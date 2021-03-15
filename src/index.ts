@@ -4,6 +4,7 @@ import Discord from "discord.js";
 import { handleCommand } from "./commands";
 
 dotenv.config();
+// TODO: Set up persistent storage, pass this to the command handler
 const client = new Discord.Client();
 
 client.on("ready", () => {
