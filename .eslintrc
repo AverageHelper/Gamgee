@@ -1,0 +1,42 @@
+{
+  "root": true,
+  "ignorePatterns": ["dist", "node_modules"],
+
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["prettier", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.prod.json",
+    "tsconfigRootDir": "./"
+  },
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "prettier/prettier": "warn",
+    "no-constant-condition": "warn",
+    "no-dupe-else-if": "warn",
+    "@typescript-eslint/no-empty-interface": "off"
+  },
+
+  "overrides": [
+    {
+      "files": ["src/**/*.test.ts"],
+      "plugins": ["prettier", "@typescript-eslint"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.test.json",
+        "tsconfigRootDir": "."
+      },
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}
