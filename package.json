@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "description": "A Discord bot",
   "scripts": {
+    "start": "nodemon --inspect dist/cjs/index.js",
     "lint": "eslint . --ext .ts",
-    "build": "rm -rf dist && tsc -p tsconfig.prod.json && tsc -p tsconfig-cjs.json",
-    "prepublishOnly": "npm run build",
+    "build": "tsc -p tsconfig.prod.json && tsc -p tsconfig-cjs.json",
+    "build:clean": "rm -rf dist && npm run build",
+    "prepublishOnly": "npm run build:clean",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -27,12 +29,15 @@
   "homepage": "https://github.com/AverageHelper/Gamgee#readme",
   "dependencies": {
     "discord.js": "^12.5.1",
-    "source-map-support": "^0.5.19"
+    "dotenv": "^8.2.0",
+    "source-map-support": "^0.5.19",
+    "yt-search": "^2.7.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",
     "@types/source-map-support": "^0.5.3",
+    "@types/yt-search": "^2.3.0",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.21.0",

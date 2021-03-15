@@ -1,5 +1,9 @@
 import "source-map-support/register";
+import dotenv from "dotenv";
 import Discord from "discord.js";
+import { handleCommand } from "./commands";
+
+dotenv.config();
 const client = new Discord.Client();
 
 client.on("ready", () => {
@@ -7,11 +11,7 @@ client.on("ready", () => {
 });
 
 client.on("message", msg => {
-  if (msg.author.bot) return;
-
-  if (msg.content === "!ping") {
-    void msg.reply("Pong!");
-  }
+  void handleCommand(msg);
 });
 
 void client.login(process.env.DISCORD_TOKEN);
