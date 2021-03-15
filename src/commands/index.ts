@@ -52,7 +52,7 @@ export async function handleCommand(
   if (!msg.content.startsWith(COMMAND_PREFIX)) return;
 
   // TODO: Parse the command more smartly
-  const command = msg.content.substring(1).split(" ");
+  const command = msg.content.trim().substring(1).split(" ");
 
   switch (command[0].toLowerCase()) {
     case "config":
