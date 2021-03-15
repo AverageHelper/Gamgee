@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import config from "./config";
 import yt from "./yt";
 
 export const COMMAND_PREFIX = "!";
@@ -27,14 +28,37 @@ function run(
   return response;
 }
 
-export async function handleCommand(msg: Discord.Message): Promise<void> {
+function runWithStorage(
+  storage: Record<string, unknown>,
+  command: string[],
+  handler: (params: string[], storage: Record<string, unknown>) => Promise<string>
+): Promise<string> {
+  return run(command, params => handler(params, storage));
+}
+
+/**
+ * Performs actions from a Discord message. The command is ignored if the message is from a bot or the message does
+ * not begin with the `COMMAND_PREFIX`.
+ *
+ * @param msg The Discord message to handle.
+ * @param storage Arbitrary persistent storage.
+ */
+export async function handleCommand(
+  msg: Discord.Message,
+  storage: Record<string, unknown>
+): Promise<void> {
   if (msg.author.bot) return;
+  if (!msg.content) return;
   if (!msg.content.startsWith(COMMAND_PREFIX)) return;
 
   // TODO: Parse the command more smartly
   const command = msg.content.substring(1).split(" ");
 
   switch (command[0].toLowerCase()) {
+    case "config":
+      await msg.reply(await runWithStorage(storage, command, config));
+      break;
+
     case "ping":
       await msg.reply(run(command, () => "Pong!"));
       break;

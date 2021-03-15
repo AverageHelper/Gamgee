@@ -22,7 +22,8 @@
     "prettier/prettier": "warn",
     "no-constant-condition": "warn",
     "no-dupe-else-if": "warn",
-    "@typescript-eslint/no-empty-interface": "off"
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/require-await": "warn"
   },
 
   "overrides": [
