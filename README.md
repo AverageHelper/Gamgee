@@ -106,20 +106,18 @@ Given a YouTube video URL or video ID, Gamgee responds with that video's title a
 
 Access the persistent config.
 
-#### `config get <key>` (soon)
+#### `config get <key>`
 
 Gamgee responds with the current configuration value for the provided key.
 
-#### `config set <key> <value>` (soon)
+#### `config set <key> <value>`
 
 Sets a new value for the provided key. Gamgee responds with a confirmation of the new key and value, with an option to undo.
 
 #### Options
 
 The following options are valid config `key`s:
-- 
-- 
-- 
+- `command_prefix`
 
 ## Contributing
 

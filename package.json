@@ -30,6 +30,7 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
+    "node-persist": "^3.1.0",
     "source-map-support": "^0.5.19",
     "yt-search": "^2.7.4",
     "ytdl-core": "^4.5.0"
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",
+    "@types/node-persist": "^3.1.1",
     "@types/source-map-support": "^0.5.3",
     "@types/yt-search": "^2.3.0",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
