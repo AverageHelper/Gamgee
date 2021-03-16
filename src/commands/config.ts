@@ -1,4 +1,4 @@
-import type { CommandContext } from "./index";
+import type { Command } from "./index";
 import { isConfigKey, isConfigValue } from "../constants/config";
 import listKeys from "../actions/config/listKeys";
 import { getConfigValue } from "../actions/config/getConfigValue";
@@ -10,58 +10,69 @@ const ARG_HELP = "help";
 
 type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_HELP;
 
-export default async function config(context: CommandContext): Promise<string> {
-  const { params, storage } = context;
-  if (params.length < 1) {
-    return `Invalid command structure. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``;
-  }
-
-  const arg = params[0].toLowerCase() as Argument;
-
-  switch (arg) {
-    case ARG_GET: {
-      // Get stuff
-      if (params.length < 2) {
-        return listKeys();
-      }
-
-      const key = params[1];
-      if (isConfigKey(key)) {
-        const value = await getConfigValue(storage, key);
-        return `**${key}**: ${JSON.stringify(value)}`;
-      }
-
-      return "Invalid key. " + listKeys();
+const config: Command = {
+  name: "config",
+  description: "Read and modify config options.",
+  async execute(context) {
+    const { message, args, storage } = context;
+    async function reply(body: string) {
+      await message.reply(body);
     }
 
-    case ARG_SET: {
-      // Set stuff
-      if (params.length < 2) {
-        return listKeys();
-      }
-      if (params.length < 3) {
-        return "Expected a value to set.";
-      }
-
-      const key = params[1];
-      const value = params[2];
-      if (!isConfigKey(key)) {
-        return "Invalid key. " + listKeys();
-      }
-      if (!isConfigValue(value)) {
-        return "invalid type of value.";
-      }
-      await setConfigValue(storage, key, value);
-      return `**${key}**: ${value}`;
+    if (args.length < 1) {
+      const response = `Invalid command structure. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``;
+      return reply(response);
     }
 
-    case ARG_HELP:
-      // List all the keys
-      console.log("Received 'config help' command.");
-      return listKeys();
+    const arg = args[0].toLowerCase() as Argument;
 
-    default:
-      console.log("Received invalid config command.");
-      return `Invalid command argument. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``;
+    switch (arg) {
+      case ARG_GET: {
+        // Get stuff
+        if (args.length < 2) {
+          return reply(listKeys());
+        }
+
+        const key = args[1];
+        if (isConfigKey(key)) {
+          const value = await getConfigValue(storage, key);
+          return reply(`**${key}**: ${JSON.stringify(value)}`);
+        }
+
+        return reply("Invalid key. " + listKeys());
+      }
+
+      case ARG_SET: {
+        // Set stuff
+        if (args.length < 2) {
+          return reply(listKeys());
+        }
+        if (args.length < 3) {
+          return reply("Expected a value to set.");
+        }
+
+        const key = args[1];
+        const value = args[2];
+        if (!isConfigKey(key)) {
+          return reply("Invalid key. " + listKeys());
+        }
+        if (!isConfigValue(value)) {
+          return reply("invalid type of value.");
+        }
+        await setConfigValue(storage, key, value);
+        return reply(`**${key}**: ${value}`);
+      }
+
+      case ARG_HELP:
+        // List all the keys
+        console.log("Received 'config help' command.");
+        return reply(listKeys());
+
+      default:
+        console.log("Received invalid config command.");
+        return reply(`Invalid command argument. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``);
+    }
   }
-}
+};
+
+export default config;
