@@ -1,20 +1,31 @@
 import "source-map-support/register";
 import "./environment";
+import { useLogger } from "./logger";
 import { useStorage } from "./storage";
 import Discord from "discord.js";
 import { handleCommand } from "./commands";
 
-const client = new Discord.Client();
+const logger = useLogger();
 
-client.on("ready", () => {
-  console.log(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
-  void useStorage()
-    .then(() => console.log("Initialized local storage"))
-    .catch(error => console.error("Failed to initialize local storage:", error));
-});
+try {
+  const client = new Discord.Client();
 
-client.on("message", msg => {
-  void useStorage().then(storage => handleCommand(client, msg, storage));
-});
+  client.on("ready", () => {
+    logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
+    void useStorage()
+      .then(() => logger.debug("Initialized local storage"))
+      .catch(error => logger.error("Failed to initialize local storage:", error));
+  });
 
-void client.login(process.env.DISCORD_TOKEN);
+  client.on("message", msg => {
+    void useStorage()
+      .then(storage => handleCommand(client, msg, storage))
+      .catch(error => logger.error("Failed to handle command:", msg, error));
+  });
+
+  void client.login(process.env.DISCORD_TOKEN);
+
+  // Handle top-level errors
+} catch (error) {
+  logger.error(error);
+}

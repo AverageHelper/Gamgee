@@ -23,7 +23,8 @@
     "no-constant-condition": "warn",
     "no-dupe-else-if": "warn",
     "@typescript-eslint/no-empty-interface": "off",
-    "@typescript-eslint/require-await": "warn"
+    "@typescript-eslint/require-await": "warn",
+    "no-console": "warn"
   },
 
   "overrides": [

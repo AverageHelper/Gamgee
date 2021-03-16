@@ -1,4 +1,7 @@
 import type Discord from "discord.js";
+import { useLogger } from "../logger";
+
+const logger = useLogger();
 
 /**
  * Get a user ID from a mention string.
@@ -19,27 +22,27 @@ export default async function getUserFromMention(
   const endsRight = m.endsWith(">");
 
   if (m.startsWith("<@") && m.endsWith(">")) {
-    console.log("This is for sure a mention. Checking for the nickname flag...");
+    logger.debug("This is for sure a mention. Checking for the nickname flag...");
     m = m.slice(2, -1);
 
     if (m.startsWith("!")) {
-      console.log("Stripped nickname.");
+      logger.debug("Stripped nickname.");
       m = m.slice(1);
     }
 
-    console.log("userId:", m);
+    logger.debug("userId:", m);
     const user = (await message.guild?.members.fetch(m))?.user;
 
     if (user) {
-      console.log("Found user", user.username);
+      logger.debug("Found user", user.username);
     } else {
-      console.log("Did not find user.");
+      logger.debug("Did not find user.");
     }
 
     return user;
   }
 
-  console.log(`This word does ${startsRight ? "" : "not "}start right.`);
-  console.log(`This word does ${endsRight ? "" : "not "}end right.`);
+  logger.debug(`This word does ${startsRight ? "" : "not "}start right.`);
+  logger.debug(`This word does ${endsRight ? "" : "not "}end right.`);
   return undefined;
 }

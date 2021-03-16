@@ -1,5 +1,8 @@
 import type { Command } from "./index";
 import { randomPhrase } from "../actions/randomStrings";
+import { useLogger } from "../logger";
+
+const logger = useLogger();
 
 const ping: Command = {
   name: "ping",
@@ -15,7 +18,7 @@ const ping: Command = {
     const response = await testMessage.edit(
       `Pong! Sent response in \`${responseTime}ms\`. API Latency is \`${apiLatency}ms\``
     );
-    console.log(`Response: '${response.content}'`);
+    logger.info(`Response: '${response.content}'`);
   }
 };
 

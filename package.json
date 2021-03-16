@@ -30,6 +30,7 @@
     "dotenv": "^8.2.0",
     "node-persist": "^3.1.0",
     "source-map-support": "^0.5.19",
+    "winston": "^3.3.3",
     "yt-search": "^2.7.4",
     "ytdl-core": "^4.5.0"
   },

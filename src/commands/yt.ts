@@ -1,6 +1,9 @@
 import type { Command } from "./index";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
+import { useLogger } from "../logger";
+
+const logger = useLogger();
 
 const yt: Command = {
   name: "yt",
@@ -33,7 +36,7 @@ const yt: Command = {
       const video = await yts({ videoId });
       return reply(`${video.title}: (${video.duration.seconds / 60} mins)`);
     } catch (error) {
-      console.error("Failed to run query", query, error);
+      logger.error("Failed to run query", query, error);
       return reply("That video query gave me an error.");
     }
   }

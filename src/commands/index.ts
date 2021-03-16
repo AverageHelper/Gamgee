@@ -5,6 +5,9 @@ import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
 import config from "./config";
 import ping from "./ping";
 import yt from "./yt";
+import { useLogger } from "../logger";
+
+const logger = useLogger();
 
 export interface Command {
   name: string;
@@ -46,36 +49,36 @@ async function query(
   storage: Storage
 ): Promise<Array<string> | undefined> {
   const content = message.content.trim();
-  console.log(`Received message: '${content}'`);
+  logger.debug(`Received message: '${content}'`);
   const query = content.split(/ +/);
 
   const commandOrMention = query[0];
-  console.log(`First word: '${commandOrMention}'`);
+  logger.debug(`First word: '${commandOrMention}'`);
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
-    console.log("This mentions", mentionedUser.username);
+    logger.debug("This mentions", mentionedUser.username);
     // See if it's for us.
     if (client.user && mentionedUser.tag === client.user.tag) {
-      console.log("This is us!", client.user.tag);
+      logger.debug("This is us!", client.user.tag);
       // It's for us. Return the query verbatim.
       return query.slice(1);
     }
 
     // It's not for us.
-    console.log("This is not us.", client.user?.tag ?? "We're not signed in.");
+    logger.debug("This is not us.", client.user?.tag ?? "We're not signed in.");
     return undefined;
   }
 
   // Make sure it's a command
   const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
-  console.log(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
+  logger.debug(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
   if (!content.startsWith(COMMAND_PREFIX)) {
-    console.log("This is just a message. Ignoring.");
+    logger.debug("This is just a message. Ignoring.");
     return undefined;
   }
   query[0] = query[0].substring(COMMAND_PREFIX.length);
-  console.log("query:", query);
+  logger.debug("query:", query);
 
   return query;
 }
@@ -84,6 +87,7 @@ async function query(
  * Performs actions from a Discord message. The command is ignored if the message is from a bot or the message does
  * not begin with the configured command prefix.
  *
+ * @param client The Discord client.
  * @param message The Discord message to handle.
  * @param storage Arbitrary persistent storage.
  */
@@ -108,7 +112,7 @@ export async function handleCommand(
   const command = commands.get(commandName);
 
   if (command) {
-    console.log(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
+    logger.info(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
 
     const args = q.slice(1);
 
@@ -121,6 +125,6 @@ export async function handleCommand(
     return command.execute(context);
   }
 
-  console.log(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
+  logger.warn(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
   await message.reply("Invalid command");
 }

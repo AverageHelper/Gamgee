@@ -3,6 +3,9 @@ import { isConfigKey, isConfigValue } from "../constants/config";
 import listKeys from "../actions/config/listKeys";
 import { getConfigValue } from "../actions/config/getConfigValue";
 import { setConfigValue } from "../actions/config/setConfigValue";
+import { useLogger } from "../logger";
+
+const logger = useLogger();
 
 const ARG_GET = "get";
 const ARG_SET = "set";
@@ -65,11 +68,11 @@ const config: Command = {
 
       case ARG_HELP:
         // List all the keys
-        console.log("Received 'config help' command.");
+        logger.debug("Received 'config help' command.");
         return reply(listKeys());
 
       default:
-        console.log("Received invalid config command.");
+        logger.info("Received invalid config command.");
         return reply(`Invalid command argument. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``);
     }
   }
