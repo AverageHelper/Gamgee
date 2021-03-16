@@ -16,10 +16,15 @@ const phrases = [
   "Potatoes. Boil 'em, mash 'em, stick 'em in a stew.",
   "There's some good in this workd, Mr. Frodo, and it's worth fighting for.",
   "We may yet, Mr. Frodo. We may.",
-  "You can not hide, I see you!"
+  "You can not hide, I see you!",
+
+  // Pony
+  "It's about time...",
+  "Trying to rebuild a house of glass...",
+  "We smile at days gone by...",
+  "What are the odds that I would find myself where I began?"
 
   // Other
-  // "As we smile at days gone by",
   // "Bit of a tongue twister",
   // "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
   // "Don't count your chickens",
@@ -28,7 +33,7 @@ const phrases = [
   // "Fond of cats",
   // "Jack and Jill ran up the hill",
   // "Keep moving forward",
-  // "Has anyone really been far even as decided to use even go want to do look more like",
+  // "Has anyone really been far even as decided to use even go want to do look more like?",
   // "I am what I am",
   // "I have a dream",
   // "I thought for a second you were joking",
@@ -43,15 +48,49 @@ const phrases = [
   // "Quite remarkable",
   // "Second star to the right, and straight on until closing time",
   // "Sponsored by",
-  // "This is just a random phrase. Feel free to add to it",
+  // "This is just a random phrase. Feel free to add to another",
   // "Thoughtful description here",
   // "Truly inspirational",
-  // "Trying to rebuild a house of glass",
   // "What are the odds that I would find myself where I began",
   // "Where it is, or anything else relevant"
 ];
 
+function randomElementOfArray<T>(array: Array<T>): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 /** Returns a random phrase or sentence fragment, in sentence case, occasionally followed by punctuation. */
 export function randomPhrase(): string {
-  return phrases[Math.floor(Math.random() * phrases.length)];
+  return randomElementOfArray(phrases);
+}
+
+const questions = [
+  "You rang?",
+  "What's up?",
+  "I got pinged.",
+  "?",
+  "??",
+  "????????",
+  "I really don't know what you're on about.",
+  "What is love?",
+  "You called?",
+  "",
+  "I hear you",
+  "Speak. Your servant hears",
+  "Who dares?",
+  "Quit yer lollygaggin'!",
+  "Wha-whAT?! I'm up!",
+  "What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?"
+];
+
+let lastResult = questions[0];
+
+/** Returns a random query. */
+export function randomQuestion(): string {
+  let result = randomElementOfArray(questions);
+  while (result === lastResult) {
+    result = randomElementOfArray(questions);
+  }
+  lastResult = result;
+  return result;
 }

@@ -20,7 +20,7 @@ try {
   client.on("message", msg => {
     void useStorage()
       .then(storage => handleCommand(client, msg, storage))
-      .catch(error => logger.error("Failed to handle command:", msg, error));
+      .catch(error => logger.error("Failed to handle command:", error));
   });
 
   void client.login(process.env.DISCORD_TOKEN);

@@ -6,6 +6,7 @@ import config from "./config";
 import ping from "./ping";
 import yt from "./yt";
 import { useLogger } from "../logger";
+import { randomQuestion } from "../actions/randomStrings";
 
 const logger = useLogger();
 
@@ -106,6 +107,12 @@ export async function handleCommand(
   // Don't bother with regular messages
   const q = await query(client, message, storage);
   if (!q) return;
+
+  if (q.length === 0) {
+    // This is a query for us to handle (we might've been pinged), but it's empty.
+    await message.reply(randomQuestion());
+    return;
+  }
 
   // Get the command
   const commandName = q[0].toLowerCase();
