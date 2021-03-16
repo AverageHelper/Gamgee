@@ -6,14 +6,14 @@ A Discord bot to play around with APIs and things
 
 ## Prerequisites
 
-This project requires [NodeJS](https://nodejs.org/) (version 6 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
+This project requires [NodeJS](https://nodejs.org/) (version 12 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 To make sure you have them available on your machine,
 try running the following command:
 
 ```sh
 $ npm -v && node -v
 6.14.11
-v10.23.0
+v14.6.0
 ```
 
 ## Clone the Repo
