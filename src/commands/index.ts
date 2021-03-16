@@ -8,6 +8,8 @@ import yt from "./yt";
 import { useLogger } from "../logger";
 import { randomQuestion } from "../actions/randomStrings";
 
+const COMMAND_HELP = "help";
+
 const logger = useLogger();
 
 export interface Command {
@@ -108,6 +110,8 @@ export async function handleCommand(
   const q = await query(client, message, storage);
   if (!q) return;
 
+  logger.info(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
+
   if (q.length === 0) {
     // This is a query for us to handle (we might've been pinged), but it's empty.
     await message.reply(randomQuestion());
@@ -116,11 +120,18 @@ export async function handleCommand(
 
   // Get the command
   const commandName = q[0].toLowerCase();
+  if (commandName === COMMAND_HELP) {
+    const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
+    const body = commands //
+      .mapValues(command => `\`${COMMAND_PREFIX}${command.name}\` - ${command.description}`)
+      .map(v => "  " + v)
+      .join("\n");
+    await message.channel.send(`Commands:\n${body}`);
+    return;
+  }
+
   const command = commands.get(commandName);
-
   if (command) {
-    logger.info(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
-
     const args = q.slice(1);
 
     const context: CommandContext = {

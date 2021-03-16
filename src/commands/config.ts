@@ -15,11 +15,17 @@ type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_HELP;
 
 const config: Command = {
   name: "config",
-  description: "Read and modify config options.",
+  description: "Read and modify config options. *(Server owner only. No touch!)*",
   async execute(context) {
     const { message, args, storage } = context;
     async function reply(body: string) {
       await message.reply(body);
+    }
+
+    // Only the guild owner may touch the config.
+    // FIXME: Add more grannular access options
+    if (!message.guild?.owner?.user.tag || message.author.tag !== message.guild.owner.user.tag) {
+      return reply("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     if (args.length < 1) {
