@@ -1,7 +1,9 @@
+import type { CommandContext } from "./index";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
 
-export default async function yt(params: string[]): Promise<string> {
+export default async function yt(context: CommandContext): Promise<string> {
+  const { params } = context;
   if (params.length < 1) {
     return "Invalid command structure. Expected a YouTube link or video ID";
   }

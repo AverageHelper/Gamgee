@@ -14,7 +14,7 @@ client.on("ready", () => {
 });
 
 client.on("message", msg => {
-  void useStorage().then(storage => handleCommand(msg, storage));
+  void useStorage().then(storage => handleCommand(client, msg, storage));
 });
 
 void client.login(process.env.DISCORD_TOKEN);

@@ -1,4 +1,4 @@
-import type { Storage } from "../storage";
+import type { CommandContext } from "./index";
 import { isConfigKey, isConfigValue } from "../constants/config";
 import listKeys from "../actions/config/listKeys";
 import { getConfigValue } from "../actions/config/getConfigValue";
@@ -10,7 +10,8 @@ const ARG_HELP = "help";
 
 type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_HELP;
 
-export default async function config(params: string[], storage: Storage): Promise<string> {
+export default async function config(context: CommandContext): Promise<string> {
+  const { params, storage } = context;
   if (params.length < 1) {
     return `Invalid command structure. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``;
   }
