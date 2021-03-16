@@ -10,7 +10,7 @@ let localStorage: LocalStorage | null = null;
 export async function useStorage(): Promise<LocalStorage> {
   if (!localStorage) {
     await storage.init({
-      dir: "./localStorage"
+      dir: "./config"
     });
     localStorage = storage;
   }
