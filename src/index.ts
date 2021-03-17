@@ -12,14 +12,14 @@ try {
 
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
-    void useStorage()
-      .then(() => logger.debug("Initialized local storage"))
-      .catch(error => logger.error("Failed to initialize local storage:", error));
   });
 
   client.on("message", msg => {
-    void useStorage()
-      .then(storage => handleCommand(client, msg, storage))
+    void useStorage(msg.guild)
+      .then(storage => {
+        logger.debug(`Initialized local storage for guild ${msg.guild?.id ?? "null"}`);
+        return handleCommand(client, msg, storage);
+      })
       .catch(error => logger.error("Failed to handle command:", error));
   });
 

@@ -9,9 +9,12 @@ const logger = useLogger();
 
 const ARG_GET = "get";
 const ARG_SET = "set";
+const ARG_UNSET = "unset";
 const ARG_HELP = "help";
+const allSubargs = [ARG_GET, ARG_SET, ARG_UNSET, ARG_HELP];
+const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
-type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_HELP;
+type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_UNSET | typeof ARG_HELP;
 
 const config: Command = {
   name: "config",
@@ -29,7 +32,7 @@ const config: Command = {
     }
 
     if (args.length < 1) {
-      const response = `Invalid command structure. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``;
+      const response = `Invalid command structure. Expected ${subargsList}`;
       return reply(response);
     }
 
@@ -46,6 +49,22 @@ const config: Command = {
         if (isConfigKey(key)) {
           const value = await getConfigValue(storage, key);
           return reply(`**${key}**: ${JSON.stringify(value)}`);
+        }
+
+        return reply("Invalid key. " + listKeys());
+      }
+
+      case ARG_UNSET: {
+        // Delete stuff
+        if (args.length < 2) {
+          return reply(listKeys());
+        }
+
+        const key = args[1];
+        if (isConfigKey(key)) {
+          await setConfigValue(storage, key, undefined);
+          const value = await getConfigValue(storage, key);
+          return reply(`**${key}** reset to ${value ?? "null"}`);
         }
 
         return reply("Invalid key. " + listKeys());
@@ -79,7 +98,7 @@ const config: Command = {
 
       default:
         logger.info("Received invalid config command.");
-        return reply(`Invalid command argument. Expected either \`${ARG_GET}\` or \`${ARG_SET}\``);
+        return reply(`Invalid command argument. Expected ${subargsList}`);
     }
   }
 };

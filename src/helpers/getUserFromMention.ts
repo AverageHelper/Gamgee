@@ -34,7 +34,7 @@ export default async function getUserFromMention(
     const user = (await message.guild?.members.fetch(m))?.user;
 
     if (user) {
-      logger.debug("Found user", user.username);
+      logger.debug("Found user", user.tag);
     } else {
       logger.debug("Did not find user.");
     }

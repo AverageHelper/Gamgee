@@ -2,11 +2,12 @@ import type { Storage } from "../storage";
 import Discord from "discord.js";
 import getUserFromMention from "../helpers/getUserFromMention";
 import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
-import config from "./config";
-import ping from "./ping";
-import yt from "./yt";
 import { useLogger } from "../logger";
 import { randomQuestion } from "../actions/randomStrings";
+import config from "./config";
+import ping from "./ping";
+import queue from "./queue";
+import yt from "./yt";
 
 const COMMAND_HELP = "help";
 
@@ -23,11 +24,11 @@ export interface CommandContext {
   client: Discord.Client;
   message: Discord.Message;
   args: string[];
-  storage: Storage;
+  storage: Storage | null;
 }
 
 const commands = new Discord.Collection<string, Command>();
-[config, ping, yt].forEach(command => {
+[config, ping, queue, yt].forEach(command => {
   commands.set(command.name, command);
 });
 
@@ -50,7 +51,7 @@ const commands = new Discord.Collection<string, Command>();
 async function query(
   client: Discord.Client,
   message: Discord.Message,
-  storage: Storage
+  storage: Storage | null
 ): Promise<Array<string> | undefined> {
   const content = message.content.trim();
   logger.debug(`Received message: '${content}'`);
@@ -61,7 +62,7 @@ async function query(
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
-    logger.debug("This mentions", mentionedUser.username);
+    logger.debug("This mentions", mentionedUser.tag);
     // See if it's for us.
     if (client.user && mentionedUser.tag === client.user.tag) {
       logger.debug("This is us!", client.user.tag);
@@ -98,7 +99,7 @@ async function query(
 export async function handleCommand(
   client: Discord.Client,
   message: Discord.Message,
-  storage: Storage
+  storage: Storage | null
 ): Promise<void> {
   // Don't respond to bots
   if (message.author.bot) return;

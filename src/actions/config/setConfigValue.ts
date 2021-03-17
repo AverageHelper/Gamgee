@@ -2,10 +2,12 @@ import type { Storage } from "../../storage";
 import type { ConfigKey, ConfigValue } from "../../constants/config";
 
 export async function setConfigValue(
-  storage: Storage,
+  storage: Storage | null,
   key: ConfigKey,
   value: ConfigValue | undefined
 ): Promise<void> {
+  if (!storage) return;
+
   if (value === undefined) {
     await storage.removeItem(key);
   } else {
@@ -13,6 +15,9 @@ export async function setConfigValue(
   }
 }
 
-export async function setConfigCommandPrefix(storage: Storage, value: string): Promise<void> {
+export async function setConfigCommandPrefix(
+  storage: Storage | null,
+  value: string
+): Promise<void> {
   return setConfigValue(storage, "command_prefix", value);
 }
