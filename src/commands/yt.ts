@@ -10,10 +10,10 @@ const yt: Command = {
   description: "Query YouTube for video data.",
   uses: [
     [
-      "`yt <search>`",
+      "yt <search>",
       "Finds the first video that matches your search, and puts the link, the video title, and the video duration in chat."
     ],
-    ["`yt <link>`", "Puts the video title and duration in chat."]
+    ["yt <link>", "Puts the video title and duration in chat."]
   ],
   async execute(context) {
     const { message, args } = context;

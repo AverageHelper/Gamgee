@@ -128,7 +128,7 @@ export async function handleCommand(
         const fact = `\`${COMMAND_PREFIX}${command.name}\` - ${command.description}`;
         const uses =
           command.uses //
-            ?.map(([use, desc]) => `    ${use} - ${desc}`)
+            ?.map(([use, desc]) => `    \`${COMMAND_PREFIX}${use}\` - ${desc}`)
             .join("\n") ?? "";
         if (uses) {
           return fact.concat("\n" + uses);
