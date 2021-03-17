@@ -15,6 +15,7 @@ const logger = useLogger();
 export interface Command {
   name: string;
   description: string;
+  uses?: Array<[string, string]>;
   execute: (context: CommandContext) => void | Promise<void>;
 }
 
@@ -123,7 +124,17 @@ export async function handleCommand(
   if (commandName === COMMAND_HELP) {
     const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
     const body = commands //
-      .mapValues(command => `\`${COMMAND_PREFIX}${command.name}\` - ${command.description}`)
+      .mapValues(command => {
+        const fact = `\`${COMMAND_PREFIX}${command.name}\` - ${command.description}`;
+        const uses =
+          command.uses //
+            ?.map(([use, desc]) => `    ${use} - ${desc}`)
+            .join("\n") ?? "";
+        if (uses) {
+          return fact.concat("\n" + uses);
+        }
+        return fact;
+      })
       .map(v => "  " + v)
       .join("\n");
     await message.channel.send(`Commands:\n${body}`);
