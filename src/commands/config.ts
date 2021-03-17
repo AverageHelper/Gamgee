@@ -1,6 +1,6 @@
 import type { Command } from "./index";
 import { isConfigKey, isConfigValue } from "../constants/config";
-import listKeys from "../actions/config/listKeys";
+import { listKeys } from "../constants/config/allKeys";
 import { getConfigValue } from "../actions/config/getConfigValue";
 import { setConfigValue } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
@@ -16,6 +16,8 @@ const allSubargs = [ARG_GET, ARG_SET, ARG_UNSET, ARG_HELP];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
 type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_UNSET | typeof ARG_HELP;
+
+const SAFE_PRINT_LENGTH = 30;
 
 const config: Command = {
   name: "config",
@@ -51,7 +53,8 @@ const config: Command = {
           return reply(`**${key}**: ${JSON.stringify(value)}`);
         }
 
-        return reply("Invalid key. " + listKeys());
+        const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
+        return reply(`I'm not sure what ${that} is. ` + listKeys());
       }
 
       case ARG_UNSET: {
@@ -67,7 +70,8 @@ const config: Command = {
           return reply(`**${key}** reset to ${value ?? "null"}`);
         }
 
-        return reply("Invalid key. " + listKeys());
+        const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
+        return reply(`I'm not sure what ${that} is. ` + listKeys());
       }
 
       case ARG_SET: {
@@ -75,17 +79,19 @@ const config: Command = {
         if (args.length < 2) {
           return reply(listKeys());
         }
+
+        const key = args[1];
+        if (!isConfigKey(key)) {
+          const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
+          return reply(`I'm not sure what ${that} is. ` + listKeys());
+        }
+
+        const value = args[2];
         if (args.length < 3) {
           return reply("Expected a value to set.");
         }
-
-        const key = args[1];
-        const value = args[2];
-        if (!isConfigKey(key)) {
-          return reply("Invalid key. " + listKeys());
-        }
         if (!isConfigValue(value)) {
-          return reply("invalid type of value.");
+          return reply("Invalid value type.");
         }
         await setConfigValue(storage, key, value);
         return reply(`**${key}**: ${value}`);
@@ -98,7 +104,7 @@ const config: Command = {
 
       default:
         logger.info("Received invalid config command.");
-        return reply(`Invalid command argument. Expected ${subargsList}`);
+        return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
     }
   }
 };
