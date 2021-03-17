@@ -21,3 +21,10 @@ export async function setConfigCommandPrefix(
 ): Promise<void> {
   return setConfigValue(storage, "command_prefix", value);
 }
+
+export async function setConfigQueueChannel(
+  storage: Storage | null,
+  value: string | null
+): Promise<void> {
+  return setConfigValue(storage, "queue_channel", value);
+}

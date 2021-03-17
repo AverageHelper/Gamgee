@@ -15,9 +15,13 @@ export async function getConfigValue(
     return defaultValueForConfigKey(key);
   }
 
-  return storedValue;
+  return storedValue ?? null;
 }
 
 export async function getConfigCommandPrefix(storage: Storage | null): Promise<string> {
   return getConfigValue(storage, "command_prefix") as Promise<string>;
+}
+
+export async function getConfigQueueChannel(storage: Storage | null): Promise<string | null> {
+  return getConfigValue(storage, "queue_channel") as Promise<string | null>;
 }

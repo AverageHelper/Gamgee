@@ -11,6 +11,7 @@ const ARG_GET = "get";
 const ARG_SET = "set";
 const ARG_UNSET = "unset";
 const ARG_HELP = "help";
+
 const allSubargs = [ARG_GET, ARG_SET, ARG_UNSET, ARG_HELP];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
@@ -32,8 +33,7 @@ const config: Command = {
     }
 
     if (args.length < 1) {
-      const response = `Invalid command structure. Expected ${subargsList}`;
-      return reply(response);
+      return reply(`Missing command structure. Expected ${subargsList}`);
     }
 
     const arg = args[0].toLowerCase() as Argument;

@@ -7,6 +7,7 @@ import { randomQuestion } from "../actions/randomStrings";
 import config from "./config";
 import ping from "./ping";
 import queue from "./queue";
+import songRequest from "./songRequest";
 import yt from "./yt";
 
 const COMMAND_HELP = "help";
@@ -28,7 +29,7 @@ export interface CommandContext {
 }
 
 const commands = new Discord.Collection<string, Command>();
-[config, ping, queue, yt].forEach(command => {
+[config, ping, queue, songRequest, yt].forEach(command => {
   commands.set(command.name, command);
 });
 
@@ -136,7 +137,7 @@ export async function handleCommand(
         }
         return fact;
       })
-      .map(v => "  " + v)
+      .array()
       .join("\n");
     await message.channel.send(`Commands:\n${body}`);
     return;
