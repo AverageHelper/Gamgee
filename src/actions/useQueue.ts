@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import Discord from "discord.js";
 
 export interface QueueEntry {
   queueMessageId: string | null;
@@ -8,9 +8,24 @@ export interface QueueEntry {
   sender: Discord.User;
 }
 
-// TODO: Store multiple queues by channel ID.
 // FIXME: This should persist across restarts.
-const theQueue: Array<QueueEntry> = [];
+const cachedQueues = new Discord.Collection<string, Array<QueueEntry>>();
+
+// eslint-disable-next-line @typescript-eslint/require-await
+async function putQueue(guild: Discord.Guild, newQueue: Array<QueueEntry>) {
+  cachedQueues.set(guild.id, newQueue);
+  // TODO: Write the queue to disk (use a relational database?)
+}
+
+async function getQueue(guild: Discord.Guild): Promise<Array<QueueEntry>> {
+  let theQueue = cachedQueues.get(guild.id);
+  // TODO: If the queue is not cached, try to read the queue from disk (use a relational database?)
+  if (!theQueue) {
+    theQueue = [];
+    await putQueue(guild, theQueue);
+  }
+  return theQueue;
+}
 
 interface QueueManager {
   count: () => Promise<number>;
@@ -20,16 +35,20 @@ interface QueueManager {
 }
 
 export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
+  const guild = queueChannel.guild;
+
   return {
-    count() {
-      return Promise.resolve(theQueue.length);
+    async count() {
+      const queue = await getQueue(guild);
+      return queue.length;
     },
-    playtime() {
+    async playtime() {
+      const queue = await getQueue(guild);
       let duration = 0;
-      theQueue.forEach(e => {
+      queue.forEach(e => {
         duration += e.minutes;
       });
-      return Promise.resolve(duration);
+      return duration;
     },
     async push(entry) {
       const queueMessage = await queueChannel.send(
@@ -37,7 +56,9 @@ export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
         { allowedMentions: { users: [] } }
       );
       entry.queueMessageId = queueMessage.id;
+      const theQueue = await getQueue(guild);
       theQueue.push(entry);
+      await putQueue(guild, theQueue);
     },
     pop() {
       // Strikethrough the message
