@@ -58,6 +58,7 @@ const yt: Command = {
       const queueIsCurrent = message.channel.id === channel.id;
       const queue = useQueue(channel);
       const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
+      // FIXME: There *has* to be a better way to build complex strings like this!
       return reply(
         `Queue channel: <#${channel.id}>${queueIsCurrent ? " (in here)" : ""}\n${
           count
@@ -95,13 +96,18 @@ const yt: Command = {
           channel.send("This is a queue now. :smiley:")
         ]);
 
-        return reply(`New queue set up in <#${channel.id}>`);
+        const queueIsCurrent = message.channel.id === channel?.id;
+        if (!queueIsCurrent) {
+          return reply(`New queue set up in <#${channel.id}>`);
+        }
+        return;
       }
 
       case ARG_STOP: {
         const channel = await getQueueChannel(context);
+        const queueIsCurrent = message.channel.id === channel?.id;
         const promises: Array<Promise<unknown>> = [setConfigQueueChannel(storage, null)];
-        if (channel) {
+        if (channel && !queueIsCurrent) {
           promises.push(channel.send("This queue is closed. :wave:"));
         }
         await Promise.all(promises);
