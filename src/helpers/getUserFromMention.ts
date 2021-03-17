@@ -21,7 +21,7 @@ export default async function getUserFromMention(
   const startsRight = m.startsWith("<@");
   const endsRight = m.endsWith(">");
 
-  if (m.startsWith("<@") && m.endsWith(">")) {
+  if (startsRight && endsRight) {
     logger.debug("This is for sure a mention. Checking for the nickname flag...");
     m = m.slice(2, -1);
 

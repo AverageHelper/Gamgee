@@ -39,8 +39,8 @@ const yt: Command = {
 
     async function accept(entry: QueueEntry, sendUrl = false) {
       await Promise.all([
-        await queueChannel?.send(message.content),
-        await message.channel.send(
+        queueChannel?.send(message.content),
+        message.channel.send(
           `${sendUrl ? entry.url + "\n" : ""}**${message.author.username}**, Submission Accepted!`
         )
       ]);
