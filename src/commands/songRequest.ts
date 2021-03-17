@@ -1,17 +1,10 @@
-import type Discord from "discord.js";
+import { useQueue, QueueEntry } from "../actions/useQueue";
 import type { Command } from "./index";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
-
-interface QueueEntry {
-  url: string;
-  minutes: number;
-  sentAt: Date;
-  sender: Discord.User;
-}
 
 const name = "sr";
 
@@ -45,16 +38,18 @@ const yt: Command = {
     }
 
     async function accept(entry: QueueEntry, sendUrl = false) {
-      // TODO: Also add this data to a lookup table.
+      if (!queueChannel) {
+        return reject_public(
+          "No queue channel has been set up yet. Ask an administrator to set one up."
+        );
+      }
+
+      const queue = useQueue(queueChannel);
       await Promise.all([
-        queueChannel?.send(
-          `<@!${entry.sender.id}> requested a **${Math.ceil(entry.minutes)}-min** song: ${
-            entry.url
-          }`,
-          { allowedMentions: { users: [] } }
-        ),
+        queue.push(entry), //
         sendUrl ? message.channel.send(entry.url) : null
       ]);
+      // Send acceptance after the potential `send(entry.url)` call
       await message.channel.send(`**${message.author.username}**, Submission Accepted!`);
     }
 
@@ -72,7 +67,8 @@ const yt: Command = {
       // Whether this is a search result and we therefore haven't had this link embedded yet
       const shouldSendUrl = "type" in video && video.type === "video";
 
-      return accept({ url, minutes, sentAt, sender }, shouldSendUrl);
+      // Full send!
+      return accept({ url, minutes, sentAt, sender, queueMessageId: null }, shouldSendUrl);
 
       // Handle fetch errors
     } catch (error) {

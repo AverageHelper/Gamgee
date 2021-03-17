@@ -1,5 +1,6 @@
 import type { Command } from "./index";
 import getQueueChannel from "../actions/getQueueChannel";
+import { useQueue } from "../actions/useQueue";
 import { setConfigQueueChannel } from "../actions/config/setConfigValue";
 import getChannelFromMention from "../helpers/getChannelFromMention";
 import { useLogger } from "../logger";
@@ -19,7 +20,7 @@ const name = "queue";
 
 const yt: Command = {
   name,
-  description: "Manage a user queue.",
+  description: "Manage a user queue. *(Server owner only. No touch!)*",
   uses: [
     [name, "Reports the status of the current queue."],
     [
@@ -39,14 +40,34 @@ const yt: Command = {
       await message.channel.send(reason);
     }
 
+    // Only the guild owner may touch the queue.
+    // FIXME: Add more grannular access options
+    if (!message.guild?.owner?.user.tag || message.author.tag !== message.guild.owner.user.tag) {
+      return reply("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    }
+
     if (args.length < 1) {
       // Get the current queue's status
       const channel = await getQueueChannel(context);
-      if (channel) {
-        return reply(`Queue channel: <#${channel.id}>\nNothing has been added yet.`);
+      if (!channel) {
+        return reply(
+          `No queue is set up. Would you like to start one? (Try using \`${name} ${ARG_START}\`)`
+        );
       }
+
+      const queueIsCurrent = message.channel.id === channel.id;
+      const queue = useQueue(channel);
+      const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
       return reply(
-        `No queue is set up. Would you like to start one? (Try using \`${name} ${ARG_START}\`)`
+        `Queue channel: <#${channel.id}>${queueIsCurrent ? " (in here)" : ""}\n${
+          count
+            ? `There ${count === 1 ? "is" : "are"} **${count} song${
+                count === 1 ? "" : "s"
+              }** in the queue, for a total of about **${Math.ceil(
+                playtime
+              )} minutes** of playtime.`
+            : "Nothing has been added yet."
+        }`
       );
     }
     const command = args[0] as Argument;
