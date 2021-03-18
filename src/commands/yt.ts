@@ -42,7 +42,9 @@ const yt: Command = {
 
       // Handle fetch errors
     } catch (error) {
-      logger.error("Failed to run query", args, error);
+      logger.error(
+        `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
+      );
       return reply("That video query gave me an error.");
     }
   }

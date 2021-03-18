@@ -19,6 +19,9 @@ interface QueueManager {
   /** Returns the next unmarked element fron the queue. */
   pop: () => Promise<QueueEntry | null>;
 
+  /** Returns all entries in the queue. */
+  getAllEntries: () => Promise<Array<QueueEntry>>;
+
   /** Resets the queue. Deletes all cached data about the queue. */
   clear: () => Promise<void>;
 }
@@ -62,6 +65,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       // TODO: Mark the entry as "used"
       // TODO: If no unused entries exist, return null
       return Promise.resolve(null);
+    },
+    getAllEntries() {
+      return queueStorage.fetchAll();
     },
     clear() {
       return queueStorage.clear();

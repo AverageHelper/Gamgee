@@ -15,13 +15,14 @@ const logger = useLogger();
 
 const ARG_START = "open";
 const ARG_STOP = "close";
+const ARG_RESTART = "restart";
 const ARG_LIMIT = "limit";
 
-type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_LIMIT;
+type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_RESTART | typeof ARG_LIMIT;
 
 const ARG_ENTRY_DURATION = "entry-duration";
 
-const allSubargs = [ARG_START, ARG_STOP, ARG_LIMIT];
+const allSubargs = [ARG_START, ARG_STOP, ARG_RESTART, ARG_LIMIT];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
 const allLimits = [ARG_ENTRY_DURATION];
@@ -45,13 +46,17 @@ const yt: Command = {
       "Tells me to use the channel called {channel name} for the queue. The previous queue will be forgotten."
     ],
     [`${name} ${ARG_STOP}`, "Tells me to close the current queue."],
+    [`${name} ${ARG_RESTART}`, "Empties the queue and starts all over!"],
     [`${name} ${ARG_LIMIT} <${allLimits.join("|")}>`, "Sets a limit value on the queue."]
   ],
   async execute(context) {
     const { message, args, storage } = context;
 
-    async function reply(reason: string) {
-      await message.channel.send(reason);
+    async function reply(msg: string) {
+      await message.channel.send(msg);
+    }
+    async function reply_private(msg: string) {
+      await message.author.send(`(Reply from <#${message.channel.id}>)\n${msg}`);
     }
 
     // Only the guild owner may touch the queue.
@@ -72,7 +77,8 @@ const yt: Command = {
       const queue = await useQueue(channel);
       const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
 
-      const response = [`Queue channel: <#${channel.id}>`];
+      const response: Array<string> = [];
+      response.push(`Queue channel: <#${channel.id}>`);
       if (queueIsCurrent) {
         response.push(" (in here)");
       }
@@ -89,7 +95,12 @@ const yt: Command = {
       } else {
         response.push("Nothing has been added yet.");
       }
-      return reply(response.join(""));
+      const queueInfo = response.join("");
+      await Promise.all([
+        queueIsCurrent ? reply(queueInfo) : reply_private(queueInfo), //
+        message.delete()
+      ]);
+      return;
     }
 
     const command = args[0] as Argument;
@@ -114,25 +125,66 @@ const yt: Command = {
         logger.info(`Setting up channel '${channel.name}' for queuage.`);
         await Promise.all([
           setConfigQueueChannel(storage, channel.id),
-          channel.send("This is a queue now. :smiley:")
+          channel.send("This is a queue now. :smiley:"),
+          message
+            .delete({ reason: "Users don't need to see this command once it's run." })
+            .catch(error =>
+              logger.error(
+                `I don't seem to have permission to delete messages: ${JSON.stringify(
+                  error,
+                  undefined,
+                  2
+                )}`
+              )
+            )
         ]);
 
         const queueIsCurrent = message.channel.id === channel?.id;
         if (!queueIsCurrent) {
-          return reply(`New queue set up in <#${channel.id}>`);
+          return reply(`The queue is now open! :smiley:`);
         }
         return;
       }
 
       case ARG_STOP: {
         const channel = await getQueueChannel(context);
+        if (!channel) {
+          return reply("There is no open queue to close, silly! :stuck_out_tongue:");
+        }
         const queueIsCurrent = message.channel.id === channel?.id;
-        const promises: Array<Promise<unknown>> = [setConfigQueueChannel(storage, null)];
+        const promises: Array<Promise<unknown>> = [
+          setConfigQueueChannel(storage, null),
+          message
+            .delete({ reason: "Users don't need to see this command once it's run." })
+            .catch(error =>
+              logger.error(
+                `I don't seem to have permission to delete messages: ${JSON.stringify(
+                  error,
+                  undefined,
+                  2
+                )}`
+              )
+            )
+        ];
         if (channel && !queueIsCurrent) {
           promises.push(channel.send("This queue is closed. :wave:"));
         }
         await Promise.all(promises);
-        return reply("The queue is closed.");
+        return reply("The queue is now closed. :wave:");
+      }
+
+      case ARG_RESTART: {
+        const channel = await getQueueChannel(context);
+        if (!channel) {
+          return reply("No queue is set up. Maybe that's what you wanted...?");
+        }
+        const queue = await useQueue(channel);
+        const deleteMessages = (await queue.getAllEntries())
+          .map(entry => entry.queueMessageId)
+          .map(messageId => channel.messages.delete(messageId));
+        await Promise.all(deleteMessages);
+        await queue.clear();
+        return reply("The queue has restarted.");
       }
 
       case ARG_LIMIT: {

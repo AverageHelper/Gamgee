@@ -18,6 +18,9 @@ const yt: Command = {
   async execute(context) {
     const { message, args, storage } = context;
 
+    async function reject_private(reason: string) {
+      await message.author.send(reason);
+    }
     async function reject_public(reason: string) {
       await message.channel.send(reason);
     }
@@ -31,7 +34,21 @@ const yt: Command = {
 
     if (message.channel.id === queueChannel.id) {
       // TODO: The ability to configure a specific channel from which song requests should be taken.
-      return reject_public("Requesting songs in the queue channel hasn't been implemented yet.");
+      await Promise.all([
+        message
+          .delete({ reason: "Spam; Song requests are not permitted in the queue channel." })
+          .catch(error =>
+            logger.error(
+              `I don't seem to have permission to delete messages: ${JSON.stringify(
+                error,
+                undefined,
+                2
+              )}`
+            )
+          ),
+        reject_private("Requesting songs in the queue channel has not been implemented yet.")
+      ]);
+      return;
     }
 
     if (args.length < 1) {
@@ -74,9 +91,11 @@ const yt: Command = {
       // If the video is too long, reject!
       const maxDuration = await getConfigQueueLimitEntryDuration(storage);
       if (maxDuration > 0 && minutes > maxDuration) {
-        return reject_public(
-          `:hammer: That video is too long. The limit is **${maxDuration} minutes**`
+        await reject_public(
+          `:hammer: <@!${message.author.id}> That video is too long. The limit is **${maxDuration} minutes**`
         );
+        await message.suppressEmbeds(true);
+        return;
       }
 
       // Whether this is a search result and we therefore haven't had this link embedded yet
@@ -87,7 +106,9 @@ const yt: Command = {
 
       // Handle fetch errors
     } catch (error) {
-      logger.error("Failed to run query", args, error);
+      logger.error(
+        `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
+      );
       return reject_public("That video query gave me an error.");
     }
   }

@@ -17,7 +17,9 @@ try {
   client.on("message", msg => {
     void useStorage(msg.guild)
       .then(storage => handleCommand(client, msg, storage))
-      .catch(error => logger.error("Failed to handle command:", error));
+      .catch(error =>
+        logger.error(`Failed to handle command: ${JSON.stringify(error, undefined, 2)}`)
+      );
   });
 
   void client.login(process.env.DISCORD_TOKEN);
