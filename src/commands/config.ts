@@ -1,6 +1,7 @@
 import type { Command } from "./index";
+import { SAFE_PRINT_LENGTH } from "../constants";
 import { isConfigKey, isConfigValue } from "../constants/config";
-import { listKeys } from "../constants/config/allKeys";
+import { listKeys } from "../constants/config/keys";
 import { getConfigValue } from "../actions/config/getConfigValue";
 import { setConfigValue } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
@@ -16,8 +17,6 @@ const allSubargs = [ARG_GET, ARG_SET, ARG_UNSET, ARG_HELP];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
 type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_UNSET | typeof ARG_HELP;
-
-const SAFE_PRINT_LENGTH = 30;
 
 const config: Command = {
   name: "config",
@@ -67,7 +66,7 @@ const config: Command = {
         if (isConfigKey(key)) {
           await setConfigValue(storage, key, undefined);
           const value = await getConfigValue(storage, key);
-          return reply(`**${key}** reset to ${value ?? "null"}`);
+          return reply(`**${key}** reset to ${JSON.stringify(value)}`);
         }
 
         const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
@@ -94,7 +93,7 @@ const config: Command = {
           return reply("Invalid value type.");
         }
         await setConfigValue(storage, key, value);
-        return reply(`**${key}**: ${value}`);
+        return reply(`**${key}**: ${JSON.stringify(value)}`);
       }
 
       case ARG_HELP:

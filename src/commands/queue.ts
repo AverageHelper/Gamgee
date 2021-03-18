@@ -1,20 +1,37 @@
 import type { Command } from "./index";
-import getQueueChannel from "../actions/getQueueChannel";
+import { SAFE_PRINT_LENGTH } from "../constants";
+import { ConfigValue } from "../constants/config";
+import { getConfigQueueLimitEntryDuration } from "../actions/config/getConfigValue";
 import { useQueue } from "../actions/useQueue";
-import { setConfigQueueChannel } from "../actions/config/setConfigValue";
-import getChannelFromMention from "../helpers/getChannelFromMention";
+import {
+  setConfigQueueChannel,
+  setConfigQueueLimitEntryDuration
+} from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
+import getQueueChannel from "../actions/getQueueChannel";
+import getChannelFromMention from "../helpers/getChannelFromMention";
 
 const logger = useLogger();
 
 const ARG_START = "open";
 const ARG_STOP = "close";
-const ARG_TOTAL_LIMIT = "total-limit";
+const ARG_LIMIT = "limit";
 
-const allSubargs = [ARG_START, ARG_STOP, ARG_TOTAL_LIMIT];
+type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_LIMIT;
+
+const ARG_ENTRY_DURATION = "entry-duration";
+
+const allSubargs = [ARG_START, ARG_STOP, ARG_LIMIT];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
-type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_TOTAL_LIMIT;
+const allLimits = [ARG_ENTRY_DURATION];
+const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
+
+type LimitKey = typeof ARG_ENTRY_DURATION;
+
+function isLimitKey(value: unknown): value is LimitKey {
+  return !!value && typeof value === "string" && allLimits.includes(value);
+}
 
 const name = "queue";
 
@@ -28,10 +45,7 @@ const yt: Command = {
       "Tells me to use the channel called {channel name} for the queue. The previous queue will be forgotten."
     ],
     [`${name} ${ARG_STOP}`, "Tells me to close the current queue."],
-    [
-      `${name} ${ARG_TOTAL_LIMIT} {number}`,
-      "Sets a default limit to the number of total submissions that any user may put in the queue."
-    ]
+    [`${name} ${ARG_LIMIT} <${allLimits.join("|")}>`, "Sets a limit value on the queue."]
   ],
   async execute(context) {
     const { message, args, storage } = context;
@@ -121,9 +135,42 @@ const yt: Command = {
         return reply("The queue is closed.");
       }
 
-      case ARG_TOTAL_LIMIT:
-        logger.info("Should set the default submission limit.");
-        return reply("This command will eventually set a queue's per-user submission limit.");
+      case ARG_LIMIT: {
+        // Set limits on the queue
+        if (args.length < 2) {
+          return reply(`Gonna need more info than that. Add one of: ${limitsList}.`);
+        }
+
+        const limitKey = args[1];
+        if (!isLimitKey(limitKey)) {
+          const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
+          return reply(`I'm not sure what ${that} is. ` + limitsList);
+        }
+
+        if (args.length < 3) {
+          return reply("Expected a value to set.");
+        }
+        let value: ConfigValue = args[2];
+
+        switch (limitKey) {
+          case ARG_ENTRY_DURATION: {
+            // Set the guild's queue entry duration limit
+            value = parseInt(args[2]);
+            if (isNaN(value)) {
+              value = await getConfigQueueLimitEntryDuration(storage);
+              await reply("That doesn't look like an integer. Enter a number value in minutes");
+            }
+            await setConfigQueueLimitEntryDuration(storage, value);
+            return reply(`Entry duration limit set to **${value} minutes**`);
+          }
+
+          default: {
+            const that =
+              (limitKey as string).length <= SAFE_PRINT_LENGTH ? `'${limitKey as string}'` : "that";
+            return reply(`I'm not sure what ${that} is. ` + limitsList);
+          }
+        }
+      }
 
       default:
         return reply(`Invalid command argument. Expected ${subargsList}`);

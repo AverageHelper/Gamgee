@@ -1,5 +1,11 @@
 import type { Storage } from "../../configStorage";
-import type { ConfigKey, ConfigValue } from "../../constants/config";
+import {
+  ConfigKey,
+  ConfigValue,
+  CONFIG_KEY_COMMAND_PREFIX,
+  CONFIG_KEY_QUEUE_CHANNEL,
+  CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION
+} from "../../constants/config";
 import defaultValueForConfigKey from "../../constants/config/defaultValueForConfigKey";
 
 export async function getConfigValue(
@@ -19,9 +25,16 @@ export async function getConfigValue(
 }
 
 export async function getConfigCommandPrefix(storage: Storage | null): Promise<string> {
-  return getConfigValue(storage, "command_prefix") as Promise<string>;
+  const val = (await getConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX)) as string;
+  return val.toString();
 }
 
 export async function getConfigQueueChannel(storage: Storage | null): Promise<string | null> {
-  return getConfigValue(storage, "queue_channel") as Promise<string | null>;
+  const val = (await getConfigValue(storage, CONFIG_KEY_QUEUE_CHANNEL)) as string | null;
+  return val?.toString() ?? null;
+}
+
+export async function getConfigQueueLimitEntryDuration(storage: Storage | null): Promise<number> {
+  const val = (await getConfigValue(storage, CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION)) ?? "-1";
+  return Number.parseInt(val as string);
 }

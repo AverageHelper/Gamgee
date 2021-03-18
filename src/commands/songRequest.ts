@@ -1,8 +1,9 @@
 import { useQueue, UnsentQueueEntry } from "../actions/useQueue";
 import type { Command } from "./index";
+import { useLogger } from "../logger";
+import { getConfigQueueLimitEntryDuration } from "../actions/config/getConfigValue";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
-import { useLogger } from "../logger";
 
 const logger = useLogger();
 
@@ -15,7 +16,7 @@ const yt: Command = {
     [`${name} <song name or YouTube link>`, "Attempts to add the given content to the queue."]
   ],
   async execute(context) {
-    const { message, args } = context;
+    const { message, args, storage } = context;
 
     async function reject_public(reason: string) {
       await message.channel.send(reason);
@@ -69,6 +70,14 @@ const yt: Command = {
       const minutes = video.duration.seconds / 60;
       const sentAt = message.createdAt;
       const senderId = message.author.id;
+
+      // If the video is too long, reject!
+      const maxDuration = await getConfigQueueLimitEntryDuration(storage);
+      if (maxDuration > 0 && minutes > maxDuration) {
+        return reject_public(
+          `:hammer: That video is too long. The limit is **${maxDuration} minutes**`
+        );
+      }
 
       // Whether this is a search result and we therefore haven't had this link embedded yet
       const shouldSendUrl = "type" in video && video.type === "video";
