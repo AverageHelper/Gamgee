@@ -8,6 +8,7 @@ import config from "./config";
 import ping from "./ping";
 import queue from "./queue";
 import songRequest from "./songRequest";
+import type from "./type";
 import yt from "./yt";
 
 const COMMAND_HELP = "help";
@@ -29,7 +30,7 @@ export interface CommandContext {
 }
 
 const commands = new Discord.Collection<string, Command>();
-[config, ping, queue, songRequest, yt].forEach(command => {
+[config, ping, queue, songRequest, type, yt].forEach(command => {
   commands.set(command.name, command);
 });
 
