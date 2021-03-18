@@ -22,12 +22,12 @@ export default function getChannelFromMention(
 
   if (startsRight && endsRight) {
     m = m.slice(2, -1);
-    logger.debug("This is for sure a mention. userId:", m);
+    logger.debug(`This is for sure a mention. userId: ${m}`);
 
     const channel = message.guild?.channels.resolve(m) ?? undefined;
 
     if (channel) {
-      logger.debug("Found channel", channel.name);
+      logger.debug(`Found channel ${channel.name}`);
     } else {
       logger.debug("Did not find user.");
     }

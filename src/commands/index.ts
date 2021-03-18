@@ -64,16 +64,16 @@ async function query(
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
-    logger.debug("This mentions", mentionedUser.tag);
+    logger.debug(`This mentions ${mentionedUser.tag}`);
     // See if it's for us.
     if (client.user && mentionedUser.tag === client.user.tag) {
-      logger.debug("This is us!", client.user.tag);
+      logger.debug(`This is us! ${client.user.tag}`);
       // It's for us. Return the query verbatim.
       return query.slice(1);
     }
 
     // It's not for us.
-    logger.debug("This is not us.", client.user?.tag ?? "We're not signed in.");
+    logger.debug(`This is not us. ${client.user?.tag ?? "We're not signed in."}`);
     return undefined;
   }
 
@@ -85,7 +85,7 @@ async function query(
     return undefined;
   }
   query[0] = query[0].substring(COMMAND_PREFIX.length);
-  logger.debug("query:", query);
+  logger.debug(`query: ${query.toString()}`);
 
   return query;
 }
