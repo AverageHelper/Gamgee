@@ -6,6 +6,7 @@ import Discord from "discord.js";
 import { handleCommand } from "./commands";
 
 const logger = useLogger();
+logger.debug(`Starting in ${process.env.NODE_ENV ?? "undefined"} environment`);
 
 try {
   const client = new Discord.Client();

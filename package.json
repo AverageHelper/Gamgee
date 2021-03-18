@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A Discord bot",
   "scripts": {
-    "start": "nodemon --inspect dist/index.js",
+    "start": "NODE_ENV=development nodemon --inspect dist/index.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",

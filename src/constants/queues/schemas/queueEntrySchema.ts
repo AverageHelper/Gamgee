@@ -1,5 +1,5 @@
 import type { QueueEntry } from "../../../queueStorage";
-import { Sequelize, Model, ModelCtor, STRING, FLOAT, DATE } from "sequelize";
+import { Sequelize, Model, ModelCtor, STRING, INTEGER, DATE } from "sequelize";
 import { useLogger } from "../../../logger";
 
 const logger = useLogger();
@@ -35,8 +35,8 @@ export default function queueEntrySchema(sequelize: Sequelize): ModelCtor<QueueE
       type: STRING,
       allowNull: false
     },
-    minutes: {
-      type: FLOAT,
+    seconds: {
+      type: INTEGER,
       allowNull: false
     },
     channelId: {
@@ -49,6 +49,6 @@ export default function queueEntrySchema(sequelize: Sequelize): ModelCtor<QueueE
     }
   });
 
-  logger.debug("Create Queue Entry schema");
+  logger.debug("Created Queue Entries schema");
   return QueueEntries;
 }

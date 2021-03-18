@@ -1,7 +1,6 @@
 import { useQueue, UnsentQueueEntry } from "../actions/useQueue";
 import type { Command } from "./index";
 import { useLogger } from "../logger";
-import { getConfigQueueLimitEntryDuration } from "../actions/config/getConfigValue";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
 
@@ -16,7 +15,7 @@ const yt: Command = {
     [`${name} <song name or YouTube link>`, "Attempts to add the given content to the queue."]
   ],
   async execute(context) {
-    const { message, args, storage } = context;
+    const { message, args } = context;
 
     async function reject_private(reason: string) {
       await message.author.send(reason);
@@ -54,20 +53,15 @@ const yt: Command = {
       return;
     }
 
+    logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
+    const queue = await useQueue(queueChannel);
+    logger.debug("Queue prepared!");
+
     if (args.length < 1) {
       return reject_public("You're gonna have to add a song link or title to that.");
     }
 
     async function accept(entry: UnsentQueueEntry, sendUrl = false) {
-      if (!queueChannel) {
-        return reject_public(
-          "No queue channel has been set up yet. Ask an administrator to set one up."
-        );
-      }
-
-      logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
-      const queue = await useQueue(queueChannel);
-      logger.debug("Queue prepared!");
       await Promise.all([
         queue.push(entry), //
         sendUrl ? message.channel.send(entry.url) : null
@@ -87,15 +81,15 @@ const yt: Command = {
       }
 
       const url = video.url;
-      const minutes = video.duration.seconds / 60;
+      const seconds = video.duration.seconds;
       const sentAt = message.createdAt;
       const senderId = message.author.id;
 
       // If the video is too long, reject!
-      const maxDuration = await getConfigQueueLimitEntryDuration(storage);
-      if (maxDuration > 0 && minutes > maxDuration) {
+      const maxDuration = (await queue.getConfig()).entryDurationSeconds;
+      if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
         return reject_public(
-          `:hammer: <@!${message.author.id}> That video is too long. The limit is **${maxDuration} minutes**`
+          `:hammer: <@!${message.author.id}> That video is too long. The limit is **${maxDuration} seconds**`
         );
       }
 
@@ -103,7 +97,7 @@ const yt: Command = {
       const shouldSendUrl = "type" in video && video.type === "video";
 
       // Full send!
-      return accept({ url, minutes, sentAt, senderId }, shouldSendUrl);
+      return accept({ url, seconds, sentAt, senderId }, shouldSendUrl);
 
       // Handle fetch errors
     } catch (error) {

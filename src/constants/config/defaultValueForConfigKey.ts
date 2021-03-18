@@ -1,9 +1,4 @@
-import {
-  ConfigKey,
-  CONFIG_KEY_COMMAND_PREFIX,
-  CONFIG_KEY_QUEUE_CHANNEL,
-  CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION
-} from "./keys";
+import { ConfigKey, CONFIG_KEY_COMMAND_PREFIX, CONFIG_KEY_QUEUE_CHANNEL } from "./keys";
 import assertUnreachable from "../../helpers/assertUnreachable";
 
 export type ConfigValue = string | number | null;
@@ -22,9 +17,6 @@ export default function defaultValueForConfigKey(key: ConfigKey): ConfigValue {
 
     case CONFIG_KEY_QUEUE_CHANNEL:
       return null;
-
-    case CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION:
-      return -1;
 
     default:
       return assertUnreachable(key);

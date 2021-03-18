@@ -1,16 +1,13 @@
 export const CONFIG_KEY_COMMAND_PREFIX = "command_prefix";
 export const CONFIG_KEY_QUEUE_CHANNEL = "queue_channel";
-export const CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION = "queue_limit_entry_duration";
 
 export type ConfigKey =
-  | typeof CONFIG_KEY_COMMAND_PREFIX
-  | typeof CONFIG_KEY_QUEUE_CHANNEL
-  | typeof CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION;
+  | typeof CONFIG_KEY_COMMAND_PREFIX //
+  | typeof CONFIG_KEY_QUEUE_CHANNEL;
 
 export const allKeys: Array<ConfigKey> = [
-  CONFIG_KEY_COMMAND_PREFIX,
-  CONFIG_KEY_QUEUE_CHANNEL,
-  CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION
+  CONFIG_KEY_COMMAND_PREFIX, //
+  CONFIG_KEY_QUEUE_CHANNEL
 ];
 
 export function isConfigKey(value: unknown): value is ConfigKey {

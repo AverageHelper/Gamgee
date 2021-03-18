@@ -1,18 +1,15 @@
 import type { Command } from "./index";
 import { SAFE_PRINT_LENGTH } from "../constants";
 import { ConfigValue } from "../constants/config";
-import { getConfigQueueLimitEntryDuration } from "../actions/config/getConfigValue";
 import { useQueue } from "../actions/useQueue";
-import {
-  setConfigQueueChannel,
-  setConfigQueueLimitEntryDuration
-} from "../actions/config/setConfigValue";
+import { setConfigQueueChannel } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
 import getQueueChannel from "../actions/getQueueChannel";
 import getChannelFromMention from "../helpers/getChannelFromMention";
 
 const logger = useLogger();
 
+const name = "queue";
 const ARG_START = "open";
 const ARG_STOP = "close";
 const ARG_RESTART = "restart";
@@ -20,34 +17,33 @@ const ARG_LIMIT = "limit";
 
 type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_RESTART | typeof ARG_LIMIT;
 
-const ARG_ENTRY_DURATION = "entry-duration";
-
 const allSubargs = [ARG_START, ARG_STOP, ARG_RESTART, ARG_LIMIT];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
-const allLimits = [ARG_ENTRY_DURATION];
-const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
+const ARG_ENTRY_DURATION = "entry-duration";
+const ARG_SUB_COOLDOWN = "cooldown";
 
-type LimitKey = typeof ARG_ENTRY_DURATION;
+type LimitKey = typeof ARG_ENTRY_DURATION | typeof ARG_SUB_COOLDOWN;
+
+const allLimits = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN];
+const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
   return !!value && typeof value === "string" && allLimits.includes(value);
 }
 
-const name = "queue";
-
 const yt: Command = {
   name,
-  description: "Manage a user queue. *(Server owner only. No touch!)*",
+  description: "Manage a request queue. *(Server owner only. No touch!)*",
   uses: [
     [name, "Reports the status of the current queue."],
     [
-      `${name} ${ARG_START} {channel name}`,
-      "Tells me to use the channel called {channel name} for the queue. The previous queue will be forgotten."
+      `${name} ${ARG_START} <channel name>`,
+      "Sets the channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead."
     ],
-    [`${name} ${ARG_STOP}`, "Tells me to close the current queue."],
-    [`${name} ${ARG_RESTART}`, "Empties the queue and starts all over!"],
-    [`${name} ${ARG_LIMIT} <${allLimits.join("|")}>`, "Sets a limit value on the queue."]
+    [`${name} ${ARG_STOP}`, "Closes the current queue."],
+    [`${name} ${ARG_RESTART}`, "Empties the queue and starts a fresh queue session."],
+    [`${name} ${ARG_LIMIT} [${allLimits.join("|")}]`, "Sets a limit value on the queue."]
   ],
   async execute(context) {
     const { message, args, storage } = context;
@@ -90,7 +86,7 @@ const yt: Command = {
         response.push(
           `There ${are} **${count} song${s}** in the queue, for a total cost of about **${Math.ceil(
             playtime
-          )} minutes** of playtime.`
+          )} seconds** of playtime.`
         );
       } else {
         response.push("Nothing has been added yet.");
@@ -188,6 +184,12 @@ const yt: Command = {
       }
 
       case ARG_LIMIT: {
+        const channel = await getQueueChannel(context);
+        if (!channel) {
+          return reply("No queue is set up.");
+        }
+        const queue = await useQueue(channel);
+
         // Set limits on the queue
         if (args.length < 2) {
           return reply(`Gonna need more info than that. Add one of: ${limitsList}.`);
@@ -199,21 +201,40 @@ const yt: Command = {
           return reply(`I'm not sure what ${that} is. ` + limitsList);
         }
 
-        if (args.length < 3) {
-          return reply("Expected a value to set.");
-        }
-        let value: ConfigValue = args[2];
+        let value: ConfigValue | undefined = args.length >= 3 ? args[2] : undefined;
 
         switch (limitKey) {
           case ARG_ENTRY_DURATION: {
-            // Set the guild's queue entry duration limit
-            value = parseInt(args[2]);
-            if (isNaN(value)) {
-              value = await getConfigQueueLimitEntryDuration(storage);
-              await reply("That doesn't look like an integer. Enter a number value in minutes");
+            if (value === undefined) {
+              value = (await queue.getConfig()).entryDurationSeconds;
+              if (value === null) {
+                return reply(`There is no limit on entry duration.`);
+              }
+              return reply(`Entry duration limit is **${value} seconds**`);
             }
-            await setConfigQueueLimitEntryDuration(storage, value);
-            return reply(`Entry duration limit set to **${value} minutes**`);
+
+            // Set the guild's queue entry duration limit
+            value = args[2] === "null" ? null : parseInt(args[2]);
+            if (value !== null && isNaN(value)) {
+              value = (await queue.getConfig()).entryDurationSeconds;
+              await reply("That doesn't look like an integer. Enter a number value in seconds");
+            }
+            await queue.updateConfig({ entryDurationSeconds: value });
+            if (value === null) {
+              return reply(`Entry duration limit **removed**`);
+            }
+            return reply(`Entry duration limit set to **${value} seconds**`);
+          }
+
+          case ARG_SUB_COOLDOWN: {
+            if (value === undefined) {
+              value = (await queue.getConfig()).cooldownSeconds;
+              if (value === null) {
+                return reply(`There is no submission cooldown time`);
+              }
+              return reply(`Entry duration limit is **${value} seconds**`);
+            }
+            return reply(`Entry duration limit set to **${0} seconds**`);
           }
 
           default: {

@@ -5,8 +5,9 @@ export type Logger = winston.Logger;
 export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error";
 
 const loggers = new Discord.Collection<LogLevel, Logger>();
+const defaultLevel: LogLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
 
-export function useLogger(level: LogLevel = "debug"): Logger {
+export function useLogger(level: LogLevel = defaultLevel): Logger {
   let logger = loggers.get(level);
 
   if (!logger) {
@@ -19,6 +20,7 @@ export function useLogger(level: LogLevel = "debug"): Logger {
         // - Write all logs with level `error` and below to `error.log`
         // - Write all logs with level `info` and below to `combined.log`
         //
+        // TODO: Delete these periodically
         new winston.transports.File({ filename: "error.log", level: "error" }),
         new winston.transports.File({ filename: "combined.log", level: "info" })
       ]

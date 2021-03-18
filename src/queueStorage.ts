@@ -1,8 +1,15 @@
 import Discord from "discord.js";
 import AsyncLock from "async-lock";
 import { Sequelize, UniqueConstraintError } from "sequelize";
-import { queueEntrySchema, channelSchema, guildSchema } from "./constants/queues/schemas";
+import {
+  queueEntrySchema,
+  queueConfigSchema,
+  channelSchema,
+  guildSchema
+} from "./constants/queues/schemas";
+import type { QueueConfig } from "./constants/queues/schemas/queueConfigSchema";
 import type { QueueEntrySchema } from "./constants/queues/schemas/queueEntrySchema";
+import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues/configs";
 import { useLogger } from "./logger";
 
 const lock = new AsyncLock();
@@ -21,7 +28,7 @@ logger.debug("Initializing Sequelize client...");
 export interface QueueEntry {
   queueMessageId: string;
   url: string;
-  minutes: number;
+  seconds: number;
   sentAt: Date;
   senderId: string;
 }
@@ -36,26 +43,33 @@ function toQueueEntry(storedEntry: QueueEntrySchema): QueueEntry {
   return {
     queueMessageId: storedEntry.queueMessageId,
     url: storedEntry.url,
-    minutes: storedEntry.minutes,
+    seconds: storedEntry.seconds,
     sentAt: storedEntry.sentAt,
     senderId: storedEntry.senderId
   };
 }
 
+// TODO: Add locks around any Sequelize access
+
 const Guilds = guildSchema(sequelize);
 const Channels = channelSchema(sequelize);
+const QueueConfigs = queueConfigSchema(sequelize);
 const QueueEntries = queueEntrySchema(sequelize);
 
 function syncSchemas(): Promise<void> {
   return lock.acquire("sequelize", async done => {
     if (isDbSetUp) return done();
 
-    await Guilds.sync();
-    await Channels.sync();
-    await QueueEntries.sync();
-    isDbSetUp = true;
-
-    done();
+    try {
+      await Guilds.sync();
+      await Channels.sync();
+      await QueueConfigs.sync();
+      await QueueEntries.sync();
+      isDbSetUp = true;
+      done();
+    } catch (error) {
+      done(error);
+    }
   });
 }
 
@@ -71,6 +85,12 @@ export class DuplicateEntryTimeError extends Error {
 interface QueueEntryManager {
   /** The channel for this queue. */
   queueChannel: Discord.Channel;
+
+  /** Retrieves the queue's configuration settings. */
+  getConfig: () => Promise<QueueConfig>;
+
+  /** Updates the provided properties of a queue's configuration settings. */
+  updateConfig: (config: Partial<QueueConfig>) => Promise<void>;
 
   /** Adds the queue entry to the database. */
   create: (entry: QueueEntry) => Promise<QueueEntry>;
@@ -101,23 +121,74 @@ export async function useQueueStorage(
   await syncSchemas();
   logger.debug("Schemas synced!");
 
+  async function getConfig(): Promise<QueueConfig> {
+    return lock.acquire("sequelize", done => {
+      void QueueConfigs.findOne({
+        where: {
+          channelId: queueChannel.id
+        }
+      })
+        .then(config =>
+          done(undefined, {
+            entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
+            cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN
+          })
+        )
+        .catch(error => done(error));
+    });
+  }
+
   return {
     queueChannel,
+    getConfig,
+    async updateConfig(config) {
+      const oldConfig = await getConfig();
+      let entryDurationSeconds: number | null;
+      if (config.entryDurationSeconds === undefined) {
+        entryDurationSeconds = oldConfig.entryDurationSeconds;
+      } else {
+        entryDurationSeconds = config.entryDurationSeconds;
+      }
+      let cooldownSeconds: number | null;
+      if (config.cooldownSeconds === undefined) {
+        cooldownSeconds = oldConfig.cooldownSeconds;
+      } else {
+        cooldownSeconds = config.cooldownSeconds;
+      }
+      await QueueConfigs.upsert({
+        channelId: queueChannel.id,
+        entryDurationSeconds,
+        cooldownSeconds
+      });
+    },
     async create(entry) {
-      // Make sure the guild and channels are in there
-      await Guilds.upsert({
-        id: queueChannel.guild.id
-      });
-      await Channels.upsert({
-        id: queueChannel.id,
-        guildId: queueChannel.guild.id
-      });
-
       try {
+        // Make sure the guild and channels are in there
+        await Guilds.upsert({
+          id: queueChannel.guild.id
+        });
+        await Channels.upsert({
+          id: queueChannel.id,
+          guildId: queueChannel.guild.id
+        });
+
+        // Make sure we have at least the default config
+        await QueueConfigs.findOrCreate({
+          where: {
+            channelId: queueChannel.id
+          },
+          defaults: {
+            channelId: queueChannel.id,
+            entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+            cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN
+          }
+        });
+
+        // Add the entry
         await QueueEntries.create({
           queueMessageId: entry.queueMessageId,
           url: entry.url,
-          minutes: entry.minutes,
+          seconds: entry.seconds,
           guildId: queueChannel.guild.id,
           channelId: queueChannel.id,
           senderId: entry.senderId,

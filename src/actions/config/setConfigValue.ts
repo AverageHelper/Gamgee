@@ -3,8 +3,7 @@ import {
   ConfigKey,
   ConfigValue,
   CONFIG_KEY_COMMAND_PREFIX,
-  CONFIG_KEY_QUEUE_CHANNEL,
-  CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION
+  CONFIG_KEY_QUEUE_CHANNEL
 } from "../../constants/config";
 
 export async function setConfigValue(
@@ -33,11 +32,4 @@ export async function setConfigQueueChannel(
   value: string | null
 ): Promise<void> {
   return setConfigValue(storage, CONFIG_KEY_QUEUE_CHANNEL, value);
-}
-
-export async function setConfigQueueLimitEntryDuration(
-  storage: Storage | null,
-  value: number
-): Promise<void> {
-  return setConfigValue(storage, CONFIG_KEY_QUEUE_LIMIT_ENTRY_DURATION, value);
 }

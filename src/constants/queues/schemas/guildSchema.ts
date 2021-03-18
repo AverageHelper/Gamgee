@@ -25,8 +25,8 @@ export default function guildSchema(sequelize: Sequelize): ModelCtor<GuildSchema
   });
 
   Guilds.hasMany(Channels, { sourceKey: "id", foreignKey: "guildId", as: "channels" });
-  Channels.belongsTo(Guilds, { targetKey: "id" });
+  Channels.belongsTo(Guilds);
 
-  logger.debug("Created Guild schema");
+  logger.debug("Created Guilds schema");
   return Guilds;
 }

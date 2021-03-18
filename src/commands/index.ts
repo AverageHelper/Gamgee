@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import getUserFromMention from "../helpers/getUserFromMention";
 import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
 import { useLogger } from "../logger";
-import { randomQuestion } from "../actions/randomStrings";
+import { randomQuestion } from "../helpers/randomStrings";
 import config from "./config";
 import ping from "./ping";
 import queue from "./queue";

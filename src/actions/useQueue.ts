@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import type { QueueConfig } from "../constants/queues/schemas/queueConfigSchema";
 import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../queueStorage";
 import { useLogger } from "../logger";
 
@@ -6,7 +7,17 @@ const logger = useLogger();
 
 export type { QueueEntry, UnsentQueueEntry } from "../queueStorage";
 
+/**
+ * A proxy for queue management and feedback. These methods may modify the
+ * queue and manage messages in the queue channel.
+ */
 interface QueueManager {
+  /** Retrieves the queue's configuration settings. */
+  getConfig: () => Promise<QueueConfig>;
+
+  /** Updates the provided properties of a queue's configuration settings. */
+  updateConfig: (config: Partial<QueueConfig>) => Promise<void>;
+
   /** Retrieves the number of entries in the queue */
   count: () => Promise<number>;
 
@@ -42,6 +53,12 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
   logger.debug("Storage prepared!");
 
   return {
+    getConfig() {
+      return queueStorage.getConfig();
+    },
+    updateConfig(config) {
+      return queueStorage.updateConfig(config);
+    },
     count() {
       return queueStorage.countAll();
     },
@@ -49,13 +66,13 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       const queue = await queueStorage.fetchAll();
       let duration = 0;
       queue.forEach(e => {
-        duration += e.minutes;
+        duration += e.seconds;
       });
       return duration;
     },
     async push(entry) {
       const queueMessage = await queueChannel.send(
-        `<@!${entry.senderId}> requested a **${Math.ceil(entry.minutes)}-min** song: ${entry.url}`,
+        `<@!${entry.senderId}> requested a **${Math.ceil(entry.seconds)}-min** song: ${entry.url}`,
         { allowedMentions: { users: [] } }
       );
       return queueStorage.create({ ...entry, queueMessageId: queueMessage.id });

@@ -1,5 +1,5 @@
 import type { Command } from "./index";
-import { randomPhrase } from "../actions/randomStrings";
+import { randomPhrase } from "../helpers/randomStrings";
 import { useLogger } from "../logger";
 
 const logger = useLogger();

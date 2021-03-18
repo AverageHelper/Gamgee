@@ -32,7 +32,7 @@ export default function channelSchema(sequelize: Sequelize): ModelCtor<ChannelSc
   });
 
   Channels.hasMany(GuildEntries, { sourceKey: "id", foreignKey: "channelId", as: "entries" });
-  GuildEntries.belongsTo(Channels, { targetKey: "id" });
+  GuildEntries.belongsTo(Channels);
 
   logger.debug("Created Channel schema");
   return Channels;
