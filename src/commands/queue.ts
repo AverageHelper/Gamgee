@@ -54,23 +54,30 @@ const yt: Command = {
           `No queue is set up. Would you like to start one? (Try using \`${name} ${ARG_START}\`)`
         );
       }
-
       const queueIsCurrent = message.channel.id === channel.id;
-      const queue = useQueue(channel);
+      const queue = await useQueue(channel);
       const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
-      // FIXME: There *has* to be a better way to build complex strings like this!
-      return reply(
-        `Queue channel: <#${channel.id}>${queueIsCurrent ? " (in here)" : ""}\n${
-          count
-            ? `There ${count === 1 ? "is" : "are"} **${count} song${
-                count === 1 ? "" : "s"
-              }** in the queue, for a total of about **${Math.ceil(
-                playtime
-              )} minutes** of playtime.`
-            : "Nothing has been added yet."
-        }`
-      );
+
+      const response = [`Queue channel: <#${channel.id}>`];
+      if (queueIsCurrent) {
+        response.push(" (in here)");
+      }
+      response.push("\n");
+      if (count) {
+        const singular = count === 1;
+        const are = singular ? "is" : "are";
+        const s = singular ? "" : "s";
+        response.push(
+          `There ${are} **${count} song${s}** in the queue, for a total cost of about **${Math.ceil(
+            playtime
+          )} minutes** of playtime.`
+        );
+      } else {
+        response.push("Nothing has been added yet.");
+      }
+      return reply(response.join(""));
     }
+
     const command = args[0] as Argument;
 
     switch (command) {

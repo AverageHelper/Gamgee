@@ -1,8 +1,12 @@
 import Discord from "discord.js";
 import storage from "node-persist";
+import { useLogger } from "./logger";
+
 import type { LocalStorage } from "node-persist";
+
 export type Storage = LocalStorage;
 
+const logger = useLogger();
 const localStorageScopes = new Discord.Collection<string, LocalStorage>();
 
 /**
@@ -17,6 +21,7 @@ export async function useStorage(guild: Discord.Guild | null): Promise<LocalStor
       dir: `./config/${guild.id}`
     });
     localStorageScopes.set(guild.id, storage);
+    logger.debug(`Initialized local storage for guild ${guild.id} (${guild.name})`);
     localStorage = storage;
   }
 

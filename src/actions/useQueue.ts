@@ -1,49 +1,49 @@
 import Discord from "discord.js";
+import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../queueStorage";
+import { useLogger } from "../logger";
 
-export interface QueueEntry {
-  queueMessageId: string | null;
-  url: string;
-  minutes: number;
-  sentAt: Date;
-  sender: Discord.User;
-}
+const logger = useLogger();
 
-// FIXME: This should persist across restarts.
-const cachedQueues = new Discord.Collection<string, Array<QueueEntry>>();
-
-// eslint-disable-next-line @typescript-eslint/require-await
-async function putQueue(guild: Discord.Guild, newQueue: Array<QueueEntry>) {
-  cachedQueues.set(guild.id, newQueue);
-  // TODO: Write the queue to disk (use a relational database?)
-}
-
-async function getQueue(guild: Discord.Guild): Promise<Array<QueueEntry>> {
-  let theQueue = cachedQueues.get(guild.id);
-  // TODO: If the queue is not cached, try to read the queue from disk (use a relational database?)
-  if (!theQueue) {
-    theQueue = [];
-    await putQueue(guild, theQueue);
-  }
-  return theQueue;
-}
+export type { QueueEntry, UnsentQueueEntry } from "../queueStorage";
 
 interface QueueManager {
+  /** Retrieves the number of entries in the queue */
   count: () => Promise<number>;
+
+  /** Retrieves the total playtime of the queue's entries. */
   playtime: () => Promise<number>;
-  push: (entry: QueueEntry) => Promise<void>;
+
+  /** Adds an entry to the queue cache and sends the entry to the queue channel. */
+  push: (entry: UnsentQueueEntry) => Promise<QueueEntry>;
+
+  /** Returns the next unmarked element fron the queue. */
   pop: () => Promise<QueueEntry | null>;
+
+  /** Resets the queue. Deletes all cached data about the queue. */
+  clear: () => Promise<void>;
 }
 
-export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
-  const guild = queueChannel.guild;
+/**
+ * Sets up and returns an interface for the queue cache and long-term storage.
+ *
+ * @param queueChannel The channel for the current queue.
+ * @returns If we don't have a queue cache stored for the given channel, a new
+ *  one is created. We return that. Otherwise, we just return what we have stored
+ *  or cached, whichever is handy.
+ */
+export async function useQueue(queueChannel: Discord.TextChannel): Promise<QueueManager> {
+  logger.debug(
+    `Preparing persistent queue storage for channel ${queueChannel.id} (#${queueChannel.name})`
+  );
+  const queueStorage = await useQueueStorage(queueChannel);
+  logger.debug("Storage prepared!");
 
   return {
-    async count() {
-      const queue = await getQueue(guild);
-      return queue.length;
+    count() {
+      return queueStorage.countAll();
     },
     async playtime() {
-      const queue = await getQueue(guild);
+      const queue = await queueStorage.fetchAll();
       let duration = 0;
       queue.forEach(e => {
         duration += e.minutes;
@@ -52,19 +52,19 @@ export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
     },
     async push(entry) {
       const queueMessage = await queueChannel.send(
-        `<@!${entry.sender.id}> requested a **${Math.ceil(entry.minutes)}-min** song: ${entry.url}`,
+        `<@!${entry.senderId}> requested a **${Math.ceil(entry.minutes)}-min** song: ${entry.url}`,
         { allowedMentions: { users: [] } }
       );
-      entry.queueMessageId = queueMessage.id;
-      const theQueue = await getQueue(guild);
-      theQueue.push(entry);
-      await putQueue(guild, theQueue);
+      return queueStorage.create({ ...entry, queueMessageId: queueMessage.id });
     },
     pop() {
-      // Strikethrough the message
-      // Mark the entry as "used"
-      // If no unused entries exist, return null
+      // TODO: Strikethrough the message
+      // TODO: Mark the entry as "used"
+      // TODO: If no unused entries exist, return null
       return Promise.resolve(null);
+    },
+    clear() {
+      return queueStorage.clear();
     }
   };
 }

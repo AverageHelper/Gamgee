@@ -1,4 +1,4 @@
-import type { Storage } from "../../storage";
+import type { Storage } from "../../configStorage";
 import type { ConfigKey, ConfigValue } from "../../constants/config";
 
 export async function setConfigValue(

@@ -1,4 +1,4 @@
-import { useQueue, QueueEntry } from "../actions/useQueue";
+import { useQueue, UnsentQueueEntry } from "../actions/useQueue";
 import type { Command } from "./index";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
@@ -37,20 +37,26 @@ const yt: Command = {
       return reject_public("You're gonna have to add a song link or title to that.");
     }
 
-    async function accept(entry: QueueEntry, sendUrl = false) {
+    async function accept(entry: UnsentQueueEntry, sendUrl = false) {
       if (!queueChannel) {
         return reject_public(
           "No queue channel has been set up yet. Ask an administrator to set one up."
         );
       }
 
-      const queue = useQueue(queueChannel);
+      logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
+      const queue = await useQueue(queueChannel);
+      logger.debug("Queue prepared!");
       await Promise.all([
         queue.push(entry), //
         sendUrl ? message.channel.send(entry.url) : null
       ]);
+      logger.debug(
+        `Pushed new entry to queue. Sending public acceptance to user ${message.author.id} (${message.author.username})`
+      );
       // Send acceptance after the potential `send(entry.url)` call
       await message.channel.send(`**${message.author.username}**, Submission Accepted!`);
+      logger.debug("Responded.");
     }
 
     try {
@@ -62,13 +68,13 @@ const yt: Command = {
       const url = video.url;
       const minutes = video.duration.seconds / 60;
       const sentAt = message.createdAt;
-      const sender = message.author;
+      const senderId = message.author.id;
 
       // Whether this is a search result and we therefore haven't had this link embedded yet
       const shouldSendUrl = "type" in video && video.type === "video";
 
       // Full send!
-      return accept({ url, minutes, sentAt, sender, queueMessageId: null }, shouldSendUrl);
+      return accept({ url, minutes, sentAt, senderId }, shouldSendUrl);
 
       // Handle fetch errors
     } catch (error) {

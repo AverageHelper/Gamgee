@@ -1,4 +1,4 @@
-import type { Storage } from "../storage";
+import type { Storage } from "../configStorage";
 import Discord from "discord.js";
 import getUserFromMention from "../helpers/getUserFromMention";
 import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
