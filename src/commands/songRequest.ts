@@ -22,7 +22,10 @@ const yt: Command = {
       await message.author.send(reason);
     }
     async function reject_public(reason: string) {
-      await message.channel.send(reason);
+      await Promise.all([
+        message.channel.send(reason), //
+        message.suppressEmbeds(true)
+      ]);
     }
 
     const queueChannel = await getQueueChannel(context);
@@ -91,11 +94,9 @@ const yt: Command = {
       // If the video is too long, reject!
       const maxDuration = await getConfigQueueLimitEntryDuration(storage);
       if (maxDuration > 0 && minutes > maxDuration) {
-        await reject_public(
+        return reject_public(
           `:hammer: <@!${message.author.id}> That video is too long. The limit is **${maxDuration} minutes**`
         );
-        await message.suppressEmbeds(true);
-        return;
       }
 
       // Whether this is a search result and we therefore haven't had this link embedded yet
