@@ -2,6 +2,7 @@
 .env
 *.log
 node_modules
+db
 dist
 coverage
 config

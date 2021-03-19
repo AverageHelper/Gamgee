@@ -1,6 +1,7 @@
+import path from "path";
+import { DEFAULT_DATABASE_FOLDER } from "../../constants/database";
 import { Sequelize } from "sequelize";
 import { queueEntrySchema, queueConfigSchema, channelSchema, guildSchema } from "./schemas";
-import { DEFAULT_DATABASE_URL } from "../../constants/database";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
@@ -19,11 +20,15 @@ interface Database {
   QueueEntries: ReturnType<typeof queueEntrySchema>;
 }
 
+const dbFolder = path.normalize(process.env.DATABASE_FOLDER ?? DEFAULT_DATABASE_FOLDER);
+const dbFile = path.join(dbFolder, "db.sqlite");
+logger.info(`Initializing database at path '${dbFile}'`);
+
 const sequelize = new Sequelize("queues", "Gamgee", "strawberries", {
   host: "localhost",
   dialect: "sqlite",
   logging: sql => logger.silly(`Query: '${sql}'`),
-  storage: DEFAULT_DATABASE_URL
+  storage: dbFile
 });
 logger.debug("Initializing Sequelize client...");
 
