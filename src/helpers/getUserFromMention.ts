@@ -1,10 +1,11 @@
 import type Discord from "discord.js";
+import getUserIdFromMention from "./getUserIdFromMention";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
 
 /**
- * Get a user ID from a mention string.
+ * Get a Discord user from a mention string.
  *
  * @see https://discordjs.guide/miscellaneous/parsing-mention-arguments.html#implementation
  * @param client The Discord client.
@@ -15,34 +16,16 @@ export default async function getUserFromMention(
   message: Discord.Message,
   mention: string
 ): Promise<Discord.User | undefined> {
-  let m = mention.slice();
-  if (!m) return undefined;
+  const userId = getUserIdFromMention(mention);
+  if (!userId) return undefined;
 
-  const startsRight = m.startsWith("<@");
-  const endsRight = m.endsWith(">");
+  const user = (await message.guild?.members.fetch(userId))?.user;
 
-  if (startsRight && endsRight) {
-    logger.debug("This is for sure a mention. Checking for the nickname flag...");
-    m = m.slice(2, -1);
-
-    if (m.startsWith("!")) {
-      logger.debug("Stripped nickname.");
-      m = m.slice(1);
-    }
-
-    logger.debug(`userId: ${m}`);
-    const user = (await message.guild?.members.fetch(m))?.user;
-
-    if (user) {
-      logger.debug(`Found user ${user.id}`);
-    } else {
-      logger.debug("Did not find user.");
-    }
-
-    return user;
+  if (user) {
+    logger.debug(`Found user ${user.id}`);
+  } else {
+    logger.debug("Did not find user.");
   }
 
-  logger.debug(`This word does ${startsRight ? "" : "not "}start right.`);
-  logger.debug(`This word does ${endsRight ? "" : "not "}end right.`);
-  return undefined;
+  return user;
 }
