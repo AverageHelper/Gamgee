@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES2019",
     "module": "CommonJS",
+    "lib": ["es2019", "es2020.bigint", "es2020.string", "es2020.symbol.wellknown"],
+    "moduleResolution": "node",
     "allowJs": false,
     "declaration": true,
     "declarationMap": true,
@@ -9,7 +11,6 @@
     "outDir": "./dist",
     "isolatedModules": true,
     "strict": true,
-    "moduleResolution": "node",
     "typeRoots": ["./node_modules/@types", "./src"],
     "types": ["node"],
     "esModuleInterop": true,
