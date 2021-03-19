@@ -35,7 +35,7 @@ $ cd Gamgee
     - [Running the tests](#running-the-tests)
   - [Commands](#commands)
     - [`ping`](#ping)
-    - [`yt`](#yt)
+    - [`video`](#video)
     - [`config`](#config)
   - [Contributing](#contributing)
   - [Built With](#built-with)
@@ -98,9 +98,9 @@ All commands must begin with the configured prefix (`!` by default).
 
 Gamgee responds with "Pong!"
 
-### `yt`
+### `video`
 
-Given a YouTube video URL or video ID, Gamgee responds with that video's title and duration.
+Given a YouTube or SoundCloud video link, Gamgee responds with that video's title and duration.
 
 ### `config`
 

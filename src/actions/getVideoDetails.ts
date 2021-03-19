@@ -1,23 +1,67 @@
 import ytdl from "ytdl-core";
 import yts from "yt-search";
+import SoundCloud from "soundcloud-scraper";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
 
-export default async function getVideoDetails(
-  args: string[]
-): Promise<yts.VideoMetadataResult | yts.VideoSearchResult | null> {
+interface VideoDetails {
+  url: string;
+  title: string;
+  duration: {
+    seconds: number;
+  };
+
+  /**
+   * `true` if these details were obtained directly from a video URL.
+   * `false` if these details are the result of a search operation
+   * from a set of terms. */
+  fromUrl: boolean;
+}
+
+/**
+ * Retrieves details about a video.
+ *
+ * @param args A series of strings which describe a video. If the first string is a URL,
+ * then that URL is treated like a YouTube or SoundCloud link, and video details are
+ * retrieved directly. Otherwise, the entirety of the array is considered a search query.
+ *
+ * @returns A set of video details, or `null` if no video could be found from the provided query.
+ */
+export default async function getVideoDetails(args: string[]): Promise<VideoDetails | null> {
   // Try the first value as a video URL
   const urlString = args[0];
+
+  // Try YouTube URL
   if (ytdl.validateURL(urlString)) {
     const videoId = ytdl.getURLVideoID(urlString);
     logger.info(`Got video ID '${videoId}'`);
-    return yts({ videoId });
+    const result = await yts({ videoId });
+    return {
+      fromUrl: true,
+      url: result.url,
+      title: result.title,
+      duration: result.duration
+    };
+
+    // Try SoundCloud
   } else {
-    // Try the rest as a search query
-    const query = args.join(" ");
-    const { videos } = await yts(query);
-    if (!videos.length) return null;
-    return videos[0];
+    const client = new SoundCloud.Client();
+    try {
+      const song = await client.getSongInfo(urlString);
+      return {
+        fromUrl: true,
+        url: song.url,
+        title: song.title,
+        duration: { seconds: song.duration / 1000 }
+      };
+
+      // Something went wrong. Is this a valid SoundCloud link?
+    } catch (error) {
+      logger.error(
+        `Failed to fetch song from SoundCloud using url '${urlString}': ${JSON.stringify(error)}`
+      );
+      return null;
+    }
   }
 }

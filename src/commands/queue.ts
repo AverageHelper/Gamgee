@@ -34,7 +34,7 @@ function isLimitKey(value: unknown): value is LimitKey {
   return !!value && typeof value === "string" && allLimits.includes(value);
 }
 
-const yt: Command = {
+const queue: Command = {
   name,
   description: "Manage a request queue. *(Server owner only. No touch!)*",
   uses: [
@@ -190,7 +190,7 @@ const yt: Command = {
       case ARG_LIMIT: {
         const channel = await getQueueChannel(context);
         if (!channel) {
-          return reply("No queue is set up.");
+          return reply("No queue is set up yet.");
         }
         const queue = await useQueue(channel);
 
@@ -255,4 +255,4 @@ const yt: Command = {
   }
 };
 
-export default yt;
+export default queue;

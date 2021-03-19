@@ -4,12 +4,13 @@ import { useLogger } from "../logger";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
 import durationString from "../helpers/durationString";
+import StringBuilder from "../helpers/StringBuilder";
 
 const logger = useLogger();
 
 const name = "sr";
 
-const yt: Command = {
+const sr: Command = {
   name,
   description: "Submit a song to the queue.",
   uses: [
@@ -23,16 +24,14 @@ const yt: Command = {
     }
     async function reject_public(reason: string) {
       await Promise.all([
-        message.channel.send(reason), //
+        message.channel.send(`:hammer: <@!${message.author.id}> ${reason}`), //
         message.suppressEmbeds(true)
       ]);
     }
 
     const queueChannel = await getQueueChannel(context);
     if (!queueChannel) {
-      return reject_public(
-        "No queue channel has been set up yet. Ask an administrator to set one up."
-      );
+      return reject_public("The queue is not open.");
     }
 
     if (message.channel.id === queueChannel.id) {
@@ -76,28 +75,29 @@ const yt: Command = {
     }
 
     try {
-      const video = await getVideoDetails(args);
-      if (video === null) {
-        return reject_public("No songs were found!");
-      }
-
-      const url = video.url;
-      const seconds = video.duration.seconds;
-      const sentAt = message.createdAt;
-      const senderId = message.author.id;
-
-      // If the video is too long, reject!
-      const maxDuration = (await queue.getConfig()).entryDurationSeconds;
-      if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
+      const song = await getVideoDetails(args);
+      if (song === null) {
         return reject_public(
-          `:hammer: <@!${
-            message.author.id
-          }> That video is too long. The limit is **${durationString(maxDuration)}**`
+          "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube or SoundCloud link instead."
         );
       }
 
-      // Whether this is a search result and we therefore haven't had this link embedded yet
-      const shouldSendUrl = "type" in video && video.type === "video";
+      const url = song.url;
+      const seconds = song.duration.seconds;
+      const sentAt = message.createdAt;
+      const senderId = message.author.id;
+
+      // If the song is too long, reject!
+      const maxDuration = (await queue.getConfig()).entryDurationSeconds;
+      if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
+        const rejectionBuilder = new StringBuilder();
+        rejectionBuilder.push("That song is too long. The limit is ");
+        rejectionBuilder.pushBold(`${durationString(maxDuration)}`);
+        return reject_public(rejectionBuilder.result());
+      }
+
+      // Whether We haven't had this link embedded yet
+      const shouldSendUrl = !song.fromUrl;
 
       // Full send!
       return accept({ url, seconds, sentAt, senderId }, shouldSendUrl);
@@ -107,9 +107,9 @@ const yt: Command = {
       logger.error(
         `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
       );
-      return reject_public("That video query gave me an error.");
+      return reject_public("That query gave me an error.");
     }
   }
 };
 
-export default yt;
+export default sr;
