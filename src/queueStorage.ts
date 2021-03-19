@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { Sequelize, UniqueConstraintError } from "sequelize";
+import { Sequelize, UniqueConstraintError, Transaction } from "sequelize";
 import {
   queueEntrySchema,
   queueConfigSchema,
@@ -112,11 +112,12 @@ export async function useQueueStorage(
   await syncSchemas();
   logger.debug("Schemas synced!");
 
-  async function getConfig(): Promise<QueueConfig> {
+  async function getConfig(transaction?: Transaction): Promise<QueueConfig> {
     const config = await QueueConfigs.findOne({
       where: {
         channelId: queueChannel.id
-      }
+      },
+      transaction
     });
     return {
       entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
@@ -128,57 +129,74 @@ export async function useQueueStorage(
     queueChannel,
     getConfig,
     async updateConfig(config) {
-      const oldConfig = await getConfig();
-      let entryDurationSeconds: number | null;
-      if (config.entryDurationSeconds === undefined) {
-        entryDurationSeconds = oldConfig.entryDurationSeconds;
-      } else {
-        entryDurationSeconds = config.entryDurationSeconds;
-      }
-      let cooldownSeconds: number | null;
-      if (config.cooldownSeconds === undefined) {
-        cooldownSeconds = oldConfig.cooldownSeconds;
-      } else {
-        cooldownSeconds = config.cooldownSeconds;
-      }
-      await QueueConfigs.upsert({
-        channelId: queueChannel.id,
-        entryDurationSeconds,
-        cooldownSeconds
+      await sequelize.transaction(async transaction => {
+        const oldConfig = await getConfig(transaction);
+        let entryDurationSeconds: number | null;
+        if (config.entryDurationSeconds === undefined) {
+          entryDurationSeconds = oldConfig.entryDurationSeconds;
+        } else {
+          entryDurationSeconds = config.entryDurationSeconds;
+        }
+        let cooldownSeconds: number | null;
+        if (config.cooldownSeconds === undefined) {
+          cooldownSeconds = oldConfig.cooldownSeconds;
+        } else {
+          cooldownSeconds = config.cooldownSeconds;
+        }
+        await QueueConfigs.upsert(
+          {
+            channelId: queueChannel.id,
+            entryDurationSeconds,
+            cooldownSeconds
+          },
+          { transaction }
+        );
       });
     },
     async create(entry) {
       try {
-        // Make sure the guild and channels are in there
-        await Guilds.upsert({
-          id: queueChannel.guild.id
-        });
-        await Channels.upsert({
-          id: queueChannel.id,
-          guildId: queueChannel.guild.id
-        });
+        await sequelize.transaction(async transaction => {
+          // Make sure the guild and channels are in there
+          await Guilds.upsert(
+            {
+              id: queueChannel.guild.id
+            },
+            { transaction }
+          );
+          await Channels.upsert(
+            {
+              id: queueChannel.id,
+              guildId: queueChannel.guild.id
+            },
+            { transaction }
+          );
 
-        // Make sure we have at least the default config
-        await QueueConfigs.findOrCreate({
-          where: {
-            channelId: queueChannel.id
-          },
-          defaults: {
-            channelId: queueChannel.id,
-            entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-            cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN
-          }
-        });
+          // Make sure we have at least the default config
+          await QueueConfigs.findOrCreate({
+            where: {
+              channelId: queueChannel.id
+            },
+            defaults: {
+              channelId: queueChannel.id,
+              entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+              cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN
+            },
+            transaction
+          });
 
-        // Add the entry
-        await QueueEntries.create({
-          queueMessageId: entry.queueMessageId,
-          url: entry.url,
-          seconds: entry.seconds,
-          guildId: queueChannel.guild.id,
-          channelId: queueChannel.id,
-          senderId: entry.senderId,
-          sentAt: entry.sentAt
+          // Add the entry
+          await QueueEntries.create(
+            {
+              queueMessageId: entry.queueMessageId,
+              url: entry.url,
+              seconds: entry.seconds,
+              guildId: queueChannel.guild.id,
+              channelId: queueChannel.id,
+              senderId: entry.senderId,
+              sentAt: entry.sentAt
+            },
+            { transaction }
+          );
         });
       } catch (error) {
         if (error instanceof UniqueConstraintError) {
