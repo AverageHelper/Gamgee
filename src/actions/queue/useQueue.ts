@@ -81,7 +81,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         }`,
         { allowedMentions: { users: [] } }
       );
-      return queueStorage.create({ ...entry, queueMessageId: queueMessage.id });
+      return queueStorage.create({ ...entry, queueMessageId: queueMessage.id, isDone: false });
     },
     pop() {
       // TODO: Strikethrough the message

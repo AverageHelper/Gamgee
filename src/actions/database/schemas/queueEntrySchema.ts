@@ -1,5 +1,5 @@
 import type { QueueEntry } from "../../../queueStorage";
-import { Sequelize, Model, ModelCtor, STRING, INTEGER, DATE } from "sequelize";
+import { Sequelize, Model, ModelCtor, STRING, INTEGER, DATE, BOOLEAN } from "sequelize";
 import { useLogger } from "../../../logger";
 
 const logger = useLogger();
@@ -45,6 +45,10 @@ export default function queueEntrySchema(sequelize: Sequelize): ModelCtor<QueueE
     },
     guildId: {
       type: STRING,
+      allowNull: false
+    },
+    isDone: {
+      type: BOOLEAN,
       allowNull: false
     }
   });

@@ -14,8 +14,9 @@ export interface QueueEntry {
   seconds: number;
   sentAt: Date;
   senderId: string;
+  isDone: boolean;
 }
-export type UnsentQueueEntry = Omit<QueueEntry, "queueMessageId">;
+export type UnsentQueueEntry = Omit<QueueEntry, "queueMessageId" | "isDone">;
 
 /**
  * Converts a `QueueEntrySchema` instance to a `QueueEntry`.
@@ -28,7 +29,8 @@ function toQueueEntry(storedEntry: QueueEntrySchema): QueueEntry {
     url: storedEntry.url,
     seconds: storedEntry.seconds,
     sentAt: storedEntry.sentAt,
-    senderId: storedEntry.senderId
+    senderId: storedEntry.senderId,
+    isDone: storedEntry.isDone
   };
 }
 
@@ -162,7 +164,8 @@ export async function useQueueStorage(
               guildId: queueChannel.guild.id,
               channelId: queueChannel.id,
               senderId: entry.senderId,
-              sentAt: entry.sentAt
+              sentAt: entry.sentAt,
+              isDone: entry.isDone
             },
             { transaction }
           );
