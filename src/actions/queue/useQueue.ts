@@ -1,12 +1,12 @@
 import Discord from "discord.js";
-import type { QueueConfig } from "../constants/queues/schemas/queueConfigSchema";
-import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../queueStorage";
-import { useLogger } from "../logger";
-import durationString from "../helpers/durationString";
+import type { QueueConfig } from "../../constants/queues/schemas/queueConfigSchema";
+import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorage";
+import { useLogger } from "../../logger";
+import durationString from "../../helpers/durationString";
 
 const logger = useLogger();
 
-export type { QueueEntry, UnsentQueueEntry } from "../queueStorage";
+export type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
 
 /**
  * A proxy for queue management and feedback. These methods may modify the

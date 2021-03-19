@@ -1,8 +1,8 @@
-import { useQueue, UnsentQueueEntry } from "../actions/useQueue";
+import { useQueue, UnsentQueueEntry } from "../actions/queue/useQueue";
 import type { Command } from "./index";
 import { useLogger } from "../logger";
 import getVideoDetails from "../actions/getVideoDetails";
-import getQueueChannel from "../actions/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 import durationString from "../helpers/durationString";
 import StringBuilder from "../helpers/StringBuilder";
 

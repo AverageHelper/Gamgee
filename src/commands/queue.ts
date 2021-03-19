@@ -1,10 +1,10 @@
 import type { Command } from "./index";
 import { SAFE_PRINT_LENGTH } from "../constants";
 import { ConfigValue } from "../constants/config";
-import { useQueue } from "../actions/useQueue";
+import { useQueue } from "../actions/queue/useQueue";
 import { setConfigQueueChannel } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
-import getQueueChannel from "../actions/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 import getChannelFromMention from "../helpers/getChannelFromMention";
 import StringBuilder from "../helpers/StringBuilder";
 import durationString from "../helpers/durationString";

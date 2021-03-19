@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import type { CommandContext } from "../commands/index";
-import { getConfigQueueChannel } from "../actions/config/getConfigValue";
-import { useLogger } from "../logger";
+import type { CommandContext } from "../../commands/index";
+import { getConfigQueueChannel } from "../../actions/config/getConfigValue";
+import { useLogger } from "../../logger";
 
 const logger = useLogger();
 
