@@ -1,27 +1,12 @@
 import Discord from "discord.js";
-import { Sequelize, UniqueConstraintError, Transaction } from "sequelize";
-import {
-  queueEntrySchema,
-  queueConfigSchema,
-  channelSchema,
-  guildSchema
-} from "./constants/queues/schemas";
-import type { QueueConfig } from "./constants/queues/schemas/queueConfigSchema";
-import type { QueueEntrySchema } from "./constants/queues/schemas/queueEntrySchema";
+import { UniqueConstraintError, Transaction } from "sequelize";
+import type { QueueConfig } from "./actions/database/schemas/queueConfigSchema";
+import type { QueueEntrySchema } from "./actions/database/schemas/queueEntrySchema";
 import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues/configs";
+import { useDatabase } from "./actions/database/useDatabase";
 import { useLogger } from "./logger";
 
 const logger = useLogger();
-
-let isDbSetUp = false;
-
-const sequelize = new Sequelize("queues", "Gamgee", "strawberries", {
-  host: "localhost",
-  dialect: "sqlite",
-  logging: sql => logger.silly(`Query: '${sql}'`),
-  storage: "./config/queues/queues-db.sqlite"
-});
-logger.debug("Initializing Sequelize client...");
 
 export interface QueueEntry {
   queueMessageId: string;
@@ -45,23 +30,6 @@ function toQueueEntry(storedEntry: QueueEntrySchema): QueueEntry {
     sentAt: storedEntry.sentAt,
     senderId: storedEntry.senderId
   };
-}
-
-// TODO: Add locks around any Sequelize access
-
-const Guilds = guildSchema(sequelize);
-const Channels = channelSchema(sequelize);
-const QueueConfigs = queueConfigSchema(sequelize);
-const QueueEntries = queueEntrySchema(sequelize);
-
-async function syncSchemas(): Promise<void> {
-  if (isDbSetUp) return;
-
-  await Guilds.sync();
-  await Channels.sync();
-  await QueueConfigs.sync();
-  await QueueEntries.sync();
-  isDbSetUp = true;
 }
 
 export class DuplicateEntryTimeError extends Error {
@@ -108,12 +76,10 @@ interface QueueEntryManager {
 export async function useQueueStorage(
   queueChannel: Discord.TextChannel
 ): Promise<QueueEntryManager> {
-  logger.debug("Syncing schemas with the database...");
-  await syncSchemas();
-  logger.debug("Schemas synced!");
+  const db = await useDatabase();
 
   async function getConfig(transaction?: Transaction): Promise<QueueConfig> {
-    const config = await QueueConfigs.findOne({
+    const config = await db.QueueConfigs.findOne({
       where: {
         channelId: queueChannel.id
       },
@@ -129,7 +95,7 @@ export async function useQueueStorage(
     queueChannel,
     getConfig,
     async updateConfig(config) {
-      await sequelize.transaction(async transaction => {
+      await db.sequelize.transaction(async transaction => {
         const oldConfig = await getConfig(transaction);
         let entryDurationSeconds: number | null;
         if (config.entryDurationSeconds === undefined) {
@@ -143,7 +109,7 @@ export async function useQueueStorage(
         } else {
           cooldownSeconds = config.cooldownSeconds;
         }
-        await QueueConfigs.upsert(
+        await db.QueueConfigs.upsert(
           {
             channelId: queueChannel.id,
             entryDurationSeconds,
@@ -155,15 +121,15 @@ export async function useQueueStorage(
     },
     async create(entry) {
       try {
-        await sequelize.transaction(async transaction => {
+        await db.sequelize.transaction(async transaction => {
           // Make sure the guild and channels are in there
-          await Guilds.upsert(
+          await db.Guilds.upsert(
             {
               id: queueChannel.guild.id
             },
             { transaction }
           );
-          await Channels.upsert(
+          await db.Channels.upsert(
             {
               id: queueChannel.id,
               guildId: queueChannel.guild.id
@@ -172,7 +138,7 @@ export async function useQueueStorage(
           );
 
           // Make sure we have at least the default config
-          await QueueConfigs.findOrCreate({
+          await db.QueueConfigs.findOrCreate({
             where: {
               channelId: queueChannel.id
             },
@@ -185,7 +151,7 @@ export async function useQueueStorage(
           });
 
           // Add the entry
-          await QueueEntries.create(
+          await db.QueueEntries.create(
             {
               queueMessageId: entry.queueMessageId,
               url: entry.url,
@@ -210,7 +176,7 @@ export async function useQueueStorage(
       return entry;
     },
     async remove(entry) {
-      await QueueEntries.destroy({
+      await db.QueueEntries.destroy({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id,
@@ -219,7 +185,7 @@ export async function useQueueStorage(
       });
     },
     async fetchAll() {
-      const entries = await QueueEntries.findAll({
+      const entries = await db.QueueEntries.findAll({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id
@@ -228,7 +194,7 @@ export async function useQueueStorage(
       return entries.map(toQueueEntry);
     },
     countAll() {
-      return QueueEntries.count({
+      return db.QueueEntries.count({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id
@@ -236,7 +202,7 @@ export async function useQueueStorage(
       });
     },
     async fetchAllFrom(senderId) {
-      const entries = await QueueEntries.findAll({
+      const entries = await db.QueueEntries.findAll({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id,
@@ -246,7 +212,7 @@ export async function useQueueStorage(
       return entries.map(toQueueEntry);
     },
     countAllFrom(senderId) {
-      return QueueEntries.count({
+      return db.QueueEntries.count({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id,
@@ -255,7 +221,7 @@ export async function useQueueStorage(
       });
     },
     async clear() {
-      await QueueEntries.destroy({
+      await db.QueueEntries.destroy({
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id

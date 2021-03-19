@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import type { QueueConfig } from "../../constants/queues/schemas/queueConfigSchema";
+import type { QueueConfig } from "../../actions/database/schemas/queueConfigSchema";
 import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
