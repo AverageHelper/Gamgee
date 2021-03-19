@@ -92,33 +92,72 @@ $ npm run lint
 
 ## Commands
 
-All commands must begin with the configured prefix (`!` by default).
+All commands must begin with the configured prefix (`!` by default), or a mention to the bot. (This is handy if you forget the prefix.)
+
+### `help`
+
+Print out the list of available commands.
+
+### `config`
+
+Access the server config. This command may only be run by the server owner. This command is unavailable in DMs.
+
+#### `help`
+
+Prints a list of valid config keys.
+
+#### `get [command_prefix|queue_channel]`
+
+Gamgee responds with the current configuration value for the provided key.
+
+#### `set [command_prefix|queue_channel] <string>`
+
+Sets a new value for the provided key. Gamgee responds with a confirmation of the new key and value, with an option to undo.
+
+#### `unset [command_prefix|queue_channel]`
+
+Resets a config value to default.
 
 ### `ping`
 
 Gamgee responds with "Pong!"
 
-### `video`
+### `queue`
+
+Manage the music queue. Running this command alone sends a private message with the current queue channel, the number of songs left in the queue, and the queue's total playtime.
+
+#### `open <channel>`
+
+Opens a new queue in the provided channel. If a queue is currently open, it is closed in favor of this one. The old queue remains where it's at.
+
+#### `close`
+
+Closes the queue to new requests.
+
+#### `restart`
+
+Empties the current queue. All queue messages are deleted, and totals and playtime are set to zero. The queue is made fresh for a new set of requests.
+
+This is not the recommended way to bypass queue submission limits. See the `limit` subcommand below.
+
+#### `limit [entry-duration|cooldown] <value>`
+
+Gets or sets a limit on the queue. To see the current value, don't provide a value after the limit name.
+
+- `entry-duration`: The maximum duration that a song submission may have in order to enter the queue. When setting this value, enter a value in seconds, or the word `null`. The default value is `null`.
+- `cooldown`: The minimum amount of time that a user must wait between song submissions. When setting this value, enter a value in seconds, or the word `null`. The default value is `null`.
+
+### `sr <video link>`
+
+Submit a song to the queue. Users must provide a valid YouTube or SoundCloud link in order to be considered.
+
+### `t`
+
+Triggers the typing indicator in the current channel. This is mostly for fun and giggles.
+
+### `video <video link>`
 
 Given a YouTube or SoundCloud video link, Gamgee responds with that video's title and duration.
-
-### `config`
-
-Access the persistent config.
-
-#### `config get <key>`
-
-Gamgee responds with the current configuration value for the provided key.
-
-#### `config set <key> <value>`
-
-Sets a new value for the provided key. Gamgee responds with a confirmation of the new key and value, with an option to undo.
-
-#### Options
-
-The following options are valid config `key`s:
-
-- `command_prefix`
 
 ## Contributing
 
