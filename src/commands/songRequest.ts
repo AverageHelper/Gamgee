@@ -3,6 +3,7 @@ import type { Command } from "./index";
 import { useLogger } from "../logger";
 import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/getQueueChannel";
+import durationString from "../helpers/durationString";
 
 const logger = useLogger();
 
@@ -89,7 +90,9 @@ const yt: Command = {
       const maxDuration = (await queue.getConfig()).entryDurationSeconds;
       if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
         return reject_public(
-          `:hammer: <@!${message.author.id}> That video is too long. The limit is **${maxDuration} seconds**`
+          `:hammer: <@!${
+            message.author.id
+          }> That video is too long. The limit is **${durationString(maxDuration)}**`
         );
       }
 

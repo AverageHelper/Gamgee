@@ -6,6 +6,8 @@ import { setConfigQueueChannel } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
 import getQueueChannel from "../actions/getQueueChannel";
 import getChannelFromMention from "../helpers/getChannelFromMention";
+import StringBuilder from "../helpers/StringBuilder";
+import durationString from "../helpers/durationString";
 
 const logger = useLogger();
 
@@ -73,27 +75,29 @@ const yt: Command = {
       const queue = await useQueue(channel);
       const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
 
-      const response: Array<string> = [];
-      response.push(`Queue channel: <#${channel.id}>`);
+      const responseBuilder = new StringBuilder();
+      responseBuilder.push(`Queue channel: <#${channel.id}>`);
       if (queueIsCurrent) {
-        response.push(" (in here)");
+        responseBuilder.push(" (in here)");
       }
-      response.push("\n");
+      responseBuilder.pushNewLine();
+
       if (count) {
         const singular = count === 1;
         const are = singular ? "is" : "are";
         const s = singular ? "" : "s";
-        response.push(
-          `There ${are} **${count} song${s}** in the queue, for a total cost of about **${Math.ceil(
-            playtime
-          )} seconds** of playtime.`
-        );
+
+        responseBuilder.push(`There ${are} `);
+        responseBuilder.pushBold(`${count} song${s}`);
+        responseBuilder.push(" in the queue, with a total playtime of ");
+        responseBuilder.pushBold(`${durationString(playtime)}`);
+        responseBuilder.push(".");
       } else {
-        response.push("Nothing has been added yet.");
+        responseBuilder.push("Nothing has been added yet.");
       }
-      const queueInfo = response.join("");
+      const response = responseBuilder.result();
       await Promise.all([
-        queueIsCurrent ? reply(queueInfo) : reply_private(queueInfo), //
+        queueIsCurrent ? reply(response) : reply_private(response), //
         message.delete()
       ]);
       return;
@@ -210,7 +214,7 @@ const yt: Command = {
               if (value === null) {
                 return reply(`There is no limit on entry duration.`);
               }
-              return reply(`Entry duration limit is **${value} seconds**`);
+              return reply(`Entry duration limit is **${durationString(value)}**`);
             }
 
             // Set the guild's queue entry duration limit
@@ -223,7 +227,7 @@ const yt: Command = {
             if (value === null) {
               return reply(`Entry duration limit **removed**`);
             }
-            return reply(`Entry duration limit set to **${value} seconds**`);
+            return reply(`Entry duration limit set to **${durationString(value)}**`);
           }
 
           case ARG_SUB_COOLDOWN: {
@@ -232,9 +236,9 @@ const yt: Command = {
               if (value === null) {
                 return reply(`There is no submission cooldown time`);
               }
-              return reply(`Entry duration limit is **${value} seconds**`);
+              return reply(`Entry duration limit is **${durationString(value)}**`);
             }
-            return reply(`Entry duration limit set to **${0} seconds**`);
+            return reply(`Entry duration limit set to **${durationString(0)}**`);
           }
 
           default: {

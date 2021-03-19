@@ -100,7 +100,7 @@ Gamgee responds with "Pong!"
 
 ### `yt`
 
-Given a YouTube video URL or video ID, Gamgee responds with that video's title and duration in minutes.
+Given a YouTube video URL or video ID, Gamgee responds with that video's title and duration.
 
 ### `config`
 
@@ -117,6 +117,7 @@ Sets a new value for the provided key. Gamgee responds with a confirmation of th
 #### Options
 
 The following options are valid config `key`s:
+
 - `command_prefix`
 
 ## Contributing

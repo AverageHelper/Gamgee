@@ -2,6 +2,7 @@ import Discord from "discord.js";
 import type { QueueConfig } from "../constants/queues/schemas/queueConfigSchema";
 import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../queueStorage";
 import { useLogger } from "../logger";
+import durationString from "../helpers/durationString";
 
 const logger = useLogger();
 
@@ -72,7 +73,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
     },
     async push(entry) {
       const queueMessage = await queueChannel.send(
-        `<@!${entry.senderId}> requested a **${Math.ceil(entry.seconds)}-min** song: ${entry.url}`,
+        `<@!${entry.senderId}> requested a song that's **${durationString(entry.seconds)}** long: ${
+          entry.url
+        }`,
         { allowedMentions: { users: [] } }
       );
       return queueStorage.create({ ...entry, queueMessageId: queueMessage.id });
