@@ -4,20 +4,28 @@ import { ConfigValue } from "../constants/config";
 import { useQueue } from "../actions/queue/useQueue";
 import { setConfigQueueChannel } from "../actions/config/setConfigValue";
 import { useLogger } from "../logger";
+import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import getChannelFromMention from "../helpers/getChannelFromMention";
 import StringBuilder from "../helpers/StringBuilder";
 import durationString from "../helpers/durationString";
+import songRequest from "./songRequest";
 
 const logger = useLogger();
 
 const name = "queue";
+const ARG_INFO = "info";
 const ARG_START = "open";
 const ARG_STOP = "close";
 const ARG_RESTART = "restart";
 const ARG_LIMIT = "limit";
 
-type Argument = typeof ARG_START | typeof ARG_STOP | typeof ARG_RESTART | typeof ARG_LIMIT;
+type Argument =
+  | typeof ARG_INFO
+  | typeof ARG_START
+  | typeof ARG_STOP
+  | typeof ARG_RESTART
+  | typeof ARG_LIMIT;
 
 const allSubargs = [ARG_START, ARG_STOP, ARG_RESTART, ARG_LIMIT];
 const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
@@ -36,16 +44,22 @@ function isLimitKey(value: unknown): value is LimitKey {
 
 const queue: Command = {
   name,
-  description: "Manage a request queue. *(Server owner only. No touch!)*",
+  description: "Prints a handy message to let people know how to queue-up.",
   uses: [
-    [name, "Reports the status of the current queue."],
+    [`${name} info`, "Reports the status of the current queue. *(Server owner only. No touch!)*"],
     [
       `${name} ${ARG_START} <channel name>`,
-      "Sets the channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead."
+      "Sets the channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead. *(Server owner only. No touch!)*"
     ],
-    [`${name} ${ARG_STOP}`, "Closes the current queue."],
-    [`${name} ${ARG_RESTART}`, "Empties the queue and starts a fresh queue session."],
-    [`${name} ${ARG_LIMIT} [${allLimits.join("|")}]`, "Sets a limit value on the queue."]
+    [`${name} ${ARG_STOP}`, "Closes the current queue. *(Server owner only. No touch!)*"],
+    [
+      `${name} ${ARG_RESTART}`,
+      "Empties the queue and starts a fresh queue session. *(Server owner only. No touch!)*"
+    ],
+    [
+      `${name} ${ARG_LIMIT} [${allLimits.join("|")}]`,
+      "Sets a limit value on the queue. *(Server owner only. No touch!)*"
+    ]
   ],
   async execute(context) {
     const { message, args, storage } = context;
@@ -60,55 +74,73 @@ const queue: Command = {
       await message.author.send(`(Reply from <#${message.channel.id}>)\n${msg}`);
     }
 
+    if (args.length < 1) {
+      // Print the standard help
+      const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
+      const helpBuilder = new StringBuilder();
+
+      helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${songRequest.name} <link>\`.`);
+      helpBuilder.pushNewLine();
+      helpBuilder.push(
+        `For example: \`${COMMAND_PREFIX}${songRequest.name} https://youtu.be/dQw4w9WgXcQ\``
+      );
+      helpBuilder.pushNewLine();
+      helpBuilder.push(
+        "I will respond with a text verification indicating your song has joined the queue!"
+      );
+
+      return reply(helpBuilder.result());
+    }
+
     // Only the guild owner may touch the queue.
     // FIXME: Add more grannular access options
     if (!message.guild?.owner?.user.tag || message.author.tag !== message.guild.owner.user.tag) {
       return reply("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
-    if (args.length < 1) {
-      // Get the current queue's status
-      const channel = await getQueueChannel(context);
-      if (!channel) {
-        return reply(
-          `No queue is set up. Would you like to start one? (Try using \`${name} ${ARG_START}\`)`
-        );
-      }
-      const queueIsCurrent = message.channel.id === channel.id;
-      const queue = await useQueue(channel);
-      const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
-
-      const responseBuilder = new StringBuilder();
-      responseBuilder.push(`Queue channel: <#${channel.id}>`);
-      if (queueIsCurrent) {
-        responseBuilder.push(" (in here)");
-      }
-      responseBuilder.pushNewLine();
-
-      if (count) {
-        const singular = count === 1;
-        const are = singular ? "is" : "are";
-        const s = singular ? "" : "s";
-
-        responseBuilder.push(`There ${are} `);
-        responseBuilder.pushBold(`${count} song${s}`);
-        responseBuilder.push(" in the queue, with a total playtime of ");
-        responseBuilder.pushBold(`${durationString(playtime)}`);
-        responseBuilder.push(".");
-      } else {
-        responseBuilder.push("Nothing has been added yet.");
-      }
-      const response = responseBuilder.result();
-      await Promise.all([
-        queueIsCurrent ? reply(response) : reply_private(response), //
-        message.delete()
-      ]);
-      return;
-    }
-
     const command = args[0] as Argument;
 
     switch (command) {
+      case ARG_INFO: {
+        // Get the current queue's status
+        const channel = await getQueueChannel(context);
+        if (!channel) {
+          return reply(
+            `No queue is set up. Would you like to start one? (Try using \`${name} ${ARG_START}\`)`
+          );
+        }
+        const queueIsCurrent = message.channel.id === channel.id;
+        const queue = await useQueue(channel);
+        const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
+
+        const responseBuilder = new StringBuilder();
+        responseBuilder.push(`Queue channel: <#${channel.id}>`);
+        if (queueIsCurrent) {
+          responseBuilder.push(" (in here)");
+        }
+        responseBuilder.pushNewLine();
+
+        if (count) {
+          const singular = count === 1;
+          const are = singular ? "is" : "are";
+          const s = singular ? "" : "s";
+
+          responseBuilder.push(`There ${are} `);
+          responseBuilder.pushBold(`${count} song${s}`);
+          responseBuilder.push(" in the queue, with a total playtime of ");
+          responseBuilder.pushBold(`${durationString(playtime)}`);
+          responseBuilder.push(".");
+        } else {
+          responseBuilder.push("Nothing has been added yet.");
+        }
+        const response = responseBuilder.result();
+        await Promise.all([
+          queueIsCurrent ? reply(response) : reply_private(response), //
+          message.delete()
+        ]);
+        return;
+      }
+
       case ARG_START: {
         if (args.length < 2) {
           return reply(`Please name a text channel to use for the queue!`);
