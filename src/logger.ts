@@ -7,13 +7,14 @@ export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error"
 const loggers = new Discord.Collection<LogLevel, Logger>();
 const defaultLevel: LogLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
 
-export function useLogger(level: LogLevel = defaultLevel): Logger {
+export function useLogger(level: LogLevel = defaultLevel, defaultMeta?: unknown): Logger {
   let logger = loggers.get(level);
 
   if (!logger) {
     logger = winston.createLogger({
       level,
       format: winston.format.json(),
+      defaultMeta,
       // defaultMeta: { service: "user-service" },
       transports: [
         //

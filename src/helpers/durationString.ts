@@ -1,6 +1,5 @@
 import humanize from "humanize-duration";
-
-const MILLISECONDS_IN_SECOND = 1000;
+import { MILLISECONDS_IN_SECOND } from "../constants/time";
 
 /**
  * Returns a string representing the given number of seconds in a

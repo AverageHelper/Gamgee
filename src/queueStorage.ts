@@ -66,6 +66,9 @@ interface QueueEntryManager {
   /** Fetches all entries by the given user in order of submission. */
   fetchAllFrom: (senderId: string) => Promise<Array<QueueEntry>>;
 
+  /** Fetches the lastest entry by the given user. */
+  fetchLatestFrom: (senderId: string) => Promise<QueueEntry | null>;
+
   /** Fetches the number of entries from the given user in the queue. */
   countAllFrom: (senderId: string) => Promise<number>;
 
@@ -189,7 +192,8 @@ export async function useQueueStorage(
         where: {
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id
-        }
+        },
+        order: [["sentAt", "ASC"]]
       });
       return entries.map(toQueueEntry);
     },
@@ -207,9 +211,25 @@ export async function useQueueStorage(
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id,
           senderId
-        }
+        },
+        order: [["sentAt", "ASC"]]
       });
       return entries.map(toQueueEntry);
+    },
+    async fetchLatestFrom(senderId) {
+      const entry = await db.QueueEntries.findOne({
+        where: {
+          channelId: queueChannel.id,
+          guildId: queueChannel.guild.id,
+          senderId
+        },
+        order: [["sentAt", "DESC"]]
+      });
+      const result = entry ? toQueueEntry(entry) : null;
+      logger.verbose(
+        `Latest submission from user ${senderId}: ${JSON.stringify(result, undefined, 2)}`
+      );
+      return result;
     },
     countAllFrom(senderId) {
       return db.QueueEntries.count({

@@ -51,7 +51,10 @@ const queue: Command = {
     const { message, args, storage } = context;
 
     async function reply(msg: string) {
-      await message.channel.send(msg);
+      await Promise.all([
+        message.channel.send(msg), //
+        message.channel.stopTyping(true)
+      ]);
     }
     async function reply_private(msg: string) {
       await message.author.send(`(Reply from <#${message.channel.id}>)\n${msg}`);
@@ -178,6 +181,9 @@ const queue: Command = {
         if (!channel) {
           return reply("No queue is set up. Maybe that's what you wanted...?");
         }
+        await reply("Time for a reset! :bucket: Clearing the queue...");
+        void message.channel.startTyping(5);
+
         const queue = await useQueue(channel);
         const deleteMessages = (await queue.getAllEntries())
           .map(entry => entry.queueMessageId)
@@ -205,40 +211,67 @@ const queue: Command = {
           return reply(`I'm not sure what ${that} is. ` + limitsList);
         }
 
+        const config = await queue.getConfig();
         let value: ConfigValue | undefined = args.length >= 3 ? args[2] : undefined;
 
         switch (limitKey) {
           case ARG_ENTRY_DURATION: {
+            // Limit each duration entry
             if (value === undefined) {
-              value = (await queue.getConfig()).entryDurationSeconds;
+              // Read the current limit
+              value = config.entryDurationSeconds;
               if (value === null) {
                 return reply(`There is no limit on entry duration.`);
               }
               return reply(`Entry duration limit is **${durationString(value)}**`);
             }
 
-            // Set the guild's queue entry duration limit
+            // Set a new limit
             value = args[2] === "null" ? null : parseInt(args[2]);
             if (value !== null && isNaN(value)) {
-              value = (await queue.getConfig()).entryDurationSeconds;
-              await reply("That doesn't look like an integer. Enter a number value in seconds");
+              value = config.entryDurationSeconds;
+              return reply("That doesn't look like an integer. Enter a number value in seconds.");
             }
+            value = value === null || value < 0 ? null : value;
             await queue.updateConfig({ entryDurationSeconds: value });
+
+            const responseBuilder = new StringBuilder("Entry duration limit ");
             if (value === null) {
-              return reply(`Entry duration limit **removed**`);
+              responseBuilder.pushBold("removed");
+            } else {
+              responseBuilder.push("set to ");
+              responseBuilder.pushBold(durationString(value));
             }
-            return reply(`Entry duration limit set to **${durationString(value)}**`);
+            return reply(responseBuilder.result());
           }
 
           case ARG_SUB_COOLDOWN: {
+            // Limit submission cooldown
             if (value === undefined) {
-              value = (await queue.getConfig()).cooldownSeconds;
+              value = config.cooldownSeconds;
               if (value === null) {
                 return reply(`There is no submission cooldown time`);
               }
-              return reply(`Entry duration limit is **${durationString(value)}**`);
+              return reply(`Submission cooldown is **${durationString(value)}**`);
             }
-            return reply(`Entry duration limit set to **${durationString(0)}**`);
+
+            // Set a new limit
+            value = args[2] === "null" ? null : parseInt(args[2]);
+            if (value !== null && isNaN(value)) {
+              value = config.cooldownSeconds;
+              return reply("That doesn't look like an integer. Enter a number value in seconds.");
+            }
+            value = value === null || value < 0 ? null : value;
+            await queue.updateConfig({ cooldownSeconds: value });
+
+            const responseBuilder = new StringBuilder("Submission cooldown ");
+            if (value === null) {
+              responseBuilder.pushBold("removed");
+            } else {
+              responseBuilder.push("set to ");
+              responseBuilder.pushBold(durationString(value));
+            }
+            return reply(responseBuilder.result());
           }
 
           default: {

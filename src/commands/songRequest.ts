@@ -5,6 +5,7 @@ import getVideoDetails from "../actions/getVideoDetails";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import durationString from "../helpers/durationString";
 import StringBuilder from "../helpers/StringBuilder";
+import { MILLISECONDS_IN_SECOND } from "../constants/time";
 
 const logger = useLogger();
 
@@ -19,12 +20,28 @@ const sr: Command = {
   async execute(context) {
     const { message, args } = context;
 
+    async function deleteMessage(reason: string) {
+      await message
+        .delete({ reason })
+        .catch(error =>
+          logger.error(
+            `I don't seem to have permission to delete messages: ${JSON.stringify(
+              error,
+              undefined,
+              2
+            )}`
+          )
+        );
+    }
     async function reject_private(reason: string) {
-      await message.author.send(reason);
+      await Promise.all([
+        deleteMessage("Spam; this song request was rejected."),
+        message.author.send(`(From <#${message.channel.id}>) ${reason}`)
+      ]);
     }
     async function reject_public(reason: string) {
       await Promise.all([
-        message.channel.send(`:hammer: <@!${message.author.id}> ${reason}`), //
+        message.channel.send(`:hammer: <@!${message.author.id}> ${reason}`),
         message.suppressEmbeds(true)
       ]);
     }
@@ -35,19 +52,9 @@ const sr: Command = {
     }
 
     if (message.channel.id === queueChannel.id) {
-      // TODO: The ability to configure a specific channel from which song requests should be taken.
+      // TODO: Add the ability to configure a specific channel from which song requests should be taken.
       await Promise.all([
-        message
-          .delete({ reason: "Spam; Song requests are not permitted in the queue channel." })
-          .catch(error =>
-            logger.error(
-              `I don't seem to have permission to delete messages: ${JSON.stringify(
-                error,
-                undefined,
-                2
-              )}`
-            )
-          ),
+        deleteMessage("Spam; song requests are not permitted in the queue channel."),
         reject_private("Requesting songs in the queue channel has not been implemented yet.")
       ]);
       return;
@@ -87,8 +94,35 @@ const sr: Command = {
       const sentAt = message.createdAt;
       const senderId = message.author.id;
 
+      const [config, latestSubmission] = await Promise.all([
+        queue.getConfig(),
+        queue.getLatestEntryFrom(senderId)
+      ]);
+
+      // If the user is still under cooldown. reject!
+      const cooldown = config.cooldownSeconds;
+      const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
+      const timeSinceLatest =
+        latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
+      logger.verbose(
+        `User ${senderId} last submitted a request ${timeSinceLatest ?? "<never>"} seconds ago`
+      );
+      logger.verbose(new Date());
+      if (
+        cooldown !== null &&
+        cooldown > 0 &&
+        timeSinceLatest !== null &&
+        cooldown > timeSinceLatest
+      ) {
+        const rejectionBuilder = new StringBuilder();
+        rejectionBuilder.push("You must wait ");
+        rejectionBuilder.pushBold(`${durationString(cooldown - timeSinceLatest)}`);
+        rejectionBuilder.push(" before submitting again.");
+        return reject_private(rejectionBuilder.result());
+      }
+
       // If the song is too long, reject!
-      const maxDuration = (await queue.getConfig()).entryDurationSeconds;
+      const maxDuration = config.entryDurationSeconds;
       if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
         const rejectionBuilder = new StringBuilder();
         rejectionBuilder.push("That song is too long. The limit is ");

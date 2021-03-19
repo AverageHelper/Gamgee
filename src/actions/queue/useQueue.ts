@@ -34,6 +34,9 @@ interface QueueManager {
   /** Returns all entries in the queue. */
   getAllEntries: () => Promise<Array<QueueEntry>>;
 
+  /** Returns the latest entry from the user with the provided ID. */
+  getLatestEntryFrom: (userId: string) => Promise<QueueEntry | null>;
+
   /** Resets the queue. Deletes all cached data about the queue. */
   clear: () => Promise<void>;
 }
@@ -88,6 +91,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
     },
     getAllEntries() {
       return queueStorage.fetchAll();
+    },
+    getLatestEntryFrom(userId) {
+      return queueStorage.fetchLatestFrom(userId);
     },
     clear() {
       return queueStorage.clear();
