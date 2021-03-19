@@ -1,5 +1,5 @@
 import type { Command } from "./index";
-import { SAFE_PRINT_LENGTH } from "../constants";
+import { SAFE_PRINT_LENGTH } from "../constants/output";
 import { isConfigKey, isConfigValue } from "../constants/config";
 import { listKeys } from "../constants/config/keys";
 import { getConfigValue } from "../actions/config/getConfigValue";

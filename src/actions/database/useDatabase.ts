@@ -1,9 +1,9 @@
 import { Sequelize } from "sequelize";
 import { queueEntrySchema, queueConfigSchema, channelSchema, guildSchema } from "./schemas";
+import { DEFAULT_DATABASE_URL } from "../../constants/database";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
-const DEFAULT_DATABASE_URL = "./config/queues/queues-db.sqlite";
 
 /**
  * An interface for reading from and writing to the database

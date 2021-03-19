@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import { UniqueConstraintError, Transaction } from "sequelize";
 import type { QueueConfig } from "./actions/database/schemas/queueConfigSchema";
 import type { QueueEntrySchema } from "./actions/database/schemas/queueEntrySchema";
-import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues/configs";
+import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues";
 import { useDatabase } from "./actions/database/useDatabase";
 import { useLogger } from "./logger";
 

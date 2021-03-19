@@ -1,5 +1,5 @@
 import type { Command } from "./index";
-import { SAFE_PRINT_LENGTH } from "../constants";
+import { SAFE_PRINT_LENGTH } from "../constants/output";
 import { ConfigValue } from "../constants/config";
 import { useQueue } from "../actions/queue/useQueue";
 import { setConfigQueueChannel } from "../actions/config/setConfigValue";
