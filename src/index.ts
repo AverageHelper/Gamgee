@@ -3,7 +3,7 @@ import "./environment";
 import { useLogger } from "./logger";
 import { useStorage } from "./configStorage";
 import Discord from "discord.js";
-import { handleCommand } from "./commands";
+import { handleCommand } from "./handleCommand";
 
 const logger = useLogger();
 logger.debug(`Starting in ${process.env.NODE_ENV ?? "undefined"} environment`);
