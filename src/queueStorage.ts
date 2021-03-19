@@ -1,5 +1,4 @@
 import Discord from "discord.js";
-import AsyncLock from "async-lock";
 import { Sequelize, UniqueConstraintError } from "sequelize";
 import {
   queueEntrySchema,
@@ -12,7 +11,6 @@ import type { QueueEntrySchema } from "./constants/queues/schemas/queueEntrySche
 import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues/configs";
 import { useLogger } from "./logger";
 
-const lock = new AsyncLock();
 const logger = useLogger();
 
 let isDbSetUp = false;
@@ -56,21 +54,14 @@ const Channels = channelSchema(sequelize);
 const QueueConfigs = queueConfigSchema(sequelize);
 const QueueEntries = queueEntrySchema(sequelize);
 
-function syncSchemas(): Promise<void> {
-  return lock.acquire("sequelize", async done => {
-    if (isDbSetUp) return done();
+async function syncSchemas(): Promise<void> {
+  if (isDbSetUp) return;
 
-    try {
-      await Guilds.sync();
-      await Channels.sync();
-      await QueueConfigs.sync();
-      await QueueEntries.sync();
-      isDbSetUp = true;
-      done();
-    } catch (error) {
-      done(error);
-    }
-  });
+  await Guilds.sync();
+  await Channels.sync();
+  await QueueConfigs.sync();
+  await QueueEntries.sync();
+  isDbSetUp = true;
 }
 
 export class DuplicateEntryTimeError extends Error {
@@ -122,20 +113,15 @@ export async function useQueueStorage(
   logger.debug("Schemas synced!");
 
   async function getConfig(): Promise<QueueConfig> {
-    return lock.acquire("sequelize", done => {
-      void QueueConfigs.findOne({
-        where: {
-          channelId: queueChannel.id
-        }
-      })
-        .then(config =>
-          done(undefined, {
-            entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
-            cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN
-          })
-        )
-        .catch(error => done(error));
+    const config = await QueueConfigs.findOne({
+      where: {
+        channelId: queueChannel.id
+      }
     });
+    return {
+      entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
+      cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN
+    };
   }
 
   return {
