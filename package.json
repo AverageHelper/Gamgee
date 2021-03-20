@@ -4,13 +4,16 @@
   "description": "A Discord bot",
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
+    "start:test": "DATABASE_FOLDER=./test/db NODE_ENV=test node .",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
+    "build:tests": "rm -rf ./test/dist && tsc -p tsconfig.corde.json",
     "prepublishOnly": "npm run build:clean",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:interaction": "NODE_ENV=interaction_test # run another bot or something idk"
+    "test": "npm run test:src && npm run test:interaction",
+    "test:src": "jest",
+    "test:src:watch": "npm run test:src -- --watch",
+    "test:interaction": "npm run build:tests && concurrently -kn bot,tester -s first 'npm run start:test' 'sleep 2 && corde -c corde.json'"
   },
   "main": "./dist/main.js",
   "files": [
@@ -51,6 +54,8 @@
     "@types/yt-search": "^2.3.0",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
+    "concurrently": "^6.0.0",
+    "corde": "^2.0.0",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^24.1.5",

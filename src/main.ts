@@ -1,13 +1,15 @@
 import "source-map-support/register";
-import "./environment";
-import Discord from "discord.js";
 import { useLogger } from "./logger";
+const logger = useLogger();
+logger.info("Starting...");
+
+import "./environment";
+logger.debug(`env: ${process.env.NODE_ENV ?? "undefined"}`);
+
+import Discord from "discord.js";
 import { useStorage } from "./configStorage";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
-
-const logger = useLogger();
-logger.debug(`Starting in ${process.env.NODE_ENV ?? "an undefined"} environment`);
 
 try {
   const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });

@@ -86,7 +86,10 @@ export async function handleCommand(
   storage: Storage | null
 ): Promise<void> {
   // Don't respond to bots unless we're being tested
-  if (message.author.bot && process.env.NODE_ENV !== "interaction_test") return;
+  if (message.author.bot && process.env.NODE_ENV !== "test") return;
+
+  // Ignore self messages
+  if (message.author.id === message.client.user?.id) return;
 
   // Don't bother with empty messages
   const content = message.content.trim();

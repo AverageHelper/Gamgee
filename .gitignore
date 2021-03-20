@@ -1,8 +1,17 @@
+# OS files
 .DS_Store
+
+# Secret files
 .env
+corde.json
+
+# Useless files
 *.log
+logs
 node_modules
+
+# Generated files
 db
 dist
-coverage
 config
+coverage

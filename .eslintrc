@@ -29,7 +29,7 @@
 
   "overrides": [
     {
-      "files": ["src/**/*.test.ts"],
+      "files": ["src/**/*.test.ts", "test/**/*.ts"],
       "plugins": ["prettier", "@typescript-eslint"],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {

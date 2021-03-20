@@ -10,7 +10,10 @@ export async function handleReactionAdd(
   user: Discord.User
 ): Promise<void> {
   // Ignore bot reactions unless we're being tested
-  if (user.bot && process.env.NODE_ENV !== "interaction_test") return;
+  if (user.bot && process.env.NODE_ENV !== "test") return;
+
+  // Ignore self reactions
+  if (user.id === reaction.client.user?.id) return;
 
   logger.debug("Received user reaction.");
   const message = reaction.message;
