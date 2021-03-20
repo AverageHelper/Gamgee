@@ -131,7 +131,11 @@ Gamgee responds with "Pong!"
 
 ### `queue`
 
-Manage the music queue. Running this command alone sends a private message with the current queue channel, the number of songs left in the queue, and the queue's total playtime.
+Manage the music queue. Running this command alone reads out a handy little message to teach folks how to use the `sr` command to add their songs to the queue.
+
+#### `info`
+
+Sends a private message with a mention of the current queue channel, the number of songs left in the queue, and the queue's playtime. If this command is run from the queue channel, then Gamgee just posts the message in there instead.
 
 #### `open <channel>`
 
