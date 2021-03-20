@@ -22,37 +22,48 @@ const phrases = [
   "It's about time...",
   "Trying to rebuild a house of glass...",
   "We smile at days gone by...",
-  "What are the odds that I would find myself where I began?"
+  "What are the odds that I would find myself where I began?",
+  "I used to wonder what friendship could be",
+  "I'm not a fan of puppeteers",
+  "I've a nagging fear someone else is pulling at the strings",
+
+  // Popeye
+  "Blow me down!",
+  "I yam what I yam an' tha's all I yam",
+  "That's all I can stands, 'cause I can't stands no more!",
+  "Shiver me timbers!",
+  "I yam disgustipated",
+  "I'm strong to the finich, 'cause I eats me spinach!",
 
   // Other
-  // "Bit of a tongue twister",
-  // "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
-  // "Don't count your chickens",
-  // "Down the hall, up the stairs, past the gargoyle",
-  // "Fan of squirrels",
-  // "Fond of cats",
-  // "Jack and Jill ran up the hill",
-  // "Keep moving forward",
-  // "Has anyone really been far even as decided to use even go want to do look more like?",
-  // "I am what I am",
-  // "I have a dream",
-  // "I thought for a second you were joking",
-  // "I used to wonder what friendship could be",
-  // "I'm so hungry, I could eat a",
-  // "Like and subscribe",
-  // "Lorem ipsum dolor sit amet",
-  // "Not a fan of spam",
-  // "O be wise",
-  // "Par for the course",
-  // "Prose, maybe even poetry",
-  // "Quite remarkable",
-  // "Second star to the right, and straight on until closing time",
-  // "Sponsored by",
-  // "This is just a random phrase. Feel free to add to another",
-  // "Thoughtful description here",
-  // "Truly inspirational",
-  // "What are the odds that I would find myself where I began",
-  // "Where it is, or anything else relevant"
+  "Bit of a tongue twister",
+  "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
+  "Don't count your chickens",
+  "Down the hall, up the stairs, past the gargoyle",
+  "Fan of squirrels",
+  "Fond of cats",
+  "Jack and Jill ran up the hill",
+  "Keep moving forward",
+  "Has anyone really been far even as decided to use even go want to do look more like?",
+  "I am what I am",
+  "I have a dream",
+  "I thought for a second you were joking",
+  "I used to wonder what friendship could be",
+  "I'm so hungry, I could eat a",
+  "Like and subscribe",
+  "Lorem ipsum dolor sit amet",
+  "Not a fan of spam",
+  "O be wise",
+  "Par for the course",
+  "Prose, maybe even poetry",
+  "Quite remarkable",
+  "Second star to the right, and straight on until closing time",
+  "Sponsored by",
+  "This is just a random phrase. Feel free to add to another",
+  "Thoughtful description here",
+  "Truly inspirational",
+  "What are the odds that I would find myself where I began",
+  "Where it is, or anything else relevant"
 ];
 
 function randomElementOfArray<T>(array: Array<T>): T {
@@ -80,7 +91,10 @@ const questions = [
   "Who dares?",
   "Quit yer lollygaggin'!",
   "Wha-whAT?! I'm up!",
-  "What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?"
+  ":eyes:",
+  ":eyes: :eyes: :eyes:",
+  "I'm not a fan of spam"
+  // "What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?"
 ];
 
 let lastResult = questions[0];

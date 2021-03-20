@@ -4,7 +4,7 @@
 >
 > - J. R. R. Tolkien
 
-A Discord bot to play around with APIs and things
+A Discord bot to play around with APIs and things. As for the name, I thought it was neat. Samwise Gamgee is a name that deserves to be remembered.
 
 ## Prerequisites
 
