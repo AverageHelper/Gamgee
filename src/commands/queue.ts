@@ -111,7 +111,17 @@ const queue: Command = {
         }
         const queueIsCurrent = message.channel.id === channel.id;
         const queue = await useQueue(channel);
-        const [count, playtime] = await Promise.all([queue.count(), queue.playtime()]);
+        const [count, playtimeRemaining, playtimeTotal] = await Promise.all([
+          queue.count(),
+          queue.playtimeRemaining(),
+          queue.playtimeTotal()
+        ]);
+        const playtimePlayed = playtimeTotal - playtimeRemaining;
+        logger.info(
+          `Info requested: ${durationString(playtimePlayed)} of ${durationString(
+            playtimeTotal
+          )} played. (${durationString(playtimeRemaining)} remaining in queue)`
+        );
 
         const responseBuilder = new StringBuilder();
         responseBuilder.push(`Queue channel: <#${channel.id}>`);
@@ -127,9 +137,20 @@ const queue: Command = {
 
           responseBuilder.push(`There ${are} `);
           responseBuilder.pushBold(`${count} song${s}`);
-          responseBuilder.push(" in the queue, with a total playtime of ");
-          responseBuilder.pushBold(`${durationString(playtime)}`);
-          responseBuilder.push(".");
+          responseBuilder.push(" in the queue, with ");
+
+          if (playtimeRemaining === 0) {
+            responseBuilder.pushBold(`all ${durationString(playtimeTotal)}`);
+            responseBuilder.push(" played.");
+          } else if (playtimePlayed === 0) {
+            responseBuilder.pushBold(durationString(playtimeRemaining));
+            responseBuilder.push(" total playtime remaining.");
+          } else {
+            responseBuilder.pushBold(durationString(playtimeRemaining));
+            responseBuilder.push(" playtime remaining of ");
+            responseBuilder.pushBold(durationString(playtimeTotal));
+            responseBuilder.push(" total.");
+          }
         } else {
           responseBuilder.push("Nothing has been added yet.");
         }

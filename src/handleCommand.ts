@@ -106,6 +106,12 @@ export async function handleCommand(
 
   // Get the command
   const commandName = q[0].toLowerCase();
+
+  if (!commandName) {
+    // Empty, so do nothing lol
+    return;
+  }
+
   if (commandName === COMMAND_HELP) {
     const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
     const body = commands //

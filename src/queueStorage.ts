@@ -268,24 +268,17 @@ export async function useQueueStorage(
       });
     },
     async markEntryDone(isDone: boolean, queueMessageId: string) {
-      await db.sequelize.transaction(async transaction => {
-        const doc = await db.QueueEntries.findOne({
+      logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
+      await db.QueueEntries.update(
+        { isDone },
+        {
           where: {
             channelId: queueChannel.id,
             guildId: queueChannel.guild.id,
             queueMessageId
-          },
-          transaction
-        });
-        if (doc) {
-          await doc.update(
-            {
-              isDone
-            },
-            { transaction }
-          );
+          }
         }
-      });
+      );
     },
     async clear() {
       await db.QueueEntries.destroy({

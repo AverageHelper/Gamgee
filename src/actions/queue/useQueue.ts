@@ -4,7 +4,11 @@ import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorag
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import { REACTION_BTN_DONE, REACTION_BTN_UNDO } from "../../constants/reactions";
+import {
+  REACTION_BTN_DONE,
+  REACTION_BTN_UNDO,
+  REACTION_BTN_MUSIC
+} from "../../constants/reactions";
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
 
 const logger = useLogger();
@@ -25,8 +29,11 @@ interface QueueManager {
   /** Retrieves the number of entries in the queue */
   count: () => Promise<number>;
 
+  /** Retrieves the playtime of the queue's unfinished entries. */
+  playtimeRemaining: () => Promise<number>;
+
   /** Retrieves the total playtime of the queue's entries. */
-  playtime: () => Promise<number>;
+  playtimeTotal: () => Promise<number>;
 
   /** Adds an entry to the queue cache and sends the entry to the queue channel. */
   push: (entry: UnsentQueueEntry) => Promise<QueueEntry>;
@@ -75,7 +82,17 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
     count() {
       return queueStorage.countAll();
     },
-    async playtime() {
+    async playtimeRemaining() {
+      const queue = await queueStorage.fetchAll();
+      let duration = 0;
+      queue
+        .filter(e => !e.isDone)
+        .forEach(e => {
+          duration += e.seconds;
+        });
+      return duration;
+    },
+    async playtimeTotal() {
       const queue = await queueStorage.fetchAll();
       let duration = 0;
       queue.forEach(e => {
@@ -100,6 +117,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         });
 
         // Add the "Done" button
+        await queueMessage.react(REACTION_BTN_MUSIC);
         await queueMessage.react(REACTION_BTN_DONE);
 
         return entry;
@@ -119,7 +137,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         queueMessage.edit(removeStrikethrough(queueMessage.content)),
         queueMessage.suppressEmbeds(false)
       ]);
-      await queueMessage.reactions.removeAll();
+      // await queueMessage.reactions.removeAll();
+      await queueMessage.reactions.resolve(REACTION_BTN_UNDO)?.remove();
+      await queueMessage.react(REACTION_BTN_MUSIC);
       await queueMessage.react(REACTION_BTN_DONE);
     },
     async markDone(queueMessage: Discord.Message) {
@@ -128,7 +148,8 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         queueMessage.edit(addStrikethrough(queueMessage.content)),
         queueMessage.suppressEmbeds(true)
       ]);
-      await queueMessage.reactions.removeAll();
+      await queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove();
+      await queueMessage.react(REACTION_BTN_MUSIC);
       await queueMessage.react(REACTION_BTN_UNDO);
     },
     getAllEntries() {
