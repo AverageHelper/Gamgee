@@ -5,13 +5,12 @@ import { useStorage } from "./configStorage";
 import Discord from "discord.js";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
-import { handleReactionRemove } from "./handleReactionRemove";
 
 const logger = useLogger();
 logger.debug(`Starting in ${process.env.NODE_ENV ?? "undefined"} environment`);
 
 try {
-  const client = new Discord.Client();
+  const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });
 
   // Handle client states
   client.on("ready", () => {
@@ -31,28 +30,24 @@ try {
 
   // Handle messages
   client.on("message", msg => {
-    void useStorage(msg.guild)
-      .then(storage => handleCommand(client, msg, storage))
-      .catch(error =>
-        logger.error(`Failed to handle command: ${JSON.stringify(error, undefined, 2)}`)
-      );
+    void msg.fetch().then(msg =>
+      useStorage(msg.guild)
+        .then(storage => handleCommand(client, msg, storage))
+        .catch(error =>
+          logger.error(`Failed to handle command: ${JSON.stringify(error, undefined, 2)}`)
+        )
+    );
   });
 
   // Handle Reactions
   client.on("messageReactionAdd", (reaction, user) => {
-    if (reaction.me) return; // Ignore self reaction
+    logger.debug("Received reaction add event.");
 
-    void handleReactionAdd(reaction, user).catch(error =>
-      logger.error(`Failed to handle reaction add: ${JSON.stringify(error, undefined, 2)}`)
-    );
-  });
-
-  client.on("messageReactionRemove", (reaction, user) => {
-    if (reaction.me) return; // Ignore self reaction
-
-    void handleReactionRemove(reaction, user).catch(error =>
-      logger.error(`Failed to handle reaction remove: ${JSON.stringify(error, undefined, 2)}`)
-    );
+    void Promise.all([reaction.fetch(), user.fetch()])
+      .then(([reaction, user]) => handleReactionAdd(reaction, user))
+      .catch(error =>
+        logger.error(`Failed to handle reaction add: ${JSON.stringify(error, undefined, 2)}`)
+      );
   });
 
   // Log in

@@ -114,16 +114,22 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       return queueStorage.fetchEntryFromMessage(queueMessageId);
     },
     async markNotDone(queueMessage: Discord.Message) {
-      await queueMessage.edit(removeStrikethrough(queueMessage.content));
+      await queueStorage.markEntryDone(false, queueMessage.id);
+      await Promise.all([
+        queueMessage.edit(removeStrikethrough(queueMessage.content)),
+        queueMessage.suppressEmbeds(false)
+      ]);
       await queueMessage.reactions.removeAll();
       await queueMessage.react(REACTION_BTN_DONE);
-      await queueStorage.markEntryDone(false, queueMessage.id);
     },
     async markDone(queueMessage: Discord.Message) {
-      await queueMessage.edit(addStrikethrough(queueMessage.content));
+      await queueStorage.markEntryDone(true, queueMessage.id);
+      await Promise.all([
+        queueMessage.edit(addStrikethrough(queueMessage.content)),
+        queueMessage.suppressEmbeds(true)
+      ]);
       await queueMessage.reactions.removeAll();
       await queueMessage.react(REACTION_BTN_UNDO);
-      await queueStorage.markEntryDone(true, queueMessage.id);
     },
     getAllEntries() {
       return queueStorage.fetchAll();
