@@ -15,13 +15,6 @@ try {
   // Handle client states
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
-
-    void client.user
-      ?.setStatus("online")
-      .catch(error =>
-        logger.error(`Failed to set status to 'online': ${JSON.stringify(error, undefined, 2)}`)
-      );
-    // TODO: On exit in prod mode, set own status to Offline
   });
 
   client.on("error", error => {
