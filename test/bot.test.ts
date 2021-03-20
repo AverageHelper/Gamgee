@@ -1,4 +1,4 @@
-import { group, test, expect, beforeEach } from "corde";
+import { group, test, expect, beforeEach } from "@averagehelper/corde";
 
 beforeEach(() => {
   // Reset the database file somehow
