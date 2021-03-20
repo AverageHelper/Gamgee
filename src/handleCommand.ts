@@ -85,8 +85,8 @@ export async function handleCommand(
   message: Discord.Message,
   storage: Storage | null
 ): Promise<void> {
-  // Don't respond to bots
-  if (message.author.bot) return;
+  // Don't respond to bots unless we're being tested
+  if (message.author.bot && process.env.NODE_ENV !== "interaction_test") return;
 
   // Don't bother with empty messages
   const content = message.content.trim();

@@ -9,7 +9,8 @@ export async function handleReactionAdd(
   reaction: Discord.MessageReaction,
   user: Discord.User
 ): Promise<void> {
-  if (user.bot) return; // Ignore bot reactions
+  // Ignore bot reactions unless we're being tested
+  if (user.bot && process.env.NODE_ENV !== "interaction_test") return;
 
   logger.debug("Received user reaction.");
   const message = reaction.message;
@@ -26,7 +27,7 @@ export async function handleReactionAdd(
 
     // Only the guild owner may touch the config.
     // FIXME: Add more grannular access options
-    if (!message.guild?.owner?.user.tag || user.tag !== message.guild.owner.user.tag) {
+    if (!message.guild?.ownerID || user.id !== message.guild.ownerID) {
       logger.debug(`Unauthorized user ${user.id} reacted to a message.`);
       return;
     }

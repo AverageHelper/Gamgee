@@ -94,7 +94,7 @@ const queue: Command = {
 
     // Only the guild owner may touch the queue.
     // FIXME: Add more grannular access options
-    if (!message.guild?.owner?.user.tag || message.author.tag !== message.guild.owner.user.tag) {
+    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
       return reply("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 

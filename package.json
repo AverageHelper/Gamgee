@@ -9,7 +9,8 @@
     "build:clean": "rm -rf dist && npm run build",
     "prepublishOnly": "npm run build:clean",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:interaction": "NODE_ENV=interaction_test # run another bot or something idk"
   },
   "main": "./dist/main.js",
   "files": [
