@@ -39,6 +39,10 @@
       "env": {
         "jest": true
       }
+    },
+    {
+      "files": ["*.js"],
+      "parser": "null"
     }
   ]
 }

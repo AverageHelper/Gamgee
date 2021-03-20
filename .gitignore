@@ -3,7 +3,6 @@
 
 # Secret files
 .env
-corde.json
 
 # Useless files
 *.log

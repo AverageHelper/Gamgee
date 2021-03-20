@@ -13,7 +13,7 @@
     "test": "npm run test:src && npm run test:interaction",
     "test:src": "jest",
     "test:src:watch": "npm run test:src -- --watch",
-    "test:interaction": "npm run build:tests && concurrently -kn bot,tester -s first 'npm run start:test' 'sleep 2 && corde -c corde.json'"
+    "test:interaction": "npm run build:tests && concurrently -kn bot,tester -s first 'npm run start:test' 'sleep 2 && corde -c corde.js'"
   },
   "main": "./dist/main.js",
   "files": [

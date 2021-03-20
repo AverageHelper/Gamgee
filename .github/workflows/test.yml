@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [12.x, 14.x, 15.x]
@@ -26,3 +26,12 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test
+        env:
+          CI: true
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          SOUNDCLOUD_API_KEY: ${{ secrets.SOUNDCLOUD_API_KEY }}
+          CORDE_TEST_TOKEN: ${{ secrets.CORDE_TEST_TOKEN }}
+          BOT_TEST_ID: ${{ secrets.BOT_TEST_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          BOT_PREFIX: "?"
