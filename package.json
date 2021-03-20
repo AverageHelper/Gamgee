@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A Discord bot",
   "scripts": {
-    "start": "NODE_ENV=development nodemon --inspect dist/index.js",
+    "start": "NODE_ENV=development nodemon --inspect dist/main.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
@@ -11,7 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/main.js",
   "files": [
     "dist/"
   ],
