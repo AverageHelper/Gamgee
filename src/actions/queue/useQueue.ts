@@ -3,6 +3,9 @@ import type { QueueConfig } from "../../actions/database/schemas/queueConfigSche
 import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
+import StringBuilder from "../../helpers/StringBuilder";
+import { REACTION_BTN_DONE, REACTION_BTN_UNDO } from "../../constants/reactions";
+import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
 
 const logger = useLogger();
 
@@ -28,8 +31,14 @@ interface QueueManager {
   /** Adds an entry to the queue cache and sends the entry to the queue channel. */
   push: (entry: UnsentQueueEntry) => Promise<QueueEntry>;
 
-  /** Returns the next unmarked element fron the queue. */
-  pop: () => Promise<QueueEntry | null>;
+  /** Fetches an entry with the given message ID. */
+  getEntryFromMessage: (queueMessageId: string) => Promise<QueueEntry | null>;
+
+  /** If the message represents a "done" entry, that entry is unmarked. */
+  markNotDone: (queueMessage: Discord.Message) => Promise<void>;
+
+  /** If the message represents a "not done" entry, that entry is marked "done". */
+  markDone: (queueMessage: Discord.Message) => Promise<void>;
 
   /** Returns all entries in the queue. */
   getAllEntries: () => Promise<Array<QueueEntry>>;
@@ -74,20 +83,47 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       });
       return duration;
     },
-    async push(entry) {
-      const queueMessage = await queueChannel.send(
-        `<@!${entry.senderId}> requested a song that's **${durationString(entry.seconds)}** long: ${
-          entry.url
-        }`,
-        { allowedMentions: { users: [] } }
-      );
-      return queueStorage.create({ ...entry, queueMessageId: queueMessage.id, isDone: false });
+    async push(newEntry) {
+      const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
+      messageBuilder.push(" requested a song that's ");
+      messageBuilder.pushBold(durationString(newEntry.seconds));
+      messageBuilder.push(` long: ${newEntry.url}`);
+
+      const queueMessage = await queueChannel.send(messageBuilder.result(), {
+        allowedMentions: { users: [] }
+      });
+      try {
+        const entry = await queueStorage.create({
+          ...newEntry,
+          queueMessageId: queueMessage.id,
+          isDone: false
+        });
+
+        // Add the "Done" button
+        await queueMessage.react(REACTION_BTN_DONE);
+
+        return entry;
+
+        // If the database write fails...
+      } catch (error) {
+        await queueMessage.delete();
+        throw error;
+      }
     },
-    pop() {
-      // TODO: Strikethrough the message
-      // TODO: Mark the entry as "used"
-      // TODO: If no unused entries exist, return null
-      return Promise.resolve(null);
+    getEntryFromMessage(queueMessageId) {
+      return queueStorage.fetchEntryFromMessage(queueMessageId);
+    },
+    async markNotDone(queueMessage: Discord.Message) {
+      await queueMessage.edit(removeStrikethrough(queueMessage.content));
+      await queueMessage.reactions.removeAll();
+      await queueMessage.react(REACTION_BTN_DONE);
+      await queueStorage.markEntryDone(false, queueMessage.id);
+    },
+    async markDone(queueMessage: Discord.Message) {
+      await queueMessage.edit(addStrikethrough(queueMessage.content));
+      await queueMessage.reactions.removeAll();
+      await queueMessage.react(REACTION_BTN_UNDO);
+      await queueStorage.markEntryDone(true, queueMessage.id);
     },
     getAllEntries() {
       return queueStorage.fetchAll();

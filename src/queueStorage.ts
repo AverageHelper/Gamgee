@@ -59,6 +59,9 @@ interface QueueEntryManager {
   /** Removes the queue entry from the database. */
   remove: (entry: QueueEntry) => Promise<void>;
 
+  /** Fetches an entry with the given message ID. */
+  fetchEntryFromMessage: (queueMessageId: string) => Promise<QueueEntry | null>;
+
   /** Fetches all entries in queue order. */
   fetchAll: () => Promise<Array<QueueEntry>>;
 
@@ -73,6 +76,9 @@ interface QueueEntryManager {
 
   /** Fetches the number of entries from the given user in the queue. */
   countAllFrom: (senderId: string) => Promise<number>;
+
+  /** Sets the entry's "done" value. */
+  markEntryDone: (isDone: boolean, queueMessageId: string) => Promise<void>;
 
   /** Delete all entries for this queue channel. */
   clear: () => Promise<void>;
@@ -94,6 +100,21 @@ export async function useQueueStorage(
       entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
       cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN
     };
+  }
+
+  async function getEntryWithMsgId(
+    queueMessageId: string,
+    transaction?: Transaction
+  ): Promise<QueueEntry | null> {
+    const doc = await db.QueueEntries.findOne({
+      where: {
+        channelId: queueChannel.id,
+        guildId: queueChannel.guild.id,
+        queueMessageId
+      },
+      transaction
+    });
+    return doc ? toQueueEntry(doc) : null;
   }
 
   return {
@@ -190,6 +211,9 @@ export async function useQueueStorage(
         }
       });
     },
+    async fetchEntryFromMessage(queueMessageId) {
+      return getEntryWithMsgId(queueMessageId);
+    },
     async fetchAll() {
       const entries = await db.QueueEntries.findAll({
         where: {
@@ -240,6 +264,26 @@ export async function useQueueStorage(
           channelId: queueChannel.id,
           guildId: queueChannel.guild.id,
           senderId
+        }
+      });
+    },
+    async markEntryDone(isDone: boolean, queueMessageId: string) {
+      await db.sequelize.transaction(async transaction => {
+        const doc = await db.QueueEntries.findOne({
+          where: {
+            channelId: queueChannel.id,
+            guildId: queueChannel.guild.id,
+            queueMessageId
+          },
+          transaction
+        });
+        if (doc) {
+          await doc.update(
+            {
+              isDone
+            },
+            { transaction }
+          );
         }
       });
     },
