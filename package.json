@@ -44,7 +44,6 @@
     "ytdl-core": "^4.5.0"
   },
   "devDependencies": {
-    "@averagehelper/corde": "^2.0.2-alpha.1",
     "@types/async-lock": "^1.1.2",
     "@types/humanize-duration": "^3.18.1",
     "@types/jest": "^26.0.20",
@@ -56,6 +55,7 @@
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "concurrently": "^6.0.0",
+    "corde": "^2.0.2",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^24.1.5",

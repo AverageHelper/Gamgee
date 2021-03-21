@@ -1,4 +1,4 @@
-import { group, test, expect } from "@averagehelper/corde";
+import { group, test, expect } from "corde";
 
 const COMMAND_PREFIX = process.env.BOT_PREFIX;
 const SENDER_ID = process.env.CORDE_BOT_ID;
