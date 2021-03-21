@@ -1,14 +1,14 @@
-import { group, test, expect, beforeEach } from "@averagehelper/corde";
+import { beforeEach, group, test, expect } from "@averagehelper/corde";
 
 beforeEach(() => {
   // Reset the database file somehow
 });
 
 group("Main commands", () => {
-  test("help command returns the help text", () => {
+  test("`help` command returns the help text", () => {
     expect("help").toReturn(`Commands:
 \`?config\` - Read and modify config options. *(Server owner only. No touch!)*
-\`?ping\` - Ping Gamgee's server to check latency.
+\`?ping\` - Ping my host server to check latency.
 \`?queue\` - Prints a handy message to let people know how to queue-up.
     \`?queue info\` - Reports the status of the current queue. *(Server owner only. No touch!)*
     \`?queue open <channel name>\` - Sets the channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead. *(Server owner only. No touch!)*

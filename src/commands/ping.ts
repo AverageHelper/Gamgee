@@ -6,7 +6,7 @@ const logger = useLogger();
 
 const ping: Command = {
   name: "ping",
-  description: "Ping Gamgee's server to check latency.",
+  description: "Ping my host server to check latency.",
   async execute(context) {
     const { client, message } = context;
 
