@@ -2,9 +2,13 @@ import Discord from "discord.js";
 import { UniqueConstraintError, Transaction } from "sequelize";
 import type { QueueConfig } from "./actions/database/schemas/queueConfigSchema";
 import type { QueueEntrySchema } from "./actions/database/schemas/queueEntrySchema";
-import { DEFAULT_ENTRY_DURATION, DEFAULT_SUBMISSION_COOLDOWN } from "./constants/queues";
 import { useDatabase } from "./actions/database/useDatabase";
 import { useLogger } from "./logger";
+import {
+  DEFAULT_ENTRY_DURATION,
+  DEFAULT_SUBMISSION_COOLDOWN,
+  DEFAULT_SUBMISSION_MAX_QUANTITY
+} from "./constants/queues";
 
 const logger = useLogger();
 
@@ -98,7 +102,8 @@ export async function useQueueStorage(
     });
     return {
       entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
-      cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN
+      cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN,
+      submissionMaxQuantity: config?.submissionMaxQuantity ?? DEFAULT_SUBMISSION_MAX_QUANTITY
     };
   }
 
@@ -123,23 +128,33 @@ export async function useQueueStorage(
     async updateConfig(config) {
       await db.sequelize.transaction(async transaction => {
         const oldConfig = await getConfig(transaction);
+
         let entryDurationSeconds: number | null;
         if (config.entryDurationSeconds === undefined) {
           entryDurationSeconds = oldConfig.entryDurationSeconds;
         } else {
           entryDurationSeconds = config.entryDurationSeconds;
         }
+
         let cooldownSeconds: number | null;
         if (config.cooldownSeconds === undefined) {
           cooldownSeconds = oldConfig.cooldownSeconds;
         } else {
           cooldownSeconds = config.cooldownSeconds;
         }
+
+        let submissionMaxQuantity: number | null;
+        if (config.submissionMaxQuantity === undefined) {
+          submissionMaxQuantity = oldConfig.submissionMaxQuantity;
+        } else {
+          submissionMaxQuantity = config.submissionMaxQuantity;
+        }
         await db.QueueConfigs.upsert(
           {
             channelId: queueChannel.id,
             entryDurationSeconds,
-            cooldownSeconds
+            cooldownSeconds,
+            submissionMaxQuantity
           },
           { transaction }
         );
@@ -171,7 +186,8 @@ export async function useQueueStorage(
             defaults: {
               channelId: queueChannel.id,
               entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-              cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN
+              cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
+              submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY
             },
             transaction
           });

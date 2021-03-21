@@ -29,6 +29,9 @@ interface QueueManager {
   /** Retrieves the number of entries in the queue */
   count: () => Promise<number>;
 
+  /** Retrieves the number of entries in the queue submitted by the given user. */
+  countFrom: (userId: string) => Promise<number>;
+
   /** Retrieves the playtime of the queue's unfinished entries. */
   playtimeRemaining: () => Promise<number>;
 
@@ -81,6 +84,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
     },
     count() {
       return queueStorage.countAll();
+    },
+    countFrom(userId) {
+      return queueStorage.countAllFrom(userId);
     },
     async playtimeRemaining() {
       const queue = await queueStorage.fetchAll();

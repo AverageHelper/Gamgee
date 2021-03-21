@@ -9,10 +9,14 @@ import StringBuilder from "../../helpers/StringBuilder";
 
 const ARG_ENTRY_DURATION = "entry-duration";
 const ARG_SUB_COOLDOWN = "cooldown";
+const ARG_SUB_MAX_SUBMISSIONS = "count";
 
-type LimitKey = typeof ARG_ENTRY_DURATION | typeof ARG_SUB_COOLDOWN;
+type LimitKey =
+  | typeof ARG_ENTRY_DURATION
+  | typeof ARG_SUB_COOLDOWN
+  | typeof ARG_SUB_MAX_SUBMISSIONS;
 
-const allLimits = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN];
+const allLimits = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
 const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
@@ -91,7 +95,7 @@ const limit: NamedSubcommand = {
         if (value === undefined) {
           value = config.cooldownSeconds;
           if (value === null) {
-            return reply(message, `There is no submission cooldown time`);
+            return reply(message, "There is no submission cooldown time");
           }
           return reply(message, `Submission cooldown is **${durationString(value)}**`);
         }
@@ -114,6 +118,38 @@ const limit: NamedSubcommand = {
         } else {
           responseBuilder.push("set to ");
           responseBuilder.pushBold(durationString(value));
+        }
+        return reply(message, responseBuilder.result());
+      }
+
+      case ARG_SUB_MAX_SUBMISSIONS: {
+        // Limit submission count per user
+        if (value === undefined) {
+          value = config.submissionMaxQuantity;
+          if (value === null) {
+            return reply(message, "There is no limit on the number of submissions per user.");
+          }
+          return reply(message, `Max submissions per user is **${value}**`);
+        }
+
+        // Set a new limit
+        value = args[2] === "null" ? null : parseInt(args[2]);
+        if (value !== null && isNaN(value)) {
+          value = config.submissionMaxQuantity;
+          return reply(
+            message,
+            "That doesn't look like an integer. Enter a number value in seconds."
+          );
+        }
+        value = value === null || value < 0 ? null : value;
+        await queue.updateConfig({ submissionMaxQuantity: value });
+
+        const responseBuilder = new StringBuilder("Submission count limit per user ");
+        if (value === null) {
+          responseBuilder.pushBold("removed");
+        } else {
+          responseBuilder.push("set to ");
+          responseBuilder.pushBold(`${value}`);
         }
         return reply(message, responseBuilder.result());
       }

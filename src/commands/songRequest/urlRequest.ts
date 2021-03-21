@@ -51,7 +51,48 @@ const urlRequest: ArbitrarySubcommand = {
       logger.debug("Responded.");
     }
 
+    const sentAt = message.createdAt;
+    const senderId = message.author.id;
+
     try {
+      const [config, latestSubmission, userSubmissionCount] = await Promise.all([
+        queue.getConfig(),
+        queue.getLatestEntryFrom(senderId),
+        queue.countFrom(senderId) // TODO: countFromSince so we can reset the userSubmissionCount limit throughout the night
+      ]);
+
+      // If the user has used all their submissions, reject!
+      const maxSubs = config.submissionMaxQuantity;
+      logger.verbose(`User ${senderId} has submitted ${userSubmissionCount} requests in total`);
+      if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
+        const rejectionBuilder = new StringBuilder();
+        rejectionBuilder.push("You have used all ");
+        rejectionBuilder.pushBold(`${maxSubs}`);
+        rejectionBuilder.push(" of your allotted submissions.");
+        return reject_public(message, rejectionBuilder.result());
+      }
+
+      // If the user is still under cooldown, reject!
+      const cooldown = config.cooldownSeconds;
+      const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
+      const timeSinceLatest =
+        latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
+      logger.verbose(
+        `User ${senderId} last submitted a request ${timeSinceLatest ?? "<never>"} seconds ago`
+      );
+      if (
+        cooldown !== null &&
+        cooldown > 0 &&
+        timeSinceLatest !== null &&
+        cooldown > timeSinceLatest
+      ) {
+        const rejectionBuilder = new StringBuilder();
+        rejectionBuilder.push("You must wait ");
+        rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
+        rejectionBuilder.push(" before submitting again.");
+        return reject_private(message, rejectionBuilder.result());
+      }
+
       const song = await getVideoDetails(args);
       if (song === null) {
         return reject_public(
@@ -62,35 +103,6 @@ const urlRequest: ArbitrarySubcommand = {
 
       const url = song.url;
       const seconds = song.duration.seconds;
-      const sentAt = message.createdAt;
-      const senderId = message.author.id;
-
-      const [config, latestSubmission] = await Promise.all([
-        queue.getConfig(),
-        queue.getLatestEntryFrom(senderId)
-      ]);
-
-      // If the user is still under cooldown. reject!
-      const cooldown = config.cooldownSeconds;
-      const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
-      const timeSinceLatest =
-        latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
-      logger.verbose(
-        `User ${senderId} last submitted a request ${timeSinceLatest ?? "<never>"} seconds ago`
-      );
-      logger.verbose(new Date());
-      if (
-        cooldown !== null &&
-        cooldown > 0 &&
-        timeSinceLatest !== null &&
-        cooldown > timeSinceLatest
-      ) {
-        const rejectionBuilder = new StringBuilder();
-        rejectionBuilder.push("You must wait ");
-        rejectionBuilder.pushBold(`${durationString(cooldown - timeSinceLatest)}`);
-        rejectionBuilder.push(" before submitting again.");
-        return reject_private(message, rejectionBuilder.result());
-      }
 
       // If the song is too long, reject!
       const maxDuration = config.entryDurationSeconds;

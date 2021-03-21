@@ -9,6 +9,9 @@ export interface QueueConfig {
 
   /** The number of seconds that a user must wait between successful queue submissions. */
   cooldownSeconds: number | null;
+
+  /** The maximum number of successfu; submissions each user may have in the queue. */
+  submissionMaxQuantity: number | null;
 }
 
 interface QueueConfigAttributes extends QueueConfig {
@@ -31,7 +34,8 @@ export default function queueConfigSchema(sequelize: Sequelize): ModelCtor<Queue
       allowNull: false
     },
     entryDurationSeconds: INTEGER,
-    cooldownSeconds: INTEGER
+    cooldownSeconds: INTEGER,
+    submissionMaxQuantity: INTEGER
   });
 
   logger.debug("Created Queue Configs schema");
