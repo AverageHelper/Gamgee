@@ -17,7 +17,7 @@ if (!COMMAND_PREFIX) throw new EnvironmentVariableNotFoundError("BOT_PREFIX");
 if (!SENDER_ID) throw new EnvironmentVariableNotFoundError("CORDE_BOT_ID");
 if (!QUEUE_CHANNEL_ID) throw new EnvironmentVariableNotFoundError("QUEUE_CHANNEL_ID");
 
-group(`?video`, () => {
+group(`${COMMAND_PREFIX}video`, () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";
   const info = `<@${SENDER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 32 seconds)`;
 
@@ -30,56 +30,54 @@ group(`?video`, () => {
   });
 });
 
-group(`?queue`, () => {
+group(`${COMMAND_PREFIX}sr`, () => {
   test("returns the queue instructional text", () => {
-    expect("queue").toReturn(
+    expect("sr info").toReturn(
       `To submit a song, type \`${COMMAND_PREFIX}sr <link>\`.
 For example: \`${COMMAND_PREFIX}sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with a text verification indicating your song has joined the queue!`
     );
   });
 
-  test("yells at the tester for trying to access queue stats", () => {
-    expect("queue info").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-  });
-
   test("yells at the tester for trying to open a queue", () => {
-    expect("queue open").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    expect(`queue open <#${QUEUE_CHANNEL_ID}>`).toReturn(
+    expect("sr open").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    expect(`sr open <#${QUEUE_CHANNEL_ID}>`).toReturn(
       "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
     );
   });
 
   test("yells at the tester for trying to close the queue", () => {
-    expect("queue close").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-  });
-
-  test("yells at the tester for trying to restart the queue", () => {
-    expect("queue restart").toReturn(
-      "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
-    );
+    expect("sr close").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
   });
 
   test("yells at the tester for trying to set limits on the queue", () => {
-    expect("queue limit").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    expect("sr limit").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
   });
+
+  test("yells at the tester for trying to see queue statistics", () => {
+    expect("sr stats").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+  });
+
+  test("yells at the tester for trying to restart the queue", () => {
+    expect("sr restart").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+  });
+
+  // TODO: Add a test for sr <song link>
 });
 
-group(`?help`, () => {
+group(`${COMMAND_PREFIX}help`, () => {
   test("returns the help text", () => {
     expect("help").toReturn(`Commands:
 \`${COMMAND_PREFIX}config\` - Read and modify config options. *(Server owner only. No touch!)*
 \`${COMMAND_PREFIX}ping\` - Ping my host server to check latency.
-\`${COMMAND_PREFIX}queue\` - Prints a handy message to let people know how to queue-up.
-    \`${COMMAND_PREFIX}queue info\` - Reports the status of the current queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}queue open <channel name>\` - Sets the channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}queue close\` - Closes the current queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}queue restart\` - Empties the queue and starts a fresh queue session. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}queue limit [entry-duration|cooldown]\` - Sets a limit value on the queue. *(Server owner only. No touch!)*
-\`${COMMAND_PREFIX}sr\` - Submit a song to the queue.
-    \`${COMMAND_PREFIX}sr <song name or YouTube link>\` - Attempts to add the given content to the queue.
+\`${COMMAND_PREFIX}sr <YouTube or SoundCloud link>\` - Submit a song to the queue.
+    \`${COMMAND_PREFIX}sr info\` - Prints a handy message to let people know how to queue-up.
+    \`${COMMAND_PREFIX}sr open <channel name>\` - Sets a channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr close\` - Closes the current queue. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr limit <entry-duration|cooldown>\` - Sets a limit value on the queue. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr stats\` - Reports the status of the current queue. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr restart\` - Empties the queue and starts a fresh queue session. *(Server owner only. No touch!)*
 \`${COMMAND_PREFIX}t\` - Start typing :wink:
-\`${COMMAND_PREFIX}video\` - Query YouTube or SoundCloud for video data.
-    \`${COMMAND_PREFIX}video {link}\` - Puts the video title and duration in chat.`);
+\`${COMMAND_PREFIX}video <YouTube or SoundCloud link>\` - Puts the video title and duration in chat.`);
   });
 });

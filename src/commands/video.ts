@@ -10,8 +10,8 @@ const name = "video";
 
 const video: Command = {
   name,
-  description: "Query YouTube or SoundCloud for video data.",
-  uses: [[`${name} {link}`, "Puts the video title and duration in chat."]],
+  requiredArgFormat: "<YouTube or SoundCloud link>",
+  description: "Puts the video title and duration in chat.",
   async execute(context) {
     const { message, args } = context;
     async function reply(body: string) {

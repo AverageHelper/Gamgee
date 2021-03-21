@@ -129,15 +129,24 @@ export async function handleCommand(
 
   if (commandName === COMMAND_HELP) {
     const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
+    // TODO: Clean this spider out
     const body = commands //
       .mapValues(command => {
-        const fact = `\`${COMMAND_PREFIX}${command.name}\` - ${command.description}`;
-        const uses =
-          command.uses //
-            ?.map(([use, desc]) => `    \`${COMMAND_PREFIX}${use}\` - ${desc}`)
+        const requiredArgFormat = command.arbitrarySubcommand?.format ?? command.requiredArgFormat;
+        const fact = `\`${COMMAND_PREFIX}${command.name}${
+          requiredArgFormat ? " " + requiredArgFormat : ""
+        }\` - ${command.description}`;
+        const subcommands =
+          command.namedSubcommands //
+            ?.map(
+              sub =>
+                `    \`${COMMAND_PREFIX}${command.name} ${sub.name}${
+                  sub.requiredArgFormat ? " " + sub.requiredArgFormat : ""
+                }\` - ${sub.description}`
+            )
             .join("\n") ?? "";
-        if (uses) {
-          return fact.concat("\n" + uses);
+        if (subcommands) {
+          return fact.concat("\n" + subcommands);
         }
         return fact;
       })
