@@ -10,7 +10,19 @@ export async function handleReactionAdd(
   user: Discord.User
 ): Promise<void> {
   // Ignore bot reactions unless we're being tested
-  if (user.bot && process.env.NODE_ENV !== "test") return;
+  if (user.bot && process.env.NODE_ENV !== "test") {
+    logger.debug(
+      `Momma always said not to stare at strangers. It's rude. bot: ${
+        user.bot ? "true" : "false"
+      }; env: ${process.env.NODE_ENV ?? "undefined"}`
+    );
+    return;
+  }
+  logger.debug(
+    `Handling a reaction. bot: ${user.bot ? "true" : "false"}; env: ${
+      process.env.NODE_ENV ?? "undefined"
+    }`
+  );
 
   // Ignore self reactions
   if (user.id === reaction.client.user?.id) return;
