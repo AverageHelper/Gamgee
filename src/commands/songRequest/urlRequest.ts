@@ -3,6 +3,7 @@ import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useLogger } from "../../logger";
 import { useQueue, UnsentQueueEntry } from "../../actions/queue/useQueue";
 import { reject_public, reject_private } from "./index";
+import { randomAcceptance } from "../../helpers/randomStrings";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
@@ -47,7 +48,9 @@ const urlRequest: ArbitrarySubcommand = {
         `Pushed new entry to queue. Sending public acceptance to user ${message.author.id} (${message.author.username})`
       );
       // Send acceptance after the potential `send(entry.url)` call
-      await message.channel.send(`**${message.author.username}**, Submission Accepted!`);
+      await message.channel.send(
+        `<@!${message.author.id}>, ${randomAcceptance()}\n\nSubmission Accepted!`
+      );
       logger.debug("Responded.");
     }
 
