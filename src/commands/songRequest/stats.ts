@@ -10,21 +10,25 @@ const logger = useLogger();
 
 const stats: NamedSubcommand = {
   name: "stats",
-  description: "Reports the status of the current queue. *(Server owner only. No touch!)*",
+  description: "Reports the status of the current queue.",
   async execute(context) {
     const { message } = context;
 
-    // Only the guild owner may touch the queue.
-    // FIXME: Add more grannular access options
-    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!message.guild) {
+      return reply(message, "Can't do that here.");
     }
 
-    // Get the current queue's status
     const channel = await getQueueChannel(context);
+
+    // Only the guild owner may touch the queue, unless we're in the privileged queue channel.
+    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
+      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    }
     if (!channel) {
       return reply(message, `No queue is set up. Would you like to start one?`);
     }
+
+    // Get the current queue's status
     const queueIsCurrent = message.channel.id === channel.id;
     const queue = await useQueue(channel);
     const [count, playtimeRemaining, playtimeTotal] = await Promise.all([

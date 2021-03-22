@@ -111,15 +111,15 @@ Access the guild config. This command may only be run by the guild owner. This c
 
 Prints a list of valid config keys.
 
-#### `config get [command_prefix|queue_channel]`
+#### `config get [command_prefix]`
 
 Gamgee responds with the current configuration value for the provided key.
 
-#### `config set [command_prefix|queue_channel] <string>`
+#### `config set [command_prefix] <string>`
 
 Sets a new value for the provided key. Gamgee responds with a confirmation of the new key and value, with an option to undo.
 
-#### `config unset [command_prefix|queue_channel]`
+#### `config unset [command_prefix]`
 
 Resets a config value to default.
 

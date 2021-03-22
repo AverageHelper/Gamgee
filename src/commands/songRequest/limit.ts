@@ -26,20 +26,24 @@ function isLimitKey(value: unknown): value is LimitKey {
 const limit: NamedSubcommand = {
   name: "limit",
   requiredArgFormat: `<${allLimits.join("|")}>`,
-  description: "Sets a limit value on the queue. *(Server owner only. No touch!)*",
+  description: "Sets a limit value on the queue.",
   async execute(context) {
     const { args, message } = context;
 
-    // Only the guild owner may touch the queue.
-    // FIXME: Add more grannular access options
-    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!message.guild) {
+      return reply(message, "Can't do that here.");
     }
 
     const channel = await getQueueChannel(context);
+
+    // Only the guild owner may touch the queue, unless we're in the privileged queue channel.
+    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
+      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    }
     if (!channel) {
       return reply(message, "No queue is set up yet.");
     }
+
     const queue = await useQueue(channel);
 
     // Set limits on the queue

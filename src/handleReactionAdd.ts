@@ -11,7 +11,7 @@ export async function handleReactionAdd(
 ): Promise<void> {
   // Ignore bot reactions unless we're being tested
   if (user.bot && process.env.NODE_ENV !== "test") {
-    logger.debug(
+    logger.silly(
       `Momma always said not to stare at strangers. It's rude. bot: ${
         user.bot ? "true" : "false"
       }; env: ${process.env.NODE_ENV ?? "undefined"}`
@@ -39,13 +39,6 @@ export async function handleReactionAdd(
     logger.debug(
       `Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
     );
-
-    // Only the guild owner may touch the config.
-    // FIXME: Add more grannular access options
-    if (!message.guild?.ownerID || user.id !== message.guild.ownerID) {
-      logger.debug(`Unauthorized user ${user.id} reacted to a message.`);
-      return;
-    }
 
     // Mark done
     if (reaction.emoji.name === REACTION_BTN_DONE) {

@@ -6,22 +6,28 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 
 const open: NamedSubcommand = {
   name: "open",
-  description: "Start accepting song requests to the queue. *(Server owner only. No touch!)*",
+  description: "Start accepting song requests to the queue.",
   async execute(context) {
     const { message } = context;
 
-    // Only the guild owner may touch the queue.
-    // FIXME: Add more grannular access options
-    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!message.guild) {
+      return reply(message, "Can't do that here.");
     }
 
     const [guild, channel] = await Promise.all([
       useGuildStorage(message.guild),
-      getQueueChannel(context),
+      getQueueChannel(context)
+    ]);
+
+    // The queue may only be opened in the queue channel, or by the server owner.
+    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
+      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    }
+
+    const [isAlreadyOpen] = await Promise.all([
+      guild.getQueueOpen(),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
-    const isAlreadyOpen = await guild.getQueueOpen();
 
     if (!channel) {
       return reply(message, "There's no queue to open. Have you set one up yet?");

@@ -87,7 +87,7 @@ export async function handleCommand(
 ): Promise<void> {
   // Don't respond to bots unless we're being tested
   if (message.author.bot && process.env.NODE_ENV !== "test") {
-    logger.debug(
+    logger.silly(
       `Momma always said not to talk to strangers. They could be *bots*. bot: ${
         message.author.bot ? "true" : "false"
       }; env: ${process.env.NODE_ENV ?? "undefined"}`

@@ -39,11 +39,15 @@ I will respond with a text verification indicating your song has joined the queu
     );
   });
 
-  test("yells at the tester for trying to open a queue", () => {
-    expect("sr open").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    expect(`sr open <#${QUEUE_CHANNEL_ID}>`).toReturn(
+  test("yells at the tester for trying to set up a queue", () => {
+    expect("sr setup").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    expect(`sr setup <#${QUEUE_CHANNEL_ID}>`).toReturn(
       "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
     );
+  });
+
+  test("yells at the tester for trying to open a queue", () => {
+    expect("sr open").toReturn("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
   });
 
   test("yells at the tester for trying to close the queue", () => {
@@ -73,11 +77,11 @@ group(`${COMMAND_PREFIX}help`, () => {
 \`${COMMAND_PREFIX}sr <YouTube or SoundCloud link>\` - Submit a song to the queue.
     \`${COMMAND_PREFIX}sr info\` - Prints a handy message to let people know how to queue-up.
     \`${COMMAND_PREFIX}sr setup <channel name>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr open\` - Start accepting song requests to the queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr close\` - Stop accepting song requests to the queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr limit <entry-duration|cooldown|count>\` - Sets a limit value on the queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr stats\` - Reports the status of the current queue. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr restart\` - Empties the queue and starts a fresh queue session. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr open\` - Start accepting song requests to the queue.
+    \`${COMMAND_PREFIX}sr close\` - Stop accepting song requests to the queue.
+    \`${COMMAND_PREFIX}sr limit <entry-duration|cooldown|count>\` - Sets a limit value on the queue.
+    \`${COMMAND_PREFIX}sr stats\` - Reports the status of the current queue.
+    \`${COMMAND_PREFIX}sr restart\` - Empties the queue and starts a fresh queue session.
 \`${COMMAND_PREFIX}t\` - Start typing :wink:
 \`${COMMAND_PREFIX}video <YouTube or SoundCloud link>\` - Puts the video title and duration in chat.`);
   });
