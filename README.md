@@ -39,11 +39,9 @@ $ cd Gamgee
     - [`help`](#help)
     - [`config`](#config)
     - [`ping`](#ping)
-    - [`video`](#video)
-    - [`queue`](#queue)
     - [`sr`](#sr)
     - [`t`](#t)
-    - [`video`](#video)
+    - [`video`](#video-video-link)
   - [Contributing](#contributing)
   - [Built With](#built-with)
   - [Authors](#authors)
@@ -107,21 +105,21 @@ Print out the list of available commands.
 
 ### `config`
 
-Access the server config. This command may only be run by the server owner. This command is unavailable in DMs.
+Access the guild config. This command may only be run by the guild owner. This command is unavailable in DMs.
 
-#### `help`
+#### `config help`
 
 Prints a list of valid config keys.
 
-#### `get [command_prefix|queue_channel]`
+#### `config get [command_prefix|queue_channel]`
 
 Gamgee responds with the current configuration value for the provided key.
 
-#### `set [command_prefix|queue_channel] <string>`
+#### `config set [command_prefix|queue_channel] <string>`
 
 Sets a new value for the provided key. Gamgee responds with a confirmation of the new key and value, with an option to undo.
 
-#### `unset [command_prefix|queue_channel]`
+#### `config unset [command_prefix|queue_channel]`
 
 Resets a config value to default.
 
@@ -129,38 +127,46 @@ Resets a config value to default.
 
 Gamgee responds with "Pong!"
 
-### `queue`
+### `sr`
 
-Manage the music queue. Running this command alone reads out a handy little message to teach folks how to use the `sr` command to add their songs to the queue.
+Access the song queue.
 
-#### `info`
+#### `sr <video link>`
+
+Submit a song to the queue. Users must provide a valid YouTube or SoundCloud link in order to be considered.
+
+#### `sr info`
+
+Reads out a handy little message to teach folks how to use the `sr` command to add their songs to the queue.
+
+#### `sr stats`
 
 Sends a private message with a mention of the current queue channel, the number of songs left in the queue, and the queue's playtime. If this command is run from the queue channel, then Gamgee just posts the message in there instead.
 
-#### `open <channel>`
+#### `sr setup <channel>`
 
-Opens a new queue in the provided channel. If a queue is currently open, it is closed in favor of this one. The old queue remains where it's at.
+Sets the given queue as the guild's queue channel. This does not open the queue.
 
-#### `close`
+#### `sr open`
+
+Opens a the queue to new requests if there is a valid queue channel set up.
+
+#### `sr close`
 
 Closes the queue to new requests.
 
-#### `restart`
+#### `sr restart`
 
 Empties the current queue. All queue messages are deleted, and totals and playtime are set to zero. The queue is made fresh for a new set of requests.
 
 This is not the recommended way to bypass queue submission limits. See the `limit` subcommand below.
 
-#### `limit [entry-duration|cooldown] <value>`
+#### `sr limit [entry-duration|cooldown] <value>`
 
 Gets or sets a limit on the queue. To see the current value, don't provide a value after the limit name.
 
 - `entry-duration`: The maximum duration that a song submission may have in order to enter the queue. When setting this value, enter a value in seconds, or the word `null`. The default value is `null`.
 - `cooldown`: The minimum amount of time that a user must wait between song submissions. When setting this value, enter a value in seconds, or the word `null`. The default value is `null`.
-
-### `sr <video link>`
-
-Submit a song to the queue. Users must provide a valid YouTube or SoundCloud link in order to be considered.
 
 ### `t`
 
