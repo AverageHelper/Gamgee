@@ -80,7 +80,7 @@ group(`${COMMAND_PREFIX}help`, () => {
     \`${COMMAND_PREFIX}sr open\` - Start accepting song requests to the queue.
     \`${COMMAND_PREFIX}sr close\` - Stop accepting song requests to the queue.
     \`${COMMAND_PREFIX}sr limit <entry-duration|cooldown|count>\` - Sets a limit value on the queue. (Time in seconds, where applicable)
-    \`${COMMAND_PREFIX}sr stats\` - Reports the status of the current queue.
+    \`${COMMAND_PREFIX}sr stats\` - Reports statistics on the current queue.
     \`${COMMAND_PREFIX}sr restart\` - Empties the queue and starts a fresh queue session.
 \`${COMMAND_PREFIX}t\` - Start typing :wink:
 \`${COMMAND_PREFIX}video <YouTube or SoundCloud link>\` - Puts the video title and duration in chat.`);
