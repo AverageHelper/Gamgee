@@ -97,7 +97,7 @@ When run, this bot will generate some files. This is normal, and you should not 
 
 ## Commands
 
-All commands must begin with the configured prefix (`!` by default), or a mention to the bot. (This is handy if you forget the prefix.)
+All commands must begin with the configured prefix (`?` by default), or a mention to the bot. (This is handy if you forget the prefix.)
 
 ### `help`
 
