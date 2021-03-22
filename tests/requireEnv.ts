@@ -1,6 +1,13 @@
+import "../src/environment";
 import EnvVariableNotFoundError from "./EnvVariableNotFoundError";
 
-type EnvKey = "BOT_PREFIX" | "CORDE_BOT_ID" | "QUEUE_CHANNEL_ID";
+type EnvKey =
+  | "BOT_PREFIX"
+  | "BOT_TEST_ID"
+  | "CORDE_BOT_ID"
+  | "QUEUE_CHANNEL_ID"
+  | "CORDE_TEST_TOKEN"
+  | "CHANNEL_ID";
 
 /**
  * Fetches the value of an environment variable key. If that value is not found, an error is thrown.
