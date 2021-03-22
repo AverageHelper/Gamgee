@@ -1,11 +1,13 @@
-import { Sequelize, Model, ModelCtor, STRING } from "sequelize";
+import { Sequelize, Model, ModelCtor, STRING, BOOLEAN } from "sequelize";
 import channelSchema from "./channelSchema";
 import { useLogger } from "../../../logger";
 
 const logger = useLogger();
 
-interface GuildAttributes {
+export interface GuildAttributes {
   id: string;
+  isQueueOpen: boolean;
+  currentQueue: string | null;
 }
 
 type GuildCreationAttributes = GuildAttributes;
@@ -21,7 +23,12 @@ export default function guildSchema(sequelize: Sequelize): ModelCtor<GuildSchema
       primaryKey: true,
       unique: true,
       allowNull: false
-    }
+    },
+    isQueueOpen: {
+      type: BOOLEAN,
+      allowNull: false
+    },
+    currentQueue: STRING
   });
 
   Guilds.hasMany(Channels, { sourceKey: "id", foreignKey: "guildId", as: "channels" });

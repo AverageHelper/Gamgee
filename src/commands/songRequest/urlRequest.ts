@@ -9,6 +9,7 @@ import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import deleteMessage from "../../actions/deleteMessage";
+import { useGuildStorage } from "../../useGuildStorage";
 
 const logger = useLogger();
 
@@ -18,8 +19,17 @@ const urlRequest: ArbitrarySubcommand = {
   async execute(context) {
     const { message, args } = context;
 
+    if (!message.guild) {
+      return;
+    }
+
+    const guild = await useGuildStorage(message.guild);
     const queueChannel = await getQueueChannel(context);
+    const isQueueOpen = await guild.getQueueOpen();
     if (!queueChannel) {
+      return reject_public(message, "The queue is not set up.");
+    }
+    if (!isQueueOpen) {
       return reject_public(message, "The queue is not open.");
     }
 

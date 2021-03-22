@@ -1,10 +1,5 @@
 import type { Storage } from "../../configStorage";
-import {
-  ConfigKey,
-  ConfigValue,
-  CONFIG_KEY_COMMAND_PREFIX,
-  CONFIG_KEY_QUEUE_CHANNEL
-} from "../../constants/config";
+import { ConfigKey, ConfigValue, CONFIG_KEY_COMMAND_PREFIX } from "../../constants/config";
 
 export async function setConfigValue(
   storage: Storage | null,
@@ -25,11 +20,4 @@ export async function setConfigCommandPrefix(
   value: string
 ): Promise<void> {
   return setConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX, value);
-}
-
-export async function setConfigQueueChannel(
-  storage: Storage | null,
-  value: string | null
-): Promise<void> {
-  return setConfigValue(storage, CONFIG_KEY_QUEUE_CHANNEL, value);
 }

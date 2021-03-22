@@ -72,8 +72,9 @@ group(`${COMMAND_PREFIX}help`, () => {
 \`${COMMAND_PREFIX}ping\` - Ping my host server to check latency.
 \`${COMMAND_PREFIX}sr <YouTube or SoundCloud link>\` - Submit a song to the queue.
     \`${COMMAND_PREFIX}sr info\` - Prints a handy message to let people know how to queue-up.
-    \`${COMMAND_PREFIX}sr open <channel name>\` - Sets a channel up as a new queue. Any existing queue is saved, but queue and request commands will go to this new queue instead. *(Server owner only. No touch!)*
-    \`${COMMAND_PREFIX}sr close\` - Closes the current queue. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr setup <channel name>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr open\` - Start accepting song requests to the queue. *(Server owner only. No touch!)*
+    \`${COMMAND_PREFIX}sr close\` - Stop accepting song requests to the queue. *(Server owner only. No touch!)*
     \`${COMMAND_PREFIX}sr limit <entry-duration|cooldown|count>\` - Sets a limit value on the queue. *(Server owner only. No touch!)*
     \`${COMMAND_PREFIX}sr stats\` - Reports the status of the current queue. *(Server owner only. No touch!)*
     \`${COMMAND_PREFIX}sr restart\` - Empties the queue and starts a fresh queue session. *(Server owner only. No touch!)*

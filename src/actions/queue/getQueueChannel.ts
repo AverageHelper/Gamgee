@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { CommandContext } from "../../commands/index";
-import { getConfigQueueChannel } from "../../actions/config/getConfigValue";
+import { useGuildStorage } from "../../useGuildStorage";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
@@ -16,9 +16,12 @@ const logger = useLogger();
 export default async function getQueueChannel(
   context: CommandContext
 ): Promise<Discord.TextChannel | null> {
-  const { message, client, storage } = context;
+  const { message, client } = context;
+  if (!message.guild) return null;
 
-  const queueChannelId = await getConfigQueueChannel(storage);
+  const guildInfo = await useGuildStorage(message.guild);
+
+  const queueChannelId = await guildInfo.getQueueChannelId();
   if (!queueChannelId) {
     return null;
   }

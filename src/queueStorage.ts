@@ -164,12 +164,18 @@ export async function useQueueStorage(
       try {
         await db.sequelize.transaction(async transaction => {
           // Make sure the guild and channels are in there
-          await db.Guilds.upsert(
-            {
-              id: queueChannel.guild.id
+          await db.Guilds.findOrCreate({
+            where: {
+              id: queueChannel.guild.id,
+              currentQueue: queueChannel.id
             },
-            { transaction }
-          );
+            defaults: {
+              id: queueChannel.guild.id,
+              currentQueue: queueChannel.id,
+              isQueueOpen: false
+            },
+            transaction
+          });
           await db.Channels.upsert(
             {
               id: queueChannel.id,
