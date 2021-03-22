@@ -1,21 +1,9 @@
 import { group, test, expect } from "corde";
+import requireEnv from "./requireEnv";
 
-const COMMAND_PREFIX = process.env.BOT_PREFIX;
-const SENDER_ID = process.env.CORDE_BOT_ID;
-const QUEUE_CHANNEL_ID = process.env.QUEUE_CHANNEL_ID;
-
-/**
- * An error object which identifies a missing environment variable.
- */
-class EnvironmentVariableNotFoundError extends Error {
-  constructor(name: string) {
-    super(`${name} not found in environment variables.`);
-  }
-}
-
-if (!COMMAND_PREFIX) throw new EnvironmentVariableNotFoundError("BOT_PREFIX");
-if (!SENDER_ID) throw new EnvironmentVariableNotFoundError("CORDE_BOT_ID");
-if (!QUEUE_CHANNEL_ID) throw new EnvironmentVariableNotFoundError("QUEUE_CHANNEL_ID");
+const COMMAND_PREFIX = requireEnv("BOT_PREFIX");
+const SENDER_ID = requireEnv("CORDE_BOT_ID");
+const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 group(`${COMMAND_PREFIX}video`, () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";

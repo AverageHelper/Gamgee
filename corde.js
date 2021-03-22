@@ -13,5 +13,5 @@ module.exports = {
   guildId: process.env.GUILD_ID,
   channelId: process.env.CHANNEL_ID,
   botPrefix: process.env.BOT_PREFIX,
-  testFiles: ["./test/dist"]
+  testFiles: ["./tests/dist"]
 };

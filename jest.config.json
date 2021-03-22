@@ -1,7 +1,7 @@
 {
   "clearMocks": true,
   "preset": "ts-jest",
-  "setupFilesAfterEnv": ["jest-extended"],
+  "setupFilesAfterEnv": ["./tests/setupJest.ts", "jest-extended"],
   "testEnvironment": "node",
   "testPathIgnorePatterns": ["/node_modules/"],
   "testRegex": ["src/.*\\.test\\.(t|j)sx?$"],
