@@ -49,6 +49,6 @@ try {
   void client.login(process.env.DISCORD_TOKEN);
 
   // Handle top-level errors
-} catch (error) {
+} catch (error: unknown) {
   logger.error(error);
 }

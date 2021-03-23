@@ -42,7 +42,7 @@ const video: Command = {
       return reply(response.result());
 
       // Handle fetch errors
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(
         `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
       );

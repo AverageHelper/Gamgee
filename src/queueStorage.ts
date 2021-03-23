@@ -213,7 +213,7 @@ export async function useQueueStorage(
             { transaction }
           );
         });
-      } catch (error) {
+      } catch (error: unknown) {
         if (error instanceof UniqueConstraintError) {
           // Wait half a second, set the date to now, then try again.
           logger.error(error);

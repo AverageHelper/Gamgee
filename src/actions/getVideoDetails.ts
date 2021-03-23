@@ -57,7 +57,7 @@ export default async function getVideoDetails(args: string[]): Promise<VideoDeta
       };
 
       // Something went wrong. Is this a valid SoundCloud link?
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(
         `Failed to fetch song from SoundCloud using url '${urlString}': ${JSON.stringify(error)}`
       );
