@@ -4,16 +4,16 @@
   "description": "A Discord bot",
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
-    "start:test": "DATABASE_FOLDER=./test/db NODE_ENV=test node .",
+    "start:test": "DATABASE_FOLDER=./tests/db NODE_ENV=test node .",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
-    "build:tests": "rm -rf ./test/dist && tsc -p tsconfig.corde.json",
     "prepublishOnly": "npm run build:clean",
-    "test": "npm run test:src && npm run test:interaction",
-    "test:src": "jest",
+    "test": "npm run test:src && npm run test:e2e",
+    "test:src": "jest --selectProjects src",
     "test:src:watch": "npm run test:src -- --watch",
-    "test:interaction": "npm run build && npm run build:tests && concurrently -kn bot,tester -s first 'npm run start:test' 'sleep 3 && corde -c corde.js'"
+    "test:e2e": "concurrently -kn bot,jest -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
+    "_test:e2e": "jest --selectProjects e2e --detectOpenHandles"
   },
   "main": "./dist/main.js",
   "files": [
@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/AverageHelper/Gamgee#readme",
   "dependencies": {
-    "async-lock": "^1.2.8",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
     "humanize-duration": "^3.25.1",
@@ -44,7 +43,6 @@
     "ytdl-core": "^4.5.0"
   },
   "devDependencies": {
-    "@types/async-lock": "^1.1.2",
     "@types/humanize-duration": "^3.18.1",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.35",
@@ -55,7 +53,6 @@
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "concurrently": "^6.0.0",
-    "corde": "^2.0.2",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^24.1.5",

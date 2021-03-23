@@ -129,7 +129,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         return entry;
 
         // If the database write fails...
-      } catch (error) {
+      } catch (error: unknown) {
         await queueMessage.delete();
         throw error;
       }

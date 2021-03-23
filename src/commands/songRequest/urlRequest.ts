@@ -133,7 +133,7 @@ const urlRequest: ArbitrarySubcommand = {
       return accept({ url, seconds, sentAt, senderId }, shouldSendUrl);
 
       // Handle fetch errors
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(
         `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
       );

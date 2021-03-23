@@ -29,7 +29,7 @@ export default async function getQueueChannel(
   let queueChannel: Discord.TextChannel;
   try {
     queueChannel = (await client.channels.fetch(queueChannelId)) as Discord.TextChannel;
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error(`Failed to fetch queue channel: ${JSON.stringify(error, undefined, 2)}`);
     await message.channel.send(
       "The configured channel doesn't exist. Have an administrator set the queue back up."

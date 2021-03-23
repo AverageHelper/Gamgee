@@ -22,6 +22,7 @@
     "prettier/prettier": "warn",
     "no-constant-condition": "warn",
     "no-dupe-else-if": "warn",
+    "@typescript-eslint/no-implicit-any-catch": "error",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/require-await": "warn",
     "no-console": "warn"
@@ -29,7 +30,7 @@
 
   "overrides": [
     {
-      "files": ["src/**/*.test.ts", "test/**/*.ts"],
+      "files": ["src/**/*.test.ts", "tests/**/*.ts"],
       "plugins": ["prettier", "@typescript-eslint"],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {

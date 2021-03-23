@@ -19,7 +19,7 @@ const video: Command = {
     }
 
     if (args.length < 1) {
-      return reply("You're gonna have to add a song link or title to that.");
+      return reply("You're gonna have to add a song link to that.");
     }
 
     try {
@@ -42,7 +42,7 @@ const video: Command = {
       return reply(response.result());
 
       // Handle fetch errors
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(
         `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
       );
