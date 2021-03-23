@@ -15,3 +15,9 @@ exports[`Command help returns the help text 1`] = `
 \`?t\` - Start typing :wink:
 \`?video <YouTube or SoundCloud link>\` - Puts the video title and duration in chat."
 `;
+
+exports[`Command sr returns the queue instructional text 1`] = `
+"To submit a song, type \`?sr <link>\`.
+For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
+I will respond with a text verification indicating your song has joined the queue!"
+`;

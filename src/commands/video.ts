@@ -19,7 +19,7 @@ const video: Command = {
     }
 
     if (args.length < 1) {
-      return reply("You're gonna have to add a song link or title to that.");
+      return reply("You're gonna have to add a song link to that.");
     }
 
     try {
