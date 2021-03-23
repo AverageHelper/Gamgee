@@ -5,7 +5,7 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 
 const restart: NamedSubcommand = {
   name: "restart",
-  description: "Empties the queue and starts a fresh queue session.",
+  description: "Empty the queue and start a fresh queue session.",
   async execute(context) {
     const { message } = context;
 

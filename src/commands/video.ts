@@ -11,7 +11,7 @@ const name = "video";
 const video: Command = {
   name,
   requiredArgFormat: "<YouTube or SoundCloud link>",
-  description: "Puts the video title and duration in chat.",
+  description: "Put the video title and duration in chat.",
   async execute(context) {
     const { message, args } = context;
     async function reply(body: string) {

@@ -26,7 +26,7 @@ function isLimitKey(value: unknown): value is LimitKey {
 const limit: NamedSubcommand = {
   name: "limit",
   requiredArgFormat: `<${allLimits.join("|")}>`,
-  description: "Sets a limit value on the queue. (Time in seconds, where applicable)",
+  description: "Set a limit value on the queue. (Time in seconds, where applicable)",
   async execute(context) {
     const { args, message } = context;
 
