@@ -1,5 +1,5 @@
 import requireEnv from "./requireEnv";
-import { testerClient, isClientLoggedIn, commandResponseInSameChannel } from "./discordUtils";
+import { logOut, commandResponseInSameChannel } from "./discordUtils";
 
 const TESTER_ID = requireEnv("CORDE_BOT_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
@@ -7,33 +7,9 @@ const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 describe("Command", () => {
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
 
-  afterAll(async () => {
+  afterAll(() => {
     // Log out of Discord
-    if (isClientLoggedIn) {
-      const client = await testerClient();
-      client.destroy();
-    }
-  });
-
-  describe("video", () => {
-    const url = "https://youtu.be/dQw4w9WgXcQ";
-    const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 32 seconds)`;
-    const needSongLink = `<@${TESTER_ID}>, You're gonna have to add a song link to that.`;
-
-    test("asks for a song link", async () => {
-      const response = await commandResponseInSameChannel("video");
-      expect(response?.content).toBe(needSongLink);
-    });
-
-    test("returns the title and duration of a song with normal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video ${url}`);
-      expect(response?.content).toBe(info);
-    });
-
-    test("returns the title and duration of a song with suboptimal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video ${url}`);
-      expect(response?.content).toBe(info);
-    });
+    logOut();
   });
 
   describe("sr", () => {
@@ -80,6 +56,27 @@ describe("Command", () => {
     test("yells at the tester for trying to restart the queue", async () => {
       const response = await commandResponseInSameChannel("sr restart");
       expect(response?.content).toBe(PERMISSION_ERROR_RESPONSE);
+    });
+  });
+
+  describe("video", () => {
+    const url = "https://youtu.be/dQw4w9WgXcQ";
+    const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 32 seconds)`;
+    const needSongLink = `<@${TESTER_ID}>, You're gonna have to add a song link to that.`;
+
+    test("asks for a song link", async () => {
+      const response = await commandResponseInSameChannel("video");
+      expect(response?.content).toBe(needSongLink);
+    });
+
+    test("returns the title and duration of a song with normal spacing", async () => {
+      const response = await commandResponseInSameChannel(`video ${url}`);
+      expect(response?.content).toBe(info);
+    });
+
+    test("returns the title and duration of a song with suboptimal spacing", async () => {
+      const response = await commandResponseInSameChannel(`video ${url}`);
+      expect(response?.content).toBe(info);
     });
   });
 

@@ -4,7 +4,7 @@ import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 
-export let isClientLoggedIn = false;
+let isClientLoggedIn = false;
 const client = new Discord.Client();
 
 /**
@@ -46,4 +46,13 @@ export async function testerClient(): Promise<Discord.Client> {
     isClientLoggedIn = true;
   }
   return client;
+}
+
+/**
+ * Logs out of the tester bot's Discord client.
+ */
+export function logOut(): void {
+  if (isClientLoggedIn) {
+    client.destroy();
+  }
 }

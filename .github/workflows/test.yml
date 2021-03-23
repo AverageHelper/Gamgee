@@ -1,5 +1,6 @@
 name: Tests
 
+# TODO: Rather than running tests on push to master, consider a CD step that auto-deploys to our server host, and builds
 on:
   push:
     branches: [main]
