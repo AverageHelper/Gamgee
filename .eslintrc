@@ -25,6 +25,7 @@
     "@typescript-eslint/no-implicit-any-catch": "error",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/require-await": "warn",
+    "@typescript-eslint/no-inferrable-types": "off",
     "no-console": "warn"
   },
 

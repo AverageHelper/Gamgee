@@ -4,7 +4,6 @@
   "description": "A Discord bot",
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
-    "start:test": "DATABASE_FOLDER=./tests/db NODE_ENV=test node .",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
@@ -13,6 +12,7 @@
     "test:src": "jest --selectProjects src",
     "test:src:watch": "npm run test:src -- --watch",
     "test:e2e": "concurrently -kn bot,jest -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
+    "start:test": "DATABASE_FOLDER=./tests/db NODE_ENV=test node .",
     "_test:e2e": "jest --selectProjects e2e --detectOpenHandles"
   },
   "main": "./dist/main.js",
