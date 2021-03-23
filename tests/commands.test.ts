@@ -1,19 +1,8 @@
 import requireEnv from "./requireEnv";
-import path from "path";
 import { testerClient, isClientLoggedIn, commandResponseInSameChannel } from "./discordUtils";
-import { fsUnlink } from "./fsUtils";
 
 const TESTER_ID = requireEnv("CORDE_BOT_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
-
-async function deleteTestDatabase() {
-  const dbDir = path.resolve(__dirname, "./db/db.sqlite");
-  await fsUnlink(dbDir);
-}
-
-beforeAll(async () => {
-  await deleteTestDatabase();
-});
 
 describe("Command", () => {
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
