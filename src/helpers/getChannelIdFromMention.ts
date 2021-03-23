@@ -2,8 +2,6 @@ import { useLogger } from "../logger";
 
 const logger = useLogger();
 
-// TODO: Write unit tests for this function
-
 /**
  * Get a channel ID from a mention string.
  *
