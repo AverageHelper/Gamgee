@@ -7,8 +7,6 @@ import { randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 
-const COMMAND_HELP = "help";
-
 const logger = useLogger();
 
 const commands = new Discord.Collection<string, Command>();
@@ -124,35 +122,6 @@ export async function handleCommand(
 
   if (!commandName) {
     // Empty, so do nothing lol
-    return;
-  }
-
-  if (commandName === COMMAND_HELP) {
-    const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
-    // TODO: Clean this spider out
-    const body = commands //
-      .mapValues(command => {
-        const requiredArgFormat = command.arbitrarySubcommand?.format ?? command.requiredArgFormat;
-        const fact = `\`${COMMAND_PREFIX}${command.name}${
-          requiredArgFormat ? " " + requiredArgFormat : ""
-        }\` - ${command.description}`;
-        const subcommands =
-          command.namedSubcommands //
-            ?.map(
-              sub =>
-                `    \`${COMMAND_PREFIX}${command.name} ${sub.name}${
-                  sub.requiredArgFormat ? " " + sub.requiredArgFormat : ""
-                }\` - ${sub.description}`
-            )
-            .join("\n") ?? "";
-        if (subcommands) {
-          return fact.concat("\n" + subcommands);
-        }
-        return fact;
-      })
-      .array()
-      .join("\n");
-    await message.channel.send(`Commands:\n${body}`);
     return;
   }
 

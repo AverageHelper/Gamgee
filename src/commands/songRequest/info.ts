@@ -6,7 +6,7 @@ import songRequest from "./index";
 
 const info: NamedSubcommand = {
   name: "info",
-  description: "Prints a handy message to let people know how to queue-up.",
+  description: "Print a handy message to let people know how to queue-up.",
   async execute({ message, storage }) {
     // Print the standard help
     const COMMAND_PREFIX = await getConfigCommandPrefix(storage);

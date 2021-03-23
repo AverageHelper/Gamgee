@@ -33,6 +33,14 @@ export default class StringBuilder {
   }
 
   /**
+   * Appends a string with Markdown inline-code formatting.
+   * @param str The string to codify.
+   */
+  pushCode(str: string): void {
+    this.push(`\`${str}\``);
+  }
+
+  /**
    * Appends a newline character to the build result.
    *
    * Identical to calling `push("\n")`.
