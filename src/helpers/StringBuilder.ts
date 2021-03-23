@@ -2,7 +2,7 @@
  * A class which facilitates the construction of a complex string over time.
  */
 export default class StringBuilder {
-  private storage: Array<string> = [];
+  #storage: Array<string> = [];
 
   /**
    *
@@ -21,7 +21,7 @@ export default class StringBuilder {
    */
   push(str: string): void {
     if (!str) return;
-    this.storage.push(str);
+    this.#storage.push(str);
   }
 
   /**
@@ -30,6 +30,14 @@ export default class StringBuilder {
    */
   pushBold(str: string): void {
     this.push(`**${str}**`);
+  }
+
+  /**
+   * Appends a string with Markdown inline-code formatting.
+   * @param str The string to codify.
+   */
+  pushCode(str: string): void {
+    this.push(`\`${str}\``);
   }
 
   /**
@@ -46,13 +54,13 @@ export default class StringBuilder {
    * @returns The built string.
    */
   result(): string {
-    return this.storage.join("");
+    return this.#storage.join("");
   }
 
   /**
    * Resets the string builder's state to empty.
    */
   clear(): void {
-    this.storage = [];
+    this.#storage = [];
   }
 }

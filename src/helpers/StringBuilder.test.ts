@@ -64,5 +64,12 @@ describe("String Builder", () => {
       builder.push("!");
       expect(builder.result()).toBe("For the **bold**!");
     });
+
+    test("builds a code string", () => {
+      builder.push("Please run the ");
+      builder.pushCode("?help");
+      builder.push(" command.");
+      expect(builder.result()).toBe("Please run the `?help` command.");
+    });
   });
 });

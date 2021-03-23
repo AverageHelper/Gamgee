@@ -12,11 +12,12 @@ const setup: NamedSubcommand = {
   requiredArgFormat: "<channel name>",
   description: "Set a channel as the 'queue' channel. *(Server owner only. No touch!)*",
   async execute({ message, args }) {
-    // Store the channel as the server's queue channel
-    // If that channel is already the queue channel, return.
+    if (!message.guild) {
+      return reply(message, "Can't do that here.");
+    }
 
     // Only the guild owner may touch the queue.
-    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
+    if (message.author.id !== message.guild.ownerID) {
       return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 

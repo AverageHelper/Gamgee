@@ -5,7 +5,7 @@ const logger = useLogger();
 
 const type: Command = {
   name: "t",
-  description: "Start typing :wink:",
+  description: "Start typing. :wink:",
   async execute(context) {
     const { message } = context;
     const channel = message.channel;

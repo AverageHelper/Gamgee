@@ -10,7 +10,7 @@ const logger = useLogger();
 
 const stats: NamedSubcommand = {
   name: "stats",
-  description: "Reports statistics on the current queue.",
+  description: "Print statistics on the current queue.",
   async execute(context) {
     const { message } = context;
 

@@ -33,7 +33,7 @@ export async function reject_private(message: Discord.Message, reason: string): 
 
 export async function reject_public(message: Discord.Message, reason: string): Promise<void> {
   await Promise.all([
-    message.channel.send(`:hammer: <@!${message.author.id}> ${reason}`),
+    message.channel.send(`:hammer: <@!${message.author.id}>, ${reason}`),
     message.suppressEmbeds(true)
   ]);
 }
@@ -48,7 +48,7 @@ const sr: Command = {
 
     // Prepare arguments
     if (args.length < 1) {
-      return reject_public(message, "You're gonna have to add a song link or title to that.");
+      return reject_public(message, "You're gonna have to add a song link to that.");
     }
 
     const arg = args[0];
