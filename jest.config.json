@@ -25,7 +25,7 @@
       "preset": "ts-jest",
       "setupFilesAfterEnv": ["jest-extended"],
       "testEnvironment": "node",
-      "testPathIgnorePatterns": ["/node_modules/"],
+      "testPathIgnorePatterns": ["./tests/setupJest.ts", "/node_modules/"],
       "testRegex": ["tests/.*\\.test\\.(t|j)s$"],
       "globals": {
         "ts-jest": {
