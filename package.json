@@ -12,7 +12,8 @@
     "test": "npm run test:src && npm run test:e2e",
     "test:src": "jest --selectProjects src",
     "test:src:watch": "npm run test:src -- --watch",
-    "test:e2e": "concurrently -kn bot,tester -s first 'npm run start:test' 'sleep 3 && jest --selectProjects e2e --detectOpenHandles'"
+    "test:e2e": "concurrently -kn bot,jest -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
+    "_test:e2e": "jest --selectProjects e2e --detectOpenHandles"
   },
   "main": "./dist/main.js",
   "files": [
