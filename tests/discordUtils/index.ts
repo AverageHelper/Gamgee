@@ -1,4 +1,4 @@
 export * from "./commandResponseInSameChannel";
-export * from "./getLastMessageFromChannel";
+export * from "./messageDispatch";
 export * from "./sendMessage";
 export * from "./testerClient";

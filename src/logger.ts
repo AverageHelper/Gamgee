@@ -7,6 +7,13 @@ export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error"
 const loggers = new Discord.Collection<LogLevel, Logger>();
 const defaultLevel: LogLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
 
+/**
+ * Sets up and returns the default runtime logger.
+ *
+ * @param level The lowest log level which should be printed to the console.
+ *
+ * @returns The logger, or a new one if no logger has been set up yet.
+ */
 export function useLogger(level: LogLevel = defaultLevel, defaultMeta?: unknown): Logger {
   let logger = loggers.get(level);
 
