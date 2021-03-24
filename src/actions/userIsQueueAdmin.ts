@@ -13,13 +13,24 @@ export default async function userIsQueueAdmin(
   // Always true for user with the "Events" role
   let hasAdminRole = false;
 
-  // FIXME: We need to get the role dynamically.
-  const EVENTS_ROLE_ID = process.env.EVENTS_ROLE_ID ?? "";
   try {
-    logger.info("Fetching admin role...");
-    const eventsRole = await guild.roles.fetch(EVENTS_ROLE_ID);
-    logger.debug(`Admin role: ${JSON.stringify(eventsRole, undefined, 2)}`);
-    hasAdminRole = eventsRole?.members.has(guild.member(user)?.id ?? "") ?? false;
+    logger.info("Fetching admin roles...");
+
+    // TODO: Fetch this from the database
+    const knownAdminRoles = [
+      process.env.EVENTS_ROLE_ID ?? "" //
+      // process.env.BOT_ADMIN_ROLE_ID ?? ""
+    ];
+
+    const adminRoles = await Promise.all(
+      knownAdminRoles //
+        .map(roleId => guild.roles.resolve(roleId))
+    );
+    // logger.debug(`${adminRoles.length} roles: ${JSON.stringify(adminRoles, undefined, 2)}`);
+
+    hasAdminRole = adminRoles.some(
+      role => role?.members.has(guild.member(user)?.id ?? "") ?? false
+    );
   } catch (error: unknown) {
     logger.error(`Couldn't fetch event: ${JSON.stringify(error, undefined, 2)}`);
   }

@@ -51,13 +51,13 @@ export async function handleReactionAdd(
     if (reaction.emoji.name === REACTION_BTN_DONE) {
       debugLog("Marking done....");
       await queue.markDone(message);
-      logger.info("Marked an entry done.");
+      logger.debug("Marked an entry done.");
 
       // Mark undone
     } else if (reaction.emoji.name === REACTION_BTN_UNDO) {
       debugLog("Marking undone....");
       await queue.markNotDone(message);
-      logger.info("Marked an entry undone");
+      logger.debug("Marked an entry undone");
     }
   }
 }
