@@ -4,6 +4,7 @@ import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import { deleteMessageWithId } from "../../actions/messages/deleteMessage";
+import { sendDMToUser } from "../../actions/messages/directMessage";
 
 const restart: NamedSubcommand = {
   name: "restart",
@@ -22,7 +23,10 @@ const restart: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await sendDMToUser(
+        message.author,
+        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
+      );
       return;
     }
     if (!channel) {

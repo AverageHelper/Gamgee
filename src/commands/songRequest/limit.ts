@@ -3,6 +3,7 @@ import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { ConfigValue } from "../../constants/config";
 import { reply } from "./index";
 import { useQueue } from "../../actions/queue/useQueue";
+import { sendDMToUser } from "../../actions/messages/directMessage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import durationString from "../../helpers/durationString";
@@ -42,7 +43,10 @@ const limit: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await sendDMToUser(
+        message.author,
+        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
+      );
       return;
     }
     if (!channel) {

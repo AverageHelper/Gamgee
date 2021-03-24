@@ -6,6 +6,7 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import { deleteMessage } from "../../actions/messages/deleteMessage";
+import { sendDMToUser } from "../../actions/messages/directMessage";
 import { reply, reply_private } from "./index";
 
 const logger = useLogger();
@@ -27,7 +28,10 @@ const stats: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await sendDMToUser(
+        message.author,
+        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
+      );
       return;
     }
     if (!channel) {
