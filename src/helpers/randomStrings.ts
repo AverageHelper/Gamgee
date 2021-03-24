@@ -1,6 +1,18 @@
-import { philosophy, phrases, questions, songAccepted } from "../constants/textResponses";
+import {
+  greetings,
+  philosophy,
+  phrases,
+  questions,
+  songAccepted
+} from "../constants/textResponses";
 import Discord from "discord.js";
 import randomElementOfArray from "./randomElementOfArray";
+
+/* Greetings */
+
+export function randomGreeting(): string {
+  return randomResponseFromArray("greetings", greetings);
+}
 
 /* Phrases */
 

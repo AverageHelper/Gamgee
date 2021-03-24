@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import getUserFromMention from "./helpers/getUserFromMention";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { useLogger } from "./logger";
-import { randomPhrase, randomQuestion } from "./helpers/randomStrings";
+import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 
@@ -152,6 +152,10 @@ export async function handleCommand(
   logger.debug(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
   if (!usedCommandPrefix) {
     // This is likely a game. Play along!
-    await message.channel.send(randomPhrase());
+    if (q.map(s => s.toLowerCase()).includes("hello")) {
+      await message.channel.send(randomGreeting());
+    } else {
+      await message.channel.send(randomPhrase());
+    }
   }
 }

@@ -5,6 +5,15 @@ export const songAccepted = [
   "Somepony once told me that I would get this request\n it’s time to put it into the queue"
 ];
 
+export const greetings = [
+  "Hello there :wave:",
+  "Hi",
+  "Good afternoon.",
+  ":grin:",
+  ":blush:",
+  "*Yawns* Good morn— what time is it??"
+];
+
 export const philosophy = [
   "What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?",
   "Has anyone really been far even as decided to use even go want to do look more like?",
@@ -56,6 +65,7 @@ export const phrases = [
   // Other
   "Bit of a tongue twister",
   "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
+  "Did you ever hear the tragedy of Darth Tirek the Wise?",
   "Don't count your chickens",
   "Down the hall, up the stairs, past the gargoyle",
   "Fan of squirrels.",
