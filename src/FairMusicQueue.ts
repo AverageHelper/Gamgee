@@ -1,85 +1,140 @@
+/**
+ * Implementation by caucow
+ * Node.js port by AverageHelper
+ */
+
 import { useLogger } from "./logger";
 const logger = useLogger();
 
-/**
- *
- * @author caucow
- */
-
-function run(): void {
-  //////// Just A Buncha Test Code ////////
-
-  const queueManager = new FairMusicQueueTest();
-  // Generate 4-8 users
-  const numberOfTestUsers = Math.floor(Math.random() * 5 + 4);
-  let submissionNumber = 0; // just to generate "unique" """submissions"""
-  // More convenient to start at a high number and work towards zero for
-  // testing fake user ids, so for this test, higher user IDs will try to
-  // queue their songs first.
-  for (let uNum = 0; uNum < numberOfTestUsers; uNum++) {
-    // create fake discord user id, easy to recognize in the test output
-    const userId = uNum * 1111;
-
-    // Generate 2-4 submissions per user
-    const numberOfTestSongs = Math.floor(Math.random() * 3 + 2);
-    for (let i = 0; i < numberOfTestSongs; i++) {
-      // proper implementation could return some kind of result to
-      // pass on to the user, boolean here just for simplicity/testing
-      queueManager.trySubmission(
-        userId,
-        `https://TotallyAMusic.com/music/${userId}/${submissionNumber}`,
-        Math.floor(Math.random() * 121 + 90)
-      );
-      submissionNumber += 1;
-    }
+/** Return the first element of an array, or `null` if the array is empty. */
+function peek<T>(linkedList: Array<T>): T | null {
+  if (linkedList.length === 0) {
+    return null;
   }
-
-  // For debug, print out all the users currently in the queue and
-  // all their submissions.
-  logger.info("");
-  logger.info("Printing master queue + local queues");
-  for (const sub of queueManager.masterQueue) {
-    logger.info(sub.userId);
-    for (const music of sub.localQueue) {
-      logger.info("    " + music.link);
-    }
-  }
-  logger.info("End of master queue");
-  logger.info("");
-
-  let next: Submission | null = null;
-  // Loop through submission queue until no submissions left.
-  let countdownToNewbieJoining = 5;
-  while (queueManager.pollNextSubmission() !== null) {
-    next = queueManager.pollNextSubmission();
-    logger.info(
-      `Playing submission: Link: ${next?.link ?? "null"} - Time: ${(
-        (next?.secondsLong ?? 0) / 60
-      ).toFixed(2)}:${((next?.secondsLong ?? 0) % 60).toFixed(2)}`
-    );
-    countdownToNewbieJoining -= 1;
-    if (countdownToNewbieJoining === 0) {
-      logger.info("");
-      logger.info("Adding 'late join' user + submissions");
-      const numberOfTestSongs = Math.floor(Math.random() * 3 + 2);
-      const newbieUserId = 9999;
-      for (let i = 0; i < numberOfTestSongs; i++) {
-        // proper implementation could return some kind of result with details
-        // to pass on to the user, boolean here just for simplicity/testing
-        queueManager.trySubmission(
-          newbieUserId,
-          `https://TotallyAMusic.com/music/${newbieUserId}/${submissionNumber}`,
-          Math.floor(Math.random() * 121 + 90)
-        );
-        submissionNumber += 1;
-      }
-      logger.info("");
-    }
-  }
-  ////////////// End Testing //////////////
+  return linkedList[0];
 }
 
-export class FairMusicQueueTest {
+/** Return the last element of an array, or `null` if the array is empty. */
+function peekLast<T>(linkedList: Array<T>): T | null {
+  if (linkedList.length === 0) {
+    return null;
+  }
+  return linkedList[linkedList.length - 1];
+}
+
+// Container object for submissions
+interface Submission {
+  link: string;
+  secondsLong: number;
+  timeCreated: number;
+}
+
+// Custom wrapper class around an Array queue that can push
+// new users who haven't played a song yet in front of people who have.
+// This way latecomers get to join the party as soon as possible while those
+// that showed up early still get to hear at least their first submission
+// before getting shifted back in the line.
+class FairerQueue {
+  #queue: Array<User> = [];
+
+  // synchronized so we can make sure we're not double-adding a user in
+  // case of spam/lag spikes.
+  add(user: User): void {
+    // Only add user to the queue if they're not already in it.
+    if (!this.#queue.includes(user)) {
+      if (user.history.length !== 0) {
+        // User has played a song before, no special treatment so
+        // add them straight to the back of the queue.
+        this.#queue.push(user);
+      } else {
+        // User has not played a song before, put them in line
+        // before users that have already played a song.
+        let insertPosition = 0;
+        for (const nextUser of this.#queue) {
+          if (nextUser.history.length !== 0) {
+            // Found a user that has already played a song,
+            // break the loop, insertPosition = that user's position.
+            break;
+          }
+          insertPosition++;
+        }
+        this.#queue.splice(insertPosition, 0, user);
+      }
+    }
+  }
+
+  isEmpty(): boolean {
+    return this.#queue.length === 0;
+  }
+
+  peek(): User | null {
+    return peek(this.#queue);
+  }
+
+  poll(): User | null {
+    return this.#queue.pop() ?? null;
+  }
+
+  [Symbol.iterator]() {
+    return this.#queue.values();
+  }
+}
+
+// Container object for Users (discord userId + local queue and history)
+class User {
+  readonly userId: number;
+  localQueue: Array<Submission>;
+  history: Array<Submission>;
+
+  constructor(userId: number) {
+    this.userId = userId;
+    this.localQueue = [];
+    this.history = [];
+  }
+
+  hasSubmission(): boolean {
+    return this.localQueue.length !== 0;
+  }
+
+  getMostRecentSubmission(): Submission | null {
+    if (this.localQueue.length !== 0) {
+      return peekLast(this.localQueue);
+    }
+    if (this.history.length !== 0) {
+      return peekLast(this.history);
+    }
+    return null;
+  }
+
+  addSubmission(sub: Submission): void {
+    this.cleanOld();
+    this.localQueue.push(sub);
+  }
+
+  // Get next submission (if one exists), remove it from local queue and
+  // add to history queue/list
+  pollSubmission(): Submission | null {
+    this.cleanOld();
+    const next = this.localQueue.pop() ?? null;
+    if (next !== null) {
+      this.history.push(next);
+    }
+    return next;
+  }
+
+  // Clear out submissions that are too old/free up memory.
+  cleanOld(): void {
+    const oldestAllowed = Date.now() - FairMusicQueueTest.maxSubmissionCacheTime;
+    while (
+      this.history.length !== 0 &&
+      (peek(this.history)?.timeCreated ?? Number.MIN_VALUE) < oldestAllowed
+    ) {
+      this.history.pop();
+    }
+  }
+}
+
+class FairMusicQueueTest {
   // Queues users rather than songs. Each user keeps its own local song queue,
   // and is added to the end of the master queue again after each of their
   // songs is played, until they have no songs left.
@@ -193,131 +248,71 @@ export class FairMusicQueueTest {
   }
 }
 
-function peek<T>(linkedList: Array<T>): T | null {
-  if (linkedList.length === 0) {
-    return null;
-  }
-  return linkedList[0];
-}
+//////// Just A Buncha Test Code ////////
 
-function peekLast<T>(linkedList: Array<T>): T | null {
-  if (linkedList.length === 0) {
-    return null;
-  }
-  return linkedList[linkedList.length - 1];
-}
+const queueManager = new FairMusicQueueTest();
 
-// Custom wrapper class around a LinkedList queue that can push
-// new users who haven't played a song yet in front of people who have.
-// This way latecomers get to join the party as soon as possible while those
-// that showed up early still get to hear at least their first submission
-// before getting shifted back in the line.
-class FairerQueue {
-  // The actual queue.
-  private queue: Array<User> = [];
+// Generate 4-8 users
+const numberOfTestUsers = Math.floor(Math.random() * 5 + 4);
 
-  // synchronized so we can make sure we're not double-adding a user in
-  // case of spam/lag spikes.
-  add(user: User): void {
-    // Only add user to the queue if they're not already in it.
-    if (!this.queue.includes(user)) {
-      if (user.history.length !== 0) {
-        // User has played a song before, no special treatment so
-        // add them straight to the back of the queue.
-        this.queue.push(user);
-      } else {
-        // User has not played a song before, put them in line
-        // before users that have already played a song.
-        let insertPosition = 0;
-        for (const nextUser of this.queue) {
-          if (nextUser.history.length !== 0) {
-            // Found a user that has already played a song,
-            // break the loop, insertPosition = that user's position.
-            break;
-          }
-          insertPosition++;
-        }
-        this.queue.splice(insertPosition, 0, user);
-      }
-    }
-  }
+let submissionNumber = 0; // just to generate "unique" """submissions"""
+// More convenient to start at a high number and work towards zero for
+// testing fake user ids, so for this test, higher user IDs will try to
+// queue their songs first.
+for (let uNum = 0; uNum < numberOfTestUsers; uNum++) {
+  // create fake discord user id, easy to recognize in the test output
+  const userId = uNum * 1111;
 
-  isEmpty(): boolean {
-    return this.queue.length === 0;
-  }
-
-  peek(): User | null {
-    return peek(this.queue);
-  }
-
-  poll(): User | null {
-    return this.queue.pop() ?? null;
-  }
-
-  [Symbol.iterator]() {
-    return this.queue.values();
+  // Generate 2-4 submissions per user
+  const numberOfTestSongs = Math.floor(Math.random() * 3 + 2);
+  for (let i = 0; i < numberOfTestSongs; i++) {
+    // proper implementation could return some kind of result to
+    // pass on to the user, boolean here just for simplicity/testing
+    queueManager.trySubmission(
+      userId,
+      `https://TotallyAMusic.com/music/${userId}/${submissionNumber}`,
+      Math.floor(Math.random() * 121 + 90)
+    );
+    submissionNumber += 1;
   }
 }
 
-// Container object for Users (discord userId + local queue and history)
-class User {
-  readonly userId: number;
-  localQueue: Array<Submission>;
-  history: Array<Submission>;
-
-  constructor(userId: number) {
-    this.userId = userId;
-    this.localQueue = [];
-    this.history = [];
+// For debug, print out all the users currently in the queue and
+// all their submissions.
+logger.info("Printing master queue + local queues");
+for (const sub of queueManager.masterQueue) {
+  logger.info(sub.userId);
+  for (const music of sub.localQueue) {
+    logger.info("    " + music.link);
   }
+}
+logger.info("End of master queue");
 
-  hasSubmission(): boolean {
-    return this.localQueue.length !== 0;
-  }
-
-  getMostRecentSubmission(): Submission | null {
-    if (this.localQueue.length !== 0) {
-      return peekLast(this.localQueue);
-    }
-    if (this.history.length !== 0) {
-      return peekLast(this.history);
-    }
-    return null;
-  }
-
-  addSubmission(sub: Submission): void {
-    this.cleanOld();
-    this.localQueue.push(sub);
-  }
-
-  // Get next submission (if one exists), remove it from local queue and
-  // add to history queue/list
-  pollSubmission(): Submission | null {
-    this.cleanOld();
-    const next = this.localQueue.pop() ?? null;
-    if (next !== null) {
-      this.history.push(next);
-    }
-    return next;
-  }
-
-  // Clear out submissions that are too old/free up memory.
-  cleanOld(): void {
-    const oldestAllowed = Date.now() - FairMusicQueueTest.maxSubmissionCacheTime;
-    while (
-      this.history.length !== 0 &&
-      (peek(this.history)?.timeCreated ?? Number.MIN_VALUE) < oldestAllowed
-    ) {
-      this.history.pop();
+let next: Submission | null = null;
+// Loop through submission queue until no submissions left.
+let countdownToNewbieJoining = 5;
+while (queueManager.pollNextSubmission() !== null) {
+  next = queueManager.pollNextSubmission();
+  logger.info(
+    `Playing submission: Link: ${next?.link ?? "null"} - Time: ${(
+      (next?.secondsLong ?? 0) / 60
+    ).toFixed(2)}:${((next?.secondsLong ?? 0) % 60).toFixed(2)}`
+  );
+  countdownToNewbieJoining -= 1;
+  if (countdownToNewbieJoining === 0) {
+    logger.info("Adding 'late join' user + submissions");
+    const numberOfTestSongs = Math.floor(Math.random() * 3 + 2);
+    const newbieUserId = 9999;
+    for (let i = 0; i < numberOfTestSongs; i++) {
+      // proper implementation could return some kind of result with details
+      // to pass on to the user, boolean here just for simplicity/testing
+      queueManager.trySubmission(
+        newbieUserId,
+        `https://TotallyAMusic.com/music/${newbieUserId}/${submissionNumber}`,
+        Math.floor(Math.random() * 121 + 90)
+      );
+      submissionNumber += 1;
     }
   }
 }
-
-// Container object for submissions
-interface Submission {
-  link: string;
-  secondsLong: number;
-  timeCreated: number;
-}
-
-run();
+////////////// End Testing //////////////
