@@ -4,7 +4,7 @@ import { isConfigKey, isConfigValue } from "../constants/config";
 import { listKeys } from "../constants/config/keys";
 import { getConfigValue } from "../actions/config/getConfigValue";
 import { setConfigValue } from "../actions/config/setConfigValue";
-import { sendDMToUser } from "../actions/messages/directMessage";
+import { replyPrivately } from "../actions/messages";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
@@ -30,10 +30,7 @@ const config: Command = {
 
     // Only the guild owner may touch the config.
     if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
-      await sendDMToUser(
-        message.author,
-        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
-      );
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 

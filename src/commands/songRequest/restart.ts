@@ -3,8 +3,7 @@ import { reply } from "./index";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
-import { deleteMessageWithId } from "../../actions/messages/deleteMessage";
-import { sendDMToUser } from "../../actions/messages/directMessage";
+import { deleteMessageWithId, replyPrivately } from "../../actions/messages";
 
 const restart: NamedSubcommand = {
   name: "restart",
@@ -23,10 +22,7 @@ const restart: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      await sendDMToUser(
-        message.author,
-        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
-      );
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
     if (!channel) {

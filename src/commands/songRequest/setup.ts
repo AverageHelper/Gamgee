@@ -3,8 +3,7 @@ import { useLogger } from "../../logger";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
-import { deleteMessage } from "../../actions/messages/deleteMessage";
-import { sendDMToUser } from "../../actions/messages/directMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 
 const logger = useLogger();
 
@@ -19,10 +18,7 @@ const setup: NamedSubcommand = {
 
     // Only the guild owner may touch the queue.
     if (message.author.id !== message.guild.ownerID) {
-      await sendDMToUser(
-        message.author,
-        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
-      );
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 

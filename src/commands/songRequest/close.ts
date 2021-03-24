@@ -1,8 +1,7 @@
 import type { NamedSubcommand } from "./../index";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
-import { deleteMessage } from "../../actions/messages/deleteMessage";
-import { sendDMToUser } from "../../actions/messages/directMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 
@@ -27,10 +26,7 @@ const close: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== queueChannel?.id
     ) {
-      await sendDMToUser(
-        message.author,
-        "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
-      );
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
     if (!queueChannel) {

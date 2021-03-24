@@ -1,7 +1,6 @@
 import type Discord from "discord.js";
 import type { Command } from "./../index";
-import { deleteMessage } from "../../actions/messages/deleteMessage";
-import { sendDMToUser } from "../../actions/messages/directMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 
 import arbitrarySubcommand from "./urlRequest";
 import info from "./info";
@@ -22,13 +21,13 @@ export async function reply(message: Discord.Message, msg: string): Promise<void
 }
 
 export async function reply_private(message: Discord.Message, msg: string): Promise<void> {
-  await sendDMToUser(message.author, `(Reply from <#${message.channel.id}>)\n${msg}`);
+  await replyPrivately(message, msg);
 }
 
 export async function reject_private(message: Discord.Message, reason: string): Promise<void> {
   await Promise.all([
     deleteMessage(message, "Spam; this song request was rejected."),
-    sendDMToUser(message.author, `(From <#${message.channel.id}>) ${reason}`)
+    replyPrivately(message, reason)
   ]);
 }
 
