@@ -14,6 +14,10 @@ const logger = useLogger();
  * @returns A `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessage(message: Discord.Message, reason?: string): Promise<boolean> {
+  if (message.channel.type === "dm") {
+    logger.debug("Can't delete others' messages in a DM channel.");
+    return false;
+  }
   try {
     await message.delete({ reason });
     return true;
