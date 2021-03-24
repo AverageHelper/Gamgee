@@ -141,6 +141,5 @@ export async function handleCommand(
     });
   }
 
-  logger.warn(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
-  await message.reply("I'm really not sure what to do with that, mate.");
+  logger.debug(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
 }
