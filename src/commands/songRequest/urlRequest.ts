@@ -7,7 +7,7 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 import { useGuildStorage } from "../../useGuildStorage";
 
 const logger = useLogger();

@@ -1,7 +1,7 @@
 import type { NamedSubcommand } from "./../index";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 

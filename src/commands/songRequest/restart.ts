@@ -3,9 +3,7 @@ import { reply } from "./index";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
-import { useLogger } from "../../logger";
-
-const logger = useLogger();
+import { deleteMessageWithId } from "../../actions/messages/deleteMessage";
 
 const restart: NamedSubcommand = {
   name: "restart",
@@ -37,11 +35,7 @@ const restart: NamedSubcommand = {
     const queue = await useQueue(channel);
     const deleteMessages = (await queue.getAllEntries())
       .map(entry => entry.queueMessageId)
-      .map(messageId =>
-        channel.messages.delete(messageId).catch(error => {
-          logger.error(`Failed to delete message: ${JSON.stringify(error, undefined, 2)}`);
-        })
-      );
+      .map(messageId => deleteMessageWithId(messageId, channel, "Pruning; Clearing the old queue"));
     await Promise.all(deleteMessages);
     await queue.clear();
     return reply(message, "The queue has restarted.");

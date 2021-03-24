@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Command } from "./../index";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 
 import arbitrarySubcommand from "./urlRequest";
 import info from "./info";

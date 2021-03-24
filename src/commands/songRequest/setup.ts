@@ -3,7 +3,7 @@ import { useLogger } from "../../logger";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 
 const logger = useLogger();
 

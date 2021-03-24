@@ -5,7 +5,7 @@ import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 import { reply, reply_private } from "./index";
 
 const logger = useLogger();
