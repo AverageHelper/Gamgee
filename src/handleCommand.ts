@@ -7,7 +7,12 @@ import { randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 
+const LOGGING = false;
 const logger = useLogger();
+
+function debugLog(msg: string): void {
+  if (LOGGING) logger.debug(msg);
+}
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
@@ -36,36 +41,36 @@ async function query(
   storage: Storage | null
 ): Promise<Array<string> | undefined> {
   const content = message.content.trim();
-  logger.debug(`Received message: '${content}'`);
+  debugLog(`Received message: '${content}'`);
   const query = content.split(/ +/);
 
   const commandOrMention = query[0];
-  logger.debug(`First word: '${commandOrMention}'`);
+  debugLog(`First word: '${commandOrMention}'`);
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
-    logger.debug(`This mentions ${mentionedUser.tag}`);
+    debugLog(`This mentions ${mentionedUser.tag}`);
     // See if it's for us.
     if (client.user && mentionedUser.tag === client.user.tag) {
-      logger.debug(`This is us! ${client.user.tag}`);
+      debugLog(`This is us! ${client.user.tag}`);
       // It's for us. Return the query verbatim.
       return query.slice(1);
     }
 
     // It's not for us.
-    logger.debug(`This is not us. ${client.user?.tag ?? "We're not signed in."}`);
+    debugLog(`This is not us. ${client.user?.tag ?? "We're not signed in."}`);
     return undefined;
   }
 
   // Make sure it's a command
   const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
-  logger.debug(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
+  debugLog(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
   if (!content.startsWith(COMMAND_PREFIX)) {
-    logger.debug("This is just a message. Ignoring.");
+    debugLog("This is just a message. Ignoring.");
     return undefined;
   }
   query[0] = query[0].substring(COMMAND_PREFIX.length);
-  logger.debug(`query: ${query.toString()}`);
+  debugLog(`query: ${query.toString()}`);
 
   return query;
 }
@@ -92,7 +97,7 @@ export async function handleCommand(
     );
     return;
   }
-  logger.debug(
+  debugLog(
     `Handling a message. bot: ${message.author.bot ? "true" : "false"}; env: ${
       process.env.NODE_ENV ?? "undefined"
     }`
