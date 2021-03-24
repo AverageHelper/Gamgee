@@ -5,6 +5,7 @@ import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
+import deleteMessage from "../../actions/deleteMessage";
 import { reply, reply_private } from "./index";
 
 const logger = useLogger();
@@ -26,7 +27,8 @@ const stats: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
     if (!channel) {
       return reply(message, `No queue is set up. Would you like to start one?`);
@@ -81,7 +83,7 @@ const stats: NamedSubcommand = {
     const response = responseBuilder.result();
     await Promise.all([
       queueIsCurrent ? reply(message, response) : reply_private(message, response), //
-      message.delete()
+      deleteMessage(message, "Spam; Users shouldn't see this")
     ]);
     return;
   }

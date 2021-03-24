@@ -19,9 +19,7 @@ export default async function deleteMessage(
     await message.delete({ reason });
     return true;
   } catch (error: unknown) {
-    logger.error(
-      `I don't seem to have permission to delete messages: ${JSON.stringify(error, undefined, 2)}`
-    );
+    logger.error(`Failed to delete a message: ${JSON.stringify(error, undefined, 2)}`);
     return false;
   }
 }
