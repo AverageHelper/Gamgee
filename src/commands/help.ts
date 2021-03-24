@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import type { Command } from "./index";
 import describeAllCommands from "../actions/describeAllCommands";
+import { replyPrivately } from "../actions/messages";
 
 const help: Command = {
   name: "help",
@@ -15,7 +16,7 @@ const help: Command = {
     });
 
     const descriptions = await describeAllCommands(storage, commands);
-    await message.channel.send(`Commands:\n${descriptions}`);
+    await replyPrivately(message, `Commands:\n${descriptions}`);
   }
 };
 

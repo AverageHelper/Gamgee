@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Command help returns the help text 1`] = `
-"Commands:
+"(DM to <@!822883259884634133>)
+Commands:
 \`?config\` - Read and modify config options. *(Server owner only. No touch!)*
 \`?help\` - Print this handy message.
 \`?ping\` - Ping my host server to check latency.
