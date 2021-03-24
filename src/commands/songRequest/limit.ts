@@ -18,11 +18,11 @@ type LimitKey =
   | typeof ARG_SUB_COOLDOWN
   | typeof ARG_SUB_MAX_SUBMISSIONS;
 
-const allLimits = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
+const allLimits: Array<LimitKey> = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
 const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
-  return !!value && typeof value === "string" && allLimits.includes(value);
+  return !!value && typeof value === "string" && allLimits.includes(value as LimitKey);
 }
 
 const limit: NamedSubcommand = {
@@ -36,6 +36,50 @@ const limit: NamedSubcommand = {
 
     const channel = await getQueueChannel(message);
 
+    if (!channel) {
+      return reply(message, "No queue is set up yet.");
+    }
+
+    const queue = await useQueue(channel);
+    const config = await queue.getConfig();
+
+    if (args.length < 2) {
+      // Read out the existing limits
+      const responseBuilder = new StringBuilder("Queue Limits:");
+
+      allLimits.forEach(key => {
+        responseBuilder.pushNewLine();
+        responseBuilder.pushCode(key);
+        responseBuilder.push(" - ");
+
+        switch (key) {
+          case ARG_SUB_COOLDOWN:
+            if (config.cooldownSeconds) {
+              responseBuilder.pushBold(durationString(config.cooldownSeconds));
+            } else {
+              responseBuilder.pushBold("none");
+            }
+            break;
+          case ARG_ENTRY_DURATION:
+            if (config.entryDurationSeconds) {
+              responseBuilder.pushBold(durationString(config.entryDurationSeconds));
+            } else {
+              responseBuilder.pushBold("infinite");
+            }
+            break;
+          case ARG_SUB_MAX_SUBMISSIONS:
+            if (config.submissionMaxQuantity) {
+              responseBuilder.pushBold(config.submissionMaxQuantity.toString());
+            } else {
+              responseBuilder.pushBold("infinite");
+            }
+            break;
+        }
+      });
+
+      return reply(message, responseBuilder.result());
+    }
+
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (
       !(await userIsQueueAdmin(message.author, message.guild)) &&
@@ -44,16 +88,6 @@ const limit: NamedSubcommand = {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
-    if (!channel) {
-      return reply(message, "No queue is set up yet.");
-    }
-
-    const queue = await useQueue(channel);
-
-    // Set limits on the queue
-    if (args.length < 2) {
-      return reply(message, `Gonna need more info than that. Add one of: ${limitsList}.`);
-    }
 
     const limitKey = args[1];
     if (!isLimitKey(limitKey)) {
@@ -61,7 +95,7 @@ const limit: NamedSubcommand = {
       return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
     }
 
-    const config = await queue.getConfig();
+    // Set limits on the queue
     let value: ConfigValue | undefined = args.length >= 3 ? args[2] : undefined;
 
     switch (limitKey) {
