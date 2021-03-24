@@ -16,6 +16,8 @@ const setup: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
+    await deleteMessage(message, "Users don't need to see this command once it's run.");
+
     // Only the guild owner may touch the queue.
     if (message.author.id !== message.guild.ownerID) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
@@ -45,8 +47,7 @@ const setup: NamedSubcommand = {
     logger.info(`Setting up channel '${channel.name}' for queuage.`);
     await Promise.all([
       guild.setQueueChannel(channel.id),
-      channel.send("This is a queue now. :smiley:"),
-      deleteMessage(message, "Users don't need to see this command once it's run.")
+      channel.send("This is a queue now. :smiley:")
     ]);
   }
 };

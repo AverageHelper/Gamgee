@@ -22,16 +22,11 @@ const urlRequest: ArbitrarySubcommand = {
 
     const guild = await useGuildStorage(message.guild);
     const queueChannel = await getQueueChannel(message);
-    const isQueueOpen = await guild.getQueueOpen();
     if (!queueChannel) {
       return reject_public(message, "The queue is not set up.");
     }
-    if (!isQueueOpen) {
-      return reject_public(message, "The queue is not open.");
-    }
 
-    if (message.channel.id === queueChannel.id) {
-      // TODO: Add the ability to configure a specific channel from which song requests should be taken.
+    if (message.channel.id === queueChannel?.id) {
       await Promise.all([
         deleteMessage(message, "Spam; song requests are not permitted in the queue channel."),
         reject_private(
@@ -40,6 +35,11 @@ const urlRequest: ArbitrarySubcommand = {
         )
       ]);
       return;
+    }
+
+    const isQueueOpen = await guild.getQueueOpen();
+    if (!isQueueOpen) {
+      return reject_public(message, "The queue is not open.");
     }
 
     logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
