@@ -36,8 +36,6 @@ try {
 
   // Handle Reactions
   client.on("messageReactionAdd", (reaction, user) => {
-    logger.debug("Received reaction add event.");
-
     void Promise.all([reaction.fetch(), user.fetch()])
       .then(([reaction, user]) => handleReactionAdd(reaction, user))
       .catch(error =>
