@@ -3,6 +3,7 @@ import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import deleteMessage from "../../actions/deleteMessage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 
 const close: NamedSubcommand = {
   name: "close",
@@ -21,7 +22,10 @@ const close: NamedSubcommand = {
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== queueChannel?.id) {
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== queueChannel?.id
+    ) {
       return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
     if (!queueChannel) {

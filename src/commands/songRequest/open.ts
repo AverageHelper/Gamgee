@@ -3,6 +3,7 @@ import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import deleteMessage from "../../actions/deleteMessage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 
 const open: NamedSubcommand = {
   name: "open",
@@ -16,22 +17,22 @@ const open: NamedSubcommand = {
 
     const [guild, channel] = await Promise.all([
       useGuildStorage(message.guild),
-      getQueueChannel(context)
+      getQueueChannel(context),
+      deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
     // The queue may only be opened in the queue channel, or by the server owner.
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== channel?.id
+    ) {
       return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
-
-    const [isAlreadyOpen] = await Promise.all([
-      guild.getQueueOpen(),
-      deleteMessage(message, "Users don't need to see this command once it's run.")
-    ]);
 
     if (!channel) {
       return reply(message, "There's no queue to open. Have you set one up yet?");
     }
+    const isAlreadyOpen = await guild.getQueueOpen();
     if (isAlreadyOpen) {
       return reply(message, "The queue's already open! :smiley:");
     }

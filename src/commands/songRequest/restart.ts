@@ -2,6 +2,7 @@ import type { NamedSubcommand } from "./../index";
 import { reply } from "./index";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 
 const restart: NamedSubcommand = {
   name: "restart",
@@ -15,8 +16,11 @@ const restart: NamedSubcommand = {
 
     const channel = await getQueueChannel(context);
 
-    // Only the guild owner may touch the queue, unless we're in the privileged queue channel.
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
+    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== channel?.id
+    ) {
       return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
     if (!channel) {
