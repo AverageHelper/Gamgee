@@ -29,7 +29,8 @@ const config: Command = {
 
     // Only the guild owner may touch the config.
     if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
-      return reply("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
 
     if (args.length < 1) {
@@ -52,7 +53,7 @@ const config: Command = {
         }
 
         const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-        return reply(`I'm not sure what ${that} is. ` + listKeys());
+        return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
       }
 
       case ARG_UNSET: {
@@ -69,7 +70,7 @@ const config: Command = {
         }
 
         const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-        return reply(`I'm not sure what ${that} is. ` + listKeys());
+        return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
       }
 
       case ARG_SET: {
@@ -81,7 +82,7 @@ const config: Command = {
         const key = args[1];
         if (!isConfigKey(key)) {
           const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-          return reply(`I'm not sure what ${that} is. ` + listKeys());
+          return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
         }
 
         const value = args[2];

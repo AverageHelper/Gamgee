@@ -42,7 +42,8 @@ const limit: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
     if (!channel) {
       return reply(message, "No queue is set up yet.");
@@ -58,7 +59,7 @@ const limit: NamedSubcommand = {
     const limitKey = args[1];
     if (!isLimitKey(limitKey)) {
       const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
-      return reply(message, `I'm not sure what ${that} is. ` + limitsList);
+      return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
     }
 
     const config = await queue.getConfig();
@@ -89,7 +90,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ entryDurationSeconds: value });
 
         const responseBuilder = new StringBuilder("Entry duration limit ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -121,7 +122,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ cooldownSeconds: value });
 
         const responseBuilder = new StringBuilder("Submission cooldown ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -153,7 +154,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ submissionMaxQuantity: value });
 
         const responseBuilder = new StringBuilder("Submission count limit per user ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -165,7 +166,7 @@ const limit: NamedSubcommand = {
       default: {
         const that =
           (limitKey as string).length <= SAFE_PRINT_LENGTH ? `'${limitKey as string}'` : "that";
-        return reply(message, `I'm not sure what ${that} is. ` + limitsList);
+        return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
       }
     }
   }

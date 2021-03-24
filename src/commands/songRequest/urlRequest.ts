@@ -79,7 +79,7 @@ const urlRequest: ArbitrarySubcommand = {
         rejectionBuilder.push("You have used all ");
         rejectionBuilder.pushBold(`${maxSubs}`);
         rejectionBuilder.push(" of your allotted submissions.");
-        return reject_public(message, rejectionBuilder.result());
+        return reject_private(message, rejectionBuilder.result());
       }
 
       // If the user is still under cooldown, reject!

@@ -18,7 +18,8 @@ const setup: NamedSubcommand = {
 
     // Only the guild owner may touch the queue.
     if (message.author.id !== message.guild.ownerID) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
 
     if (args.length < 2) {

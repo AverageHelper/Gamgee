@@ -26,7 +26,8 @@ const open: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
 
     if (!channel) {

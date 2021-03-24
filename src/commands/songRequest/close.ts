@@ -26,7 +26,8 @@ const close: NamedSubcommand = {
       !(await userIsQueueAdmin(message.author, message.guild)) &&
       message.channel.id !== queueChannel?.id
     ) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await message.author.send("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
     if (!queueChannel) {
       return reply(message, "There's no queue to close. Have you set one up yet?");
