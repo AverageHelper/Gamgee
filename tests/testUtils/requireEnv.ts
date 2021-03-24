@@ -1,4 +1,4 @@
-import "../src/environment";
+import "../../src/environment";
 import EnvVariableNotFoundError from "./EnvVariableNotFoundError";
 
 type EnvKey =
@@ -7,7 +7,9 @@ type EnvKey =
   | "CORDE_BOT_ID"
   | "QUEUE_CHANNEL_ID"
   | "CORDE_TEST_TOKEN"
-  | "CHANNEL_ID";
+  | "GUILD_ID"
+  | "CHANNEL_ID"
+  | "QUEUE_ADMIN_ROLE_ID";
 
 /**
  * Fetches the value of an environment variable key. If that value is not found, an error is thrown.

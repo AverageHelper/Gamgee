@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import requireEnv from "../requireEnv";
+import requireEnv from "../testUtils/requireEnv";
 import { testerClient } from "./testerClient";
 
 const COMMAND_PREFIX = requireEnv("BOT_PREFIX");

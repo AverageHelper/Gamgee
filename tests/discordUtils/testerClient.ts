@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import requireEnv from "../requireEnv";
+import requireEnv from "../testUtils/requireEnv";
 import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();

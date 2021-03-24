@@ -1,5 +1,6 @@
 import path from "path";
 import { fsUnlink } from "./fsUtils";
+import { logOut } from "./discordUtils";
 
 // 30-second timeout for E2E tests
 jest.setTimeout(30000);
@@ -11,4 +12,8 @@ async function deleteTestDatabase() {
 
 beforeAll(async () => {
   await deleteTestDatabase();
+});
+
+afterAll(() => {
+  logOut();
 });
