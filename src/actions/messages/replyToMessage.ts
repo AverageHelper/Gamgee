@@ -18,8 +18,13 @@ const logger = useLogger();
  */
 export async function replyPrivately(message: Discord.Message, content: string): Promise<boolean> {
   try {
-    await message.author.send(`(Reply from <#${message.channel.id}>)\n${content}`);
-    // TODO: If the message author is our test bot, send in the channel instead
+    const user = message.author;
+    if (user.bot && user.id === process.env.CORDE_BOT_ID) {
+      await message.channel.send(`(DM to <@!${user.id}>)\n${content}`);
+    } else if (!user.bot) {
+      await user.send(`(Reply from <#${message.channel.id}>)\n${content}`);
+    }
+    // Normal bot messages get ignored
     return true;
   } catch (error: unknown) {
     logger.error(`Failed to send direct message: ${JSON.stringify(error, undefined, 2)}`);
