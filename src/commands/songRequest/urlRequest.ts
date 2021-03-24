@@ -15,15 +15,13 @@ const logger = useLogger();
 const urlRequest: ArbitrarySubcommand = {
   format: "<YouTube or SoundCloud link>",
   description: "Attempts to add the given content to the queue.",
-  async execute(context) {
-    const { message, args } = context;
-
+  async execute({ args, message }) {
     if (!message.guild) {
       return;
     }
 
     const guild = await useGuildStorage(message.guild);
-    const queueChannel = await getQueueChannel(context);
+    const queueChannel = await getQueueChannel(message);
     const isQueueOpen = await guild.getQueueOpen();
     if (!queueChannel) {
       return reject_public(message, "The queue is not set up.");

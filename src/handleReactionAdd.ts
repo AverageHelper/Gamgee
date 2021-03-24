@@ -2,8 +2,14 @@ import type Discord from "discord.js";
 import { useLogger } from "./logger";
 import { useQueue } from "./actions/queue/useQueue";
 import { REACTION_BTN_DONE, REACTION_BTN_UNDO } from "./constants/reactions";
+import getQueueChannel from "./actions/queue/getQueueChannel";
 
+const LOGGING = false;
 const logger = useLogger();
+
+function debugLog(msg: string): void {
+  if (LOGGING) logger.debug(msg);
+}
 
 export async function handleReactionAdd(
   reaction: Discord.MessageReaction,
@@ -18,7 +24,7 @@ export async function handleReactionAdd(
     );
     return;
   }
-  logger.debug(
+  debugLog(
     `Handling a reaction. bot: ${user.bot ? "true" : "false"}; env: ${
       process.env.NODE_ENV ?? "undefined"
     }`
@@ -27,32 +33,31 @@ export async function handleReactionAdd(
   // Ignore self reactions
   if (user.id === reaction.client.user?.id) return;
 
-  logger.debug("Received user reaction.");
+  debugLog("Received user reaction.");
   const message = reaction.message;
 
-  if (!reaction.message.channel.isText()) return;
-  const channel = reaction.message.channel as Discord.TextChannel;
+  const channel = await getQueueChannel(message);
+  if (!channel) return;
+
   const queue = await useQueue(channel);
   const entry = await queue.getEntryFromMessage(message.id);
 
   if (entry) {
-    logger.debug(
+    debugLog(
       `Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
     );
 
     // Mark done
     if (reaction.emoji.name === REACTION_BTN_DONE) {
-      logger.debug("Marking done....");
+      debugLog("Marking done....");
       await queue.markDone(message);
       logger.info("Marked an entry done.");
 
       // Mark undone
     } else if (reaction.emoji.name === REACTION_BTN_UNDO) {
-      logger.debug("Marking undone....");
+      debugLog("Marking undone....");
       await queue.markNotDone(message);
       logger.info("Marked an entry undone");
     }
   }
-
-  return Promise.resolve();
 }

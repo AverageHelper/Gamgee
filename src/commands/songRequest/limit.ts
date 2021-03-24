@@ -29,14 +29,12 @@ const limit: NamedSubcommand = {
   name: "limit",
   requiredArgFormat: `<${allLimits.join("|")}>`,
   description: "Set a limit value on the queue. (Time in seconds, where applicable)",
-  async execute(context) {
-    const { args, message } = context;
-
+  async execute({ args, message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
 
-    const channel = await getQueueChannel(context);
+    const channel = await getQueueChannel(message);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (

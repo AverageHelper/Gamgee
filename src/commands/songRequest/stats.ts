@@ -13,14 +13,12 @@ const logger = useLogger();
 const stats: NamedSubcommand = {
   name: "stats",
   description: "Print statistics on the current queue.",
-  async execute(context) {
-    const { message } = context;
-
+  async execute({ message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
 
-    const channel = await getQueueChannel(context);
+    const channel = await getQueueChannel(message);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (

@@ -8,14 +8,12 @@ import { deleteMessageWithId, replyPrivately } from "../../actions/messages";
 const restart: NamedSubcommand = {
   name: "restart",
   description: "Empty the queue and start a fresh queue session.",
-  async execute(context) {
-    const { message } = context;
-
+  async execute({ message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
 
-    const channel = await getQueueChannel(context);
+    const channel = await getQueueChannel(message);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (

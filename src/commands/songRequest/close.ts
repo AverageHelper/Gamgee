@@ -8,9 +8,7 @@ import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 const close: NamedSubcommand = {
   name: "close",
   description: "Stop accepting song requests to the queue.",
-  async execute(context) {
-    const { message } = context;
-
+  async execute({ message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
@@ -18,7 +16,7 @@ const close: NamedSubcommand = {
     const guild = await useGuildStorage(message.guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
       guild.getQueueOpen(),
-      getQueueChannel(context),
+      getQueueChannel(message),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
