@@ -1,30 +1,48 @@
-import { phrases, questions, songAccepted } from "../constants/textResponses";
+import { philosophy, phrases, questions, songAccepted } from "../constants/textResponses";
+import Discord from "discord.js";
 import randomElementOfArray from "./randomElementOfArray";
 
-/** Returns a random phrase or sentence fragment, in sentence case, occasionally followed by punctuation. */
+/* Phrases */
+
 export function randomPhrase(): string {
-  return randomElementOfArray(phrases);
+  return randomResponseFromArray("phrases", phrases);
 }
 
-let lastQuestion = questions[0];
+/* Philosophy */
 
-/** Returns a random query. */
+export function randomPhilosophy(): string {
+  return randomResponseFromArray("phrases", philosophy);
+}
+
+/* Questions */
+
 export function randomQuestion(): string {
-  let result = randomElementOfArray(questions);
-  while (result === lastQuestion) {
-    result = randomElementOfArray(questions);
-  }
-  lastQuestion = result;
-  return result;
+  return randomResponseFromArray("questions", questions);
 }
 
-let lastAcceptance = songAccepted[0];
+/* Song Acceptance */
 
 export function randomAcceptance(): string {
-  let result = randomElementOfArray(songAccepted);
-  while (result === lastAcceptance) {
-    result = randomElementOfArray(songAccepted);
+  return randomResponseFromArray("songAccepted", songAccepted);
+}
+
+const lastResponses = new Discord.Collection<string, string>();
+
+/**
+ * Returns a random value from the provided `array`, making sure that the value
+ * does not match the value previously given (if the array is longer than 1 item)
+ *
+ * @param key The key by which to differentiate this array from the next.
+ * @param array The array from which to source a response.
+ *
+ * @returns A string from the array.
+ */
+function randomResponseFromArray(key: string, array: Array<string>): string {
+  let result = randomElementOfArray(array);
+  const lastResult = lastResponses.get(key);
+  while (array.length > 1 && result === lastResult) {
+    result = randomElementOfArray(array);
   }
-  lastAcceptance = result;
+  lastResponses.set(key, result);
   return result;
 }

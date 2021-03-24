@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import getUserFromMention from "./helpers/getUserFromMention";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { useLogger } from "./logger";
-import { randomQuestion } from "./helpers/randomStrings";
+import { randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 
@@ -18,6 +18,13 @@ const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
   commands.set(command.name, command);
 });
+
+interface QueryMessage {
+  /** The command and its arguments. */
+  query: Array<string>;
+  /** Whether the user used the regular command prefix or a user mention. */
+  usedCommandPrefix: boolean;
+}
 
 /**
  * Parses a message and returns a command query if one exists.
@@ -39,7 +46,7 @@ async function query(
   client: Discord.Client,
   message: Discord.Message,
   storage: Storage | null
-): Promise<Array<string> | undefined> {
+): Promise<QueryMessage | null> {
   const content = message.content.trim();
   debugLog(`Received message: '${content}'`);
   const query = content.split(/ +/);
@@ -54,12 +61,12 @@ async function query(
     if (client.user && mentionedUser.tag === client.user.tag) {
       debugLog(`This is us! ${client.user.tag}`);
       // It's for us. Return the query verbatim.
-      return query.slice(1);
+      return { query: query.slice(1), usedCommandPrefix: false };
     }
 
     // It's not for us.
     debugLog(`This is not us. ${client.user?.tag ?? "We're not signed in."}`);
-    return undefined;
+    return null;
   }
 
   // Make sure it's a command
@@ -67,12 +74,12 @@ async function query(
   debugLog(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
   if (!content.startsWith(COMMAND_PREFIX)) {
     debugLog("This is just a message. Ignoring.");
-    return undefined;
+    return null;
   }
   query[0] = query[0].substring(COMMAND_PREFIX.length);
   debugLog(`query: ${query.toString()}`);
 
-  return query;
+  return { query, usedCommandPrefix: true };
 }
 
 /**
@@ -111,8 +118,9 @@ export async function handleCommand(
   if (!content) return;
 
   // Don't bother with regular messages
-  const q = await query(client, message, storage);
-  if (!q) return;
+  const pq = await query(client, message, storage);
+  if (!pq) return;
+  const { query: q, usedCommandPrefix } = pq;
 
   logger.info(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
 
@@ -142,4 +150,8 @@ export async function handleCommand(
   }
 
   logger.debug(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
+  if (!usedCommandPrefix) {
+    // This is likely a game. Play along!
+    await message.channel.send(randomPhrase());
+  }
 }
