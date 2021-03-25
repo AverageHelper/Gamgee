@@ -54,4 +54,6 @@ jobs:
           GUILD_ID: ${{ secrets.GUILD_ID }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
           QUEUE_CHANNEL_ID: ${{ secrets.QUEUE_CHANNEL_ID }}
+          QUEUE_ADMIN_ROLE_ID: ${{ secrets.QUEUE_ADMIN_ROLE_ID }}
+          QUEUE_CREATOR_ROLE_ID: ${{ secrets.QUEUE_CREATOR_ROLE_ID }}
           BOT_PREFIX: "?"
