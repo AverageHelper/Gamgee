@@ -177,19 +177,28 @@ describe("Command as admin", () => {
         });
 
         test("allows the tester to see queue statistics", async () => {
-          const response = await commandResponseInSameChannel("sr stats");
+          const response = await commandResponseInSameChannel(
+            "sr stats",
+            undefined,
+            "Queue channel"
+          );
           expect(response?.content).toContain(
             `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
           );
         });
 
         test("allows the tester to restart the queue", async () => {
-          const startResponse = await commandResponseInSameChannel("sr restart");
+          const startResponse = await commandResponseInSameChannel(
+            "sr restart",
+            undefined,
+            "Clearing the queue"
+          );
           const finishResponse = await waitForMessage(
             msg =>
               msg.author.id === UUT_ID &&
               msg.channel.id === RUN_CHANNEL_ID &&
-              msg.id !== startResponse?.id
+              msg.id !== startResponse?.id &&
+              msg.content.toLowerCase().includes("the queue has restarted")
           );
           expect(startResponse?.deleted).toBeFalse();
           expect(startResponse?.content).toContain("Clearing the queue");
@@ -203,30 +212,43 @@ describe("Command as admin", () => {
         });
 
         test("allows the tester to open the queue", async () => {
-          const response = await commandResponseInSameChannel("sr open");
+          const response = await commandResponseInSameChannel("sr open", undefined, "now open");
           expect(response?.content).not.toContain("already");
           expect(response?.content).toContain("now open");
         });
 
         test("fails to close the queue", async () => {
-          const response = await commandResponseInSameChannel("sr close");
+          const response = await commandResponseInSameChannel(
+            "sr close",
+            undefined,
+            "already closed"
+          );
           expect(response?.content).toContain("already closed");
         });
 
         test("allows the tester to see queue statistics", async () => {
-          const response = await commandResponseInSameChannel("sr stats");
+          const response = await commandResponseInSameChannel(
+            "sr stats",
+            undefined,
+            "Queue channel"
+          );
           expect(response?.content).toContain(
             `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
           );
         });
 
         test("allows the tester to restart the queue", async () => {
-          const startResponse = await commandResponseInSameChannel("sr restart");
+          const startResponse = await commandResponseInSameChannel(
+            "sr restart",
+            undefined,
+            "Clearing the queue"
+          );
           const finishResponse = await waitForMessage(
             msg =>
               msg.author.id === UUT_ID &&
               msg.channel.id === RUN_CHANNEL_ID &&
-              msg.id !== startResponse?.id
+              msg.id !== startResponse?.id &&
+              msg.content.toLowerCase().includes("the queue has restarted")
           );
           expect(startResponse?.deleted).toBeFalse();
           expect(startResponse?.content).toContain("Clearing the queue");
