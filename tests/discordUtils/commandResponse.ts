@@ -14,16 +14,24 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
  * automatically prepended.
  * @param channelId The ID of the channel in which to send the command,
  * and from which a response should be received.
+ * @param expectToContain A string that should be found in the content
+ * of the received message.
  *
  * @returns The message that was received, or `null` if no matching
  * message was found within the timeout duration.
  */
 export async function commandResponseInSameChannel(
   command: string,
-  channelId: string = TEST_CHANNEL_ID
+  channelId: string = TEST_CHANNEL_ID,
+  expectToContain?: string
 ): Promise<Discord.Message | null> {
-  await sendCommand(command, channelId);
+  const commandMsg = await sendCommand(command, channelId);
   return waitForMessage(response => {
-    return response.author.id === UUT_ID && response.channel.id === channelId;
+    return (
+      response.author.id === UUT_ID &&
+      response.channel.id === channelId &&
+      response.createdTimestamp > commandMsg.createdTimestamp &&
+      (!expectToContain || response.content.toLowerCase().includes(expectToContain.toLowerCase()))
+    );
   });
 }

@@ -166,14 +166,14 @@ describe("Command as admin", () => {
         });
 
         test("fails to open the queue", async () => {
-          const response = await commandResponseInSameChannel("sr open");
+          const response = await commandResponseInSameChannel("sr open", undefined, "already open");
           expect(response?.content).toContain("already open");
         });
 
         test("allows the tester to close the queue", async () => {
-          const response = await commandResponseInSameChannel("sr close");
+          const response = await commandResponseInSameChannel("sr close", undefined, "now closed");
           expect(response?.content).not.toContain("already");
-          expect(response?.content).toContain("closed");
+          expect(response?.content).toContain("now closed");
         });
 
         test("allows the tester to see queue statistics", async () => {
