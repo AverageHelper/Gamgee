@@ -152,12 +152,16 @@ export async function handleCommand(
   }
 
   logger.debug(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
+
   if (!usedCommandPrefix) {
+    void message.channel.startTyping();
+    await new Promise(resolve => setTimeout(resolve, 1000));
     // This is likely a game. Play along!
     if (q.map(s => s.toLowerCase()).includes("hello")) {
       await message.channel.send(randomGreeting());
     } else {
       await message.channel.send(randomPhrase());
     }
+    void message.channel.stopTyping();
   }
 }
