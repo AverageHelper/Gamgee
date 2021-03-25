@@ -52,6 +52,7 @@ async function query(
   const query = content.split(/ +/);
 
   const commandOrMention = query[0];
+  if (!commandOrMention) return null;
   debugLog(`First word: '${commandOrMention}'`);
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
@@ -76,7 +77,7 @@ async function query(
     debugLog("This is just a message. Ignoring.");
     return null;
   }
-  query[0] = query[0].substring(COMMAND_PREFIX.length);
+  query[0] = query[0]?.substring(COMMAND_PREFIX.length) ?? "";
   debugLog(`query: ${query.toString()}`);
 
   return { query, usedCommandPrefix: true };
@@ -131,7 +132,7 @@ export async function handleCommand(
   }
 
   // Get the command
-  const commandName = q[0].toLowerCase();
+  const commandName = q[0]?.toLowerCase();
 
   if (!commandName) {
     // Empty, so do nothing lol

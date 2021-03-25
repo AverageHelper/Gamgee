@@ -29,7 +29,13 @@ try {
       useStorage(msg.guild)
         .then(storage => handleCommand(client, msg, storage))
         .catch(error =>
-          logger.error(`Failed to handle command: ${JSON.stringify(error, undefined, 2)}`)
+          logger.error(
+            `Failed to handle message: ${JSON.stringify(msg)}\n Error: ${JSON.stringify(
+              error,
+              undefined,
+              2
+            )}`
+          )
         )
     );
   });
@@ -48,5 +54,7 @@ try {
 
   // Handle top-level errors
 } catch (error: unknown) {
-  logger.error(error);
+  logger.error(
+    `Something bad has happened and we had to stop a command. Error: ${JSON.stringify(error)}`
+  );
 }

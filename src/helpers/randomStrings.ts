@@ -50,10 +50,10 @@ const lastResponses = new Discord.Collection<string, string>();
  * @returns A string from the array.
  */
 function randomResponseFromArray(key: string, array: Array<string>): string {
-  let result = randomElementOfArray(array);
+  let result = randomElementOfArray(array) ?? "";
   const lastResult = lastResponses.get(key);
   while (array.length > 1 && result === lastResult) {
-    result = randomElementOfArray(array);
+    result = randomElementOfArray(array) ?? "";
   }
   lastResponses.set(key, result);
   return result;

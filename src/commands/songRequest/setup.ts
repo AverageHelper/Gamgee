@@ -24,10 +24,9 @@ const setup: NamedSubcommand = {
       return;
     }
 
-    if (args.length < 2) {
-      return reply(message, `Please name a text channel to use for the queue!`);
-    }
     const channelName = args[1];
+    if (!channelName) return reply(message, `Please name a text channel to use for the queue!`);
+
     const channel = getChannelFromMention(message, channelName);
     if (!channel) {
       return reply(

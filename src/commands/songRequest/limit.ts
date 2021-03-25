@@ -43,7 +43,8 @@ const limit: NamedSubcommand = {
     const queue = await useQueue(channel);
     const config = await queue.getConfig();
 
-    if (args.length < 2) {
+    const limitKey = args[1];
+    if (!limitKey) {
       // Read out the existing limits
       const responseBuilder = new StringBuilder("Queue Limits:");
 
@@ -89,7 +90,6 @@ const limit: NamedSubcommand = {
       return;
     }
 
-    const limitKey = args[1];
     if (!isLimitKey(limitKey)) {
       const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
       return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
@@ -111,7 +111,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.entryDurationSeconds;
           return reply(
@@ -143,7 +143,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.cooldownSeconds;
           return reply(
@@ -175,7 +175,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.submissionMaxQuantity;
           return reply(
@@ -194,12 +194,6 @@ const limit: NamedSubcommand = {
           responseBuilder.pushBold(`${value}`);
         }
         return reply(message, responseBuilder.result());
-      }
-
-      default: {
-        const that =
-          (limitKey as string).length <= SAFE_PRINT_LENGTH ? `'${limitKey as string}'` : "that";
-        return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
       }
     }
   }

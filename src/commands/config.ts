@@ -19,6 +19,12 @@ const subargsList = allSubargs.map(v => `\`${v}\``).join(", ");
 
 type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_UNSET | typeof ARG_HELP;
 
+function isArgument(toBeDetermined: unknown): toBeDetermined is Argument {
+  return (
+    !!toBeDetermined && typeof toBeDetermined === "string" && allSubargs.includes(toBeDetermined)
+  );
+}
+
 const config: Command = {
   name: "config",
   description: "Read and modify config options. *(Server owner only. No touch!)*",
@@ -34,20 +40,22 @@ const config: Command = {
       return;
     }
 
-    if (args.length < 1) {
+    const arg = args[0]?.toLowerCase();
+    if (!arg) {
       return reply(`Missing command structure. Expected ${subargsList}`);
     }
-
-    const arg = args[0].toLowerCase() as Argument;
+    if (!isArgument(arg)) {
+      return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
+    }
 
     switch (arg) {
       case ARG_GET: {
         // Get stuff
-        if (args.length < 2) {
+        const key = args[1];
+        if (!key) {
           return reply(listKeys());
         }
 
-        const key = args[1];
         if (isConfigKey(key)) {
           const value = await getConfigValue(storage, key);
           return reply(`**${key}**: ${JSON.stringify(value)}`);
@@ -59,11 +67,11 @@ const config: Command = {
 
       case ARG_UNSET: {
         // Delete stuff
-        if (args.length < 2) {
+        const key = args[1];
+        if (!key) {
           return reply(listKeys());
         }
 
-        const key = args[1];
         if (isConfigKey(key)) {
           await setConfigValue(storage, key, undefined);
           const value = await getConfigValue(storage, key);
@@ -76,18 +84,18 @@ const config: Command = {
 
       case ARG_SET: {
         // Set stuff
-        if (args.length < 2) {
+        const key = args[1];
+        if (!key) {
           return reply(listKeys());
         }
 
-        const key = args[1];
         if (!isConfigKey(key)) {
           const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
           return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
         }
 
         const value = args[2];
-        if (args.length < 3) {
+        if (!value) {
           return reply("Expected a value to set.");
         }
         if (!isConfigValue(value)) {
@@ -101,10 +109,6 @@ const config: Command = {
         // List all the keys
         logger.debug("Received 'config help' command.");
         return reply(listKeys());
-
-      default:
-        logger.info("Received invalid config command.");
-        return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
     }
   }
 };

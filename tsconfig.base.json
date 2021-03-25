@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "isolatedModules": true,
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "typeRoots": ["./node_modules/@types", "./src"],
     "types": ["node"],
     "esModuleInterop": true,

@@ -47,11 +47,10 @@ const sr: Command = {
     const { message, args } = context;
 
     // Prepare arguments
-    if (args.length < 1) {
+    const arg = args[0];
+    if (!arg) {
       return reject_public(message, "You're gonna have to add a song link to that.");
     }
-
-    const arg = args[0];
 
     for (const command of namedSubcommands) {
       if (command.name === arg) {
