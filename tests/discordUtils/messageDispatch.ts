@@ -5,7 +5,7 @@ import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 5000;
 
 function uuid(): number {
   return Date.now();
@@ -69,7 +69,7 @@ function waitForEventInCollection<T extends { id: string }>(
 
 /**
  * Waits for a new message from Discord. Waits up to a provided `timeout`
- * (default 10 seconds) for one to arrive that fulfills the provided
+ * (default 5 seconds) for one to arrive that fulfills the provided
  * `condition` before resolving the promise with `null`.
  *
  * @returns A `Promise` which resolves with a Discord message or `null`,
@@ -84,7 +84,7 @@ export function waitForMessage(
 
 /**
  * Waits for message deletion event. Waits up to a provided `timeout`
- * (default 10 seconds) for one to arrive that fulfills the provided
+ * (default 5 seconds) for one to arrive that fulfills the provided
  * `condition` before resolving the promise with `null`.
  *
  * @returns A `Promise` which resolves with a Discord message or `null`,
