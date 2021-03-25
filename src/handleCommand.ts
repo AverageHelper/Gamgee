@@ -1,6 +1,7 @@
 import type { Storage } from "./configStorage";
 import Discord from "discord.js";
 import getUserFromMention from "./helpers/getUserFromMention";
+import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { useLogger } from "./logger";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
@@ -97,17 +98,17 @@ export async function handleCommand(
   storage: Storage | null
 ): Promise<void> {
   // Don't respond to bots unless we're being tested
-  if (message.author.bot && process.env.NODE_ENV !== "test") {
+  if (message.author.bot && getEnv("NODE_ENV") !== "test") {
     logger.silly(
       `Momma always said not to talk to strangers. They could be *bots*. bot: ${
         message.author.bot ? "true" : "false"
-      }; env: ${process.env.NODE_ENV ?? "undefined"}`
+      }; env: ${getEnv("NODE_ENV") ?? "undefined"}`
     );
     return;
   }
   debugLog(
     `Handling a message. bot: ${message.author.bot ? "true" : "false"}; env: ${
-      process.env.NODE_ENV ?? "undefined"
+      getEnv("NODE_ENV") ?? "undefined"
     }`
   );
 
@@ -123,7 +124,7 @@ export async function handleCommand(
   if (!pq) return;
   const { query: q, usedCommandPrefix } = pq;
 
-  logger.info(`Received command '${q[0]}' with args [${q.slice(1).join(", ")}]`);
+  logger.info(`Received command '${q[0] ?? ""}' with args [${q.slice(1).join(", ")}]`);
 
   if (q.length === 0) {
     // This is a query for us to handle (we might've been pinged), but it's empty.

@@ -1,11 +1,12 @@
 import Discord from "discord.js";
 import winston from "winston";
+import { getEnv } from "./helpers/environment";
 
 export type Logger = winston.Logger;
 export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error";
 
 const loggers = new Discord.Collection<LogLevel, Logger>();
-const defaultLevel: LogLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
+const defaultLevel: LogLevel = getEnv("NODE_ENV") === "production" ? "info" : "debug";
 
 /**
  * Sets up and returns the default runtime logger.
@@ -41,7 +42,7 @@ export function useLogger(level: LogLevel = defaultLevel, defaultMeta?: unknown)
     logger.add(
       new winston.transports.Console({
         format: winston.format.cli(),
-        level: process.env.NODE_ENV === "test" ? "error" : level
+        level: getEnv("NODE_ENV") === "test" ? "error" : level
       })
     );
 

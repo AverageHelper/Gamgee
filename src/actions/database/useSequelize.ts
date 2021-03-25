@@ -1,6 +1,7 @@
 import path from "path";
 import { DEFAULT_DATABASE_FOLDER } from "../../constants/database";
 import { Sequelize } from "sequelize";
+import { getEnv } from "../../helpers/environment";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
@@ -9,7 +10,7 @@ let sequelize: Sequelize | null = null;
 
 export function useSequelize(): Sequelize {
   if (!sequelize) {
-    const dbFolder = path.normalize(process.env.DATABASE_FOLDER ?? DEFAULT_DATABASE_FOLDER);
+    const dbFolder = path.normalize(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
     const dbFile = path.join(dbFolder, "db.sqlite");
     logger.info(`Initializing database at path '${dbFile}'`);
 

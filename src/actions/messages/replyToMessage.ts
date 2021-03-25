@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import { getEnv } from "../../helpers/environment";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
@@ -19,7 +20,7 @@ const logger = useLogger();
 export async function replyPrivately(message: Discord.Message, content: string): Promise<boolean> {
   try {
     const user = message.author;
-    if (user.bot && user.id === process.env.CORDE_BOT_ID) {
+    if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
       await message.channel.send(`(DM to <@!${user.id}>)\n${content}`);
     } else if (!user.bot) {
       await user.send(`(Reply from <#${message.channel.id}>)\n${content}`);

@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import { useLogger } from "../logger";
+import { getEnv } from "../helpers/environment";
 
 const logger = useLogger();
 
@@ -19,8 +20,8 @@ export default async function userIsQueueAdmin(
 
   // TODO: Fetch role IDs from the database
   const knownAdminRoles = [
-    process.env.EVENTS_ROLE_ID ?? "" //
-    // process.env.BOT_ADMIN_ROLE_ID ?? ""
+    getEnv("EVENTS_ROLE_ID") ?? "" //
+    // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
   ];
 
   const adminRoles = await Promise.all(

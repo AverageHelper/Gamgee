@@ -1,4 +1,4 @@
-import requireEnv from "./requireEnv";
+import { requireEnv } from "../src/helpers/environment";
 import { logOut, commandResponseInSameChannel } from "./discordUtils";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
@@ -42,9 +42,9 @@ describe("Command", () => {
       expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
-    test("yells at the tester for trying to set limits on the queue", async () => {
+    test("yells at the tester for trying to access limits on the queue", async () => {
       const response = await commandResponseInSameChannel("sr limit");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+      expect(response?.content).toContain("No queue is set up yet.");
     });
 
     test("yells at the tester for trying to see queue statistics", async () => {
