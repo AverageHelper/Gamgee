@@ -1,14 +1,26 @@
 import { requireEnv } from "../src/helpers/environment";
-import { commandResponseInSameChannel, setIsQueueAdmin } from "./discordUtils";
+import {
+  setIsQueueAdmin,
+  setIsQueueCreator,
+  commandResponseInSameChannel,
+  sendCommand,
+  waitForMessage,
+  sendMessage
+} from "./discordUtils";
 
+const UUT_ID = requireEnv("BOT_TEST_ID");
 const TESTER_ID = requireEnv("CORDE_BOT_ID");
-// const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
+const RUN_CHANNEL_ID = requireEnv("CHANNEL_ID");
+const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 describe("Command as admin", () => {
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
+  const NO_QUEUE = "no queue";
 
   beforeEach(async () => {
-    // Remove the Queue Admin role from the tester bot
+    await sendMessage(`**Preparing to test '${expect.getState().currentTestName}'**`);
+    // Add the Queue Admin role to the tester bot
+    await setIsQueueCreator(false);
     await setIsQueueAdmin(true);
   });
 
@@ -25,34 +37,202 @@ describe("Command as admin", () => {
       expect(response?.content).toMatchSnapshot();
     });
 
-    test("yells at the tester for trying to set up a queue", async () => {
-      const response = await commandResponseInSameChannel("sr setup");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+    describe("no queue yet", () => {
+      beforeEach(async () => {
+        await setIsQueueCreator(true);
+        await setIsQueueAdmin(true);
+
+        // TODO: Add an `?sr teardown` command so server owners can unset the server's queue channel
+        await commandResponseInSameChannel("sr close");
+        await commandResponseInSameChannel("sr restart");
+        await waitForMessage(
+          msg =>
+            msg.author.id === UUT_ID &&
+            msg.channel.id === RUN_CHANNEL_ID &&
+            msg.content.includes("has restarted")
+        );
+        await commandResponseInSameChannel("sr limit count null");
+        await commandResponseInSameChannel("sr limit cooldown null");
+        await commandResponseInSameChannel("sr limit entry-duration null");
+
+        await setIsQueueCreator(false);
+      });
+
+      test("fails to set up a queue without a channel mention", async () => {
+        await setIsQueueCreator(true);
+        const cmdMessage = await sendCommand("sr setup");
+        const response = await waitForMessage(
+          msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
+        );
+        expect(cmdMessage.deleted).toBeTrue();
+        expect(response?.content).toContain("name a text channel");
+      });
+
+      test("fails to set up a queue with an improper channel mention", async () => {
+        await setIsQueueCreator(true);
+        const response = await commandResponseInSameChannel("sr setup queue");
+        expect(response?.content).toContain("That's not a real channel");
+      });
+
+      test("fails to set up a queue without owner permission", async () => {
+        const response = await commandResponseInSameChannel("sr setup queue");
+        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+      });
+
+      test.each`
+        key
+        ${"entry-duration"}
+        ${"cooldown"}
+        ${"count"}
+      `("fails to set $key limits on the queue", async ({ key }: { key: string }) => {
+        const response = await commandResponseInSameChannel(`sr limit ${key} 3`);
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      test("fails to get the queue's global limits", async () => {
+        const response = await commandResponseInSameChannel("sr limit");
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      test.each`
+        key
+        ${"entry-duration"}
+        ${"cooldown"}
+        ${"count"}
+      `(
+        "allows the tester to get the queue's global $key limit",
+        async ({ key }: { key: string }) => {
+          const response = await commandResponseInSameChannel(`sr limit ${key}`);
+          expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+        }
+      );
+
+      test("fails to open the queue", async () => {
+        const response = await commandResponseInSameChannel("sr open");
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      test("fails to close the queue", async () => {
+        const response = await commandResponseInSameChannel("sr close");
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      test("fails to see queue statistics", async () => {
+        const response = await commandResponseInSameChannel("sr stats");
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      test("fails to restart the queue", async () => {
+        const response = await commandResponseInSameChannel("sr restart");
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
+
+      // FIXME: This needs to run last b/c it only works once per server. Set up a teardown command.
+      test("allows the tester to set up a queue", async () => {
+        await setIsQueueCreator(true);
+        await sendCommand(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        const response = await waitForMessage(
+          msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
+        );
+        expect(response?.content).toContain("This is a queue now.");
+      });
     });
 
-    test("yells at the tester for trying to open a queue", async () => {
-      const response = await commandResponseInSameChannel("sr open");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-    });
+    describe("queue available", () => {
+      beforeEach(async () => {
+        await setIsQueueCreator(true);
+        await setIsQueueAdmin(true);
 
-    test("yells at the tester for trying to close the queue", async () => {
-      const response = await commandResponseInSameChannel("sr close");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-    });
+        await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel("sr close");
+        await commandResponseInSameChannel("sr restart");
+        await waitForMessage(
+          msg =>
+            msg.author.id === UUT_ID &&
+            msg.channel.id === RUN_CHANNEL_ID &&
+            msg.content.includes("has restarted")
+        );
+        await commandResponseInSameChannel("sr limit count null");
+        await commandResponseInSameChannel("sr limit cooldown null");
+        await commandResponseInSameChannel("sr limit entry-duration null");
+        await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
 
-    test("yells at the tester for trying to set limits on the queue", async () => {
-      const response = await commandResponseInSameChannel("sr limit");
-      expect(response?.content).toContain("No queue is set up yet");
-    });
+        await setIsQueueCreator(false);
+      });
 
-    test("yells at the tester for trying to see queue statistics", async () => {
-      const response = await commandResponseInSameChannel("sr stats");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-    });
+      describe("queue open", () => {
+        beforeEach(async () => {
+          await commandResponseInSameChannel("sr open");
+        });
 
-    test("yells at the tester for trying to restart the queue", async () => {
-      const response = await commandResponseInSameChannel("sr restart");
-      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+        test("fails to open the queue", async () => {
+          const response = await commandResponseInSameChannel("sr open");
+          expect(response?.content).toContain("already open");
+        });
+
+        test("allows the tester to close the queue", async () => {
+          const response = await commandResponseInSameChannel("sr close");
+          expect(response?.content).not.toContain("already");
+          expect(response?.content).toContain("closed");
+        });
+
+        test("allows the tester to see queue statistics", async () => {
+          const response = await commandResponseInSameChannel("sr stats");
+          expect(response?.content).toContain(
+            `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
+          );
+        });
+
+        test("allows the tester to restart the queue", async () => {
+          const startResponse = await commandResponseInSameChannel("sr restart");
+          const finishResponse = await waitForMessage(
+            msg =>
+              msg.author.id === UUT_ID &&
+              msg.channel.id === RUN_CHANNEL_ID &&
+              msg.id !== startResponse?.id
+          );
+          expect(startResponse?.deleted).toBeFalse();
+          expect(startResponse?.content).toContain("Clearing the queue");
+          expect(finishResponse?.content).toContain("The queue has restarted");
+        });
+      });
+
+      describe("queue closed", () => {
+        beforeEach(async () => {
+          await commandResponseInSameChannel("sr close");
+        });
+
+        test("allows the tester to open the queue", async () => {
+          const response = await commandResponseInSameChannel("sr open");
+          expect(response?.content).not.toContain("already");
+          expect(response?.content).toContain("now open");
+        });
+
+        test("fails to close the queue", async () => {
+          const response = await commandResponseInSameChannel("sr close");
+          expect(response?.content).toContain("already closed");
+        });
+
+        test("allows the tester to see queue statistics", async () => {
+          const response = await commandResponseInSameChannel("sr stats");
+          expect(response?.content).toContain(
+            `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
+          );
+        });
+
+        test("allows the tester to restart the queue", async () => {
+          const startResponse = await commandResponseInSameChannel("sr restart");
+          const finishResponse = await waitForMessage(
+            msg =>
+              msg.author.id === UUT_ID &&
+              msg.channel.id === RUN_CHANNEL_ID &&
+              msg.id !== startResponse?.id
+          );
+          expect(startResponse?.deleted).toBeFalse();
+          expect(startResponse?.content).toContain("Clearing the queue");
+          expect(finishResponse?.content).toContain("The queue has restarted");
+        });
+      });
     });
   });
 

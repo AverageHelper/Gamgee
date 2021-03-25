@@ -14,7 +14,7 @@ const logger = useTestLogger();
  *
  * @returns an event receiver function.
  */
-export function useWaitLoop<T>(
+export function useDispatchLoop<T>(
   waiterCollection: Discord.Collection<number, (arg: T) => boolean>
 ): (arg: T) => void {
   return function (arg) {

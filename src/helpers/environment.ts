@@ -15,6 +15,7 @@ type EnvKey =
   | "QUEUE_CHANNEL_ID"
   | "GUILD_ID"
   | "QUEUE_ADMIN_ROLE_ID"
+  | "QUEUE_CREATOR_ROLE_ID"
   | "EVENTS_ROLE_ID"
   | "BOT_ADMIN_ROLE_ID";
 

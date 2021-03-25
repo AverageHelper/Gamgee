@@ -18,6 +18,13 @@ Commands:
 \`?video <YouTube or SoundCloud link>\` - Put the video title and duration in chat."
 `;
 
+exports[`Command as pleb sr allows the tester to get the queue's global limits 1`] = `
+"Queue Limits:
+\`entry-duration\` - **infinite**
+\`cooldown\` - **none**
+\`count\` - **infinite**"
+`;
+
 exports[`Command as pleb sr returns the queue instructional text 1`] = `
 "To submit a song, type \`?sr <link>\`.
 For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`

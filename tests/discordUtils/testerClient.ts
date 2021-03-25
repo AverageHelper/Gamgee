@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import { requireEnv } from "../../src/helpers/environment";
-import { useWaitLoop } from "./waitLoop";
+import { useDispatchLoop } from "./dispatchLoop";
 
 let isClientLoggedIn = false;
 const client = new Discord.Client();
@@ -16,7 +16,7 @@ const client = new Discord.Client();
  */
 export const messageWaiters = new Discord.Collection<number, (msg: Discord.Message) => boolean>();
 
-client.on("message", useWaitLoop(messageWaiters));
+client.on("message", useDispatchLoop(messageWaiters));
 
 /**
  * A collection of functions that expect a message be deleted within a
@@ -32,7 +32,7 @@ export const messageDeleteWaiters = new Discord.Collection<
   (msg: Discord.Message | Discord.PartialMessage) => boolean
 >();
 
-client.on("messageDelete", useWaitLoop(messageDeleteWaiters));
+client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 
 /**
  * Prepares the tester bot's Discord client. If the client is not logged in,

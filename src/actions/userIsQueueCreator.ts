@@ -4,7 +4,7 @@ import { getEnv } from "../helpers/environment";
 
 const logger = useLogger();
 
-export default async function userIsQueueAdmin(
+export default async function userIsQueueCreator(
   user: Discord.User,
   guild: Discord.Guild
 ): Promise<boolean> {
@@ -16,12 +16,11 @@ export default async function userIsQueueAdmin(
   }
 
   // Always true for user with a whitelisted role
-  logger.info("Fetching admin roles...");
+  logger.info("Fetching creator roles...");
 
   // TODO: Fetch role IDs from the database
   const knownAdminRoles = [
-    getEnv("EVENTS_ROLE_ID") ?? "", //
-    getEnv("QUEUE_ADMIN_ROLE_ID") ?? "" //
+    getEnv("QUEUE_CREATOR_ROLE_ID") ?? "" //
     // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
   ];
 
