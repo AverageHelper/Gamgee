@@ -1,14 +1,21 @@
 import { requireEnv } from "../src/helpers/environment";
-import { logOut, commandResponseInSameChannel } from "./discordUtils";
+import {
+  setIsQueueAdmin,
+  setIsQueueCreator,
+  commandResponseInSameChannel,
+  sendMessage
+} from "./discordUtils";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
-describe("Command", () => {
+describe("Command as pleb", () => {
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
 
-  afterAll(() => {
-    // Log out of Discord
-    logOut();
+  beforeEach(async () => {
+    await sendMessage(`**Preparing to test '${expect.getState().currentTestName}'**`);
+    // Remove the Queue Admin role from the tester bot
+    await setIsQueueAdmin(false);
+    await setIsQueueCreator(false);
   });
 
   describe("sr", () => {
@@ -32,7 +39,7 @@ describe("Command", () => {
       expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
-    test("yells at the tester for trying to open a queue", async () => {
+    test("yells at the tester for trying to open the queue", async () => {
       const response = await commandResponseInSameChannel("sr open");
       expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
@@ -42,9 +49,14 @@ describe("Command", () => {
       expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
-    test("yells at the tester for trying to access limits on the queue", async () => {
+    test("yells at the tester for trying to set limits on the queue", async () => {
+      const response = await commandResponseInSameChannel("sr limit count");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+    });
+
+    test("allows the tester to get the queue's global limits", async () => {
       const response = await commandResponseInSameChannel("sr limit");
-      expect(response?.content).toContain("No queue is set up yet.");
+      expect(response?.content).toMatchSnapshot();
     });
 
     test("yells at the tester for trying to see queue statistics", async () => {

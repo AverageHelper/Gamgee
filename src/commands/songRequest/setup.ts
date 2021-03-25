@@ -4,6 +4,7 @@ import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
+import userIsQueueCreator from "../../actions/userIsQueueCreator";
 
 const logger = useLogger();
 
@@ -19,7 +20,7 @@ const setup: NamedSubcommand = {
     await deleteMessage(message, "Users don't need to see this command once it's run.");
 
     // Only the guild owner may touch the queue.
-    if (message.author.id !== message.guild.ownerID) {
+    if (!(await userIsQueueCreator(message.author, message.guild))) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }

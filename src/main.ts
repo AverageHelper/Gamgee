@@ -13,6 +13,27 @@ import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
 import StringBuilder from "./helpers/StringBuilder";
 
+function richErrorMessage(preamble: string, error: unknown): string {
+  const messageBuilder = new StringBuilder(preamble);
+  messageBuilder.pushNewLine();
+
+  if (isError(error)) {
+    messageBuilder.push(`${error.name}: ${error.message}`);
+    if (error.code) {
+      messageBuilder.push(` (${error.code})`);
+    }
+    if (error.stack) {
+      messageBuilder.push(",\nStack: ");
+      messageBuilder.push(error.stack);
+    }
+  } else {
+    messageBuilder.push("Error: ");
+    messageBuilder.push(JSON.stringify(error));
+  }
+
+  return messageBuilder.result();
+}
+
 try {
   const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });
 
@@ -22,7 +43,7 @@ try {
   });
 
   client.on("error", error => {
-    logger.error(`Received client error: ${JSON.stringify(error, undefined, 2)}`);
+    logger.error(richErrorMessage("Received client error.", error));
   });
 
   // Handle messages
@@ -32,11 +53,10 @@ try {
         .then(storage => handleCommand(client, msg, storage))
         .catch(error =>
           logger.error(
-            `Failed to handle message: ${JSON.stringify(msg)}\n Error: ${JSON.stringify(
-              error,
-              undefined,
-              2
-            )}`
+            richErrorMessage(
+              `Failed to handle message: ${JSON.stringify(msg, undefined, 2)}`,
+              error
+            )
           )
         )
     );
@@ -46,9 +66,7 @@ try {
   client.on("messageReactionAdd", (reaction, user) => {
     void Promise.all([reaction.fetch(), user.fetch()])
       .then(([reaction, user]) => handleReactionAdd(reaction, user))
-      .catch(error =>
-        logger.error(`Failed to handle reaction add: ${JSON.stringify(error, undefined, 2)}`)
-      );
+      .catch(error => logger.error(richErrorMessage("Failed to handle reaction add.", error)));
   });
 
   // Log in
@@ -56,23 +74,5 @@ try {
 
   // Handle top-level errors
 } catch (error: unknown) {
-  const messageBuilder = new StringBuilder(
-    "Something bad has happened and we had to stop a command. "
-  );
-
-  if (isError(error)) {
-    messageBuilder.push(`${error.name}: ${error.message}`);
-    if (error.code) {
-      messageBuilder.push(` (${error.code})`);
-    }
-    if (error.stack) {
-      messageBuilder.push(",\nStack:");
-      messageBuilder.push(error.stack);
-    }
-  } else {
-    messageBuilder.push("Error: ");
-    messageBuilder.push(JSON.stringify(error));
-  }
-
-  logger.error(messageBuilder.result());
+  logger.error(richErrorMessage("Something bad has happened and we had to stop a command.", error));
 }

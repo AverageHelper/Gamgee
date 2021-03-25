@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Command help returns the help text 1`] = `
+exports[`Command as pleb help returns the help text 1`] = `
 "(DM to <@!822883259884634133>)
 Commands:
 \`?config\` - Read and modify config options. *(Server owner only. No touch!)*
@@ -18,7 +18,14 @@ Commands:
 \`?video <YouTube or SoundCloud link>\` - Put the video title and duration in chat."
 `;
 
-exports[`Command sr returns the queue instructional text 1`] = `
+exports[`Command as pleb sr allows the tester to get the queue's global limits 1`] = `
+"Queue Limits:
+\`entry-duration\` - **infinite**
+\`cooldown\` - **none**
+\`count\` - **infinite**"
+`;
+
+exports[`Command as pleb sr returns the queue instructional text 1`] = `
 "To submit a song, type \`?sr <link>\`.
 For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with a text verification indicating your song has joined the queue!"

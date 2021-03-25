@@ -11,6 +11,7 @@ node_modules
 
 # Generated files
 db
+db-test
 dist
 config
 coverage
