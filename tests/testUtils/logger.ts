@@ -13,7 +13,7 @@ const loggers = new Discord.Collection<LogLevel, Logger>();
  *
  * @returns The logger, or a new one if no logger has been set up yet.
  */
-export function useTestLogger(level: LogLevel = "debug"): Logger {
+export function useTestLogger(level: LogLevel = "info"): Logger {
   let logger = loggers.get(level);
 
   if (!logger) {

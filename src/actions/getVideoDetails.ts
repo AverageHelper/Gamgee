@@ -31,6 +31,7 @@ interface VideoDetails {
 export default async function getVideoDetails(args: string[]): Promise<VideoDetails | null> {
   // Try the first value as a video URL
   const urlString = args[0];
+  if (!urlString) return null;
 
   // Try YouTube URL
   if (ytdl.validateURL(urlString)) {

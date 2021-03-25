@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import requireEnv from "../testUtils/requireEnv";
+import { requireEnv } from "../../src/helpers/environment";
 import { sendCommand } from "./sendMessage";
 import { waitForMessage } from "./messageDispatch";
 

@@ -1,4 +1,4 @@
-import requireEnv from "../testUtils/requireEnv";
+import { requireEnv } from "../../src/helpers/environment";
 import { testerClient } from "./testerClient";
 import { useTestLogger } from "../testUtils/logger";
 

@@ -1,6 +1,11 @@
 import { useLogger } from "../logger";
 
+const LOGGING = false;
 const logger = useLogger();
+
+function debugLog(msg: string): void {
+  if (LOGGING) logger.debug(msg);
+}
 
 /**
  * Get a user ID from a mention string.
@@ -17,19 +22,19 @@ export default function getUserIdFromMention(mention: string): string | null {
   const endsRight = m.endsWith(">");
 
   if (startsRight && endsRight) {
-    logger.debug("This is for sure a mention. Checking for the nickname flag...");
+    debugLog("This is for sure a mention. Checking for the nickname flag...");
     m = m.slice(2, -1);
 
     if (m.startsWith("!")) {
-      logger.debug("Stripped nickname.");
+      debugLog("Stripped nickname.");
       m = m.slice(1);
     }
 
-    logger.debug(`userId: ${m}`);
+    debugLog(`userId: ${m}`);
     return m;
   }
 
-  logger.debug(`This word does ${startsRight ? "" : "not "}start right.`);
-  logger.debug(`This word does ${endsRight ? "" : "not "}end right.`);
+  debugLog(`This word does ${startsRight ? "" : "not "}start right.`);
+  debugLog(`This word does ${endsRight ? "" : "not "}end right.`);
   return null;
 }

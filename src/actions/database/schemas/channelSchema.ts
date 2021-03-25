@@ -1,6 +1,6 @@
-import { Sequelize, Model, ModelCtor, STRING } from "sequelize";
-import queueEntrySchema from "./queueEntrySchema";
+import { Model, ModelCtor, STRING } from "sequelize";
 import { useLogger } from "../../../logger";
+import { useSequelize } from "../useSequelize";
 
 const logger = useLogger();
 
@@ -15,25 +15,25 @@ interface ChannelSchema
   extends Model<ChannelAttributes, ChannelCreationAttributes>,
     ChannelAttributes {}
 
-export default function channelSchema(sequelize: Sequelize): ModelCtor<ChannelSchema> {
-  const GuildEntries = queueEntrySchema(sequelize);
+let Channels: ModelCtor<ChannelSchema> | null = null;
 
-  const Channels = sequelize.define<ChannelSchema>("channels", {
-    id: {
-      type: STRING,
-      primaryKey: true,
-      unique: true,
-      allowNull: false
-    },
-    guildId: {
-      type: STRING,
-      allowNull: false
-    }
-  });
+export default function channelSchema(): ModelCtor<ChannelSchema> {
+  if (!Channels) {
+    const sequelize = useSequelize();
+    Channels = sequelize.define<ChannelSchema>("channels", {
+      id: {
+        type: STRING,
+        primaryKey: true,
+        unique: true,
+        allowNull: false
+      },
+      guildId: {
+        type: STRING,
+        allowNull: false
+      }
+    });
+    logger.debug("Created Channel schema");
+  }
 
-  Channels.hasMany(GuildEntries, { sourceKey: "id", foreignKey: "channelId", as: "entries" });
-  GuildEntries.belongsTo(Channels);
-
-  logger.debug("Created Channel schema");
   return Channels;
 }

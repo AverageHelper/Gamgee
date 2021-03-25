@@ -1,4 +1,5 @@
 import type { Command } from "./index";
+import { deleteMessage } from "../actions/messages/deleteMessage";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
@@ -12,13 +13,7 @@ const type: Command = {
 
     logger.info(`Started typing in channel ${channel.id}`);
     void channel.startTyping();
-    await message
-      .delete()
-      .catch(error =>
-        logger.error(
-          `I don't seem to have deletion privileges here: ${JSON.stringify(error, undefined, 2)}`
-        )
-      );
+    await deleteMessage(message, "Spam: Users don't need to see this command run");
 
     setTimeout(() => {
       void channel.stopTyping();

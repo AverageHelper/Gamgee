@@ -3,7 +3,7 @@ import { useLogger } from "../../logger";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 
 const logger = useLogger();
 
@@ -16,15 +16,17 @@ const setup: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
+    await deleteMessage(message, "Users don't need to see this command once it's run.");
+
     // Only the guild owner may touch the queue.
     if (message.author.id !== message.guild.ownerID) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
 
-    if (args.length < 2) {
-      return reply(message, `Please name a text channel to use for the queue!`);
-    }
     const channelName = args[1];
+    if (!channelName) return reply(message, `Please name a text channel to use for the queue!`);
+
     const channel = getChannelFromMention(message, channelName);
     if (!channel) {
       return reply(
@@ -44,8 +46,7 @@ const setup: NamedSubcommand = {
     logger.info(`Setting up channel '${channel.name}' for queuage.`);
     await Promise.all([
       guild.setQueueChannel(channel.id),
-      channel.send("This is a queue now. :smiley:"),
-      deleteMessage(message, "Users don't need to see this command once it's run.")
+      channel.send("This is a queue now. :smiley:")
     ]);
   }
 };

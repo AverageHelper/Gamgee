@@ -3,7 +3,9 @@ import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { ConfigValue } from "../../constants/config";
 import { reply } from "./index";
 import { useQueue } from "../../actions/queue/useQueue";
+import { replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 
@@ -16,48 +18,84 @@ type LimitKey =
   | typeof ARG_SUB_COOLDOWN
   | typeof ARG_SUB_MAX_SUBMISSIONS;
 
-const allLimits = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
+const allLimits: Array<LimitKey> = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
 const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
-  return !!value && typeof value === "string" && allLimits.includes(value);
+  return !!value && typeof value === "string" && allLimits.includes(value as LimitKey);
 }
 
 const limit: NamedSubcommand = {
   name: "limit",
   requiredArgFormat: `<${allLimits.join("|")}>`,
   description: "Set a limit value on the queue. (Time in seconds, where applicable)",
-  async execute(context) {
-    const { args, message } = context;
-
+  async execute({ args, message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
 
-    const channel = await getQueueChannel(context);
+    const channel = await getQueueChannel(message);
 
-    // Only the guild owner may touch the queue, unless we're in the privileged queue channel.
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
     if (!channel) {
       return reply(message, "No queue is set up yet.");
     }
 
     const queue = await useQueue(channel);
-
-    // Set limits on the queue
-    if (args.length < 2) {
-      return reply(message, `Gonna need more info than that. Add one of: ${limitsList}.`);
-    }
+    const config = await queue.getConfig();
 
     const limitKey = args[1];
-    if (!isLimitKey(limitKey)) {
-      const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
-      return reply(message, `I'm not sure what ${that} is. ` + limitsList);
+    if (!limitKey) {
+      // Read out the existing limits
+      const responseBuilder = new StringBuilder("Queue Limits:");
+
+      allLimits.forEach(key => {
+        responseBuilder.pushNewLine();
+        responseBuilder.pushCode(key);
+        responseBuilder.push(" - ");
+
+        switch (key) {
+          case ARG_SUB_COOLDOWN:
+            if (config.cooldownSeconds) {
+              responseBuilder.pushBold(durationString(config.cooldownSeconds));
+            } else {
+              responseBuilder.pushBold("none");
+            }
+            break;
+          case ARG_ENTRY_DURATION:
+            if (config.entryDurationSeconds) {
+              responseBuilder.pushBold(durationString(config.entryDurationSeconds));
+            } else {
+              responseBuilder.pushBold("infinite");
+            }
+            break;
+          case ARG_SUB_MAX_SUBMISSIONS:
+            if (config.submissionMaxQuantity) {
+              responseBuilder.pushBold(config.submissionMaxQuantity.toString());
+            } else {
+              responseBuilder.pushBold("infinite");
+            }
+            break;
+        }
+      });
+
+      return reply(message, responseBuilder.result());
     }
 
-    const config = await queue.getConfig();
+    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== channel?.id
+    ) {
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
+    }
+
+    if (!isLimitKey(limitKey)) {
+      const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
+      return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
+    }
+
+    // Set limits on the queue
     let value: ConfigValue | undefined = args.length >= 3 ? args[2] : undefined;
 
     switch (limitKey) {
@@ -73,7 +111,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.entryDurationSeconds;
           return reply(
@@ -85,7 +123,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ entryDurationSeconds: value });
 
         const responseBuilder = new StringBuilder("Entry duration limit ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -105,7 +143,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.cooldownSeconds;
           return reply(
@@ -117,7 +155,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ cooldownSeconds: value });
 
         const responseBuilder = new StringBuilder("Submission cooldown ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -137,7 +175,7 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2]);
+        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
         if (value !== null && isNaN(value)) {
           value = config.submissionMaxQuantity;
           return reply(
@@ -149,19 +187,13 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ submissionMaxQuantity: value });
 
         const responseBuilder = new StringBuilder("Submission count limit per user ");
-        if (value === null) {
+        if (!value) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
           responseBuilder.pushBold(`${value}`);
         }
         return reply(message, responseBuilder.result());
-      }
-
-      default: {
-        const that =
-          (limitKey as string).length <= SAFE_PRINT_LENGTH ? `'${limitKey as string}'` : "that";
-        return reply(message, `I'm not sure what ${that} is. ` + limitsList);
       }
     }
   }

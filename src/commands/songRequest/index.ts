@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Command } from "./../index";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 
 import arbitrarySubcommand from "./urlRequest";
 import info from "./info";
@@ -21,13 +21,13 @@ export async function reply(message: Discord.Message, msg: string): Promise<void
 }
 
 export async function reply_private(message: Discord.Message, msg: string): Promise<void> {
-  await message.author.send(`(Reply from <#${message.channel.id}>)\n${msg}`);
+  await replyPrivately(message, msg);
 }
 
 export async function reject_private(message: Discord.Message, reason: string): Promise<void> {
   await Promise.all([
     deleteMessage(message, "Spam; this song request was rejected."),
-    message.author.send(`(From <#${message.channel.id}>) ${reason}`)
+    replyPrivately(message, `:hammer: ${reason}`)
   ]);
 }
 
@@ -47,11 +47,10 @@ const sr: Command = {
     const { message, args } = context;
 
     // Prepare arguments
-    if (args.length < 1) {
+    const arg = args[0];
+    if (!arg) {
       return reject_public(message, "You're gonna have to add a song link to that.");
     }
-
-    const arg = args[0];
 
     for (const command of namedSubcommands) {
       if (command.name === arg) {

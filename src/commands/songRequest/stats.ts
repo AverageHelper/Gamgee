@@ -1,9 +1,11 @@
 import type { NamedSubcommand } from "./../index";
 import { useLogger } from "../../logger";
 import { useQueue } from "../../actions/queue/useQueue";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 import { reply, reply_private } from "./index";
 
 const logger = useLogger();
@@ -11,18 +13,20 @@ const logger = useLogger();
 const stats: NamedSubcommand = {
   name: "stats",
   description: "Print statistics on the current queue.",
-  async execute(context) {
-    const { message } = context;
-
+  async execute({ message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
 
-    const channel = await getQueueChannel(context);
+    const channel = await getQueueChannel(message);
 
-    // Only the guild owner may touch the queue, unless we're in the privileged queue channel.
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== channel?.id) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== channel?.id
+    ) {
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
     if (!channel) {
       return reply(message, `No queue is set up. Would you like to start one?`);
@@ -77,7 +81,7 @@ const stats: NamedSubcommand = {
     const response = responseBuilder.result();
     await Promise.all([
       queueIsCurrent ? reply(message, response) : reply_private(message, response), //
-      message.delete()
+      deleteMessage(message, "Spam; Users shouldn't see this")
     ]);
     return;
   }

@@ -1,11 +1,11 @@
-import requireEnv from "./testUtils/requireEnv";
+import { requireEnv } from "../src/helpers/environment";
 import { commandResponseInSameChannel, setIsQueueAdmin } from "./discordUtils";
 
 const TESTER_ID = requireEnv("CORDE_BOT_ID");
 // const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 describe("Command as admin", () => {
-  // const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
+  const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
 
   beforeEach(async () => {
     // Remove the Queue Admin role from the tester bot
@@ -27,32 +27,32 @@ describe("Command as admin", () => {
 
     test("yells at the tester for trying to set up a queue", async () => {
       const response = await commandResponseInSameChannel("sr setup");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
     test("yells at the tester for trying to open a queue", async () => {
       const response = await commandResponseInSameChannel("sr open");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
     test("yells at the tester for trying to close the queue", async () => {
       const response = await commandResponseInSameChannel("sr close");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
     test("yells at the tester for trying to set limits on the queue", async () => {
       const response = await commandResponseInSameChannel("sr limit");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain("No queue is set up yet");
     });
 
     test("yells at the tester for trying to see queue statistics", async () => {
       const response = await commandResponseInSameChannel("sr stats");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
 
     test("yells at the tester for trying to restart the queue", async () => {
       const response = await commandResponseInSameChannel("sr restart");
-      expect(response?.content).toBe("PERMISSION_ERROR_RESPONSE");
+      expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
     });
   });
 

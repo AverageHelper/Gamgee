@@ -3,12 +3,11 @@ import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useLogger } from "../../logger";
 import { useQueue, UnsentQueueEntry } from "../../actions/queue/useQueue";
 import { reject_public, reject_private } from "./index";
-import { randomAcceptance } from "../../helpers/randomStrings";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage } from "../../actions/messages/deleteMessage";
 import { useGuildStorage } from "../../useGuildStorage";
 
 const logger = useLogger();
@@ -16,25 +15,18 @@ const logger = useLogger();
 const urlRequest: ArbitrarySubcommand = {
   format: "<YouTube or SoundCloud link>",
   description: "Attempts to add the given content to the queue.",
-  async execute(context) {
-    const { message, args } = context;
-
+  async execute({ args, message }) {
     if (!message.guild) {
       return;
     }
 
     const guild = await useGuildStorage(message.guild);
-    const queueChannel = await getQueueChannel(context);
-    const isQueueOpen = await guild.getQueueOpen();
+    const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {
       return reject_public(message, "The queue is not set up.");
     }
-    if (!isQueueOpen) {
-      return reject_public(message, "The queue is not open.");
-    }
 
-    if (message.channel.id === queueChannel.id) {
-      // TODO: Add the ability to configure a specific channel from which song requests should be taken.
+    if (message.channel.id === queueChannel?.id) {
       await Promise.all([
         deleteMessage(message, "Spam; song requests are not permitted in the queue channel."),
         reject_private(
@@ -43,6 +35,11 @@ const urlRequest: ArbitrarySubcommand = {
         )
       ]);
       return;
+    }
+
+    const isQueueOpen = await guild.getQueueOpen();
+    if (!isQueueOpen) {
+      return reject_public(message, "The queue is not open.");
     }
 
     logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
@@ -58,9 +55,7 @@ const urlRequest: ArbitrarySubcommand = {
         `Pushed new entry to queue. Sending public acceptance to user ${message.author.id} (${message.author.username})`
       );
       // Send acceptance after the potential `send(entry.url)` call
-      await message.channel.send(
-        `<@!${message.author.id}>, ${randomAcceptance()}\n\nSubmission Accepted!`
-      );
+      await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
       logger.debug("Responded.");
     }
 
@@ -82,7 +77,7 @@ const urlRequest: ArbitrarySubcommand = {
         rejectionBuilder.push("You have used all ");
         rejectionBuilder.pushBold(`${maxSubs}`);
         rejectionBuilder.push(" of your allotted submissions.");
-        return reject_public(message, rejectionBuilder.result());
+        return reject_private(message, rejectionBuilder.result());
       }
 
       // If the user is still under cooldown, reject!

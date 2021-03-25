@@ -1,5 +1,4 @@
 import { ConfigKey, CONFIG_KEY_COMMAND_PREFIX } from "./keys";
-import assertUnreachable from "../../helpers/assertUnreachable";
 
 export type ConfigValue = string | number | null;
 
@@ -14,8 +13,5 @@ export default function defaultValueForConfigKey(key: ConfigKey): ConfigValue {
   switch (key) {
     case CONFIG_KEY_COMMAND_PREFIX:
       return "?";
-
-    default:
-      return assertUnreachable(key);
   }
 }

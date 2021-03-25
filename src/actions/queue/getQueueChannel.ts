@@ -1,5 +1,4 @@
 import type Discord from "discord.js";
-import type { CommandContext } from "../../commands/index";
 import { useGuildStorage } from "../../useGuildStorage";
 import { useLogger } from "../../logger";
 
@@ -10,13 +9,12 @@ const logger = useLogger();
  *
  * This action may sent error messages to the channel using the provided `context`.
  *
- * @param context The context of the command that needs the queue channel.
- * @returns
+ * @param message The message from which to derive a guild's queue channel.
+ * @returns the guild's queue channel, or `null` if it has none.
  */
 export default async function getQueueChannel(
-  context: CommandContext
+  message: Discord.Message
 ): Promise<Discord.TextChannel | null> {
-  const { message, client } = context;
   if (!message.guild) return null;
 
   const guildInfo = await useGuildStorage(message.guild);
@@ -28,7 +26,7 @@ export default async function getQueueChannel(
 
   let queueChannel: Discord.TextChannel;
   try {
-    queueChannel = (await client.channels.fetch(queueChannelId)) as Discord.TextChannel;
+    queueChannel = (await message.client.channels.fetch(queueChannelId)) as Discord.TextChannel;
   } catch (error: unknown) {
     logger.error(`Failed to fetch queue channel: ${JSON.stringify(error, undefined, 2)}`);
     await message.channel.send(
