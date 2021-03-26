@@ -6,6 +6,8 @@ module.exports = {
     {
       name: "gamgee",
       script: "./dist/main.js",
+      watch: ["dist"],
+      watch_delay: 1000,
       env: {
         NODE_ENV: "development"
       },
