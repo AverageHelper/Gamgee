@@ -28,10 +28,10 @@ interface VideoDetails {
  *
  * @returns A set of video details, or `null` if no video could be found from the provided query.
  */
-export default async function getVideoDetails(args: string[]): Promise<VideoDetails | null> {
+export default async function getVideoDetails(args: Array<string>): Promise<VideoDetails | null> {
   // Try the first value as a video URL
   const urlString = args[0];
-  if (!urlString) return null;
+  if (urlString === undefined || urlString === "") return null;
 
   // Try YouTube URL
   if (ytdl.validateURL(urlString)) {
@@ -44,25 +44,24 @@ export default async function getVideoDetails(args: string[]): Promise<VideoDeta
       title: result.title,
       duration: result.duration
     };
+  }
 
-    // Try SoundCloud
-  } else {
-    const client = new SoundCloud.Client();
-    try {
-      const song = await client.getSongInfo(urlString);
-      return {
-        fromUrl: true,
-        url: song.url,
-        title: song.title,
-        duration: { seconds: song.duration / 1000 }
-      };
+  // Try SoundCloud
+  const client = new SoundCloud.Client();
+  try {
+    const song = await client.getSongInfo(urlString);
+    return {
+      fromUrl: true,
+      url: song.url,
+      title: song.title,
+      duration: { seconds: song.duration / 1000 }
+    };
 
-      // Something went wrong. Is this a valid SoundCloud link?
-    } catch (error: unknown) {
-      logger.error(
-        `Failed to fetch song from SoundCloud using url '${urlString}': ${JSON.stringify(error)}`
-      );
-      return null;
-    }
+    // Something went wrong. Is this a valid SoundCloud link?
+  } catch (error: unknown) {
+    logger.error(
+      `Failed to fetch song from SoundCloud using url '${urlString}': ${JSON.stringify(error)}`
+    );
+    return null;
   }
 }

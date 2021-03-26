@@ -1,4 +1,4 @@
-import type { Command } from "./index";
+import type { Command } from "./Command";
 import { useLogger } from "../logger";
 import getVideoDetails from "../actions/getVideoDetails";
 import durationString from "../helpers/durationString";
@@ -14,11 +14,11 @@ const video: Command = {
   description: "Put the video title and duration in chat.",
   async execute(context) {
     const { message, args } = context;
-    async function reply(body: string) {
+    async function reply(body: string): Promise<void> {
       await message.reply(body);
     }
 
-    if (args.length < 1) {
+    if (args.length === 0) {
       return reply("You're gonna have to add a song link to that.");
     }
 

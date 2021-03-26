@@ -43,8 +43,8 @@ client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 export async function testerClient(): Promise<Discord.Client> {
   const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
   if (!isClientLoggedIn) {
-    await client.login(TESTER_TOKEN);
     isClientLoggedIn = true;
+    await client.login(TESTER_TOKEN);
   }
   return client;
 }

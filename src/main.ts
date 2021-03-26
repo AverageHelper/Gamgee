@@ -19,10 +19,10 @@ function richErrorMessage(preamble: string, error: unknown): string {
 
   if (isError(error)) {
     messageBuilder.push(`${error.name}: ${error.message}`);
-    if (error.code) {
+    if (error.code !== undefined) {
       messageBuilder.push(` (${error.code})`);
     }
-    if (error.stack) {
+    if (error.stack !== undefined) {
       messageBuilder.push(",\nStack: ");
       messageBuilder.push(error.stack);
     }
@@ -34,10 +34,36 @@ function richErrorMessage(preamble: string, error: unknown): string {
   return messageBuilder.result();
 }
 
+async function onNewMessage(
+  client: Discord.Client,
+  msg: Discord.Message | Discord.PartialMessage
+): Promise<void> {
+  try {
+    const message = await msg.fetch();
+    const storage = await useStorage(message.guild);
+    await handleCommand(client, message, storage);
+  } catch (error: unknown) {
+    const msgDescription = JSON.stringify(msg, undefined, 2);
+    logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
+  }
+}
+
+async function onMessageReactionAdd(
+  rxn: Discord.MessageReaction,
+  usr: Discord.User | Discord.PartialUser
+): Promise<void> {
+  try {
+    const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
+    await handleReactionAdd(reaction, user);
+  } catch (error: unknown) {
+    logger.error(richErrorMessage("Failed to handle reaction add.", error));
+  }
+}
+
 try {
   const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });
 
-  // Handle client states
+  // Handle client events
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
   });
@@ -46,27 +72,12 @@ try {
     logger.error(richErrorMessage("Received client error.", error));
   });
 
-  // Handle messages
   client.on("message", msg => {
-    void msg.fetch().then(msg =>
-      useStorage(msg.guild)
-        .then(storage => handleCommand(client, msg, storage))
-        .catch(error =>
-          logger.error(
-            richErrorMessage(
-              `Failed to handle message: ${JSON.stringify(msg, undefined, 2)}`,
-              error
-            )
-          )
-        )
-    );
+    void onNewMessage(client, msg);
   });
 
-  // Handle Reactions
   client.on("messageReactionAdd", (reaction, user) => {
-    void Promise.all([reaction.fetch(), user.fetch()])
-      .then(([reaction, user]) => handleReactionAdd(reaction, user))
-      .catch(error => logger.error(richErrorMessage("Failed to handle reaction add.", error)));
+    void onMessageReactionAdd(reaction, user);
   });
 
   // Log in

@@ -17,7 +17,7 @@ const logger = useTestLogger();
 export function useDispatchLoop<T>(
   waiterCollection: Discord.Collection<number, (arg: T) => boolean>
 ): (arg: T) => void {
-  return function (arg) {
+  return function handleEvent(arg): void {
     if (waiterCollection.size === 0) return;
 
     const removed = waiterCollection.sweep((waiter, id) => {

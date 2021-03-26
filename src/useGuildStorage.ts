@@ -24,7 +24,7 @@ export async function useGuildStorage(guild: Discord.Guild): Promise<GuildEntryM
   return {
     guild,
 
-    async getQueueChannelId() {
+    async getQueueChannelId(): Promise<string | null> {
       const queueInfo = await db.Guilds.findOne({
         where: {
           id: guild.id
@@ -33,7 +33,7 @@ export async function useGuildStorage(guild: Discord.Guild): Promise<GuildEntryM
       return queueInfo?.currentQueue ?? null;
     },
 
-    async setQueueChannel(channel) {
+    async setQueueChannel(channel): Promise<void> {
       let currentQueue: string | null;
 
       if (channel === null || typeof channel === "string") {
@@ -54,7 +54,7 @@ export async function useGuildStorage(guild: Discord.Guild): Promise<GuildEntryM
       });
     },
 
-    async getQueueOpen() {
+    async getQueueOpen(): Promise<boolean> {
       const queueInfo = await db.Guilds.findOne({
         where: {
           id: guild.id
@@ -63,13 +63,18 @@ export async function useGuildStorage(guild: Discord.Guild): Promise<GuildEntryM
       return queueInfo?.isQueueOpen ?? false;
     },
 
-    async setQueueOpen(isOpen) {
+    async setQueueOpen(isOpen): Promise<void> {
       const guildInfo = await db.Guilds.findOne({
         where: {
           id: guild.id
         }
       });
-      if (isOpen && !guildInfo?.currentQueue) {
+      if (
+        isOpen &&
+        (guildInfo?.currentQueue === undefined ||
+          guildInfo.currentQueue === null ||
+          guildInfo.currentQueue === "")
+      ) {
         throw new Error("Cannot open a queue without a queue to open.");
       }
       await db.Guilds.update(

@@ -20,7 +20,7 @@ export default async function getQueueChannel(
   const guildInfo = await useGuildStorage(message.guild);
 
   const queueChannelId = await guildInfo.getQueueChannelId();
-  if (!queueChannelId) {
+  if (queueChannelId === null || queueChannelId === "") {
     return null;
   }
 

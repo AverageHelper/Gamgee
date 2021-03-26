@@ -1,6 +1,6 @@
-import type { NamedSubcommand } from "./../index";
+import type { NamedSubcommand } from "../Command";
 import { useLogger } from "../../logger";
-import { reply } from "./index";
+import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
@@ -26,7 +26,8 @@ const setup: NamedSubcommand = {
     }
 
     const channelName = args[1];
-    if (!channelName) return reply(message, `Please name a text channel to use for the queue!`);
+    if (channelName === undefined || channelName === "")
+      return reply(message, `Please name a text channel to use for the queue!`);
 
     const channel = getChannelFromMention(message, channelName);
     if (!channel) {

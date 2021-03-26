@@ -50,10 +50,10 @@ async function query(
 ): Promise<QueryMessage | null> {
   const content = message.content.trim();
   debugLog(`Received message: '${content}'`);
-  const query = content.split(/ +/);
+  const query = content.split(/ +/u);
 
   const commandOrMention = query[0];
-  if (!commandOrMention) return null;
+  if (commandOrMention === undefined || commandOrMention === "") return null;
   debugLog(`First word: '${commandOrMention}'`);
 
   const mentionedUser = await getUserFromMention(message, commandOrMention);
@@ -78,7 +78,7 @@ async function query(
     debugLog("This is just a message. Ignoring.");
     return null;
   }
-  query[0] = query[0]?.substring(COMMAND_PREFIX.length) ?? "";
+  query[0] = query[0]?.slice(COMMAND_PREFIX.length) ?? "";
   debugLog(`query: ${query.toString()}`);
 
   return { query, usedCommandPrefix: true };
@@ -135,7 +135,7 @@ export async function handleCommand(
   // Get the command
   const commandName = q[0]?.toLowerCase();
 
-  if (!commandName) {
+  if (commandName === undefined || commandName === "") {
     // Empty, so do nothing lol
     return;
   }

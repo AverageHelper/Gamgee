@@ -1,4 +1,4 @@
-import type { Command } from "./index";
+import type { Command } from "./Command";
 import { randomPhrase } from "../helpers/randomStrings";
 import { useLogger } from "../logger";
 

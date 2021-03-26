@@ -9,7 +9,7 @@ export default class StringBuilder {
    * @param initialString The initial state of the string builder.
    */
   constructor(initialString?: string) {
-    if (initialString) {
+    if (initialString !== undefined) {
       this.push(initialString);
     }
   }

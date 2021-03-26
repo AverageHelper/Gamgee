@@ -23,7 +23,7 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
 export async function commandResponseInSameChannel(
   command: string,
   channelId: string = TEST_CHANNEL_ID,
-  expectToContain?: string
+  expectToContain: string | undefined = undefined
 ): Promise<Discord.Message | null> {
   const commandMsg = await sendCommand(command, channelId);
   return waitForMessage(response => {
@@ -31,7 +31,9 @@ export async function commandResponseInSameChannel(
       response.author.id === UUT_ID &&
       response.channel.id === channelId &&
       response.createdTimestamp > commandMsg.createdTimestamp &&
-      (!expectToContain || response.content.toLowerCase().includes(expectToContain.toLowerCase()))
+      (expectToContain === undefined ||
+        expectToContain === "" ||
+        response.content.toLowerCase().includes(expectToContain.toLowerCase()))
     );
   });
 }

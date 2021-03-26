@@ -17,7 +17,7 @@ export function useSequelize(): Sequelize {
     sequelize = new Sequelize("queues", "Gamgee", "strawberries", {
       host: "localhost",
       dialect: "sqlite",
-      logging: sql => logger.silly(`Query: '${sql}'`),
+      logging: sql => void logger.silly(`Query: '${sql}'`),
       storage: dbFile
     });
     logger.debug("Initialized Sequelize client");

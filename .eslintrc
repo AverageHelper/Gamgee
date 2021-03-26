@@ -3,13 +3,17 @@
   "ignorePatterns": ["dist", "node_modules"],
 
   "extends": [
+    "strictest/eslint",
+    "strictest/promise",
+    "strictest/typescript-eslint",
+    "strictest/unicorn",
     "eslint:recommended",
     "plugin:jest/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["prettier", "@typescript-eslint"],
+  "plugins": ["prettier", "unicorn", "promise", "@typescript-eslint"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.prod.json",
@@ -21,12 +25,26 @@
   "rules": {
     "prettier/prettier": "warn",
     "no-constant-condition": "warn",
+    "no-console": "warn",
     "no-dupe-else-if": "warn",
+    "consistent-return": "off", // TS handles this
+    "no-duplicate-imports": "off", // typescript-eslint handles this
+    "@typescript-eslint/no-duplicate-imports": "error",
     "@typescript-eslint/no-implicit-any-catch": "error",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/no-inferrable-types": "off",
-    "no-console": "warn"
+    "@typescript-eslint/explicit-member-accessibility": [
+      "error",
+      { "accessibility": "no-public", "overrides": { "properties": "off" } }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      { "allowConciseArrowFunctionExpressionsStartingWithVoid": true }
+    ],
+    "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
+    "@typescript-eslint/array-type": ["warn", { "default": "generic" }],
+    "unicorn/catch-error-name": ["warn", { "name": "error" }]
   },
 
   "overrides": [
@@ -40,6 +58,9 @@
       },
       "env": {
         "jest": true
+      },
+      "rules": {
+        "max-nested-callbacks": "off" // Unit tests involve a lot of nested callbacks
       }
     },
     {

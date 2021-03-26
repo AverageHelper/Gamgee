@@ -15,7 +15,10 @@ const defaultLevel: LogLevel = getEnv("NODE_ENV") === "production" ? "info" : "d
  *
  * @returns The logger, or a new one if no logger has been set up yet.
  */
-export function useLogger(level: LogLevel = defaultLevel, defaultMeta?: unknown): Logger {
+export function useLogger(
+  level: LogLevel = defaultLevel,
+  defaultMeta: unknown = undefined
+): Logger {
   let logger = loggers.get(level);
 
   if (!logger) {
