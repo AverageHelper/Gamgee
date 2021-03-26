@@ -10,7 +10,7 @@ const logger = useLogger();
  */
 interface Database {
   /** The database proxy instance. */
-  sequelize: Sequelize;
+  proxy: Sequelize;
 
   // Tables
   Guilds: ReturnType<typeof guildSchema>;
@@ -54,7 +54,7 @@ export async function useDatabase(): Promise<Database> {
   await syncSchemas();
 
   return {
-    sequelize,
+    proxy: sequelize,
     Guilds,
     Channels,
     QueueConfigs,

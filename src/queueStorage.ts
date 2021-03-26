@@ -126,7 +126,7 @@ export async function useQueueStorage(
     queueChannel,
     getConfig,
     async updateConfig(config) {
-      await db.sequelize.transaction(async transaction => {
+      await db.proxy.transaction(async transaction => {
         const oldConfig = await getConfig(transaction);
 
         let entryDurationSeconds: number | null;
@@ -162,7 +162,7 @@ export async function useQueueStorage(
     },
     async create(entry) {
       try {
-        await db.sequelize.transaction(async transaction => {
+        await db.proxy.transaction(async transaction => {
           // Make sure the guild and channels are in there
           await db.Guilds.findOrCreate({
             where: {
