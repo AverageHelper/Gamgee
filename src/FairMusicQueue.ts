@@ -5,23 +5,23 @@
 
 export {};
 
-/** Return the last element of an array, or `null` if the array is empty. */
-function peekLast<T>(linkedList: ReadonlyArray<T> | Array<T>): T | null {
-  return linkedList[linkedList.length - 1] ?? null;
-}
-
-// Container object for submissions
 interface Submission {
   url: string;
   secondsLong: number;
   timeCreated: number;
 }
 
-// Custom wrapper class around an Array queue that can push
-// new users who haven't played a song yet in front of people who have.
-// This way latecomers get to join the party as soon as possible while those
-// that showed up early still get to hear at least their first submission
-// before getting shifted back in the line.
+/** Returns the last element of an array, or `null` if the array is empty. */
+function last<T>(linkedList: ReadonlyArray<T> | Array<T>): T | null {
+  return linkedList[linkedList.length - 1] ?? null;
+}
+
+/**
+ * A queue that pushes new users who haven't played a song yet in front of
+ * people who have. This way latecomers get to join the party as soon as
+ * possible while those that showed up early still get to hear at least
+ * their first submission before getting shifted back in the line.
+ */
 class PriorityQueue {
   #storage: Array<User> = [];
 
@@ -61,19 +61,19 @@ class PriorityQueue {
     return this.#storage.pop() ?? null;
   }
 
-  [Symbol.iterator]() {
+  [Symbol.iterator](): IterableIterator<User> {
     return this.#storage.values();
   }
 }
 
 // Container object for Users (discord userId + local queue and history)
 class User {
-  readonly userId: number;
+  readonly id: string;
   #localQueue: Array<Submission>;
   #history: Array<Submission>;
 
-  constructor(userId: number) {
-    this.userId = userId;
+  constructor(id: string) {
+    this.id = id;
     this.#localQueue = [];
     this.#history = [];
   }
@@ -92,10 +92,10 @@ class User {
 
   getMostRecentSubmission(): Submission | null {
     if (this.localQueue.length !== 0) {
-      return peekLast(this.localQueue);
+      return last(this.localQueue);
     }
     if (this.history.length !== 0) {
-      return peekLast(this.history);
+      return last(this.history);
     }
     return null;
   }
@@ -105,9 +105,8 @@ class User {
     this.#localQueue.push(sub);
   }
 
-  // Get next submission (if one exists), remove it from local queue and
-  // add to history queue/list
-  pollSubmission(): Submission | null {
+  /** Removes and returns the next submission if one exists. */
+  popSubmission(): Submission | null {
     this.cleanOld();
     const next = this.#localQueue.pop() ?? null;
     if (next !== null) {
@@ -116,8 +115,8 @@ class User {
     return next;
   }
 
-  // Clear out submissions that are too old/free up memory.
-  cleanOld(): void {
+  /** Removes old submissions from the queue. */
+  private cleanOld(): void {
     const oldestAllowed = Date.now() - Queue.maxSubmissionCacheTime;
     while (
       this.history.length !== 0 &&
@@ -137,7 +136,7 @@ class Queue {
   // Discord's userId -> User object
   // Filled with fake userIds and dummy User objects for testing but this
   // would be the persistent user/record storage
-  #userMap: Record<number, User | undefined> = {};
+  #userMap: Record<string, User | undefined> = {};
 
   // Old/already-played user submissions will be forgotten over time, this
   // defines how long that takes.
@@ -168,7 +167,7 @@ class Queue {
    * @param seconds The duration of their submission
    * @returns `true` if the submission was accepted. `false` otherwise.
    */
-  trySubmission(userId: number, url: string, seconds: number): boolean {
+  trySubmission(userId: string, url: string, seconds: number): boolean {
     if (seconds > this.maxSubmissionLength) {
       // Submission denied. Song too long.
       return false;
@@ -203,7 +202,7 @@ class Queue {
       const user = this.#masterQueue.pop();
 
       // Get next submission from user
-      const nextSubmission = user?.pollSubmission() ?? null;
+      const nextSubmission = user?.popSubmission() ?? null;
       if (nextSubmission !== null) {
         // Add user back to master queue if they have more submissions
         if (user?.hasSubmission()) {
@@ -239,7 +238,7 @@ class Queue {
 // // queue their songs first.
 // for (let uNum = 0; uNum < numberOfTestUsers; uNum++) {
 //   // create fake discord user id, easy to recognize in the test output
-//   const userId = uNum * 1111;
+//   const userId = `${uNum * 1111}`;
 
 //   // Generate 2-4 submissions per user
 //   const numberOfTestSongs = Math.floor(Math.random() * 3 + 2);
