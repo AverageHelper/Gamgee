@@ -3,6 +3,7 @@ import type { QueueConfig } from "../../actions/database/schemas/queueConfigSche
 import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
+import { deleteMessage } from "../messages/deleteMessage";
 import StringBuilder from "../../helpers/StringBuilder";
 import {
   REACTION_BTN_DONE,
@@ -130,7 +131,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
 
         // If the database write fails...
       } catch (error: unknown) {
-        await queueMessage.delete();
+        await deleteMessage(queueMessage, "We had an error");
         throw error;
       }
     },

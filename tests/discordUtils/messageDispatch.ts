@@ -1,18 +1,75 @@
-import type Discord from "discord.js";
-import { messageWaiters } from "./testerClient";
+import Discord from "discord.js";
+import LimitedQueue from "../../src/helpers/LimitedQueue";
+import { messageWaiters, messageDeleteWaiters } from "./testerClient";
 import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 5000;
 
 function uuid(): number {
   return Date.now();
 }
 
+const caches = new Discord.Collection<string, LimitedQueue<unknown>>();
+
+function eventCache<T>(key: string): LimitedQueue<T> {
+  let cache = caches.get(key) as LimitedQueue<T> | undefined;
+  if (!cache) {
+    cache = new LimitedQueue<T>(5);
+    caches.set(key, cache);
+  }
+  return cache;
+}
+
+function waitForEventInCollection<T extends { id: string }>(
+  key: string,
+  waiterPool: Discord.Collection<number, (msg: T) => boolean>,
+  condition: (msg: T) => boolean = () => true,
+  timeout: number = DEFAULT_TIMEOUT
+): Promise<T | null> {
+  return new Promise(resolve => {
+    const id = uuid();
+    const cache = eventCache<T>(key);
+
+    const timer = setTimeout(() => {
+      // Remove self from the waters list
+      if (waiterPool.delete(id)) {
+        logger.debug(`Waiter ${id} was removed due to timeout.`);
+        return resolve(null);
+      }
+      logger.debug(`Waiter ${id} was already removed. (Should rarely see this)`);
+    }, timeout);
+
+    function newMessage(newMessage: T): boolean {
+      cache.push(newMessage);
+
+      let shouldHandle = false;
+      for (const message of cache) {
+        shouldHandle = condition(message);
+        if (shouldHandle) {
+          logger.debug(
+            `Waiter ${id} received message ${message.id} and should handle it. Removing from loop...`
+          );
+          clearTimeout(timer);
+          cache.removeFirstWhere(msg => msg.id === message.id);
+          resolve(message);
+        } else {
+          logger.debug(
+            `Waiter ${id} received message ${message.id} but should not handle it. Continuing.`
+          );
+        }
+      }
+      return shouldHandle;
+    }
+
+    waiterPool.set(id, newMessage);
+  });
+}
+
 /**
  * Waits for a new message from Discord. Waits up to a provided `timeout`
- * (default 10 seconds) for one to arrive that fulfills the provided
+ * (default 5 seconds) for one to arrive that fulfills the provided
  * `condition` before resolving the promise with `null`.
  *
  * @returns A `Promise` which resolves with a Discord message or `null`,
@@ -22,78 +79,20 @@ export function waitForMessage(
   condition: (msg: Discord.Message) => boolean = () => true,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
-  return new Promise(resolve => {
-    const id = uuid();
-
-    const timer = setTimeout(() => {
-      // Remove self from the waters list
-      if (messageWaiters.delete(id)) {
-        logger.debug(`Waiter ${id} was removed due to timeout.`);
-        return resolve(null);
-      }
-      logger.debug(`Waiter ${id} was already removed. (Should rarely see this)`);
-    }, timeout);
-
-    function newMessage(message: Discord.Message): boolean {
-      const shouldHandle = condition(message);
-      if (shouldHandle) {
-        logger.debug(`Waiter ${id} received a message we should handle. Removing from loop...`);
-        clearTimeout(timer);
-        resolve(message);
-      } else {
-        logger.debug(`Waiter ${id} received a message, but we should not handle it.`);
-      }
-      return shouldHandle;
-    }
-
-    messageWaiters.set(id, newMessage);
-  });
+  return waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
 }
 
 /**
- * Waits for a new message from Discord in the provided channel. Waits
- * up to a provided `timeout` (default 10 seconds) for one to arrive
- * before resolving the promise with `null`.
+ * Waits for message deletion event. Waits up to a provided `timeout`
+ * (default 5 seconds) for one to arrive that fulfills the provided
+ * `condition` before resolving the promise with `null`.
  *
  * @returns A `Promise` which resolves with a Discord message or `null`,
- * depending on whether a message arrives before the `timeout`.
+ * depending on whether a message was deleted before the `timeout`.
  */
-export function waitForMessageInChannel(
-  channelId: string,
+export function waitForMessageDeletion(
+  condition: (msg: Discord.Message) => boolean = () => true,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
-  return waitForMessage(msg => msg.channel.id === channelId, timeout);
-}
-
-/**
- * Waits for a new message from Discord from the provided user. Waits
- * up to a provided `timeout` (default 10 seconds) for one to arrive
- * before resolving the promise with `null`.
- *
- * @returns A `Promise` which resolves with a Discord message or `null`,
- * depending on whether a message arrives before the `timeout`.
- */
-export function waitForMessageFromUser(
-  userId: string,
-  timeout: number = DEFAULT_TIMEOUT
-): Promise<Discord.Message | null> {
-  return waitForMessage(msg => msg.author.id === userId, timeout);
-}
-
-/**
- * Waits for a new message from Discord in the provided channel and
- * from the provided user. Waits up to a provided `timeout` (default
- * 10 seconds) for one to arrive before resolving the promise with `null`.
- *
- * @returns A `Promise` which resolves with a Discord message or `null`,
- * depending on whether a message arrives before the `timeout`.
- */
-export function waitForMessageWithInfo(
-  info: { userId: string; channelId: string },
-  timeout: number = DEFAULT_TIMEOUT
-): Promise<Discord.Message | null> {
-  return waitForMessage(
-    msg => msg.author.id === info.userId && msg.channel.id === info.channelId,
-    timeout
-  );
+  return waitForEventInCollection("messageDeleteWaiters", messageDeleteWaiters, condition, timeout);
 }

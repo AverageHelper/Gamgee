@@ -1,6 +1,6 @@
-import { Sequelize, Model, ModelCtor, STRING, BOOLEAN } from "sequelize";
-import channelSchema from "./channelSchema";
+import { Model, ModelCtor, STRING, BOOLEAN } from "sequelize";
 import { useLogger } from "../../../logger";
+import { useSequelize } from "../useSequelize";
 
 const logger = useLogger();
 
@@ -14,26 +14,26 @@ type GuildCreationAttributes = GuildAttributes;
 
 interface GuildSchema extends Model<GuildAttributes, GuildCreationAttributes>, GuildAttributes {}
 
-export default function guildSchema(sequelize: Sequelize): ModelCtor<GuildSchema> {
-  const Channels = channelSchema(sequelize);
+let Guilds: ModelCtor<GuildSchema> | null = null;
 
-  const Guilds = sequelize.define<GuildSchema>("guilds", {
-    id: {
-      type: STRING,
-      primaryKey: true,
-      unique: true,
-      allowNull: false
-    },
-    isQueueOpen: {
-      type: BOOLEAN,
-      allowNull: false
-    },
-    currentQueue: STRING
-  });
+export default function guildSchema(): ModelCtor<GuildSchema> {
+  if (!Guilds) {
+    const sequelize = useSequelize();
+    Guilds = sequelize.define<GuildSchema>("guilds", {
+      id: {
+        type: STRING,
+        primaryKey: true,
+        unique: true,
+        allowNull: false
+      },
+      isQueueOpen: {
+        type: BOOLEAN,
+        allowNull: false
+      },
+      currentQueue: STRING
+    });
+    logger.debug("Created Guilds schema");
+  }
 
-  Guilds.hasMany(Channels, { sourceKey: "id", foreignKey: "guildId", as: "channels" });
-  Channels.belongsTo(Guilds);
-
-  logger.debug("Created Guilds schema");
   return Guilds;
 }

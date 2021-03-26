@@ -1,5 +1,6 @@
-import { Sequelize, Model, ModelCtor, STRING, INTEGER } from "sequelize";
+import { Model, ModelCtor, STRING, INTEGER } from "sequelize";
 import { useLogger } from "../../../logger";
+import { useSequelize } from "../useSequelize";
 
 const logger = useLogger();
 
@@ -25,19 +26,24 @@ interface QueueConfigSchema
   extends Model<QueueConfigAttributes, QueueConfigCreationAttributes>,
     QueueConfigAttributes {}
 
-export default function queueConfigSchema(sequelize: Sequelize): ModelCtor<QueueConfigSchema> {
-  const QueueConfigs = sequelize.define<QueueConfigSchema>("queue-configs", {
-    channelId: {
-      type: STRING,
-      unique: true,
-      primaryKey: true,
-      allowNull: false
-    },
-    entryDurationSeconds: INTEGER,
-    cooldownSeconds: INTEGER,
-    submissionMaxQuantity: INTEGER
-  });
+let QueueConfigs: ModelCtor<QueueConfigSchema> | null = null;
 
-  logger.debug("Created Queue Configs schema");
+export default function queueConfigSchema(): ModelCtor<QueueConfigSchema> {
+  if (!QueueConfigs) {
+    const sequelize = useSequelize();
+    QueueConfigs = sequelize.define<QueueConfigSchema>("queue-configs", {
+      channelId: {
+        type: STRING,
+        unique: true,
+        primaryKey: true,
+        allowNull: false
+      },
+      entryDurationSeconds: INTEGER,
+      cooldownSeconds: INTEGER,
+      submissionMaxQuantity: INTEGER
+    });
+    logger.debug("Created Queue Configs schema");
+  }
+
   return QueueConfigs;
 }

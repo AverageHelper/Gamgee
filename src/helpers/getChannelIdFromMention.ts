@@ -1,6 +1,11 @@
 import { useLogger } from "../logger";
 
+const LOGGING = false;
 const logger = useLogger();
+
+function debugLog(msg: string): void {
+  if (LOGGING) logger.debug(msg);
+}
 
 /**
  * Get a channel ID from a mention string.
@@ -17,12 +22,12 @@ export default function getChannelIdFromMention(mention: string): string | null 
 
   if (startsRight && endsRight) {
     m = m.slice(2, -1);
-    logger.debug(`This is for sure a mention. Channel ID: ${m}`);
+    debugLog(`This is for sure a mention. Channel ID: ${m}`);
 
     return m;
   }
 
-  logger.debug(`This word does ${startsRight ? "" : "not "}start right.`);
-  logger.debug(`This word does ${endsRight ? "" : "not "}end right.`);
+  debugLog(`This word does ${startsRight ? "" : "not "}start right.`);
+  debugLog(`This word does ${endsRight ? "" : "not "}end right.`);
   return null;
 }

@@ -1,15 +1,14 @@
 import type { NamedSubcommand } from "./../index";
 import { reply } from "./index";
 import { useGuildStorage } from "../../useGuildStorage";
-import deleteMessage from "../../actions/deleteMessage";
+import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 
 const close: NamedSubcommand = {
   name: "close",
   description: "Stop accepting song requests to the queue.",
-  async execute(context) {
-    const { message } = context;
-
+  async execute({ message }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
@@ -17,12 +16,16 @@ const close: NamedSubcommand = {
     const guild = await useGuildStorage(message.guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
       guild.getQueueOpen(),
-      getQueueChannel(context),
+      getQueueChannel(message),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
-    if (message.author.id !== message.guild.ownerID && message.channel.id !== queueChannel?.id) {
-      return reply(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (
+      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      message.channel.id !== queueChannel?.id
+    ) {
+      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+      return;
     }
     if (!queueChannel) {
       return reply(message, "There's no queue to close. Have you set one up yet?");

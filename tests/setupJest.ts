@@ -1,14 +1,16 @@
 import path from "path";
 import { fsUnlink } from "./fsUtils";
+import { logOut } from "./discordUtils";
 
-// 30-second timeout for E2E tests
-jest.setTimeout(30000);
-
-async function deleteTestDatabase() {
-  const dbDir = path.resolve(__dirname, "./db/db.sqlite");
-  await fsUnlink(dbDir);
-}
+// 45-second timeout for E2E tests
+jest.setTimeout(45000);
 
 beforeAll(async () => {
-  await deleteTestDatabase();
+  // Delete the test database
+  const dbDir = path.resolve(__dirname, "./db-test/db.sqlite");
+  await fsUnlink(dbDir);
+});
+
+afterAll(() => {
+  logOut();
 });
