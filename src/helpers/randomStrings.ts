@@ -23,7 +23,7 @@ export function randomPhrase(): string {
 /* Philosophy */
 
 export function randomPhilosophy(): string {
-  return randomResponseFromArray("phrases", philosophy);
+  return randomResponseFromArray("philosophy", philosophy);
 }
 
 /* Questions */
