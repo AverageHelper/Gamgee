@@ -1,11 +1,10 @@
-const dotenv = require("dotenv");
-dotenv.config();
-
 module.exports = {
   apps: [
     {
       name: "gamgee",
       script: "./dist/main.js",
+      cwd: __dirname,
+      source_map_support: true,
       watch: ["dist"],
       watch_delay: 1000,
       env: {
@@ -13,11 +12,6 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: "production"
-      },
-      env_webhook: {
-        port: 23928,
-        path: "/",
-        secret: process.env["WEBHOOK_SECRET"]
       }
     }
   ]
