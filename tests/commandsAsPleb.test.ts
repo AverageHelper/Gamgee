@@ -50,7 +50,7 @@ describe("Command as pleb", () => {
         }
       );
 
-      test("urlRequest does nothing", async () => {
+      test("url request does nothing", async () => {
         const response = await commandResponseInSameChannel(`sr ${url}`);
         expect(response?.content.toLowerCase()).toContain("no queue");
       });
@@ -85,7 +85,7 @@ describe("Command as pleb", () => {
           expect(response?.content).toBe(`<@!${TESTER_ID}>, Submission Accepted!`);
         });
       } else {
-        test("urlRequest tells the user the queue is not open", async () => {
+        test("url request tells the user the queue is not open", async () => {
           const response = await commandResponseInSameChannel(`sr ${url}`);
           expect(response?.content).toContain("queue is not open");
         });
@@ -96,12 +96,12 @@ describe("Command as pleb", () => {
         expect(response?.content).toContain(needSongLink);
       });
 
-      test("returns the queue instructional text", async () => {
+      test("info returns the queue instructional text", async () => {
         const response = await commandResponseInSameChannel("sr info");
         expect(response?.content).toMatchSnapshot();
       });
 
-      test("yells at the tester for trying to set up a queue", async () => {
+      test("setup yells at the tester for trying to set up a queue", async () => {
         let response = await commandResponseInSameChannel("sr setup");
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
 
@@ -109,35 +109,25 @@ describe("Command as pleb", () => {
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
       });
 
-      test("yells at the tester for trying to open the queue", async () => {
-        const response = await commandResponseInSameChannel("sr open");
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
-
-      test("yells at the tester for trying to close the queue", async () => {
-        const response = await commandResponseInSameChannel("sr close");
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
-
-      test("yells at the tester for trying to set limits on the queue", async () => {
-        const response = await commandResponseInSameChannel("sr limit count");
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
-
-      test("allows the tester to get the queue's global limits", async () => {
+      test("limit allows the tester to get the queue's global limits", async () => {
         const response = await commandResponseInSameChannel("sr limit");
         expect(response?.content).toMatchSnapshot();
       });
 
-      test("yells at the tester for trying to see queue statistics", async () => {
-        const response = await commandResponseInSameChannel("sr stats");
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
-
-      test("yells at the tester for trying to restart the queue", async () => {
-        const response = await commandResponseInSameChannel("sr restart");
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
+      test.each`
+        subcommand
+        ${"open"}
+        ${"close"}
+        ${"limit count"}
+        ${"stats"}
+        ${"restart"}
+      `(
+        "$subcommand yells at the tester because they don't have permission",
+        async ({ subcommand }: { subcommand: string }) => {
+          const response = await commandResponseInSameChannel(`sr ${subcommand}`);
+          expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
+        }
+      );
     });
   });
 
@@ -156,7 +146,7 @@ describe("Command as pleb", () => {
     });
 
     test("returns the title and duration of a song with suboptimal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video ${url}`);
+      const response = await commandResponseInSameChannel(`video             ${url}`);
       expect(response?.content).toContain(info);
     });
   });

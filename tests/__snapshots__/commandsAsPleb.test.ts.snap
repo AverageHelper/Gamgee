@@ -19,28 +19,28 @@ Commands:
 \`?video <YouTube or SoundCloud link>\` - Put the video title and duration in chat."
 `;
 
-exports[`Command as pleb sr when the queue is closed allows the tester to get the queue's global limits 1`] = `
+exports[`Command as pleb sr when the queue is closed info returns the queue instructional text 1`] = `
+"To submit a song, type \`?sr <link>\`.
+For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
+I will respond with a text verification indicating your song has joined the queue!"
+`;
+
+exports[`Command as pleb sr when the queue is closed limit allows the tester to get the queue's global limits 1`] = `
 "Queue Limits:
 \`entry-duration\` - **infinite**
 \`cooldown\` - **none**
 \`count\` - **infinite**"
 `;
 
-exports[`Command as pleb sr when the queue is closed returns the queue instructional text 1`] = `
+exports[`Command as pleb sr when the queue is open info returns the queue instructional text 1`] = `
 "To submit a song, type \`?sr <link>\`.
 For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with a text verification indicating your song has joined the queue!"
 `;
 
-exports[`Command as pleb sr when the queue is open allows the tester to get the queue's global limits 1`] = `
+exports[`Command as pleb sr when the queue is open limit allows the tester to get the queue's global limits 1`] = `
 "Queue Limits:
 \`entry-duration\` - **infinite**
 \`cooldown\` - **none**
 \`count\` - **infinite**"
-`;
-
-exports[`Command as pleb sr when the queue is open returns the queue instructional text 1`] = `
-"To submit a song, type \`?sr <link>\`.
-For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
-I will respond with a text verification indicating your song has joined the queue!"
 `;

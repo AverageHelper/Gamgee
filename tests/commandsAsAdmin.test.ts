@@ -56,7 +56,7 @@ describe("Command as admin", () => {
         }
       );
 
-      test("urlRequest does nothing", async () => {
+      test("url request does nothing", async () => {
         const response = await commandResponseInSameChannel(`sr ${url}`);
         expect(response?.content.toLowerCase()).toContain("no queue");
       });
@@ -67,7 +67,7 @@ describe("Command as admin", () => {
       expect(response?.content).toBe(needSongLink);
     });
 
-    test("returns the queue instructional text", async () => {
+    test("info returns the queue instructional text", async () => {
       const response = await commandResponseInSameChannel("sr info");
       expect(response?.content).toMatchSnapshot();
     });
@@ -317,7 +317,7 @@ describe("Command as admin", () => {
     });
 
     test("returns the title and duration of a song with suboptimal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video ${url}`);
+      const response = await commandResponseInSameChannel(`video             ${url}`);
       expect(response?.content).toBe(info);
     });
   });
