@@ -9,6 +9,7 @@ Commands:
 \`?sr <YouTube or SoundCloud link>\` - Submit a song to the queue.
     \`?sr info\` - Print a handy message to let people know how to queue-up.
     \`?sr setup <channel name>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
+    \`?sr teardown <channel name>\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
     \`?sr open\` - Start accepting song requests to the queue.
     \`?sr close\` - Stop accepting song requests to the queue.
     \`?sr limit <entry-duration|cooldown|count>\` - Set a limit value on the queue. (Time in seconds, where applicable)

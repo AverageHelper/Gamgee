@@ -23,7 +23,7 @@ const urlRequest: ArbitrarySubcommand = {
     const guild = await useGuildStorage(message.guild);
     const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {
-      return reject_public(message, "The queue is not set up.");
+      return reject_public(message, "No queue is set up.");
     }
 
     if (message.channel.id === queueChannel?.id) {

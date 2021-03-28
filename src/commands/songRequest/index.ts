@@ -4,13 +4,14 @@ import { reject_public } from "./actions";
 import arbitrarySubcommand from "./urlRequest";
 import info from "./info";
 import setup from "./setup";
+import teardown from "./teardown";
 import open from "./open";
 import close from "./close";
 import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
 
-const namedSubcommands = [info, setup, open, close, limit, stats, restart];
+const namedSubcommands = [info, setup, teardown, open, close, limit, stats, restart];
 
 const sr: Command = {
   name: "sr",
