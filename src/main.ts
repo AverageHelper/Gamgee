@@ -1,38 +1,16 @@
 import "source-map-support/register";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
-import isError from "./helpers/isError";
 
 const logger = useLogger();
 logger.info("Starting...");
 logger.debug(`env: ${getEnv("NODE_ENV") ?? "undefined"}`);
 
 import Discord from "discord.js";
+import richErrorMessage from "./helpers/richErrorMessage";
 import { useStorage } from "./configStorage";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
-import StringBuilder from "./helpers/StringBuilder";
-
-function richErrorMessage(preamble: string, error: unknown): string {
-  const messageBuilder = new StringBuilder(preamble);
-  messageBuilder.pushNewLine();
-
-  if (isError(error)) {
-    messageBuilder.push(`${error.name}: ${error.message}`);
-    if (error.code !== undefined) {
-      messageBuilder.push(` (${error.code})`);
-    }
-    if (error.stack !== undefined) {
-      messageBuilder.push(",\nStack: ");
-      messageBuilder.push(error.stack);
-    }
-  } else {
-    messageBuilder.push("Error: ");
-    messageBuilder.push(JSON.stringify(error));
-  }
-
-  return messageBuilder.result();
-}
 
 async function onNewMessage(
   client: Discord.Client,

@@ -7,6 +7,7 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import { deleteMessage } from "../../actions/messages/deleteMessage";
 import { useGuildStorage } from "../../useGuildStorage";
 
@@ -130,7 +131,7 @@ const urlRequest: ArbitrarySubcommand = {
       // Handle fetch errors
     } catch (error: unknown) {
       logger.error(
-        `Failed to run query: ${JSON.stringify(args)}, ${JSON.stringify(error, undefined, 2)}`
+        richErrorMessage(`Failed to run query: ${JSON.stringify(args, undefined, 2)}`, error)
       );
       return reject_public(message, "That query gave me an error.");
     }

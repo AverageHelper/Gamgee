@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import { getEnv } from "../../helpers/environment";
 import { useLogger } from "../../logger";
 
@@ -28,7 +29,7 @@ export async function replyPrivately(message: Discord.Message, content: string):
     // Normal bot messages get ignored
     return true;
   } catch (error: unknown) {
-    logger.error(`Failed to send direct message: ${JSON.stringify(error, undefined, 2)}`);
+    logger.error(richErrorMessage("Failed to send direct message.", error));
     return false;
   }
 }

@@ -1,6 +1,7 @@
 import ytdl from "ytdl-core";
 import yts from "yt-search";
 import SoundCloud from "soundcloud-scraper";
+import richErrorMessage from "../helpers/richErrorMessage";
 import { useLogger } from "../logger";
 
 const logger = useLogger();
@@ -60,7 +61,7 @@ export default async function getVideoDetails(args: Array<string>): Promise<Vide
     // Something went wrong. Is this a valid SoundCloud link?
   } catch (error: unknown) {
     logger.error(
-      `Failed to fetch song from SoundCloud using url '${urlString}': ${JSON.stringify(error)}`
+      richErrorMessage(`Failed to fetch song from SoundCloud using url '${urlString}'`, error)
     );
     return null;
   }

@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import { useGuildStorage } from "../../useGuildStorage";
 import { useLogger } from "../../logger";
 
@@ -28,7 +29,7 @@ export default async function getQueueChannel(
   try {
     queueChannel = (await message.client.channels.fetch(queueChannelId)) as Discord.TextChannel;
   } catch (error: unknown) {
-    logger.error(`Failed to fetch queue channel: ${JSON.stringify(error, undefined, 2)}`);
+    logger.error(richErrorMessage("Failed to fetch queue channel.", error));
     await message.channel.send(
       "The configured channel doesn't exist. Have an administrator set the queue back up."
     );

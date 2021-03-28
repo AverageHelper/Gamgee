@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import { useLogger } from "../../logger";
 
 const logger = useLogger();
@@ -22,7 +23,7 @@ export async function deleteMessage(message: Discord.Message, reason?: string): 
     await message.delete({ reason });
     return true;
   } catch (error: unknown) {
-    logger.error(`Failed to delete a message: ${JSON.stringify(error, undefined, 2)}`);
+    logger.error(richErrorMessage("Failed to delete a message.", error));
     return false;
   }
 }
@@ -47,7 +48,7 @@ export async function deleteMessageWithId(
     await channel.messages.delete(messageId, reason);
     return true;
   } catch (error: unknown) {
-    logger.error(`Failed to delete a message: ${JSON.stringify(error, undefined, 2)}`);
+    logger.error(richErrorMessage("Failed to delete a message.", error));
     return false;
   }
 }
