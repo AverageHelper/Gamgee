@@ -14,7 +14,7 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
  * @throws an error if the provided channel is not a text channel, or
  * something else went wrong with the send.
  *
- * @returns the message that was sent.
+ * @returns a `Promise` that resolves to the message that was sent.
  */
 export async function sendMessage(
   content: string,
@@ -38,9 +38,9 @@ export async function sendMessage(
  * @throws an error if the provided channel is not a text channel, or
  * something else went wrong with the send.
  *
- * @returns the message that was sent.
+ * @returns a `Promise` that resolves to the message that was sent.
  */
-export function sendCommand(
+export async function sendCommand(
   name: string,
   channelId: string = TEST_CHANNEL_ID
 ): Promise<Discord.Message> {

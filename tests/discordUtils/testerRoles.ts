@@ -16,7 +16,6 @@ async function setAdminRole(
   if (!user) throw new Error("The tester bot has no user object");
 
   const guild = await client.guilds.fetch(TEST_GUILD_ID);
-  if (!guild) throw new Error(`No accessible guild found with ID ${TEST_GUILD_ID}`);
 
   const roleId = requireEnv(roleKey);
   const queueAdminRole = await guild.roles.fetch(roleId);
@@ -42,7 +41,7 @@ async function setAdminRole(
 /**
  * Grants or removes the Queue Admin role on the tester bot.
  */
-export function setIsQueueAdmin(isAdmin: boolean): Promise<void> {
+export async function setIsQueueAdmin(isAdmin: boolean): Promise<void> {
   return setAdminRole("QUEUE_ADMIN_ROLE_ID", isAdmin);
 }
 

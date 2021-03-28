@@ -17,7 +17,7 @@ export default async function getUserFromMention(
   mention: string
 ): Promise<Discord.User | undefined> {
   const userId = getUserIdFromMention(mention);
-  if (!userId) return undefined;
+  if (userId === null || userId === "") return undefined;
 
   const user = (await message.guild?.members.fetch(userId))?.user;
 

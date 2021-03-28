@@ -77,19 +77,19 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
   logger.debug("Storage prepared!");
 
   return {
-    getConfig() {
+    async getConfig(): Promise<QueueConfig> {
       return queueStorage.getConfig();
     },
-    updateConfig(config) {
+    async updateConfig(config): Promise<void> {
       return queueStorage.updateConfig(config);
     },
-    count() {
+    async count(): Promise<number> {
       return queueStorage.countAll();
     },
-    countFrom(userId) {
+    async countFrom(userId): Promise<number> {
       return queueStorage.countAllFrom(userId);
     },
-    async playtimeRemaining() {
+    async playtimeRemaining(): Promise<number> {
       const queue = await queueStorage.fetchAll();
       let duration = 0;
       queue
@@ -99,7 +99,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         });
       return duration;
     },
-    async playtimeTotal() {
+    async playtimeTotal(): Promise<number> {
       const queue = await queueStorage.fetchAll();
       let duration = 0;
       queue.forEach(e => {
@@ -107,7 +107,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       });
       return duration;
     },
-    async push(newEntry) {
+    async push(newEntry): Promise<QueueEntry> {
       const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
       messageBuilder.push(" requested a song that's ");
       messageBuilder.pushBold(durationString(newEntry.seconds));
@@ -135,10 +135,10 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
         throw error;
       }
     },
-    getEntryFromMessage(queueMessageId) {
+    async getEntryFromMessage(queueMessageId): Promise<QueueEntry | null> {
       return queueStorage.fetchEntryFromMessage(queueMessageId);
     },
-    async markNotDone(queueMessage: Discord.Message) {
+    async markNotDone(queueMessage): Promise<void> {
       await queueStorage.markEntryDone(false, queueMessage.id);
       await Promise.all([
         queueMessage.edit(removeStrikethrough(queueMessage.content)),
@@ -149,7 +149,7 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       await queueMessage.react(REACTION_BTN_MUSIC);
       await queueMessage.react(REACTION_BTN_DONE);
     },
-    async markDone(queueMessage: Discord.Message) {
+    async markDone(queueMessage): Promise<void> {
       await queueStorage.markEntryDone(true, queueMessage.id);
       await Promise.all([
         queueMessage.edit(addStrikethrough(queueMessage.content)),
@@ -159,13 +159,13 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
       await queueMessage.react(REACTION_BTN_MUSIC);
       await queueMessage.react(REACTION_BTN_UNDO);
     },
-    getAllEntries() {
+    async getAllEntries(): Promise<Array<QueueEntry>> {
       return queueStorage.fetchAll();
     },
-    getLatestEntryFrom(userId) {
+    async getLatestEntryFrom(userId): Promise<QueueEntry | null> {
       return queueStorage.fetchLatestFrom(userId);
     },
-    clear() {
+    async clear(): Promise<void> {
       return queueStorage.clear();
     }
   };

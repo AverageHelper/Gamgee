@@ -28,7 +28,7 @@ export default async function describeAllCommands(
     // Describe the command
     cmdDesc.push(CODE);
     cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
-    if (requiredArgFormat) {
+    if (requiredArgFormat !== undefined && requiredArgFormat !== "") {
       cmdDesc.push(` ${requiredArgFormat}`);
     }
     cmdDesc.push(CODE);
@@ -47,7 +47,7 @@ export default async function describeAllCommands(
 
       subDesc.push(CODE);
       subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
-      if (requiredSubargFormat) {
+      if (requiredSubargFormat !== undefined && requiredSubargFormat !== "") {
         subDesc.push(` ${requiredSubargFormat}`);
       }
       subDesc.push(CODE);

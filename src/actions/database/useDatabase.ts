@@ -1,9 +1,6 @@
 import { Sequelize } from "sequelize";
 import { queueEntrySchema, queueConfigSchema, channelSchema, guildSchema } from "./schemas";
-import { useLogger } from "../../logger";
 import { useSequelize } from "./useSequelize";
-
-const logger = useLogger();
 
 /**
  * An interface for reading from and writing to the database
@@ -19,8 +16,6 @@ interface Database {
   QueueEntries: ReturnType<typeof queueEntrySchema>;
 }
 
-let isDbSetUp = false;
-
 const sequelize = useSequelize();
 const Guilds = guildSchema();
 const Channels = channelSchema();
@@ -30,19 +25,12 @@ const QueueEntries = queueEntrySchema();
 /**
  * Sets up the database to receive data from our schema's tables.
  * If these tables already exist in the database, nothing more is done.
- *
- * @returns This action only occurs once per run.
  */
 async function syncSchemas(): Promise<void> {
-  if (isDbSetUp) return;
-
-  logger.debug("Syncing schemas with the database...");
   await Guilds.sync();
   await Channels.sync();
   await QueueConfigs.sync();
   await QueueEntries.sync();
-  logger.debug("Schemas synced!");
-  isDbSetUp = true;
 }
 
 /**

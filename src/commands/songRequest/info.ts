@@ -1,13 +1,14 @@
-import type { NamedSubcommand } from "./../index";
-import { reply } from "./index";
+import type { NamedSubcommand } from "../Command";
+import { reply } from "./actions";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue";
 import StringBuilder from "../../helpers/StringBuilder";
-import songRequest from "./index";
 
 const info: NamedSubcommand = {
   name: "info",
   description: "Print a handy message to let people know how to queue-up.",
   async execute({ message, storage }) {
+    const songRequest = (await import("./index")).default;
+
     // Print the standard help
     const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
     const helpBuilder = new StringBuilder();

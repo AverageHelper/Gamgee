@@ -22,10 +22,10 @@ function eventCache<T>(key: string): LimitedQueue<T> {
   return cache;
 }
 
-function waitForEventInCollection<T extends { id: string }>(
+async function waitForEventInCollection<T extends { id: string }>(
   key: string,
   waiterPool: Discord.Collection<number, (msg: T) => boolean>,
-  condition: (msg: T) => boolean = () => true,
+  condition: (msg: T) => boolean = (): boolean => true,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<T | null> {
   return new Promise(resolve => {
@@ -72,11 +72,11 @@ function waitForEventInCollection<T extends { id: string }>(
  * (default 5 seconds) for one to arrive that fulfills the provided
  * `condition` before resolving the promise with `null`.
  *
- * @returns A `Promise` which resolves with a Discord message or `null`,
+ * @returns a `Promise` which resolves with a Discord message or `null`,
  * depending on whether a message arrives before the `timeout`.
  */
-export function waitForMessage(
-  condition: (msg: Discord.Message) => boolean = () => true,
+export async function waitForMessage(
+  condition: (msg: Discord.Message) => boolean = (): boolean => true,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
   return waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
@@ -87,11 +87,11 @@ export function waitForMessage(
  * (default 5 seconds) for one to arrive that fulfills the provided
  * `condition` before resolving the promise with `null`.
  *
- * @returns A `Promise` which resolves with a Discord message or `null`,
+ * @returns a `Promise` which resolves with a Discord message or `null`,
  * depending on whether a message was deleted before the `timeout`.
  */
-export function waitForMessageDeletion(
-  condition: (msg: Discord.Message) => boolean = () => true,
+export async function waitForMessageDeletion(
+  condition: (msg: Discord.Message) => boolean = (): boolean => true,
   timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
   return waitForEventInCollection("messageDeleteWaiters", messageDeleteWaiters, condition, timeout);

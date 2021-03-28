@@ -1,4 +1,4 @@
-import type { NamedSubcommand } from "./../index";
+import type { NamedSubcommand } from "../Command";
 import { useLogger } from "../../logger";
 import { useQueue } from "../../actions/queue/useQueue";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
@@ -6,7 +6,7 @@ import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
-import { reply, reply_private } from "./index";
+import { reply, reply_private } from "./actions";
 
 const logger = useLogger();
 
@@ -83,7 +83,6 @@ const stats: NamedSubcommand = {
       queueIsCurrent ? reply(message, response) : reply_private(message, response), //
       deleteMessage(message, "Spam; Users shouldn't see this")
     ]);
-    return;
   }
 };
 

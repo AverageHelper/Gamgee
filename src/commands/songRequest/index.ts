@@ -1,42 +1,17 @@
-import type Discord from "discord.js";
-import type { Command } from "./../index";
-import { deleteMessage, replyPrivately } from "../../actions/messages";
+import type { Command } from "../Command";
+import { reject_public } from "./actions";
 
 import arbitrarySubcommand from "./urlRequest";
 import info from "./info";
 import setup from "./setup";
+import teardown from "./teardown";
 import open from "./open";
 import close from "./close";
 import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
 
-const namedSubcommands = [info, setup, open, close, limit, stats, restart];
-
-export async function reply(message: Discord.Message, msg: string): Promise<void> {
-  await Promise.all([
-    message.channel.send(msg), //
-    message.channel.stopTyping(true)
-  ]);
-}
-
-export async function reply_private(message: Discord.Message, msg: string): Promise<void> {
-  await replyPrivately(message, msg);
-}
-
-export async function reject_private(message: Discord.Message, reason: string): Promise<void> {
-  await Promise.all([
-    deleteMessage(message, "Spam; this song request was rejected."),
-    replyPrivately(message, `:hammer: ${reason}`)
-  ]);
-}
-
-export async function reject_public(message: Discord.Message, reason: string): Promise<void> {
-  await Promise.all([
-    message.channel.send(`:hammer: <@!${message.author.id}>, ${reason}`),
-    message.suppressEmbeds(true)
-  ]);
-}
+const namedSubcommands = [info, setup, teardown, open, close, limit, stats, restart];
 
 const sr: Command = {
   name: "sr",
@@ -48,7 +23,7 @@ const sr: Command = {
 
     // Prepare arguments
     const arg = args[0];
-    if (!arg) {
+    if (arg === undefined || arg === "") {
       return reject_public(message, "You're gonna have to add a song link to that.");
     }
 

@@ -1,5 +1,5 @@
-import type { NamedSubcommand } from "./../index";
-import { reply } from "./index";
+import type { NamedSubcommand } from "../Command";
+import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";

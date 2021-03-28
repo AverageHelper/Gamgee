@@ -43,6 +43,7 @@ export class DuplicateEntryTimeError extends Error {
 
   constructor(entry: QueueEntry) {
     super("Duplicate entry. Try again.");
+    this.name = "DuplicateEntryTimeError";
     this.entry = entry;
   }
 }
@@ -125,7 +126,7 @@ export async function useQueueStorage(
   return {
     queueChannel,
     getConfig,
-    async updateConfig(config) {
+    async updateConfig(config): Promise<void> {
       await db.proxy.transaction(async transaction => {
         const oldConfig = await getConfig(transaction);
 
@@ -160,7 +161,7 @@ export async function useQueueStorage(
         );
       });
     },
-    async create(entry) {
+    async create(entry): Promise<QueueEntry> {
       try {
         await db.proxy.transaction(async transaction => {
           // Make sure the guild and channels are in there
@@ -224,7 +225,7 @@ export async function useQueueStorage(
 
       return entry;
     },
-    async remove(entry) {
+    async remove(entry): Promise<void> {
       await db.QueueEntries.destroy({
         where: {
           channelId: queueChannel.id,
@@ -233,10 +234,10 @@ export async function useQueueStorage(
         }
       });
     },
-    async fetchEntryFromMessage(queueMessageId) {
+    async fetchEntryFromMessage(queueMessageId): Promise<QueueEntry | null> {
       return getEntryWithMsgId(queueMessageId);
     },
-    async fetchAll() {
+    async fetchAll(): Promise<Array<QueueEntry>> {
       const entries = await db.QueueEntries.findAll({
         where: {
           channelId: queueChannel.id,
@@ -246,7 +247,7 @@ export async function useQueueStorage(
       });
       return entries.map(toQueueEntry);
     },
-    countAll() {
+    async countAll(): Promise<number> {
       return db.QueueEntries.count({
         where: {
           channelId: queueChannel.id,
@@ -254,7 +255,7 @@ export async function useQueueStorage(
         }
       });
     },
-    async fetchAllFrom(senderId) {
+    async fetchAllFrom(senderId): Promise<Array<QueueEntry>> {
       const entries = await db.QueueEntries.findAll({
         where: {
           channelId: queueChannel.id,
@@ -265,7 +266,7 @@ export async function useQueueStorage(
       });
       return entries.map(toQueueEntry);
     },
-    async fetchLatestFrom(senderId) {
+    async fetchLatestFrom(senderId): Promise<QueueEntry | null> {
       const entry = await db.QueueEntries.findOne({
         where: {
           channelId: queueChannel.id,
@@ -280,7 +281,7 @@ export async function useQueueStorage(
       );
       return result;
     },
-    countAllFrom(senderId) {
+    async countAllFrom(senderId): Promise<number> {
       return db.QueueEntries.count({
         where: {
           channelId: queueChannel.id,
@@ -289,7 +290,7 @@ export async function useQueueStorage(
         }
       });
     },
-    async markEntryDone(isDone: boolean, queueMessageId: string) {
+    async markEntryDone(isDone: boolean, queueMessageId: string): Promise<void> {
       logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
       await db.QueueEntries.update(
         { isDone },
@@ -302,7 +303,7 @@ export async function useQueueStorage(
         }
       );
     },
-    async clear() {
+    async clear(): Promise<void> {
       await db.QueueEntries.destroy({
         where: {
           channelId: queueChannel.id,

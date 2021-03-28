@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/filename-case */
 /**
  * Typings by ZYROUGE
  * Maintained by Snowflake Studio ❄
@@ -21,9 +22,9 @@ declare module "soundcloud-scraper" {
   }
 
   declare class Client {
-    constructor(API_KEY?: string, ClientOptions?: ClientOptions);
     API_KEY: string;
     options: ClientOptions;
+    constructor(API_KEY?: string, ClientOptions?: ClientOptions);
     apiVersion(force?: boolean): Promise<string | null>;
     getSongInfo(
       url: string,
@@ -34,7 +35,10 @@ declare module "soundcloud-scraper" {
       }
     ): Promise<Song>;
     getPlaylist(url: string, options?: PlaylistParseOptions): Promise<Playlist>;
-    search(query: string, type?: "all" | "artist" | "playlist" | "track"): Promise<SearchResult[]>;
+    search(
+      query: string,
+      type?: "all" | "artist" | "playlist" | "track"
+    ): Promise<Array<SearchResult>>;
     getUser(username: string): Promise<UserInfo>;
     getEmbed(embedURL: string): Promise<Embed>;
     createAPIKey(KEY?: string | null, fetch?: boolean): Promise<void>;
@@ -48,15 +52,15 @@ declare module "soundcloud-scraper" {
   type validateURL = (url?: string) => boolean;
   type keygen = (force?: boolean) => Promise<string | null>;
   declare class Util {
-    static last(arr?: unknown[]): unknown;
     static validateURL: validateURL;
+    static keygen: keygen;
+    static last(arr?: Array<unknown>): unknown;
     static request(url?: RequestInfo, options?: RequestInit): Promise<Response>;
     static parseHTML(url?: RequestInfo, options?: RequestInit): Promise<string>;
     static loadHTML(html?: string | null): ReturnType<typeof CherrioLoad>;
     static parseDuration(duration: string): number;
-    static parseComments(commentSection: string): Comment[];
+    static parseComments(commentSection: string): Array<Comment>;
     static fetchSongStreamURL(songURL: string, clientID: string | null): Promise<string>;
-    static keygen: keygen;
   }
 
   type downloadHLS = (url: string, options?: m3u8stream.Options) => Promise<m3u8stream.Stream>;
@@ -69,7 +73,6 @@ declare module "soundcloud-scraper" {
   }
 
   declare class Embed {
-    constructor(data: Record<string, unknown>, embedURL?: string | null);
     url: string;
     version: number;
     type: string;
@@ -87,6 +90,7 @@ declare module "soundcloud-scraper" {
     };
     thumbnailURL: string;
     visualizer: string;
+    constructor(data: Record<string, unknown>, embedURL?: string | null);
     toHTML(): string;
     toJSON(): SimpleJSON;
     toString(): string;
@@ -134,11 +138,10 @@ declare module "soundcloud-scraper" {
     };
     trackURL: string;
     streamURL: string;
-    comments: Comment[];
+    comments: Array<Comment>;
   }
 
   declare class Song {
-    constructor(data: SimpleJSON);
     id: string;
     title: string;
     description: string;
@@ -158,12 +161,13 @@ declare module "soundcloud-scraper" {
       progressive: string;
     };
     trackURL: string;
-    comments: Comment[];
+    comments: Array<Comment>;
     streamURL: string;
     age: number;
     publishedTimestamp: number;
     downloadHLS: downloadHLS;
     downloadProgressive: downloadProgressive;
+    constructor(data: SimpleJSON);
     toString(): string;
     toJSON(): SongData;
   }
@@ -188,7 +192,7 @@ declare module "soundcloud-scraper" {
     embed: Embed | null;
     genre: string;
     trackCount: number;
-    tracks: SimpleJSON[];
+    tracks: Array<SimpleJSON>;
   }
 
   declare interface SearchResult {
@@ -233,7 +237,7 @@ declare module "soundcloud-scraper" {
     following: number;
     likesCount: number;
     tracksCount: number;
-    tracks: UserTracks[];
-    likes: UserLikes[];
+    tracks: Array<UserTracks>;
+    likes: Array<UserLikes>;
   }
 }

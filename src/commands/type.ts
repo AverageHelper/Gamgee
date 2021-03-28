@@ -1,4 +1,4 @@
-import type { Command } from "./index";
+import type { Command } from "./Command";
 import { deleteMessage } from "../actions/messages/deleteMessage";
 import { useLogger } from "../logger";
 

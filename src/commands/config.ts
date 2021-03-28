@@ -1,4 +1,4 @@
-import type { Command } from "./index";
+import type { Command } from "./Command";
 import { SAFE_PRINT_LENGTH } from "../constants/output";
 import { isConfigKey, isConfigValue } from "../constants/config";
 import { listKeys } from "../constants/config/keys";
@@ -21,7 +21,9 @@ type Argument = typeof ARG_GET | typeof ARG_SET | typeof ARG_UNSET | typeof ARG_
 
 function isArgument(toBeDetermined: unknown): toBeDetermined is Argument {
   return (
-    !!toBeDetermined && typeof toBeDetermined === "string" && allSubargs.includes(toBeDetermined)
+    Boolean(toBeDetermined) &&
+    typeof toBeDetermined === "string" &&
+    allSubargs.includes(toBeDetermined)
   );
 }
 
@@ -30,18 +32,22 @@ const config: Command = {
   description: "Read and modify config options. *(Server owner only. No touch!)*",
   async execute(context) {
     const { message, args, storage } = context;
-    async function reply(body: string) {
+    async function reply(body: string): Promise<void> {
       await message.reply(body);
     }
 
+    if (!message.guild) {
+      return reply("Can't do that here.");
+    }
+
     // Only the guild owner may touch the config.
-    if (!message.guild?.ownerID || message.author.id !== message.guild.ownerID) {
+    if (message.author.id !== message.guild.ownerID) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
     const arg = args[0]?.toLowerCase();
-    if (!arg) {
+    if (arg === undefined || arg === "") {
       return reply(`Missing command structure. Expected ${subargsList}`);
     }
     if (!isArgument(arg)) {
@@ -52,7 +58,7 @@ const config: Command = {
       case ARG_GET: {
         // Get stuff
         const key = args[1];
-        if (!key) {
+        if (key === undefined || key === "") {
           return reply(listKeys());
         }
 
@@ -62,13 +68,13 @@ const config: Command = {
         }
 
         const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-        return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
+        return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
       }
 
       case ARG_UNSET: {
         // Delete stuff
         const key = args[1];
-        if (!key) {
+        if (key === undefined || key === "") {
           return reply(listKeys());
         }
 
@@ -79,23 +85,23 @@ const config: Command = {
         }
 
         const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-        return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
+        return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
       }
 
       case ARG_SET: {
         // Set stuff
         const key = args[1];
-        if (!key) {
+        if (key === undefined || key === "") {
           return reply(listKeys());
         }
 
         if (!isConfigKey(key)) {
           const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-          return reply(`I'm not sure what ${that} is. Try one of ` + listKeys());
+          return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
         }
 
         const value = args[2];
-        if (!value) {
+        if (value === undefined || value === "") {
           return reply("Expected a value to set.");
         }
         if (!isConfigValue(value)) {

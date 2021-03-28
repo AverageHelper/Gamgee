@@ -1,8 +1,8 @@
-import type { ArbitrarySubcommand } from "./../index";
+import type { ArbitrarySubcommand } from "../Command";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useLogger } from "../../logger";
 import { useQueue, UnsentQueueEntry } from "../../actions/queue/useQueue";
-import { reject_public, reject_private } from "./index";
+import { reject_public, reject_private } from "./actions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import getVideoDetails from "../../actions/getVideoDetails";
 import durationString from "../../helpers/durationString";
@@ -15,7 +15,7 @@ const logger = useLogger();
 const urlRequest: ArbitrarySubcommand = {
   format: "<YouTube or SoundCloud link>",
   description: "Attempts to add the given content to the queue.",
-  async execute({ args, message }) {
+  async execute({ args, message }): Promise<void> {
     if (!message.guild) {
       return;
     }
@@ -23,7 +23,7 @@ const urlRequest: ArbitrarySubcommand = {
     const guild = await useGuildStorage(message.guild);
     const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {
-      return reject_public(message, "The queue is not set up.");
+      return reject_public(message, "No queue is set up.");
     }
 
     if (message.channel.id === queueChannel?.id) {
@@ -46,7 +46,7 @@ const urlRequest: ArbitrarySubcommand = {
     const queue = await useQueue(queueChannel);
     logger.debug("Queue prepared!");
 
-    async function accept(entry: UnsentQueueEntry, sendUrl = false) {
+    async function accept(entry: UnsentQueueEntry, sendUrl = false): Promise<void> {
       await Promise.all([
         queue.push(entry), //
         sendUrl ? message.channel.send(entry.url) : null

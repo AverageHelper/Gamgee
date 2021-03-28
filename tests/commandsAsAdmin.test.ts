@@ -14,18 +14,53 @@ const RUN_CHANNEL_ID = requireEnv("CHANNEL_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 describe("Command as admin", () => {
+  const url = "https://youtu.be/dQw4w9WgXcQ";
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
   const NO_QUEUE = "no queue";
 
   beforeEach(async () => {
-    await sendMessage(`**Preparing to test '${expect.getState().currentTestName}'**`);
+    await sendMessage(`**'${expect.getState().currentTestName}'**`);
+
+    await setIsQueueCreator(true);
+    await commandResponseInSameChannel("sr teardown");
+
     // Add the Queue Admin role to the tester bot
     await setIsQueueCreator(false);
     await setIsQueueAdmin(true);
   });
 
+  describe("unknown input", () => {
+    test("does nothing", async () => {
+      const response = await commandResponseInSameChannel("dunno what this does");
+      expect(response).toBeNull();
+    });
+  });
+
   describe("sr", () => {
     const needSongLink = `:hammer: <@!${TESTER_ID}>, You're gonna have to add a song link to that.`;
+
+    describe("when the queue is not set up", () => {
+      const NO_QUEUE = "no queue";
+
+      test.each`
+        subcommand
+        ${"stats"}
+        ${"restart"}
+        ${"open"}
+        ${"close"}
+      `(
+        "$subcommand asks the user to set up the queue",
+        async ({ subcommand }: { subcommand: string }) => {
+          const response = await commandResponseInSameChannel(`sr ${subcommand}`);
+          expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+        }
+      );
+
+      test("urlRequest does nothing", async () => {
+        const response = await commandResponseInSameChannel(`sr ${url}`);
+        expect(response?.content.toLowerCase()).toContain("no queue");
+      });
+    });
 
     test("asks for a song link", async () => {
       const response = await commandResponseInSameChannel("sr");
@@ -39,10 +74,11 @@ describe("Command as admin", () => {
 
     describe("no queue yet", () => {
       beforeEach(async () => {
+        await sendMessage(`**Setup**`);
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
-        // TODO: Add an `?sr teardown` command so server owners can unset the server's queue channel
+        await commandResponseInSameChannel("sr teardown");
         await commandResponseInSameChannel("sr close");
         await commandResponseInSameChannel("sr restart");
         await waitForMessage(
@@ -56,6 +92,7 @@ describe("Command as admin", () => {
         await commandResponseInSameChannel("sr limit entry-duration null");
 
         await setIsQueueCreator(false);
+        await sendMessage(`**Run**`);
       });
 
       test("fails to set up a queue without a channel mention", async () => {
@@ -140,9 +177,11 @@ describe("Command as admin", () => {
 
     describe("queue available", () => {
       beforeEach(async () => {
+        await sendMessage(`**Setup**`);
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
+        await commandResponseInSameChannel("sr teardown");
         await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
         await commandResponseInSameChannel("sr close");
         await commandResponseInSameChannel("sr restart");
@@ -158,6 +197,7 @@ describe("Command as admin", () => {
         await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
 
         await setIsQueueCreator(false);
+        await sendMessage(`**Run**`);
       });
 
       describe("queue open", () => {
@@ -204,6 +244,8 @@ describe("Command as admin", () => {
           expect(startResponse?.content).toContain("Clearing the queue");
           expect(finishResponse?.content).toContain("The queue has restarted");
         });
+
+        // TODO: Add tests for setting queue limits
       });
 
       describe("queue closed", () => {
@@ -254,12 +296,13 @@ describe("Command as admin", () => {
           expect(startResponse?.content).toContain("Clearing the queue");
           expect(finishResponse?.content).toContain("The queue has restarted");
         });
+
+        // TODO: Add tests for setting queue limits
       });
     });
   });
 
   describe("video", () => {
-    const url = "https://youtu.be/dQw4w9WgXcQ";
     const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 32 seconds)`;
     const needSongLink = `<@${TESTER_ID}>, You're gonna have to add a song link to that.`;
 

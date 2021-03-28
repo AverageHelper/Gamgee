@@ -6,11 +6,7 @@
  */
 export function addStrikethrough(straightText: string): string {
   if (!straightText) return straightText;
-  if (
-    straightText.substring(0, 2) === "~~" &&
-    straightText.substring(straightText.length - 2) === "~~"
-  )
-    return straightText;
+  if (straightText.startsWith("~~") && straightText.endsWith("~~")) return straightText;
   return `~~${straightText}~~`;
 }
 
@@ -22,11 +18,8 @@ export function addStrikethrough(straightText: string): string {
  */
 export function removeStrikethrough(strickenText: string): string {
   if (!strickenText) return strickenText;
-  if (
-    strickenText.substring(0, 2) !== "~~" ||
-    strickenText.substring(strickenText.length - 2) !== "~~"
-  ) {
+  if (!strickenText.startsWith("~~") || !strickenText.endsWith("~~")) {
     return strickenText;
   }
-  return strickenText.substring(2, strickenText.length - 2);
+  return strickenText.slice(2, -2);
 }

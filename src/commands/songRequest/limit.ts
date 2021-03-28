@@ -1,7 +1,7 @@
-import type { NamedSubcommand } from "./../index";
+import type { NamedSubcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { ConfigValue } from "../../constants/config";
-import { reply } from "./index";
+import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import { replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
@@ -22,7 +22,7 @@ const allLimits: Array<LimitKey> = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SU
 const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
-  return !!value && typeof value === "string" && allLimits.includes(value as LimitKey);
+  return Boolean(value) && typeof value === "string" && allLimits.includes(value as LimitKey);
 }
 
 const limit: NamedSubcommand = {
@@ -37,14 +37,14 @@ const limit: NamedSubcommand = {
     const channel = await getQueueChannel(message);
 
     if (!channel) {
-      return reply(message, "There's no queue set up yet.");
+      return reply(message, "No queue is set up.");
     }
 
     const queue = await useQueue(channel);
     const config = await queue.getConfig();
 
     const limitKey = args[1];
-    if (!limitKey) {
+    if (limitKey === undefined || limitKey === "") {
       // Read out the existing limits
       const responseBuilder = new StringBuilder("Queue Limits:");
 
@@ -55,21 +55,21 @@ const limit: NamedSubcommand = {
 
         switch (key) {
           case ARG_SUB_COOLDOWN:
-            if (config.cooldownSeconds) {
+            if (config.cooldownSeconds !== null && config.cooldownSeconds > 0) {
               responseBuilder.pushBold(durationString(config.cooldownSeconds));
             } else {
               responseBuilder.pushBold("none");
             }
             break;
           case ARG_ENTRY_DURATION:
-            if (config.entryDurationSeconds) {
+            if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
               responseBuilder.pushBold(durationString(config.entryDurationSeconds));
             } else {
               responseBuilder.pushBold("infinite");
             }
             break;
           case ARG_SUB_MAX_SUBMISSIONS:
-            if (config.submissionMaxQuantity) {
+            if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
               responseBuilder.pushBold(config.submissionMaxQuantity.toString());
             } else {
               responseBuilder.pushBold("infinite");
@@ -92,7 +92,7 @@ const limit: NamedSubcommand = {
 
     if (!isLimitKey(limitKey)) {
       const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
-      return reply(message, `I'm not sure what ${that} is. Try one of ` + limitsList);
+      return reply(message, `I'm not sure what ${that} is. Try one of ${limitsList}`);
     }
 
     // Set limits on the queue
@@ -111,8 +111,8 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
-        if (value !== null && isNaN(value)) {
+        value = args[2] === "null" ? null : Number.parseInt(args[2] ?? "-1", 10);
+        if (value !== null && Number.isNaN(value)) {
           value = config.entryDurationSeconds;
           return reply(
             message,
@@ -123,7 +123,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ entryDurationSeconds: value });
 
         const responseBuilder = new StringBuilder("Entry duration limit ");
-        if (!value) {
+        if (value === null || value <= 0) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -143,8 +143,8 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
-        if (value !== null && isNaN(value)) {
+        value = args[2] === "null" ? null : Number.parseInt(args[2] ?? "-1", 10);
+        if (value !== null && Number.isNaN(value)) {
           value = config.cooldownSeconds;
           return reply(
             message,
@@ -155,7 +155,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ cooldownSeconds: value });
 
         const responseBuilder = new StringBuilder("Submission cooldown ");
-        if (!value) {
+        if (value === null || value <= 0) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");
@@ -175,8 +175,8 @@ const limit: NamedSubcommand = {
         }
 
         // Set a new limit
-        value = args[2] === "null" ? null : parseInt(args[2] ?? "-1");
-        if (value !== null && isNaN(value)) {
+        value = args[2] === "null" ? null : Number.parseInt(args[2] ?? "-1", 10);
+        if (value !== null && Number.isNaN(value)) {
           value = config.submissionMaxQuantity;
           return reply(
             message,
@@ -187,7 +187,7 @@ const limit: NamedSubcommand = {
         await queue.updateConfig({ submissionMaxQuantity: value });
 
         const responseBuilder = new StringBuilder("Submission count limit per user ");
-        if (!value) {
+        if (value === null || value <= 0) {
           responseBuilder.pushBold("removed");
         } else {
           responseBuilder.push("set to ");

@@ -16,7 +16,7 @@ export default function getChannelFromMention(
   mention: string
 ): Discord.GuildChannel | undefined {
   const channelId = getChannelIdFromMention(mention);
-  if (!channelId) return undefined;
+  if (channelId === null || channelId === "") return undefined;
 
   const channel = message.guild?.channels.resolve(channelId) ?? undefined;
 
