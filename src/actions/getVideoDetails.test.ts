@@ -1,5 +1,4 @@
 import getVideoDetails from "./getVideoDetails";
-import { useLogger } from "../logger";
 
 describe("Video details", () => {
   // YouTube
@@ -59,7 +58,7 @@ describe("Video details", () => {
 
   test("returns null for bandcamp album links", async () => {
     const url = "https://poniesatdawn.bandcamp.com/album/memories";
-    const details = await getVideoDetails([url], useLogger("debug"));
+    const details = await getVideoDetails([url]);
     expect(details).toBe(null);
   });
 
@@ -70,7 +69,7 @@ describe("Video details", () => {
       "https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"
     ];
     for (const url of urls) {
-      const details = await getVideoDetails([url], useLogger("debug"));
+      const details = await getVideoDetails([url]);
       expect(details?.url).toBe(url);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBeNumber();

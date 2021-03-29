@@ -3,6 +3,7 @@ import yts from "yt-search";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";
 import richErrorMessage from "../helpers/richErrorMessage";
+import any from "../helpers/any";
 import { Logger, useLogger } from "../logger";
 
 interface VideoDetails {
@@ -19,6 +20,50 @@ interface VideoDetails {
   fromUrl: boolean;
 }
 
+async function getYouTubeVideo(url: string): Promise<VideoDetails> {
+  if (!ytdl.validateURL(url)) throw new TypeError("Not a valid YouTube URL");
+
+  const videoId = ytdl.getURLVideoID(url);
+  const result = await yts({ videoId });
+  return {
+    fromUrl: true,
+    url: result.url,
+    title: result.title,
+    duration: result.duration
+  };
+}
+
+async function getSoundCloudVideo(url: string): Promise<VideoDetails> {
+  const client = new SoundCloud.Client();
+  const song = await client.getSongInfo(url);
+  return {
+    fromUrl: true,
+    url: song.url,
+    title: song.title,
+    duration: { seconds: song.duration / 1000 }
+  };
+}
+
+async function getBandcampVideo(url: string): Promise<VideoDetails> {
+  const metadata = await urlMetadata(url);
+
+  const json = metadata.jsonld as
+    | { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
+    | undefined;
+  const seconds: number | null =
+    json?.additionalProperty?.find(property => property.name === "duration_secs")?.value ?? null;
+  const title: string | null = json?.name ?? null;
+
+  if (seconds === null || title === null) throw new TypeError("Duration and title not found");
+
+  return {
+    fromUrl: true,
+    url: metadata.url,
+    title: metadata.title,
+    duration: { seconds }
+  };
+}
+
 /**
  * Retrieves details about a video.
  *
@@ -26,7 +71,7 @@ interface VideoDetails {
  * then that URL is treated like a YouTube or SoundCloud link, and video details are
  * retrieved directly. Otherwise, the entirety of the array is considered a search query.
  *
- * @returns A set of video details, or `null` if no video could be found from the provided query.
+ * @returns a details about the video, or `null` if no video could be found from the provided query.
  */
 export default async function getVideoDetails(
   args: Array<string>,
@@ -36,77 +81,14 @@ export default async function getVideoDetails(
   const urlString = args[0];
   if (urlString === undefined || urlString === "") return null;
 
-  // Try YouTube URL
-  if (ytdl.validateURL(urlString)) {
-    try {
-      const videoId = ytdl.getURLVideoID(urlString);
-      logger?.info(`Got video ID '${videoId}'`);
-      const result = await yts({ videoId });
-      return {
-        fromUrl: true,
-        url: result.url,
-        title: result.title,
-        duration: result.duration
-      };
-    } catch (error: unknown) {
-      logger?.error(
-        richErrorMessage(`Failed to fetch song from YouTube using url '${urlString}'`, error)
-      );
-      return null;
-    }
-  }
-
-  // Try SoundCloud
-  const client = new SoundCloud.Client();
   try {
-    const song = await client.getSongInfo(urlString);
-    return {
-      fromUrl: true,
-      url: song.url,
-      title: song.title,
-      duration: { seconds: song.duration / 1000 }
-    };
-
-    // Something went wrong. Is this a valid SoundCloud link?
+    return await any([
+      getYouTubeVideo(urlString), //
+      getSoundCloudVideo(urlString),
+      getBandcampVideo(urlString)
+    ]);
   } catch (error: unknown) {
-    if (error instanceof TypeError) {
-      logger?.debug(
-        `Failed to fetch song from SoundCloud using url '${urlString}'. Likely not a SoundCloud link`
-      );
-    } else {
-      logger?.error(
-        richErrorMessage(`Failed to fetch song from SoundCloud using url '${urlString}'`, error)
-      );
-      return null;
-    }
-  }
-
-  // Try Bandcamp
-  try {
-    // Get the webpage
-    const metadata = await urlMetadata(urlString);
-
-    const json = metadata.jsonld as
-      | { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
-      | undefined;
-    const seconds: number | null =
-      json?.additionalProperty?.find(property => property.name === "duration_secs")?.value ?? null;
-    const title: string | null = json?.name ?? null;
-
-    if (seconds === null || title === null) return null;
-
-    return {
-      fromUrl: true,
-      url: metadata.url,
-      title: metadata.title,
-      duration: { seconds }
-    };
-
-    // Something went wrong. Is this a valid Bandcamp link?
-  } catch (error: unknown) {
-    logger?.error(
-      richErrorMessage(`Failed to fetch song from Bandcamp using url '${urlString}'`, error)
-    );
+    logger?.error(richErrorMessage(`Failed to fetch song using url '${urlString}'`, error));
     return null;
   }
 }
