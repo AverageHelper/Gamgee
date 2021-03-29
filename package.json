@@ -38,6 +38,7 @@
     "soundcloud-scraper": "^4.0.3",
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
+    "url-metadata": "^2.5.0",
     "winston": "^3.3.3",
     "yt-search": "^2.7.4",
     "ytdl-core": "^4.5.0"
