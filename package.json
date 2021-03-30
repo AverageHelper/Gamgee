@@ -9,8 +9,8 @@
     "build": "tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
     "test": "npm run test:src && npm run test:e2e",
-    "test:src": "jest --selectProjects src",
-    "test:src:watch": "npm run test:src -- --watch",
+    "test:src": "jest --selectProjects src --verbose --coverage",
+    "test:src:watch": "npm run test:src -- --watch --coverage=false",
     "test:e2e": "concurrently -kn bot,jest -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
     "start:test": "DATABASE_FOLDER=./tests/db-test NODE_ENV=test node .",
     "_test:e2e": "jest --selectProjects e2e --detectOpenHandles"

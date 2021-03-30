@@ -321,11 +321,4 @@ describe("Command as admin", () => {
       expect(response?.content).toBe(info);
     });
   });
-
-  describe("help", () => {
-    test("returns the help text", async () => {
-      const response = await commandResponseInSameChannel("help");
-      expect(response?.content).toMatchSnapshot();
-    });
-  });
 });
