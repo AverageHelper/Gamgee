@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Song request help descibes how to submit a song 1`] = `
+"To submit a song, type \`?sr <link>\`.
+For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
+I will respond with a text verification indicating your song has joined the queue!"
+`;

@@ -56,18 +56,19 @@ async function query(
   if (commandOrMention === undefined || commandOrMention === "") return null;
   debugLog(`First word: '${commandOrMention}'`);
 
+  // TODO: Drop this indirection. We don't need more than the user's ID here
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
     debugLog(`This mentions ${mentionedUser.tag}`);
     // See if it's for us.
-    if (client.user && mentionedUser.tag === client.user.tag) {
-      debugLog(`This is us! ${client.user.tag}`);
+    if (client.user && mentionedUser.id === client.user.id) {
+      debugLog(`This is us! ${client.user.id}`);
       // It's for us. Return the query verbatim.
       return { query: query.slice(1), usedCommandPrefix: false };
     }
 
     // It's not for us.
-    debugLog(`This is not us. ${client.user?.tag ?? "We're not signed in."}`);
+    debugLog(`This is not us. ${client.user?.id ?? "We're not signed in."}`);
     return null;
   }
 
@@ -98,7 +99,10 @@ export async function handleCommand(
   storage: Storage | null
 ): Promise<void> {
   // Don't respond to bots unless we're being tested
-  if (message.author.bot && getEnv("NODE_ENV") !== "test") {
+  if (
+    message.author.bot &&
+    (message.author.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
+  ) {
     logger.silly(
       `Momma always said not to talk to strangers. They could be *bots*. bot: ${
         message.author.bot ? "true" : "false"

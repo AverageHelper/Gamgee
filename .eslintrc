@@ -44,12 +44,13 @@
     ],
     "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
     "@typescript-eslint/array-type": ["warn", { "default": "generic" }],
+    "@typescript-eslint/dot-notation": "off",
     "unicorn/catch-error-name": ["warn", { "name": "error" }]
   },
 
   "overrides": [
     {
-      "files": ["src/**/*.test.ts", "tests/**/*.ts"],
+      "files": ["src/**/*.test.ts", "tests/**/*.ts", "**/__mocks__/**/*.ts"],
       "plugins": ["prettier", "@typescript-eslint"],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {

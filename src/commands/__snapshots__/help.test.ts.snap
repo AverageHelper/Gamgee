@@ -1,8 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Command as admin help returns the help text 1`] = `
-"(DM to <@!822883259884634133>)
-Commands:
+exports[`Help command describes all commands 1`] = `
+"Commands:
 \`?config\` - Read and modify config options. *(Server owner only. No touch!)*
 \`?help\` - Print this handy message.
 \`?ping\` - Ping my host server to check latency.
@@ -16,11 +15,6 @@ Commands:
     \`?sr stats\` - Print statistics on the current queue.
     \`?sr restart\` - Empty the queue and start a fresh queue session.
 \`?t\` - Start typing. :wink:
-\`?video <YouTube or SoundCloud link>\` - Put the video title and duration in chat."
-`;
-
-exports[`Command as admin sr info returns the queue instructional text 1`] = `
-"To submit a song, type \`?sr <link>\`.
-For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
-I will respond with a text verification indicating your song has joined the queue!"
+\`?video <YouTube or SoundCloud link>\` - Put the video title and duration in chat.
+"
 `;
