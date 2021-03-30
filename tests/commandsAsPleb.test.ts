@@ -96,11 +96,6 @@ describe("Command as pleb", () => {
         expect(response?.content).toContain(needSongLink);
       });
 
-      test("info returns the queue instructional text", async () => {
-        const response = await commandResponseInSameChannel("sr info");
-        expect(response?.content).toMatchSnapshot();
-      });
-
       test("setup yells at the tester for trying to set up a queue", async () => {
         let response = await commandResponseInSameChannel("sr setup");
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
@@ -148,13 +143,6 @@ describe("Command as pleb", () => {
     test("returns the title and duration of a song with suboptimal spacing", async () => {
       const response = await commandResponseInSameChannel(`video             ${url}`);
       expect(response?.content).toContain(info);
-    });
-  });
-
-  describe("help", () => {
-    test("returns the help text", async () => {
-      const response = await commandResponseInSameChannel("help");
-      expect(response?.content).toMatchSnapshot();
     });
   });
 });
