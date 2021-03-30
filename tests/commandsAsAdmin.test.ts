@@ -67,11 +67,6 @@ describe("Command as admin", () => {
       expect(response?.content).toBe(needSongLink);
     });
 
-    test("info returns the queue instructional text", async () => {
-      const response = await commandResponseInSameChannel("sr info");
-      expect(response?.content).toMatchSnapshot();
-    });
-
     describe("no queue yet", () => {
       beforeEach(async () => {
         await sendMessage(`**Setup**`);

@@ -1,6 +1,6 @@
 jest.mock("../actions/messages/replyToMessage");
 import * as replyToMessage from "../actions/messages/replyToMessage";
-import { CommandContext } from "./Command";
+import type { CommandContext } from "./Command";
 const mockReplyPrivately = replyToMessage.replyPrivately as jest.Mock;
 
 import help from "./help";
@@ -14,7 +14,7 @@ describe("Help command", () => {
 
     await help.execute(context);
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith("Reply to this", expect.toBeString());
+    expect(mockReplyPrivately).toHaveBeenCalledWith(context.message, expect.toBeString());
 
     const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
     const description = calls[1];
