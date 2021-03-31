@@ -133,7 +133,7 @@ Access the song queue.
 
 #### `sr <video link>`
 
-Submit a song to the queue. Users must provide a valid YouTube or SoundCloud link in order to be considered.
+Submit a song to the queue. Users must provide a valid YouTube, SoundCloud, or Bandcamp link in order to be considered.
 
 #### `sr info`
 
@@ -174,7 +174,7 @@ Triggers the typing indicator in the current channel. This is mostly for fun and
 
 ### `video <video link>`
 
-Given a YouTube or SoundCloud video link, Gamgee responds with that video's title and duration.
+Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that video's title and duration.
 
 ## Contributing
 

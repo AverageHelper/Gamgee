@@ -298,7 +298,7 @@ describe("Command as admin", () => {
   });
 
   describe("video", () => {
-    const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 32 seconds)`;
+    const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 33 seconds)`;
     const needSongLink = `<@${TESTER_ID}>, You're gonna have to add a song link to that.`;
 
     test("asks for a song link", async () => {

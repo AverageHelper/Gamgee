@@ -14,7 +14,7 @@ import { useGuildStorage } from "../../useGuildStorage";
 const logger = useLogger();
 
 const urlRequest: ArbitrarySubcommand = {
-  format: "<YouTube or SoundCloud link>",
+  format: "<YouTube, SoundCloud, or Bandcamp link>",
   description: "Attempts to add the given content to the queue.",
   async execute({ args, message }): Promise<void> {
     if (!message.guild) {

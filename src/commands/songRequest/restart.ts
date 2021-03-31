@@ -3,7 +3,7 @@ import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
-import { deleteMessageWithId, replyPrivately } from "../../actions/messages";
+import { bulkDeleteMessagesWithIds, replyPrivately } from "../../actions/messages";
 
 const restart: NamedSubcommand = {
   name: "restart",
@@ -31,10 +31,8 @@ const restart: NamedSubcommand = {
     void message.channel.startTyping(5);
 
     const queue = await useQueue(channel);
-    const deleteMessages = (await queue.getAllEntries())
-      .map(entry => entry.queueMessageId)
-      .map(messageId => deleteMessageWithId(messageId, channel, "Pruning; Clearing the old queue"));
-    await Promise.all(deleteMessages);
+    const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
+    await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();
     return reply(message, "The queue has restarted.");
   }
