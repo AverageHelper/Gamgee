@@ -19,6 +19,14 @@ interface VideoDetails {
   fromUrl: boolean;
 }
 
+/**
+ * Gets information about a YouTube video.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws an error if YouTube metadata could not be found at the provided `url`.
+ * @returns a `Promise` that resolves with the video details.
+ */
 async function getYouTubeVideo(url: string): Promise<VideoDetails> {
   if (!ytdl.validateURL(url)) throw new TypeError("Not a valid YouTube URL");
 
@@ -34,7 +42,16 @@ async function getYouTubeVideo(url: string): Promise<VideoDetails> {
   };
 }
 
-async function getSoundCloudVideo(url: string): Promise<VideoDetails> {
+/**
+ * Gets information about a SoundCloud track.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws an error if SoundCloud song information could not be found at the
+ * provided `url`.
+ * @returns a `Promise` that resolves with the track details.
+ */
+async function getSoundCloudTrack(url: string): Promise<VideoDetails> {
   const client = new SoundCloud.Client();
   const song = await client.getSongInfo(url);
   return {
@@ -45,16 +62,26 @@ async function getSoundCloudVideo(url: string): Promise<VideoDetails> {
   };
 }
 
-async function getBandcampVideo(url: string): Promise<VideoDetails> {
+/**
+ * Gets information about a Bandcamp track.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws an error if metadata couldn't be found on the webpage pointed to by the
+ * provided `url`, or a `TypeError` if no song duration or title could be found in
+ * that metadata.
+ * @returns a `Promise` that resolves with the track details.
+ */
+async function getBandcampTrack(url: string): Promise<VideoDetails> {
   const metadata = await urlMetadata(url);
-
   const json = metadata.jsonld as
     | { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
     | undefined;
-  const seconds: number | null =
-    json?.additionalProperty?.find(property => property.name === "duration_secs")?.value ?? null;
-  const title: string | null = json?.name ?? null;
 
+  const durationProperty = json?.additionalProperty?.find(prop => prop.name === "duration_secs");
+
+  const seconds: number | null = durationProperty?.value ?? null;
+  const title: string | null = json?.name ?? null;
   if (seconds === null || title === null) throw new TypeError("Duration and title not found");
 
   return {
@@ -85,8 +112,8 @@ export default async function getVideoDetails(
   try {
     return await any([
       getYouTubeVideo(urlString), //
-      getSoundCloudVideo(urlString),
-      getBandcampVideo(urlString)
+      getSoundCloudTrack(urlString),
+      getBandcampTrack(urlString)
     ]);
   } catch (error: unknown) {
     logger?.error(richErrorMessage(`Failed to fetch song using url '${urlString}'`, error));
