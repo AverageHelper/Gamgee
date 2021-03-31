@@ -1,5 +1,4 @@
 import ytdl from "ytdl-core";
-import yts from "yt-search";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";
 import richErrorMessage from "../helpers/richErrorMessage";
@@ -23,13 +22,15 @@ interface VideoDetails {
 async function getYouTubeVideo(url: string): Promise<VideoDetails> {
   if (!ytdl.validateURL(url)) throw new TypeError("Not a valid YouTube URL");
 
-  const videoId = ytdl.getURLVideoID(url);
-  const result = await yts({ videoId });
+  const info = await ytdl.getBasicInfo(url);
+  if (!info.videoDetails.availableCountries.includes("US")) {
+    throw new Error("That video is not available in the United States");
+  }
   return {
     fromUrl: true,
-    url: result.url,
-    title: result.title,
-    duration: result.duration
+    url: info.videoDetails.video_url,
+    title: info.videoDetails.title,
+    duration: { seconds: Number.parseInt(info.videoDetails.lengthSeconds, 10) }
   };
 }
 
@@ -40,7 +41,7 @@ async function getSoundCloudVideo(url: string): Promise<VideoDetails> {
     fromUrl: true,
     url: song.url,
     title: song.title,
-    duration: { seconds: song.duration / 1000 }
+    duration: { seconds: Math.floor(song.duration / 1000) }
   };
 }
 
@@ -60,7 +61,7 @@ async function getBandcampVideo(url: string): Promise<VideoDetails> {
     fromUrl: true,
     url: metadata.url,
     title: metadata.title,
-    duration: { seconds }
+    duration: { seconds: Math.floor(seconds) }
   };
 }
 

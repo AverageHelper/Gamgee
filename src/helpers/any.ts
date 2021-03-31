@@ -1,10 +1,17 @@
-export class AggregateError extends Error {
-  errors: ReadonlyArray<Error>;
+import isError from "./isError";
 
-  constructor(errors: Array<Error>) {
+export class AggregateError extends Error {
+  errors: ReadonlyArray<unknown>;
+
+  constructor(errors: Array<unknown>) {
     super(
       `No promises resolved successfully: ${JSON.stringify(
-        errors.map(err => `${err.name}: ${err.message}`),
+        errors.map(err => {
+          if (isError(err)) {
+            return `${err.name}: ${err.message}`;
+          }
+          return `${typeof err}: ${JSON.stringify(err, undefined, 2)}`;
+        }),
         undefined,
         2
       )}`
@@ -23,7 +30,7 @@ export class AggregateError extends Error {
  */
 export default async function any<T>(promises: Array<Promise<T>>): Promise<T> {
   return new Promise((resolve, reject) => {
-    const allErrors: Array<Error> = [];
+    const allErrors: Array<unknown> = [];
     let count = promises.length;
     let resolved = false;
 
@@ -35,7 +42,7 @@ export default async function any<T>(promises: Array<Promise<T>>): Promise<T> {
           count -= 1;
           resolve(value);
         },
-        error => {
+        (error: unknown) => {
           count -= 1;
           allErrors.push(error);
           if (count === 0 && !resolved) {
