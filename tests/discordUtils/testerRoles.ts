@@ -28,12 +28,14 @@ async function setAdminRole(
   if (isAdmin) {
     await tester.roles.add(queueAdminRole);
     if (!didHaveAdmin) {
-      logger.info(`${user.tag} now has the '${queueAdminRole.name}' role`);
+      logger.info(`User ${user.id} (${user.username}) now has the '${queueAdminRole.name}' role`);
     }
   } else {
     await tester.roles.remove(queueAdminRole);
     if (didHaveAdmin) {
-      logger.info(`${user.tag} no longer has the '${queueAdminRole.name}' role`);
+      logger.info(
+        `User ${user.id} (${user.username}) no longer has the '${queueAdminRole.name}' role`
+      );
     }
   }
 }

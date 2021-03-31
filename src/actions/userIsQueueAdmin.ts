@@ -11,7 +11,7 @@ export default async function userIsQueueAdmin(
   // Always true for server owner
   const isOwner = user.id === guild.ownerID;
   if (isOwner) {
-    logger.debug(`User ${user.id} owns guild ${guild.id}`);
+    logger.debug(`User ${user.id} (${user.username}) owns guild ${guild.id}`);
     return true;
   }
 
@@ -35,10 +35,12 @@ export default async function userIsQueueAdmin(
     role => role?.members.has(guild.member(user)?.id ?? "") ?? false
   );
   if (hasAdminRole) {
-    logger.debug(`User ${user.id} has a whitelisted admin role in guild ${guild.id}`);
+    logger.debug(
+      `User ${user.id} (${user.username}) has a whitelisted admin role in guild ${guild.id}`
+    );
     return true;
   }
 
-  logger.debug(`User ${user.id} is not a queue admin in guild ${guild.id}`);
+  logger.debug(`User ${user.id} (${user.username}) is not a queue admin in guild ${guild.id}`);
   return false;
 }

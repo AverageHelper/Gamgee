@@ -72,7 +72,9 @@ const urlRequest: ArbitrarySubcommand = {
 
       // If the user has used all their submissions, reject!
       const maxSubs = config.submissionMaxQuantity;
-      logger.verbose(`User ${senderId} has submitted ${userSubmissionCount} requests in total`);
+      logger.verbose(
+        `User ${senderId} (${message.author.username}) has submitted ${userSubmissionCount} requests in total`
+      );
       if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
         const rejectionBuilder = new StringBuilder();
         rejectionBuilder.push("You have used all ");
@@ -87,7 +89,9 @@ const urlRequest: ArbitrarySubcommand = {
       const timeSinceLatest =
         latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
       logger.verbose(
-        `User ${senderId} last submitted a request ${timeSinceLatest ?? "<never>"} seconds ago`
+        `User ${senderId} (${message.author.username}) last submitted a request ${
+          timeSinceLatest ?? "<never>"
+        } seconds ago`
       );
       if (
         cooldown !== null &&
