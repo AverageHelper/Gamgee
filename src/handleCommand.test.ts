@@ -72,7 +72,7 @@ describe("Command handler", () => {
       ${`${prefix}helpp`}
       ${`${prefix}srhttps://`}
     `(
-      "does nothing with unknown command '$prefix$content'",
+      `does nothing with unknown command '${prefix}$content'`,
       async ({ content }: { content: string }) => {
         mockMessage.content = content;
         await handleCommand(mockClient, mockMessage, null);
@@ -118,7 +118,7 @@ describe("Command handler", () => {
       ${"sr"}
       ${"video"}
     `(
-      "ignores bot sending the command '$prefix$command'",
+      `ignores bot sending the command '${prefix}$command'`,
       async ({ command }: { command: string }) => {
         mockMessage.content = `${prefix}${command}`;
         mockMessage.author.bot = true;

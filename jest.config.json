@@ -7,6 +7,7 @@
       "setupFilesAfterEnv": ["jest-extended"],
       "testEnvironment": "node",
       "testPathIgnorePatterns": ["/node_modules/"],
+      "modulePathIgnorePatterns": ["<rootDir>/.*/__mocks__"],
       "testRegex": ["src/.*\\.test\\.(t|j)s$"],
       "globals": {
         "ts-jest": {
