@@ -7,6 +7,7 @@ import { useLogger } from "./logger";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
+import logUser from "./helpers/logUser";
 
 const LOGGING = false;
 const logger = useLogger();
@@ -59,7 +60,7 @@ async function query(
   // TODO: Drop this indirection. We don't need more than the user's ID here
   const mentionedUser = await getUserFromMention(message, commandOrMention);
   if (mentionedUser) {
-    debugLog(`This mentions ${mentionedUser.username}`);
+    debugLog(`This mentions ${logUser(mentionedUser)}`);
     // See if it's for us.
     if (client.user && mentionedUser.id === client.user.id) {
       debugLog(`This is us! ${client.user.id}`);

@@ -10,6 +10,7 @@ import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { deleteMessage } from "../../actions/messages/deleteMessage";
 import { useGuildStorage } from "../../useGuildStorage";
+import logUser from "../../helpers/logUser";
 
 const logger = useLogger();
 
@@ -53,7 +54,7 @@ const urlRequest: ArbitrarySubcommand = {
         sendUrl ? message.channel.send(entry.url) : null
       ]);
       logger.debug(
-        `Pushed new entry to queue. Sending public acceptance to user ${message.author.id} (${message.author.username})`
+        `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
       );
       // Send acceptance after the potential `send(entry.url)` call
       await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
@@ -73,7 +74,7 @@ const urlRequest: ArbitrarySubcommand = {
       // If the user has used all their submissions, reject!
       const maxSubs = config.submissionMaxQuantity;
       logger.verbose(
-        `User ${senderId} (${message.author.username}) has submitted ${userSubmissionCount} requests in total`
+        `User ${logUser(message.author)} has submitted ${userSubmissionCount} requests in total`
       );
       if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
         const rejectionBuilder = new StringBuilder();
@@ -89,7 +90,7 @@ const urlRequest: ArbitrarySubcommand = {
       const timeSinceLatest =
         latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
       logger.verbose(
-        `User ${senderId} (${message.author.username}) last submitted a request ${
+        `User ${logUser(message.author)} last submitted a request ${
           timeSinceLatest ?? "<never>"
         } seconds ago`
       );

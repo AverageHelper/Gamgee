@@ -1,6 +1,7 @@
 import { requireEnv } from "../../src/helpers/environment";
 import { testerClient } from "./testerClient";
 import { useTestLogger } from "../testUtils/logger";
+import logUser from "../../src/helpers/logUser";
 
 const logger = useTestLogger();
 
@@ -28,14 +29,12 @@ async function setAdminRole(
   if (isAdmin) {
     await tester.roles.add(queueAdminRole);
     if (!didHaveAdmin) {
-      logger.info(`User ${user.id} (${user.username}) now has the '${queueAdminRole.name}' role`);
+      logger.info(`User ${logUser(user)} now has the '${queueAdminRole.name}' role`);
     }
   } else {
     await tester.roles.remove(queueAdminRole);
     if (didHaveAdmin) {
-      logger.info(
-        `User ${user.id} (${user.username}) no longer has the '${queueAdminRole.name}' role`
-      );
+      logger.info(`User ${logUser(user)} no longer has the '${queueAdminRole.name}' role`);
     }
   }
 }

@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import { useLogger } from "../logger";
 import { getEnv } from "../helpers/environment";
+import logUser from "../helpers/logUser";
 
 const logger = useLogger();
 
@@ -11,7 +12,7 @@ export default async function userIsQueueCreator(
   // Always true for server owner
   const isOwner = user.id === guild.ownerID;
   if (isOwner) {
-    logger.debug(`User ${user.id} (${user.username}) owns guild ${guild.id}`);
+    logger.debug(`User ${logUser(user)} owns guild ${guild.id}`);
     return true;
   }
 
@@ -34,12 +35,10 @@ export default async function userIsQueueCreator(
     role => role?.members.has(guild.member(user)?.id ?? "") ?? false
   );
   if (hasAdminRole) {
-    logger.debug(
-      `User ${user.id} (${user.username}) has a whitelisted admin role in guild ${guild.id}`
-    );
+    logger.debug(`User ${logUser(user)} has a whitelisted admin role in guild ${guild.id}`);
     return true;
   }
 
-  logger.debug(`User ${user.id} (${user.username}) is not a queue admin in guild ${guild.id}`);
+  logger.debug(`User ${logUser(user)} is not a queue admin in guild ${guild.id}`);
   return false;
 }
