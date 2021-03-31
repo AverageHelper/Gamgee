@@ -9,6 +9,7 @@ import {
   DEFAULT_SUBMISSION_COOLDOWN,
   DEFAULT_SUBMISSION_MAX_QUANTITY
 } from "./constants/queues";
+import richErrorMessage from "./helpers/richErrorMessage";
 
 const logger = useLogger();
 
@@ -217,7 +218,7 @@ export async function useQueueStorage(
       } catch (error: unknown) {
         if (error instanceof UniqueConstraintError) {
           // Wait half a second, set the date to now, then try again.
-          logger.error(error);
+          logger.error(richErrorMessage("Sequelize error:", error));
           throw new DuplicateEntryTimeError(entry);
         }
         throw error;
