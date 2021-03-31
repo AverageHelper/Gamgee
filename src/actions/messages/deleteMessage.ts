@@ -12,7 +12,7 @@ const logger = useLogger();
  * @param message The message to delete.
  * @param reason The reason for the deletion, to provide to Discord's API.
  *
- * @returns A `Promise` that resolves to `true` if the message was deleted successfully.
+ * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessage(message: Discord.Message, reason?: string): Promise<boolean> {
   if (message.channel.type === "dm") {
@@ -37,7 +37,7 @@ export async function deleteMessage(message: Discord.Message, reason?: string): 
  * @param channel The channel in which to search for the message to delete.
  * @param reason The reason for the deletion, to provide to Discord's API.
  *
- * @returns A `Promise` that resolves to `true` if the message was deleted successfully.
+ * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessageWithId(
   messageId: string,
@@ -49,6 +49,29 @@ export async function deleteMessageWithId(
     return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to delete a message.", error));
+    return false;
+  }
+}
+
+/**
+ * Attempts to delete the given Discord messages. If Discord throws an
+ * error at the delete attempt, then the error will be logged and the
+ * function's resulting `Promise` will resolve to `false`.
+ *
+ * @param messageIds The IDs of the messages to delete.
+ * @param channel The channel in which to search for the messages to delete.
+ *
+ * @returns A `Promise` that resolves to `true` if the messages were deleted successfully.
+ */
+export async function bulkDeleteMessagesWithIds(
+  messageIds: Array<string>,
+  channel: Discord.TextChannel
+): Promise<boolean> {
+  try {
+    await channel.bulkDelete(messageIds);
+    return true;
+  } catch (error: unknown) {
+    logger.error(richErrorMessage(`Failed to delete ${messageIds.length} messages.`, error));
     return false;
   }
 }
