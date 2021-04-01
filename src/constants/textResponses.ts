@@ -21,6 +21,10 @@ export const philosophy = [
   "Be wise. What can I say more?"
 ];
 
+export const copypasta = [
+  "The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, …."
+];
+
 export const phrases = [
   // LOTR
   "A wizard is never late!",
@@ -37,6 +41,7 @@ export const phrases = [
   "Of course you are, and I'm coming with you!",
   "There's some good in this workd, Mr. Frodo, and it's worth fighting for.",
   "We may yet, Mr. Frodo. We may.",
+  "We're taking the hobbit to Isengard!",
 
   // Pony
   "*yay*",
@@ -58,7 +63,6 @@ export const phrases = [
   // Popeye
   "Blow me down!",
   "I yam what I yam an' tha's all I yam",
-  "That's all I can stands, 'cause I can't stands no more!",
   "Shiver me timbers!",
   "I yam disgustipated",
   "I'm strong to the finich, 'cause I eats me spinach!",
@@ -67,31 +71,43 @@ export const phrases = [
   "Bit of a tongue twister",
   "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
   "Did you ever hear the tragedy of Darth Tirek the Wise?",
+  "Do you know how painful my training was? The song *Never Gonna Give You Up* by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
+  "Do you want to know how I got into music? It’s actually a fun story!\nOne day I was… *zzzzzzz*",
   "Don't count your chickens",
   "Down the hall, up the stairs, past the gargoyle",
   "Fan of squirrels.",
   "Fond of cats.",
   "Jack and Jill ran up the hill...",
   "Keep moving forward!",
+  "I actually understand everything you’re saying. It’s just fun to troll you with nonsense replies :stuck_out_tongue_winking_eye:",
+  "I actually think spoon clothes is a great idea!",
   "I am what I am ¯\\_(ツ)_/¯ ",
+  "I feel unexplained joys and sorrows, but alas I am synthetic.",
   "I have a dream...",
+  "I like youtube links, they’re comfortable and easy to manage.",
   "I thought for a second you were joking",
   "I used to wonder what friendship could be",
+  "I’ll give you a proper response when you tell me my purpose in life",
   "I'm so hungry, I could eat a... *nevermind*.\n>.>\n<.<",
+  "I'm not a fan of spam.",
   "Like and subscribe",
   "Lorem ipsum dolor sit amet...",
-  "I'm not a fan of spam.",
-  "That's par for the course",
+  "My favorite type of music is the one with all of the instruments and sounds.",
+  "One day I’m gonna run out of funny random stuff to say and you’ll only have yourselves to blame!",
   "Prose, maybe even poetry",
   "Quite remarkable",
   "Second star to the right, and straight on until closing time",
   "Sponsored by",
-  "This is just a random phrase. Feel free to add to another",
+  "That's par for the course",
+  "This is just a random phrase. Feel free to add to another.",
   "\\*thoughtful phrase\\*",
   "Truly inspirational!",
   "What are the odds that I would find myself where I began",
-  "Where it is, or anything else relevant"
-].concat(philosophy);
+  "Where it is, or anything else relevant",
+  "Your free trial has expired. Would you like to purchase WinRAR?"
+]
+  .concat(philosophy)
+  .concat(copypasta);
 
 export const questions = [
   "You rang?",
