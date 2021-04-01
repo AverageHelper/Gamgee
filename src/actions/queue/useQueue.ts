@@ -156,6 +156,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
           .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
         queueMessage.reactions.resolve(REACTION_BTN_UNDO)?.remove()
       ]);
+      if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
+        await queueMessage.react(REACTION_BTN_MUSIC);
+      }
       await queueMessage.react(REACTION_BTN_DONE);
     },
 
@@ -168,6 +171,9 @@ export async function useQueue(queueChannel: Discord.TextChannel): Promise<Queue
           .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
         queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
       ]);
+      if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
+        await queueMessage.react(REACTION_BTN_MUSIC);
+      }
       await queueMessage.react(REACTION_BTN_UNDO);
     },
 
