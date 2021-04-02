@@ -10,30 +10,39 @@ export class JobQueue<Job> {
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
 
-  #startHandler: (() => void) | null = null;
-  #completionHandler: (() => void) | null = null;
+  #startHandlers: Array<() => void> = [];
+  #completionHandlers: Array<() => void> = [];
 
   /** Enqueues a work item to be processed. */
-  add(job: Job): void {
+  createJob(job: Job): void {
     this.#workItems.push(job);
     void this.tryToStart();
   }
 
   /** Enqueues multiple work items to be processed. */
-  addAll(jobs: Array<Job>): void {
+  createJobs(jobs: Array<Job>): void {
     this.#workItems.push(...jobs);
     void this.tryToStart();
   }
 
+  /**
+   * Registers a function to be called when the queue starts processing its workload,
+   * or the workload increases in size.
+   */
+  on(event: "start", cb: () => void): void;
+
   /** Registers a function to be called on completion of the queue's workload. */
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
+  on(event: "finish", cb: () => void): void;
+
   on(event: JobQueueLifecycleEvent, cb: () => void): void {
     switch (event) {
       case "start":
-        this.#startHandler = cb;
+        this.#startHandlers.push(cb);
         break;
 
       case "finish":
-        this.#completionHandler = cb;
+        this.#completionHandlers.push(cb);
         break;
     }
   }
@@ -58,17 +67,21 @@ export class JobQueue<Job> {
    * @param fn The worker function to call for each job.
    */
   process(fn: (job: Job) => void | Promise<void>): void {
-    this.#worker = fn;
-    void this.tryToStart();
+    if (!this.#worker) {
+      this.#worker = fn;
+      void this.tryToStart();
+    }
   }
 
   private async tryToStart(): Promise<void> {
     const worker = this.#worker;
+    // Don't start processing if we have no worker
     if (!worker) return;
 
-    if (this.#startHandler) {
-      this.#startHandler();
-    }
+    this.callStarts();
+
+    // Don't start processing again if we're already processing
+    if (this.#currentJob) return;
 
     while (this.length > 0) {
       const workItem = this.#workItems.shift() ?? null;
@@ -78,9 +91,15 @@ export class JobQueue<Job> {
       }
     }
 
-    if (this.#completionHandler) {
-      this.#completionHandler();
-    }
+    this.callCompletions();
+  }
+
+  private callStarts(): void {
+    this.#startHandlers.forEach(cb => cb());
+  }
+
+  private callCompletions(): void {
+    this.#completionHandlers.forEach(cb => cb());
   }
 }
 
