@@ -5,7 +5,7 @@ type JobQueueLifecycleEvent = "start" | "finish";
 /**
  * A queue of work items to be processed sequentially.
  */
-class JobQueue<Job> {
+export class JobQueue<Job> {
   #workItems: Array<Job> = [];
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
@@ -57,7 +57,7 @@ class JobQueue<Job> {
    * Registers a worker function to process jobs.
    * @param fn The worker function to call for each job.
    */
-  process(fn: (job: Job) => void): void {
+  process(fn: (job: Job) => void | Promise<void>): void {
     this.#worker = fn;
     void this.tryToStart();
   }
