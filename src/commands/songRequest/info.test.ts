@@ -1,8 +1,8 @@
 jest.mock("./actions");
 import * as messageActions from "./actions";
-import type { CommandContext } from "../Command";
 const mockReply = messageActions.reply as jest.Mock;
 
+import type { CommandContext } from "../Command";
 import info from "./info";
 
 describe("Song request help", () => {

@@ -100,12 +100,14 @@ describe("Command handler", () => {
         await handleCommand(mockClient, mockMessage, null);
 
         expect(mock).toHaveBeenCalledTimes(1);
-        expect(mock).toHaveBeenCalledWith({
-          client: mockClient,
-          message: mockMessage,
-          args: command.split(/ +/u).slice(1),
-          storage: null
-        });
+        expect(mock).toHaveBeenCalledWith(
+          expect.toContainEntries([
+            ["client", mockClient],
+            ["message", mockMessage],
+            ["args", command.split(/ +/u).slice(1)],
+            ["storage", null]
+          ])
+        );
       }
     );
 

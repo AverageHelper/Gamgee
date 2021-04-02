@@ -48,7 +48,8 @@ describe("Video details", () => {
       expect(details?.url).toBe(result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    }
+    },
+    10000
   );
 
   // SoundCloud
@@ -73,7 +74,8 @@ describe("Video details", () => {
       expect(details?.url).toBe(result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    }
+    },
+    10000
   );
 
   // BandCamp
@@ -82,7 +84,7 @@ describe("Video details", () => {
     const url = "https://poniesatdawn.bandcamp.com/album/memories";
     const details = await getVideoDetails([url], null);
     expect(details).toBe(null);
-  });
+  }, 10000);
 
   test.each`
     url                                                                             | duration
@@ -96,6 +98,7 @@ describe("Video details", () => {
       expect(details?.url).toBe(url);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    }
+    },
+    10000
   );
 });

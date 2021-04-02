@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import type { Storage } from "../configStorage";
+import type { Logger } from "../logger";
 
 /**
  * Information relevant to a command invocation.
@@ -16,6 +17,9 @@ export interface CommandContext {
 
   /** A `LocalStorage` instance scoped to the current guild. */
   storage: Storage | null;
+
+  /** A logger to use to submit informative debug messages. */
+  logger: Logger;
 }
 
 interface Subcommand {

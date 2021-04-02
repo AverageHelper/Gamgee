@@ -152,7 +152,8 @@ export async function handleCommand(
       client,
       message,
       args,
-      storage
+      storage,
+      logger
     });
   }
 
