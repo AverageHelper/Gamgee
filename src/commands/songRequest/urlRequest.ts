@@ -174,14 +174,17 @@ const urlRequest: ArbitrarySubcommand = {
       return reject_public(message, "The queue is not open.");
     }
 
-    const senderId = message.author.id;
-    const key = `${senderId}_${queueChannel.id}`;
+    const key = `${message.author.id}_${queueChannel.id}`;
+
     const requestQueue = useJobQueue<SongRequest>(key);
-    requestQueue.process(processRequest);
+    requestQueue.process(processRequest); // Same function instance, so a nonce call
+
     requestQueue.on("start", () => {
+      // Show loading
       void queueChannel.startTyping();
     });
     requestQueue.on("finish", () => {
+      // Delete this queue and stop loading
       jobQueues.delete(key);
       void queueChannel.stopTyping(true);
     });

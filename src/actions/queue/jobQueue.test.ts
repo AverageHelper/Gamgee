@@ -1,7 +1,7 @@
 import { useJobQueue, jobQueues } from "./jobQueue";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 
-const logger = useTestLogger("debug");
+const logger = useTestLogger("error");
 
 describe("Job queue", () => {
   const queueKey = "queue1234";

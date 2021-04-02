@@ -36,6 +36,8 @@ import type { CommandContext } from "../Command";
 import urlRequest from "./urlRequest";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 
+const logger = useTestLogger("error");
+
 describe("Song request via URL", () => {
   const url1 = "https://youtu.be/dQw4w9WgXcQ";
   const url2 = "https://youtube.com/watch?v=9RAQsdTQIcs";
@@ -131,7 +133,7 @@ describe("Song request via URL", () => {
     const context1 = ({
       args: [url1],
       message: mockMessage1,
-      logger: useTestLogger("debug")
+      logger
     } as unknown) as CommandContext;
     const context2 = { ...context1, args: [url2], message: mockMessage2 };
 

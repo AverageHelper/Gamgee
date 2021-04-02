@@ -67,10 +67,8 @@ export class JobQueue<Job> {
    * @param fn The worker function to call for each job.
    */
   process(fn: (job: Job) => void | Promise<void>): void {
-    if (!this.#worker) {
-      this.#worker = fn;
-      void this.tryToStart();
-    }
+    this.#worker = fn;
+    void this.tryToStart();
   }
 
   private async tryToStart(): Promise<void> {
