@@ -22,3 +22,7 @@ export const video = {
   name: "video",
   execute: jest.fn().mockResolvedValue(undefined)
 };
+export const version = {
+  name: "version",
+  execute: jest.fn().mockResolvedValue(undefined)
+};

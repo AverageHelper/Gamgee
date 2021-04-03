@@ -6,8 +6,9 @@
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
     "lint": "eslint . --ext .ts",
-    "build": "tsc -p tsconfig.prod.json",
+    "build": "npm run export-version && tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
+    "export-version": "genversion ./src/version.ts -es",
     "test": "npm run test:src && npm run test:e2e",
     "test:src": "jest --selectProjects src --verbose --coverage",
     "test:src:watch": "npm run test:src -- --watch --coverage=false",
@@ -60,6 +61,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-unicorn": "^29.0.0",
+    "genversion": "^2.3.1",
     "jest": "^26.6.3",
     "jest-environment-node": "^26.6.2",
     "jest-extended": "^0.11.5",
