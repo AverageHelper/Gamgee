@@ -5,7 +5,7 @@ import { useSequelize } from "./useSequelize";
 /**
  * An interface for reading from and writing to the database
  */
-interface Database {
+export interface Database {
   /** The database proxy instance. */
   proxy: Sequelize;
 
@@ -34,7 +34,7 @@ async function syncSchemas(): Promise<void> {
 }
 
 /**
- * Prepares a SQLite database with tables
+ * Prepares a SQLite database interface.
  *
  * @returns The prepared database proxy and schema definitions.
  */
