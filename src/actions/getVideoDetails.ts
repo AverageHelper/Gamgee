@@ -73,7 +73,7 @@ async function getSoundCloudTrack(url: string): Promise<VideoDetails> {
  * @returns a `Promise` that resolves with the track details.
  */
 async function getBandcampTrack(url: string): Promise<VideoDetails> {
-  const metadata = await urlMetadata(url);
+  const metadata = await urlMetadata(url, { timeout: 5000 });
   const json = metadata.jsonld as
     | { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
     | undefined;
