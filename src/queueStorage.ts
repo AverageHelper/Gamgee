@@ -1,8 +1,9 @@
 import Discord from "discord.js";
-import { UniqueConstraintError, Transaction } from "sequelize";
+import { UniqueConstraintError } from "sequelize";
+import type { Transaction } from "sequelize";
 import type { QueueConfig } from "./actions/database/schemas/queueConfigSchema";
 import type { QueueEntrySchema } from "./actions/database/schemas/queueEntrySchema";
-import { useDatabase } from "./actions/database/useDatabase";
+import { useDatabase, Database } from "./actions/database/useDatabase";
 import { useLogger } from "./logger";
 import {
   DEFAULT_ENTRY_DURATION,
@@ -49,56 +50,22 @@ export class DuplicateEntryTimeError extends Error {
   }
 }
 
-interface QueueEntryManager {
+class QueueEntryManager {
+  readonly db: Database;
+
   /** The channel for this queue. */
-  queueChannel: Discord.Channel;
+  private readonly queueChannel: Discord.TextChannel;
+
+  constructor(queueChannel: Discord.TextChannel, db: Database) {
+    this.db = db;
+    this.queueChannel = queueChannel;
+  }
 
   /** Retrieves the queue's configuration settings. */
-  getConfig: () => Promise<QueueConfig>;
-
-  /** Updates the provided properties of a queue's configuration settings. */
-  updateConfig: (config: Partial<QueueConfig>) => Promise<void>;
-
-  /** Adds the queue entry to the database. */
-  create: (entry: QueueEntry) => Promise<QueueEntry>;
-
-  /** Removes the queue entry from the database. */
-  remove: (entry: QueueEntry) => Promise<void>;
-
-  /** Fetches an entry with the given message ID. */
-  fetchEntryFromMessage: (queueMessageId: string) => Promise<QueueEntry | null>;
-
-  /** Fetches all entries in queue order. */
-  fetchAll: () => Promise<Array<QueueEntry>>;
-
-  /** Fetches the number of entries in the queue. */
-  countAll: () => Promise<number>;
-
-  /** Fetches all entries by the given user in order of submission. */
-  fetchAllFrom: (senderId: string) => Promise<Array<QueueEntry>>;
-
-  /** Fetches the lastest entry by the given user. */
-  fetchLatestFrom: (senderId: string) => Promise<QueueEntry | null>;
-
-  /** Fetches the number of entries from the given user in the queue. */
-  countAllFrom: (senderId: string) => Promise<number>;
-
-  /** Sets the entry's "done" value. */
-  markEntryDone: (isDone: boolean, queueMessageId: string) => Promise<void>;
-
-  /** Delete all entries for this queue channel. */
-  clear: () => Promise<void>;
-}
-
-export async function useQueueStorage(
-  queueChannel: Discord.TextChannel
-): Promise<QueueEntryManager> {
-  const db = await useDatabase();
-
-  async function getConfig(transaction?: Transaction): Promise<QueueConfig> {
-    const config = await db.QueueConfigs.findOne({
+  async getConfig(transaction?: Transaction): Promise<QueueConfig> {
+    const config = await this.db.QueueConfigs.findOne({
       where: {
-        channelId: queueChannel.id
+        channelId: this.queueChannel.id
       },
       transaction
     });
@@ -109,208 +76,232 @@ export async function useQueueStorage(
     };
   }
 
-  async function getEntryWithMsgId(
+  /** Updates the provided properties of a queue's configuration settings. */
+  async updateConfig(config: Partial<QueueConfig>): Promise<void> {
+    await this.db.proxy.transaction(async transaction => {
+      const oldConfig = await this.getConfig(transaction);
+
+      let entryDurationSeconds: number | null;
+      if (config.entryDurationSeconds === undefined) {
+        entryDurationSeconds = oldConfig.entryDurationSeconds;
+      } else {
+        entryDurationSeconds = config.entryDurationSeconds;
+      }
+
+      let cooldownSeconds: number | null;
+      if (config.cooldownSeconds === undefined) {
+        cooldownSeconds = oldConfig.cooldownSeconds;
+      } else {
+        cooldownSeconds = config.cooldownSeconds;
+      }
+
+      let submissionMaxQuantity: number | null;
+      if (config.submissionMaxQuantity === undefined) {
+        submissionMaxQuantity = oldConfig.submissionMaxQuantity;
+      } else {
+        submissionMaxQuantity = config.submissionMaxQuantity;
+      }
+      await this.db.QueueConfigs.upsert(
+        {
+          channelId: this.queueChannel.id,
+          entryDurationSeconds,
+          cooldownSeconds,
+          submissionMaxQuantity
+        },
+        { transaction }
+      );
+    });
+  }
+
+  /** Adds the queue entry to the database. */
+  async create(entry: QueueEntry): Promise<QueueEntry> {
+    try {
+      await this.db.proxy.transaction(async transaction => {
+        // Make sure the guild and channels are in there
+        await this.db.Guilds.findOrCreate({
+          where: {
+            id: this.queueChannel.guild.id,
+            currentQueue: this.queueChannel.id
+          },
+          defaults: {
+            id: this.queueChannel.guild.id,
+            currentQueue: this.queueChannel.id,
+            isQueueOpen: false
+          },
+          transaction
+        });
+        await this.db.Channels.upsert(
+          {
+            id: this.queueChannel.id,
+            guildId: this.queueChannel.guild.id
+          },
+          { transaction }
+        );
+
+        // Make sure we have at least the default config
+        await this.db.QueueConfigs.findOrCreate({
+          where: {
+            channelId: this.queueChannel.id
+          },
+          defaults: {
+            channelId: this.queueChannel.id,
+            entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+            cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
+            submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY
+          },
+          transaction
+        });
+
+        // Add the entry
+        await this.db.QueueEntries.create(
+          {
+            queueMessageId: entry.queueMessageId,
+            url: entry.url,
+            seconds: entry.seconds,
+            guildId: this.queueChannel.guild.id,
+            channelId: this.queueChannel.id,
+            senderId: entry.senderId,
+            sentAt: entry.sentAt,
+            isDone: entry.isDone
+          },
+          { transaction }
+        );
+      });
+    } catch (error: unknown) {
+      if (error instanceof UniqueConstraintError) {
+        // Wait half a second, set the date to now, then try again.
+        logger.error(richErrorMessage("Sequelize error:", error));
+        throw new DuplicateEntryTimeError(entry);
+      }
+      throw error;
+    }
+
+    return entry;
+  }
+
+  /** Removes the queue entry from the database. */
+  async remove(entry: QueueEntry): Promise<void> {
+    await this.db.QueueEntries.destroy({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
+        queueMessageId: entry.queueMessageId
+      }
+    });
+  }
+
+  /** Fetches an entry with the given message ID. */
+  async fetchEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
+    return this.getEntryWithMsgId(queueMessageId);
+  }
+
+  /** Fetches all entries in queue order. */
+  async fetchAll(): Promise<Array<QueueEntry>> {
+    const entries = await this.db.QueueEntries.findAll({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id
+      },
+      order: [["sentAt", "ASC"]]
+    });
+    return entries.map(toQueueEntry);
+  }
+
+  /** Fetches the number of entries in the queue. */
+  async countAll(): Promise<number> {
+    return this.db.QueueEntries.count({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id
+      }
+    });
+  }
+
+  /** Fetches all entries by the given user in order of submission. */
+  async fetchAllFrom(senderId: string): Promise<Array<QueueEntry>> {
+    const entries = await this.db.QueueEntries.findAll({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
+        senderId
+      },
+      order: [["sentAt", "ASC"]]
+    });
+    return entries.map(toQueueEntry);
+  }
+
+  /** Fetches the lastest entry by the given user. */
+  async fetchLatestFrom(senderId: string): Promise<QueueEntry | null> {
+    const entry = await this.db.QueueEntries.findOne({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
+        senderId
+      },
+      order: [["sentAt", "DESC"]]
+    });
+    const result = entry ? toQueueEntry(entry) : null;
+    logger.verbose(
+      `Latest submission from user ${senderId}: ${JSON.stringify(result, undefined, 2)}`
+    );
+    return result;
+  }
+
+  /** Fetches the number of entries from the given user in the queue. */
+  async countAllFrom(senderId: string): Promise<number> {
+    return this.db.QueueEntries.count({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
+        senderId
+      }
+    });
+  }
+
+  /** Sets the entry's "done" value. */
+  async markEntryDone(isDone: boolean, queueMessageId: string): Promise<void> {
+    logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
+    await this.db.QueueEntries.update(
+      { isDone },
+      {
+        where: {
+          channelId: this.queueChannel.id,
+          guildId: this.queueChannel.guild.id,
+          queueMessageId
+        }
+      }
+    );
+  }
+
+  /** Delete all entries for this queue channel. */
+  async clear(): Promise<void> {
+    await this.db.QueueEntries.destroy({
+      where: {
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id
+      }
+    });
+  }
+
+  private async getEntryWithMsgId(
     queueMessageId: string,
     transaction?: Transaction
   ): Promise<QueueEntry | null> {
-    const doc = await db.QueueEntries.findOne({
+    const doc = await this.db.QueueEntries.findOne({
       where: {
-        channelId: queueChannel.id,
-        guildId: queueChannel.guild.id,
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
         queueMessageId
       },
       transaction
     });
     return doc ? toQueueEntry(doc) : null;
   }
+}
 
-  return {
-    queueChannel,
-    getConfig,
-    async updateConfig(config): Promise<void> {
-      await db.proxy.transaction(async transaction => {
-        const oldConfig = await getConfig(transaction);
-
-        let entryDurationSeconds: number | null;
-        if (config.entryDurationSeconds === undefined) {
-          entryDurationSeconds = oldConfig.entryDurationSeconds;
-        } else {
-          entryDurationSeconds = config.entryDurationSeconds;
-        }
-
-        let cooldownSeconds: number | null;
-        if (config.cooldownSeconds === undefined) {
-          cooldownSeconds = oldConfig.cooldownSeconds;
-        } else {
-          cooldownSeconds = config.cooldownSeconds;
-        }
-
-        let submissionMaxQuantity: number | null;
-        if (config.submissionMaxQuantity === undefined) {
-          submissionMaxQuantity = oldConfig.submissionMaxQuantity;
-        } else {
-          submissionMaxQuantity = config.submissionMaxQuantity;
-        }
-        await db.QueueConfigs.upsert(
-          {
-            channelId: queueChannel.id,
-            entryDurationSeconds,
-            cooldownSeconds,
-            submissionMaxQuantity
-          },
-          { transaction }
-        );
-      });
-    },
-    async create(entry): Promise<QueueEntry> {
-      try {
-        await db.proxy.transaction(async transaction => {
-          // Make sure the guild and channels are in there
-          await db.Guilds.findOrCreate({
-            where: {
-              id: queueChannel.guild.id,
-              currentQueue: queueChannel.id
-            },
-            defaults: {
-              id: queueChannel.guild.id,
-              currentQueue: queueChannel.id,
-              isQueueOpen: false
-            },
-            transaction
-          });
-          await db.Channels.upsert(
-            {
-              id: queueChannel.id,
-              guildId: queueChannel.guild.id
-            },
-            { transaction }
-          );
-
-          // Make sure we have at least the default config
-          await db.QueueConfigs.findOrCreate({
-            where: {
-              channelId: queueChannel.id
-            },
-            defaults: {
-              channelId: queueChannel.id,
-              entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-              cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-              submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY
-            },
-            transaction
-          });
-
-          // Add the entry
-          await db.QueueEntries.create(
-            {
-              queueMessageId: entry.queueMessageId,
-              url: entry.url,
-              seconds: entry.seconds,
-              guildId: queueChannel.guild.id,
-              channelId: queueChannel.id,
-              senderId: entry.senderId,
-              sentAt: entry.sentAt,
-              isDone: entry.isDone
-            },
-            { transaction }
-          );
-        });
-      } catch (error: unknown) {
-        if (error instanceof UniqueConstraintError) {
-          // Wait half a second, set the date to now, then try again.
-          logger.error(richErrorMessage("Sequelize error:", error));
-          throw new DuplicateEntryTimeError(entry);
-        }
-        throw error;
-      }
-
-      return entry;
-    },
-    async remove(entry): Promise<void> {
-      await db.QueueEntries.destroy({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id,
-          queueMessageId: entry.queueMessageId
-        }
-      });
-    },
-    async fetchEntryFromMessage(queueMessageId): Promise<QueueEntry | null> {
-      return getEntryWithMsgId(queueMessageId);
-    },
-    async fetchAll(): Promise<Array<QueueEntry>> {
-      const entries = await db.QueueEntries.findAll({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id
-        },
-        order: [["sentAt", "ASC"]]
-      });
-      return entries.map(toQueueEntry);
-    },
-    async countAll(): Promise<number> {
-      return db.QueueEntries.count({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id
-        }
-      });
-    },
-    async fetchAllFrom(senderId): Promise<Array<QueueEntry>> {
-      const entries = await db.QueueEntries.findAll({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id,
-          senderId
-        },
-        order: [["sentAt", "ASC"]]
-      });
-      return entries.map(toQueueEntry);
-    },
-    async fetchLatestFrom(senderId): Promise<QueueEntry | null> {
-      const entry = await db.QueueEntries.findOne({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id,
-          senderId
-        },
-        order: [["sentAt", "DESC"]]
-      });
-      const result = entry ? toQueueEntry(entry) : null;
-      logger.verbose(
-        `Latest submission from user ${senderId}: ${JSON.stringify(result, undefined, 2)}`
-      );
-      return result;
-    },
-    async countAllFrom(senderId): Promise<number> {
-      return db.QueueEntries.count({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id,
-          senderId
-        }
-      });
-    },
-    async markEntryDone(isDone: boolean, queueMessageId: string): Promise<void> {
-      logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
-      await db.QueueEntries.update(
-        { isDone },
-        {
-          where: {
-            channelId: queueChannel.id,
-            guildId: queueChannel.guild.id,
-            queueMessageId
-          }
-        }
-      );
-    },
-    async clear(): Promise<void> {
-      await db.QueueEntries.destroy({
-        where: {
-          channelId: queueChannel.id,
-          guildId: queueChannel.guild.id
-        }
-      });
-    }
-  };
+export async function useQueueStorage(
+  queueChannel: Discord.TextChannel
+): Promise<QueueEntryManager> {
+  const db = await useDatabase();
+  return new QueueEntryManager(queueChannel, db);
 }
