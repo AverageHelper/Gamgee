@@ -31,7 +31,7 @@ const open: NamedSubcommand = {
     if (!channel) {
       return reply(message, "There's no queue to open. Have you set one up yet?");
     }
-    const isAlreadyOpen = await guild.getQueueOpen();
+    const isAlreadyOpen = await guild.isQueueOpen();
     if (isAlreadyOpen) {
       return reply(message, "The queue's already open! :smiley:");
     }

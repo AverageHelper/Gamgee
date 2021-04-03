@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
 import { useLogger } from "../logger";
-import { getEnv } from "../helpers/environment";
 import logUser from "../helpers/logUser";
+import { useGuildStorage } from "../useGuildStorage";
 
 const logger = useLogger();
 
@@ -18,16 +18,12 @@ export default async function userIsQueueCreator(
 
   // Always true for user with a whitelisted role
   logger.info("Fetching creator roles...");
-
-  // TODO: Fetch role IDs from the database
-  const knownAdminRoles = [
-    getEnv("QUEUE_CREATOR_ROLE_ID") ?? "" //
-    // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
-  ];
+  const guildStorage = await useGuildStorage(guild);
+  const knownAdminRoleIDs = await guildStorage.getGuildAdminRoles();
 
   const adminRoles = await Promise.all(
     // Resolve the roles
-    knownAdminRoles.map(roleId => guild.roles.resolve(roleId))
+    knownAdminRoleIDs.map(roleId => guild.roles.resolve(roleId))
   );
   // logger.debug(`${adminRoles.length} roles: ${JSON.stringify(adminRoles, undefined, 2)}`);
 

@@ -65,7 +65,7 @@ describe("Song request via URL", () => {
   });
 
   mockGuildStorage.mockResolvedValue({
-    getQueueOpen: jest.fn().mockResolvedValue(true)
+    isQueueOpen: jest.fn().mockResolvedValue(true)
   });
 
   mockGetQueueChannel.mockResolvedValue({

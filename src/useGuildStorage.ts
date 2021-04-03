@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import { useDatabase, Database } from "./actions/database/useDatabase";
+import { getEnv } from "./helpers/environment";
 
 class GuildEntryManager {
   /** The guild. */
@@ -9,6 +10,29 @@ class GuildEntryManager {
   constructor(guild: Discord.Guild, db: Database) {
     this.guild = guild;
     this.db = db;
+  }
+
+  /**
+   * Retrives the list of Discord Role IDs whose members have permission to manage
+   * the guild's queue limits, content, and open status.
+   */
+  async getQueueAdminRoles(): Promise<Array<string>> {
+    return [
+      getEnv("EVENTS_ROLE_ID") ?? "", //
+      getEnv("QUEUE_ADMIN_ROLE_ID") ?? "" //
+      // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
+    ];
+  }
+
+  /**
+   * Retrieves the list of Discord Role IDs whose members have
+   * permission to manage the guild.
+   */
+  async getGuildAdminRoles(): Promise<Array<string>> {
+    return [
+      getEnv("QUEUE_CREATOR_ROLE_ID") ?? "" //
+      // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
+    ];
   }
 
   /** Retrieves the guild's queue channel ID, if it exists.. */
@@ -44,7 +68,7 @@ class GuildEntryManager {
   }
 
   /** Get's the queue's current open status. */
-  async getQueueOpen(): Promise<boolean> {
+  async isQueueOpen(): Promise<boolean> {
     const queueInfo = await this.db.Guilds.findOne({
       where: {
         id: this.guild.id

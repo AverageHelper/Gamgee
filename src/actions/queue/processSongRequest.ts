@@ -42,7 +42,7 @@ export default async function processSongRequest({
     const [config, latestSubmission, userSubmissionCount] = await Promise.all([
       queue.getConfig(),
       queue.getLatestEntryFrom(senderId),
-      queue.countFrom(senderId) // TODO: countFromSince so we can reset the userSubmissionCount limit throughout the night
+      queue.countFrom(senderId /* since: Date */)
     ]);
 
     // ** If the user has used all their submissions, reject!

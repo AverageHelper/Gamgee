@@ -34,7 +34,7 @@ const urlRequest: ArbitrarySubcommand = {
       return;
     }
 
-    const isQueueOpen = await guild.getQueueOpen();
+    const isQueueOpen = await guild.isQueueOpen();
     if (!isQueueOpen) {
       return reject_public(message, "The queue is not open.");
     }
