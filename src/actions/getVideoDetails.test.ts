@@ -11,14 +11,10 @@ describe("Video details", () => {
     ${"unavailable video (9Y8ZGLiqXba)"} | ${"https://youtu.be/9Y8ZGLiqXba"}
     ${"unavailable video (dmneTS-Gows)"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}
     ${"is too short"}                    | ${"https://www.youtube.com/watch?v=9Y8ZGL"}
-  `(
-    "returns null with $desc",
-    async ({ url }: { url: string }) => {
-      const details = await getVideoDetails([url], null);
-      expect(details).toBeNull();
-    },
-    10000
-  );
+  `("returns null with $desc", async ({ url }: { url: string }) => {
+    const details = await getVideoDetails([url], null);
+    expect(details).toBeNull();
+  });
 
   test.each`
     desc                                      | params                                                                                                                   | result                                           | duration
@@ -48,8 +44,7 @@ describe("Video details", () => {
       expect(details?.url).toBe(result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    },
-    10000
+    }
   );
 
   // SoundCloud
@@ -74,8 +69,7 @@ describe("Video details", () => {
       expect(details?.url).toBe(result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    },
-    10000
+    }
   );
 
   // BandCamp
@@ -84,7 +78,7 @@ describe("Video details", () => {
     const url = "https://poniesatdawn.bandcamp.com/album/memories";
     const details = await getVideoDetails([url], null);
     expect(details).toBe(null);
-  }, 10000);
+  });
 
   test.each`
     url                                                                             | duration
@@ -98,7 +92,6 @@ describe("Video details", () => {
       expect(details?.url).toBe(url);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
-    },
-    10000
+    }
   );
 });
