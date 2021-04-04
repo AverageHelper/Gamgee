@@ -42,6 +42,7 @@ $ cd Gamgee
     - [`sr`](#sr)
     - [`t`](#t)
     - [`video`](#video-video-link)
+    - [`version`](#version)
   - [Contributing](#contributing)
   - [Built With](#built-with)
   - [Authors](#authors)
@@ -175,6 +176,10 @@ Triggers the typing indicator in the current channel. This is mostly for fun and
 ### `video <video link>`
 
 Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that video's title and duration.
+
+### `version`
+
+Display's the current version of Gamgee Core. (see [package.json](https://github.com/AverageHelper/Gamgee/blob/main/package.json#L3))
 
 ## Contributing
 
