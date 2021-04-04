@@ -50,7 +50,7 @@ export class DuplicateEntryTimeError extends Error {
   }
 }
 
-class QueueEntryManager {
+export class QueueEntryManager {
   readonly db: Database;
 
   /** The channel for this queue. */
