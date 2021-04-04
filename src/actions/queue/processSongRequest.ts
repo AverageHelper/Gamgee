@@ -88,7 +88,7 @@ export default async function processSongRequest({
     if (song === null) {
       return reject_public(
         message,
-        "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube or SoundCloud link instead."
+        "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube, SoundCloud, or Bandcamp link."
       );
     }
 
