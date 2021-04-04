@@ -16,5 +16,6 @@ exports[`Help command describes all commands 1`] = `
     \`?sr restart\` - Empty the queue and start a fresh queue session.
 \`?t\` - Start typing. :wink:
 \`?video <YouTube, SoundCloud, or Bandcamp link>\` - Put the video title and duration in chat.
+\`?version\` - Display the bot's current codebase version.
 "
 `;
