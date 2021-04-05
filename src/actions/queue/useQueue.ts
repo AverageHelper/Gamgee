@@ -20,13 +20,11 @@ import richErrorMessage from "../../helpers/richErrorMessage";
 
 const logger = useLogger();
 
-export type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
-
 /**
  * A proxy for queue management and feedback. These methods may modify the
  * queue and manage messages in the queue channel.
  */
-class QueueManager {
+export class QueueManager {
   private readonly queueStorage: QueueEntryManager;
   private readonly queueChannel: Discord.TextChannel;
 
