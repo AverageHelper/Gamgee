@@ -17,6 +17,7 @@ class GuildEntryManager {
    * the guild's queue limits, content, and open status.
    */
   async getQueueAdminRoles(): Promise<Array<string>> {
+    // TODO: Get all Role entry IDs such that the entry has isQueueAdmin: true
     return [
       getEnv("EVENTS_ROLE_ID") ?? "", //
       getEnv("QUEUE_ADMIN_ROLE_ID") ?? "" //
@@ -29,6 +30,7 @@ class GuildEntryManager {
    * permission to manage the guild.
    */
   async getGuildAdminRoles(): Promise<Array<string>> {
+    // TODO: Get all Role entry IDs such that the entry has isGuildAdmin: true
     return [
       getEnv("QUEUE_CREATOR_ROLE_ID") ?? "" //
       // getEnv("BOT_ADMIN_ROLE_ID") ?? ""
