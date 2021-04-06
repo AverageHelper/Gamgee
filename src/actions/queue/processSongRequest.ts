@@ -1,13 +1,47 @@
 import type Discord from "discord.js";
 import type { Logger } from "../../logger";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
-import { useQueue } from "./useQueue";
+import { useQueue, QueueManager } from "./useQueue";
 import { reject_public, reject_private } from "../../commands/songRequest/actions";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
+import type { UnsentQueueEntry } from "../../queueStorage";
+
+export interface SongAcceptance {
+  queue: QueueManager;
+  message: Discord.Message;
+  entry: UnsentQueueEntry;
+  shouldSendUrl: boolean;
+  logger: Logger;
+}
+
+/**
+ * Adds an entry to the song queue, and sends appropriate feedback responses.
+ *
+ * @param param0 The feedback context.
+ */
+async function acceptSongRequest({
+  queue,
+  message,
+  entry,
+  shouldSendUrl,
+  logger
+}: SongAcceptance): Promise<void> {
+  logger.debug(`accepted urlRequest from message from ${message.author.id}: ${message.content}`);
+  await Promise.all([
+    queue.push(entry), //
+    shouldSendUrl ? message.channel.send(entry.url) : null
+  ]);
+  logger.debug(
+    `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
+  );
+  // Send acceptance after the potential `send(entry.url)` call
+  await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
+  logger.debug("Responded.");
+}
 
 export interface SongRequest {
   requestArgs: Array<string>;
@@ -20,7 +54,7 @@ export interface SongRequest {
  * Processes a song request, either accepting or rejecting the request, and possibly
  * adding the song to the queue.
  *
- * @param param0 The song request,
+ * @param param0 The song request context.
  */
 export default async function processSongRequest({
   requestArgs: args,
@@ -109,18 +143,8 @@ export default async function processSongRequest({
     const entry = { url, seconds, sentAt, senderId };
 
     // ** Full send!
-    logger.debug(`accepted urlRequest from message from ${message.author.id}: ${message.content}`);
-    await Promise.all([
-      queue.push(entry), //
-      shouldSendUrl ? message.channel.send(entry.url) : null
-    ]);
-    logger.debug(
-      `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
-    );
-    // Send acceptance after the potential `send(entry.url)` call
-    await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
-    logger.debug("Responded.");
-    return;
+    // TODO: Add this to a process queue. Submissions should be accepted in the order they were received, though vetting can take place in parallel between users.
+    return await acceptSongRequest({ queue, message, entry, shouldSendUrl, logger });
 
     // Handle fetch errors
   } catch (error: unknown) {

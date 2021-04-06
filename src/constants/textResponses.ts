@@ -90,6 +90,7 @@ export const phrases = [
   "I’ll give you a proper response when you tell me my purpose in life",
   "I'm so hungry, I could eat a... *nevermind*.\n>.>\n<.<",
   "I'm not a fan of spam.",
+  "Let me play among the stars...",
   "Like and subscribe",
   "Lorem ipsum dolor sit amet...",
   "My favorite type of music is the one with all of the instruments and sounds.",
