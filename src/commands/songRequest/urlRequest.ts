@@ -4,7 +4,8 @@ import { reject_public, reject_private } from "./actions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import { deleteMessage } from "../../actions/messages";
 import { useGuildStorage } from "../../useGuildStorage";
-import processRequest, { SongRequest } from "../../actions/queue/processSongRequest";
+import type { SongRequest } from "../../actions/queue/processSongRequest";
+import processRequest from "../../actions/queue/processSongRequest";
 
 const urlRequest: ArbitrarySubcommand = {
   format: "<YouTube, SoundCloud, or Bandcamp link>",

@@ -3,7 +3,8 @@ import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";
 import richErrorMessage from "../helpers/richErrorMessage";
 import any from "../helpers/any";
-import { Logger, useLogger } from "../logger";
+import type { Logger } from "../logger";
+import { useLogger } from "../logger";
 
 interface VideoDetails {
   url: string;

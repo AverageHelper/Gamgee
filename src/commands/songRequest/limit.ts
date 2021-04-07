@@ -1,6 +1,6 @@
 import type { NamedSubcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
-import { ConfigValue } from "../../constants/config";
+import type { ConfigValue } from "../../constants/config";
 import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import { replyPrivately } from "../../actions/messages";

@@ -1,7 +1,8 @@
 import type Discord from "discord.js";
 import type { Logger } from "../../logger";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
-import { useQueue, QueueManager } from "./useQueue";
+import type { QueueManager } from "./useQueue";
+import { useQueue } from "./useQueue";
 import { reject_public, reject_private } from "../../commands/songRequest/actions";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";

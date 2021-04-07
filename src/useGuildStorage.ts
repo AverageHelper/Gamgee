@@ -1,5 +1,6 @@
-import Discord from "discord.js";
-import { useDatabase, Database } from "./actions/database/useDatabase";
+import type Discord from "discord.js";
+import type { Database } from "./actions/database/useDatabase";
+import { useDatabase } from "./actions/database/useDatabase";
 
 class GuildEntryManager {
   /** The guild. */

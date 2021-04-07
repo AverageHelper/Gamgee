@@ -1,6 +1,7 @@
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import type { QueueConfig } from "../../actions/database/schemas/queueConfigSchema";
-import { useQueueStorage, QueueEntry, UnsentQueueEntry } from "../../queueStorage";
+import type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
+import { useQueueStorage } from "../../queueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
 import { deleteMessage, editMessage } from "../messages";
@@ -21,7 +22,7 @@ export type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
  * A proxy for queue management and feedback. These methods may modify the
  * queue and manage messages in the queue channel.
  */
-interface QueueManager {
+export interface QueueManager {
   /** Retrieves the queue's configuration settings. */
   getConfig: () => Promise<QueueConfig>;
 

@@ -1,5 +1,6 @@
 import type { QueueEntry } from "../../../queueStorage";
-import { Model, ModelCtor, STRING, INTEGER, DATE, BOOLEAN } from "sequelize";
+import type { Model, ModelCtor } from "sequelize";
+import { STRING, INTEGER, DATE, BOOLEAN } from "sequelize";
 import { useLogger } from "../../../logger";
 import { useSequelize } from "../useSequelize";
 

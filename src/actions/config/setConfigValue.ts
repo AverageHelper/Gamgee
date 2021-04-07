@@ -1,5 +1,6 @@
 import type { Storage } from "../../configStorage";
-import { ConfigKey, ConfigValue, CONFIG_KEY_COMMAND_PREFIX } from "../../constants/config";
+import type { ConfigKey, ConfigValue } from "../../constants/config";
+import { CONFIG_KEY_COMMAND_PREFIX } from "../../constants/config";
 
 export async function setConfigValue(
   storage: Storage | null,
