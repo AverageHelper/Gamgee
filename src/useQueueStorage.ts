@@ -136,11 +136,9 @@ export class QueueEntryManager {
   async remove(entry: QueueEntry): Promise<void> {
     await useDatabase(manager =>
       manager.delete(QueueEntry, {
-        where: {
-          channelId: this.queueChannel.id,
-          guildId: this.queueChannel.guild.id,
-          queueMessageId: entry.queueMessageId
-        }
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id,
+        queueMessageId: entry.queueMessageId
       })
     );
   }
@@ -242,10 +240,8 @@ export class QueueEntryManager {
   async clear(): Promise<void> {
     await useDatabase(manager =>
       manager.delete(QueueEntry, {
-        where: {
-          channelId: this.queueChannel.id,
-          guildId: this.queueChannel.guild.id
-        }
+        channelId: this.queueChannel.id,
+        guildId: this.queueChannel.guild.id
       })
     );
   }

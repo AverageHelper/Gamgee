@@ -8,7 +8,7 @@ export class Guild {
   @Column({ nullable: false })
   isQueueOpen: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   currentQueue: string | null;
 
   constructor(id: string, isQueueOpen: boolean = false, currentQueue: string | null = null) {
