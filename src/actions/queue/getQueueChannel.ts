@@ -1,4 +1,4 @@
-import Discord, { Message } from "discord.js";
+import type Discord from "discord.js";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { useGuildStorage } from "../../useGuildStorage";
 import { useLogger } from "../../logger";
