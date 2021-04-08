@@ -1,11 +1,7 @@
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import type { QueueConfig } from "../../actions/database/schemas/queueConfigSchema";
-import {
-  useQueueStorage,
-  QueueEntryManager,
-  QueueEntry,
-  UnsentQueueEntry
-} from "../../queueStorage";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../queueStorage";
+import { useQueueStorage } from "../../queueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
 import { deleteMessage, editMessage } from "../messages";

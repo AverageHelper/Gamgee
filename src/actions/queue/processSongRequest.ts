@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Logger } from "../../logger";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
+import type { QueueManager } from "./useQueue";
 import { useQueue } from "./useQueue";
 import { reject_public, reject_private } from "../../commands/songRequest/actions";
 import getVideoDetails from "../getVideoDetails";
@@ -8,6 +9,39 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
+import type { UnsentQueueEntry } from "../../queueStorage";
+
+export interface SongAcceptance {
+  queue: QueueManager;
+  message: Discord.Message;
+  entry: UnsentQueueEntry;
+  shouldSendUrl: boolean;
+  logger: Logger;
+}
+
+/**
+ * Adds an entry to the song queue, and sends appropriate feedback responses.
+ *
+ * @param param0 The feedback context.
+ */
+async function acceptSongRequest({
+  queue,
+  message,
+  entry,
+  shouldSendUrl,
+  logger
+}: SongAcceptance): Promise<void> {
+  logger.debug(`accepted urlRequest from message from ${message.author.id}: ${message.content}`);
+  await Promise.all([
+    queue.push(entry), //
+    shouldSendUrl ? message.channel.send(entry.url) : null
+  ]);
+  logger.debug(
+    `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
+  );
+  // Send acceptance after the potential `send(entry.url)` call
+  await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
+}
 
 export interface SongRequest {
   requestArgs: Array<string>;
@@ -20,7 +54,7 @@ export interface SongRequest {
  * Processes a song request, either accepting or rejecting the request, and possibly
  * adding the song to the queue.
  *
- * @param param0 The song request,
+ * @param param0 The song request context.
  */
 export default async function processSongRequest({
   requestArgs: args,
@@ -88,7 +122,7 @@ export default async function processSongRequest({
     if (song === null) {
       return reject_public(
         message,
-        "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube or SoundCloud link instead."
+        "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube, SoundCloud, or Bandcamp link."
       );
     }
 
@@ -97,6 +131,9 @@ export default async function processSongRequest({
 
     // ** If the song is too long, reject!
     const maxDuration = config.entryDurationSeconds;
+    logger.verbose(
+      `Request from user ${logUser(message.author)} is ${durationString(seconds)} long`
+    );
     if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
       const rejectionBuilder = new StringBuilder();
       rejectionBuilder.push("That song is too long. The limit is ");
@@ -109,18 +146,7 @@ export default async function processSongRequest({
     const entry = { url, seconds, sentAt, senderId };
 
     // ** Full send!
-    logger.debug(`accepted urlRequest from message from ${message.author.id}: ${message.content}`);
-    await Promise.all([
-      queue.push(entry), //
-      shouldSendUrl ? message.channel.send(entry.url) : null
-    ]);
-    logger.debug(
-      `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
-    );
-    // Send acceptance after the potential `send(entry.url)` call
-    await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
-    logger.debug("Responded.");
-    return;
+    return await acceptSongRequest({ queue, message, entry, shouldSendUrl, logger });
 
     // Handle fetch errors
   } catch (error: unknown) {

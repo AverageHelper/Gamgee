@@ -1,4 +1,5 @@
-import { ConfigKey, CONFIG_KEY_COMMAND_PREFIX } from "./keys";
+import type { ConfigKey } from "./keys";
+import { CONFIG_KEY_COMMAND_PREFIX } from "./keys";
 
 export type ConfigValue = string | number | null;
 

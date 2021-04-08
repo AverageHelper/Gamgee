@@ -8,10 +8,10 @@
 // TODO: Remove this file once official typings are available
 
 declare module "soundcloud-scraper" {
-  import m3u8stream from "m3u8stream";
-  import { RequestOptions, IncomingMessage } from "http";
-  import { Response } from "node-fetch";
-  import { load as CherrioLoad } from "cheerio";
+  import type m3u8stream from "m3u8stream";
+  import type { RequestOptions, IncomingMessage } from "http";
+  import type { Response } from "node-fetch";
+  import type { load as CherrioLoad } from "cheerio";
 
   declare interface SimpleJSON {
     [s: string]: unknown;
