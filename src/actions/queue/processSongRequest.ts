@@ -41,7 +41,6 @@ async function acceptSongRequest({
   );
   // Send acceptance after the potential `send(entry.url)` call
   await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
-  logger.debug("Responded.");
 }
 
 export interface SongRequest {
@@ -132,6 +131,9 @@ export default async function processSongRequest({
 
     // ** If the song is too long, reject!
     const maxDuration = config.entryDurationSeconds;
+    logger.verbose(
+      `Request from user ${logUser(message.author)} is ${durationString(seconds)} long`
+    );
     if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
       const rejectionBuilder = new StringBuilder();
       rejectionBuilder.push("That song is too long. The limit is ");
@@ -144,7 +146,6 @@ export default async function processSongRequest({
     const entry = { url, seconds, sentAt, senderId };
 
     // ** Full send!
-    // TODO: Add this to a process queue. Submissions should be accepted in the order they were received, though vetting can take place in parallel between users.
     return await acceptSongRequest({ queue, message, entry, shouldSendUrl, logger });
 
     // Handle fetch errors

@@ -1,5 +1,5 @@
 import type { ArbitrarySubcommand } from "../Command";
-import { jobQueues, useJobQueue } from "../../actions/queue/jobQueue";
+import { useJobQueue } from "../../actions/queue/jobQueue";
 import { reject_public, reject_private } from "./actions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import { deleteMessage } from "../../actions/messages";
@@ -40,18 +40,13 @@ const urlRequest: ArbitrarySubcommand = {
       return reject_public(message, "The queue is not open.");
     }
 
-    const key = `${message.author.id}_${queueChannel.id}`;
-
-    const requestQueue = useJobQueue<SongRequest>(key);
+    const requestQueue = useJobQueue<SongRequest>("urlRequest");
     requestQueue.process(processRequest); // Same function instance, so a nonce call
 
     requestQueue.on("start", () => {
-      // Show loading
       void queueChannel.startTyping();
     });
     requestQueue.on("finish", () => {
-      // Delete this queue and stop loading
-      jobQueues.delete(key);
       void queueChannel.stopTyping(true);
     });
 
