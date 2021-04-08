@@ -18,7 +18,7 @@ export default async function userIsQueueCreator(
 
   // Always true for user with a whitelisted role
   logger.info("Fetching creator roles...");
-  const guildStorage = await useGuildStorage(guild);
+  const guildStorage = useGuildStorage(guild);
   const knownAdminRoleIDs = await guildStorage.getGuildAdminRoles();
 
   const adminRoles = await Promise.all(

@@ -40,7 +40,7 @@ const limit: NamedSubcommand = {
       return reply(message, "No queue is set up.");
     }
 
-    const queue = await useQueue(channel);
+    const queue = useQueue(channel);
     const config = await queue.getConfig();
 
     const limitKey = args[1];

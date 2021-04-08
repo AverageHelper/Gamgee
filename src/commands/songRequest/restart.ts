@@ -30,7 +30,7 @@ const restart: NamedSubcommand = {
     await reply(message, "Time for a reset! :bucket: Clearing the queue...");
     void message.channel.startTyping(5);
 
-    const queue = await useQueue(channel);
+    const queue = useQueue(channel);
     const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
     await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();

@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import type { QueueConfig } from "../../actions/database/schemas/queueConfigSchema";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../queueStorage";
-import { useQueueStorage } from "../../queueStorage";
+import type { QueueConfig } from "../../database/model/QueueConfig";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import { useQueueStorage } from "../../useQueueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
 import { deleteMessage, editMessage } from "../messages";
@@ -162,11 +162,11 @@ export class QueueManager {
  *  one is created. We return that. Otherwise, we just return what we have stored
  *  or cached, whichever is handy.
  */
-export async function useQueue(queueChannel: Discord.TextChannel): Promise<QueueManager> {
+export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
   logger.debug(
     `Preparing persistent queue storage for channel ${queueChannel.id} (#${queueChannel.name})`
   );
-  const queueStorage = await useQueueStorage(queueChannel);
+  const queueStorage = useQueueStorage(queueChannel);
   logger.debug("Storage prepared!");
 
   return new QueueManager(queueStorage, queueChannel);

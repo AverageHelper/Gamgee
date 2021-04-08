@@ -41,7 +41,7 @@ const setup: NamedSubcommand = {
       );
     }
 
-    const guild = await useGuildStorage(message.guild);
+    const guild = useGuildStorage(message.guild);
     logger.info(`Setting up channel '${channel.name}' for queuage.`);
     await Promise.all([
       guild.setQueueChannel(channel.id),

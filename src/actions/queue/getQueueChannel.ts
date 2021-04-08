@@ -16,7 +16,7 @@ async function getQueueChannelFromMessage(
 ): Promise<Discord.TextChannel | null> {
   if (!message.guild) return null;
 
-  const guildInfo = await useGuildStorage(message.guild);
+  const guildInfo = useGuildStorage(message.guild);
 
   const queueChannelId = await guildInfo.getQueueChannelId();
   if (queueChannelId === null || queueChannelId === "") {
@@ -46,7 +46,7 @@ async function getQueueChannelFromMessage(
 }
 
 async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.TextChannel | null> {
-  const guildInfo = await useGuildStorage(guild);
+  const guildInfo = useGuildStorage(guild);
 
   const queueChannelId = await guildInfo.getQueueChannelId();
   if (queueChannelId === null || queueChannelId === "") {

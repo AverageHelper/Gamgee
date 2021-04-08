@@ -9,7 +9,7 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
-import type { UnsentQueueEntry } from "../../queueStorage";
+import type { UnsentQueueEntry } from "../../useQueueStorage";
 
 export interface SongAcceptance {
   queue: QueueManager;
@@ -69,7 +69,7 @@ export default async function processSongRequest({
   const sentAt = message.createdAt;
 
   logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
-  const queue = await useQueue(queueChannel);
+  const queue = useQueue(queueChannel);
   logger.debug("Queue prepared!");
 
   try {

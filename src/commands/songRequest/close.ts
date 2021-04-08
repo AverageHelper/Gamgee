@@ -13,7 +13,7 @@ const close: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
-    const guild = await useGuildStorage(message.guild);
+    const guild = useGuildStorage(message.guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
       guild.isQueueOpen(),
       getQueueChannel(message),

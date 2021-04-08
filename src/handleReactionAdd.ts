@@ -40,7 +40,7 @@ export async function handleReactionAdd(
   const channel = await getQueueChannel(message);
   if (!channel || reaction.message.channel.id !== channel.id) return;
 
-  const queue = await useQueue(channel);
+  const queue = useQueue(channel);
   const entry = await queue.getEntryFromMessage(message.id);
 
   if (entry) {

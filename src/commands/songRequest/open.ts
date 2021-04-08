@@ -13,8 +13,8 @@ const open: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
-    const [guild, channel] = await Promise.all([
-      useGuildStorage(message.guild),
+    const guild = useGuildStorage(message.guild);
+    const [channel] = await Promise.all([
       getQueueChannel(message),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);

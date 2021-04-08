@@ -19,7 +19,7 @@ const teardown: NamedSubcommand = {
       return;
     }
 
-    const guild = await useGuildStorage(message.guild);
+    const guild = useGuildStorage(message.guild);
     logger.info(`Forgetting queue channel for guild ${message.guild.id}.`);
     await Promise.all([
       guild.setQueueChannel(null), //

@@ -31,7 +31,7 @@ const stats: NamedSubcommand = {
 
     // Get the current queue's status
     const queueIsCurrent = message.channel.id === channel.id;
-    const queue = await useQueue(channel);
+    const queue = useQueue(channel);
     const [count, playtimeRemaining, playtimeTotal] = await Promise.all([
       queue.count(),
       queue.playtimeRemaining(),

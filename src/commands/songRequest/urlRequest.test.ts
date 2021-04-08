@@ -65,7 +65,7 @@ describe("Song request via URL", () => {
 
   const mockQueuePush = jest.fn();
 
-  mockGuildStorage.mockResolvedValue({
+  mockGuildStorage.mockReturnValue({
     isQueueOpen: jest.fn().mockResolvedValue(true)
   });
 
@@ -76,7 +76,7 @@ describe("Song request via URL", () => {
     stopTyping: mockChannelStopTyping
   });
 
-  mockUseQueue.mockResolvedValue({
+  mockUseQueue.mockReturnValue({
     getConfig: jest.fn().mockResolvedValue({
       entryDurationSeconds: null,
       cooldownSeconds: 600,

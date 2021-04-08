@@ -18,7 +18,7 @@ export default async function userIsQueueAdmin(
 
   // Always true for user with a whitelisted role
   logger.info("Fetching admin roles...");
-  const guildStorage = await useGuildStorage(guild);
+  const guildStorage = useGuildStorage(guild);
   const knownAdminRoleIDs = await guildStorage.getQueueAdminRoles();
 
   const adminRoles = await Promise.all(

@@ -1,4 +1,5 @@
 import "source-map-support/register";
+import "reflect-metadata";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
 
