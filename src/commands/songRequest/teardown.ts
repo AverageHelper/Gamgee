@@ -1,17 +1,14 @@
 import type { NamedSubcommand } from "../Command";
-import { useLogger } from "../../logger";
 import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import { replyPrivately } from "../../actions/messages";
 import userIsQueueCreator from "../../actions/userIsQueueCreator";
 
-const logger = useLogger();
-
 const teardown: NamedSubcommand = {
   name: "teardown",
   requiredArgFormat: "<channel name>",
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
-  async execute({ message }) {
+  async execute({ message, logger }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }

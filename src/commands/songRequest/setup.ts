@@ -1,18 +1,15 @@
 import type { NamedSubcommand } from "../Command";
-import { useLogger } from "../../logger";
 import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
 import userIsQueueCreator from "../../actions/userIsQueueCreator";
 
-const logger = useLogger();
-
 const setup: NamedSubcommand = {
   name: "setup",
   requiredArgFormat: "<channel name>",
   description: "Set a channel as the 'queue' channel. *(Server owner only. No touch!)*",
-  async execute({ message, args }) {
+  async execute({ message, args, logger }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }

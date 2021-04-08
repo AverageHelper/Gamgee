@@ -1,5 +1,4 @@
 import type { NamedSubcommand } from "../Command";
-import { useLogger } from "../../logger";
 import { useQueue } from "../../actions/queue/useQueue";
 import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
@@ -8,12 +7,10 @@ import StringBuilder from "../../helpers/StringBuilder";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
 import { reply, reply_private } from "./actions";
 
-const logger = useLogger();
-
 const stats: NamedSubcommand = {
   name: "stats",
   description: "Print statistics on the current queue.",
-  async execute({ message }) {
+  async execute({ message, logger }) {
     if (!message.guild) {
       return reply(message, "Can't do that here.");
     }
