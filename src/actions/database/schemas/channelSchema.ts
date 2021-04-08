@@ -1,4 +1,5 @@
-import { Model, ModelCtor, STRING } from "sequelize";
+import type { Model, ModelCtor } from "sequelize";
+import { STRING } from "sequelize";
 import { useLogger } from "../../../logger";
 import { useSequelize } from "../useSequelize";
 

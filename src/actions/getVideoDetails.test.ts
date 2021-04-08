@@ -19,6 +19,7 @@ describe("Video details", () => {
   test.each`
     desc                                      | params                                                                                                                   | result                                           | duration
     ${"is already good"}                      | ${["https://youtube.com/watch?v=9RAQsdTQIcs"]}                                                                           | ${"https://www.youtube.com/watch?v=9RAQsdTQIcs"} | ${174}
+    ${"is for mobile"}                        | ${["https://m.youtube.com/watch?v=9Y8ZGLiqXB8"]}                                                                         | ${testVid1}                                      | ${346}
     ${"is shortened"}                         | ${["https://youtu.be/9Y8ZGLiqXB8"]}                                                                                      | ${testVid1}                                      | ${346}
     ${"has extra info"}                       | ${["https://youtu.be/9Y8ZGLiqXB8", "Text", "and", "stuff"]}                                                              | ${testVid1}                                      | ${346}
     ${"spams repeat characters"}              | ${["https://youtu.be/9Y8ZGLiqXB8!!!!!!!!!!!!!!!!!!!!!!!!!!!!"]}                                                          | ${testVid1}                                      | ${346}

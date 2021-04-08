@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import type { Sequelize } from "sequelize";
 import { queueEntrySchema, queueConfigSchema, channelSchema, guildSchema } from "./schemas";
 import { useSequelize } from "./useSequelize";
 
