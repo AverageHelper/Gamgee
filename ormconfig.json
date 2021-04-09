@@ -1,15 +1,4 @@
 {
-  "type": "sqlite",
-  "host": "localhost",
-  "port": 3306,
-  "username": "Gamgee",
-  "password": "strawberries",
-  "database": "queues",
-  "synchronize": true,
-  "logging": false,
-  "entities": ["src/database/model/**/*.ts"],
-  "migrations": ["src/database/migration/**/*.ts"],
-  "subscribers": ["src/database/subscribers/**/*.ts"],
   "cli": {
     "entitiesDir": "src/database/model",
     "migrationsDir": "src/database/migration",
