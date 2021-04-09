@@ -47,11 +47,7 @@ export async function useDatabaseConnection<T = undefined>(
   const connection = await createConnection({
     name: uuid(),
     type: "sqlite",
-    database: dbFile, // "queues",
-    // host: "localhost",
-    // port: 3306,
-    // username: "Gamgee",
-    // password: "strawberries",
+    database: dbFile,
     synchronize: true,
     logging: "all",
     logger: toLogger(gLogger),

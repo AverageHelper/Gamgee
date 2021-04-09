@@ -34,6 +34,8 @@ const restart: NamedSubcommand = {
     const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
     await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();
+
+    // TODO: Do we need to force-stop the typing indicator here?
     return reply(message, "The queue has restarted.");
   }
 };

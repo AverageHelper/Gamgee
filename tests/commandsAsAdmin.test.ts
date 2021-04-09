@@ -45,7 +45,6 @@ describe("Command as admin", () => {
       test.each`
         subcommand
         ${"stats"}
-        ${"restart"}
         ${"open"}
         ${"close"}
       `(
@@ -154,11 +153,6 @@ describe("Command as admin", () => {
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
-      test("fails to restart the queue", async () => {
-        const response = await commandResponseInSameChannel("sr restart");
-        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-      });
-
       // FIXME: This needs to run last b/c it only works once per server. Set up a teardown command.
       test("allows the tester to set up a queue", async () => {
         await setIsQueueCreator(true);
@@ -222,24 +216,6 @@ describe("Command as admin", () => {
           );
         });
 
-        test("allows the tester to restart the queue", async () => {
-          const startResponse = await commandResponseInSameChannel(
-            "sr restart",
-            undefined,
-            "Clearing the queue"
-          );
-          const finishResponse = await waitForMessage(
-            msg =>
-              msg.author.id === UUT_ID &&
-              msg.channel.id === RUN_CHANNEL_ID &&
-              msg.id !== startResponse?.id &&
-              msg.content.toLowerCase().includes("the queue has restarted")
-          );
-          expect(startResponse?.deleted).toBeFalse();
-          expect(startResponse?.content).toContain("Clearing the queue");
-          expect(finishResponse?.content).toContain("The queue has restarted");
-        });
-
         // TODO: Add tests for setting queue limits
       });
 
@@ -272,24 +248,6 @@ describe("Command as admin", () => {
           expect(response?.content).toContain(
             `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
           );
-        });
-
-        test("allows the tester to restart the queue", async () => {
-          const startResponse = await commandResponseInSameChannel(
-            "sr restart",
-            undefined,
-            "Clearing the queue"
-          );
-          const finishResponse = await waitForMessage(
-            msg =>
-              msg.author.id === UUT_ID &&
-              msg.channel.id === RUN_CHANNEL_ID &&
-              msg.id !== startResponse?.id &&
-              msg.content.toLowerCase().includes("the queue has restarted")
-          );
-          expect(startResponse?.deleted).toBeFalse();
-          expect(startResponse?.content).toContain("Clearing the queue");
-          expect(finishResponse?.content).toContain("The queue has restarted");
         });
 
         // TODO: Add tests for setting queue limits
