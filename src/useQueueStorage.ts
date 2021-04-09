@@ -145,7 +145,7 @@ export class QueueEntryManager {
 
   /** Fetches an entry with the given message ID. */
   async fetchEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
-    return useDatabase(manager => this.getEntryWithMsgId(queueMessageId, manager));
+    return useDatabase(manager => this._getEntryWithMsgId(queueMessageId, manager));
   }
 
   /** Fetches all entries in queue order. */
@@ -246,7 +246,7 @@ export class QueueEntryManager {
     );
   }
 
-  private async getEntryWithMsgId(
+  private async _getEntryWithMsgId(
     queueMessageId: string,
     manager: EntityManager
   ): Promise<QueueEntry | null> {
