@@ -2,47 +2,43 @@ import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "queue-entries" })
 export class QueueEntry {
-  @Column({ nullable: false })
+  @Column()
   channelId: string;
 
-  @Column({ nullable: false })
+  @Column()
   guildId: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true })
   queueMessageId: string;
 
-  @Column({ nullable: false })
+  @Column()
   url: string;
 
-  @Column({ type: "integer", nullable: false })
+  @Column({ type: "integer" })
   seconds: number;
 
-  @PrimaryColumn({ nullable: false })
+  @PrimaryColumn({ unique: true })
   sentAt: Date;
 
-  @Column({ nullable: false })
+  @Column()
   senderId: string;
 
-  @Column({ nullable: false })
+  @Column()
   isDone: boolean;
 
+  constructor(channelId: string, guildId: string, entry: Omit<QueueEntry, "channelId" | "guildId">);
   constructor(
-    channelId: string,
-    guildId: string,
-    queueMessageId: string,
-    url: string,
-    seconds: number,
-    sentAt: Date,
-    senderId: string,
-    isDone: boolean
+    channelId?: string,
+    guildId?: string,
+    entry?: Omit<QueueEntry, "channelId" | "guildId">
   ) {
-    this.channelId = channelId;
-    this.guildId = guildId;
-    this.queueMessageId = queueMessageId;
-    this.url = url;
-    this.seconds = seconds;
-    this.sentAt = sentAt;
-    this.senderId = senderId;
-    this.isDone = isDone;
+    this.channelId = channelId ?? "";
+    this.guildId = guildId ?? "";
+    this.queueMessageId = entry?.queueMessageId ?? "";
+    this.url = entry?.url ?? "";
+    this.seconds = entry?.seconds ?? 0;
+    this.sentAt = entry?.sentAt ?? new Date();
+    this.senderId = entry?.senderId ?? "";
+    this.isDone = entry?.isDone ?? false;
   }
 }

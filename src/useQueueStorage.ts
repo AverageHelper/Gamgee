@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import type { EntityManager } from "typeorm";
+import type { Repository } from "typeorm";
 import { Channel, Guild, QueueConfig, QueueEntry } from "./database/model";
-import { useDatabase, useDatabaseTransaction } from "./database/useDatabase";
+import { useRepository, useTransaction } from "./database/useDatabase";
 import { useLogger } from "./logger";
 import {
   DEFAULT_ENTRY_DURATION,
@@ -27,13 +27,14 @@ export class QueueEntryManager {
 
   /** Retrieves the queue's configuration settings. */
   async getConfig(): Promise<QueueConfig> {
-    return useDatabase(manager => this._getConfig(manager));
+    return useRepository(QueueConfig, repo => this._getConfig(repo));
   }
 
   /** Updates the provided properties of a queue's configuration settings. */
   async updateConfig(config: Partial<QueueConfig>): Promise<void> {
-    await useDatabaseTransaction(async transaction => {
-      const oldConfig = await this._getConfig(transaction);
+    await useTransaction(async transaction => {
+      const queueConfigs = transaction.getRepository(QueueConfig);
+      const oldConfig = await this._getConfig(queueConfigs);
 
       let entryDurationSeconds: number | null;
       if (config.entryDurationSeconds === undefined) {
@@ -55,87 +56,58 @@ export class QueueEntryManager {
       } else {
         submissionMaxQuantity = config.submissionMaxQuantity;
       }
-      const newConfig = {
-        channelId: this.queueChannel.id,
+      const newConfig = new QueueConfig(this.queueChannel.id, {
         entryDurationSeconds,
         cooldownSeconds,
         submissionMaxQuantity
-      };
-      await transaction
-        .createQueryBuilder()
-        .insert()
-        .into(QueueConfig)
-        .values(newConfig)
-        .orUpdate({
-          conflict_target: ["channelId"],
-          overwrite: ["entryDurationSeconds", "cooldownSeconds", "submissionMaxQuantity"]
-        })
-        .execute();
+      });
+      await transaction.save(newConfig);
     });
   }
 
   /** Adds the queue entry to the database. */
   async create(entry: Omit<QueueEntry, "channelId" | "guildId">): Promise<QueueEntry> {
-    return useDatabaseTransaction(async transaction => {
+    return useTransaction(async transaction => {
+      const guilds = transaction.getRepository(Guild);
+      const queueConfigs = transaction.getRepository(QueueConfig);
+
       // Make sure the guild and channels are in there
-      await transaction
-        .createQueryBuilder()
-        .insert()
-        .into(Guild)
-        .values({
-          id: this.queueChannel.guild.id,
-          currentQueue: this.queueChannel.id,
-          isQueueOpen: false
-        })
-        .orUpdate({
-          conflict_target: ["id"],
-          overwrite: ["currentQueue", "isQueueOpen"]
-        })
-        .execute();
-      await transaction
-        .createQueryBuilder()
-        .insert()
-        .into(Channel)
-        .values({
-          id: this.queueChannel.id,
-          guildId: this.queueChannel.guild.id
-        })
-        .orUpdate({
-          conflict_target: ["id"],
-          overwrite: ["guildId"]
-        })
-        .execute();
+      const guild =
+        (await guilds.findOne({
+          where: {
+            id: this.queueChannel.guild.id
+          }
+        })) ?? new Guild(this.queueChannel.guild.id, false, this.queueChannel.id);
+      await transaction.save(guild);
+
+      const channel = new Channel(this.queueChannel.id, this.queueChannel.guild.id);
+      await transaction.save(channel);
 
       // Make sure we have at least the default config
-      await transaction
-        .createQueryBuilder()
-        .insert()
-        .into(QueueConfig)
-        .values({
-          channelId: this.queueChannel.id,
+      const config =
+        (await queueConfigs.findOne({
+          where: {
+            channelId: this.queueChannel.id
+          }
+        })) ??
+        new QueueConfig(this.queueChannel.id, {
           entryDurationSeconds: DEFAULT_ENTRY_DURATION,
           cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
           submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY
-        })
-        .orUpdate({
-          conflict_target: ["channelId"],
-          overwrite: ["entryDurationSeconds", "cooldownSeconds", "submissionMaxQuantity"]
-        })
-        .execute();
+        });
+      await transaction.save(config);
 
       // Add the entry
-      return transaction.create(QueueEntry, {
-        ...entry,
-        guildId: this.queueChannel.guild.id,
-        channelId: this.queueChannel.id
-      });
+      const queueEntries = transaction.getRepository(QueueEntry);
+      const queueEntry = new QueueEntry(this.queueChannel.id, this.queueChannel.guild.id, entry);
+      return queueEntries.create(queueEntry);
     });
   }
 
   /** Removes the queue entry from the database. */
   async remove(entry: QueueEntry): Promise<void> {
-    await useDatabase(manager =>
-      manager.delete(QueueEntry, {
+    await useRepository(QueueEntry, repo =>
+      repo.delete({
         channelId: this.queueChannel.id,
         guildId: this.queueChannel.guild.id,
         queueMessageId: entry.queueMessageId
@@ -145,13 +117,13 @@ export class QueueEntryManager {
 
   /** Fetches an entry with the given message ID. */
   async fetchEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
-    return useDatabase(manager => this._getEntryWithMsgId(queueMessageId, manager));
+    return useRepository(QueueEntry, repo => this._getEntryWithMsgId(queueMessageId, repo));
   }
 
   /** Fetches all entries in queue order. */
   async fetchAll(): Promise<Array<QueueEntry>> {
-    return useDatabase(manager =>
-      manager.find(QueueEntry, {
+    return useRepository(QueueEntry, repo =>
+      repo.find({
         where: {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id
@@ -163,8 +135,8 @@ export class QueueEntryManager {
 
   /** Fetches the number of entries in the queue. */
   async countAll(): Promise<number> {
-    return useDatabase(manager =>
-      manager.count(QueueEntry, {
+    return useRepository(QueueEntry, repo =>
+      repo.count({
         where: {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id
@@ -175,8 +147,8 @@ export class QueueEntryManager {
 
   /** Fetches all entries by the given user in order of submission. */
   async fetchAllFrom(senderId: string): Promise<Array<QueueEntry>> {
-    return useDatabase(manager =>
-      manager.find(QueueEntry, {
+    return useRepository(QueueEntry, repo =>
+      repo.find({
         where: {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id,
@@ -189,8 +161,8 @@ export class QueueEntryManager {
 
   /** Fetches the lastest entry by the given user. */
   async fetchLatestFrom(senderId: string): Promise<QueueEntry | null> {
-    const entry = await useDatabase(manager =>
-      manager.findOne(QueueEntry, {
+    const entry = await useRepository(QueueEntry, repo =>
+      repo.findOne({
         where: {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id,
@@ -209,8 +181,8 @@ export class QueueEntryManager {
 
   /** Fetches the number of entries from the given user in the queue. */
   async countAllFrom(senderId: string): Promise<number> {
-    return useDatabase(manager =>
-      manager.count(QueueEntry, {
+    return useRepository(QueueEntry, repo =>
+      repo.count({
         where: {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id,
@@ -223,9 +195,8 @@ export class QueueEntryManager {
   /** Sets the entry's "done" value. */
   async markEntryDone(isDone: boolean, queueMessageId: string): Promise<void> {
     logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
-    await useDatabase(manager =>
-      manager.update(
-        QueueEntry,
+    await useRepository(QueueEntry, repo =>
+      repo.update(
         {
           channelId: this.queueChannel.id,
           guildId: this.queueChannel.guild.id,
@@ -238,8 +209,8 @@ export class QueueEntryManager {
 
   /** Delete all entries for this queue channel. */
   async clear(): Promise<void> {
-    await useDatabase(manager =>
-      manager.delete(QueueEntry, {
+    await useRepository(QueueEntry, repo =>
+      repo.delete({
         channelId: this.queueChannel.id,
         guildId: this.queueChannel.guild.id
       })
@@ -248,9 +219,9 @@ export class QueueEntryManager {
 
   private async _getEntryWithMsgId(
     queueMessageId: string,
-    manager: EntityManager
+    repo: Repository<QueueEntry>
   ): Promise<QueueEntry | null> {
-    const doc = await manager.findOne(QueueEntry, {
+    const doc = await repo.findOne({
       where: {
         channelId: this.queueChannel.id,
         guildId: this.queueChannel.guild.id,
@@ -260,8 +231,8 @@ export class QueueEntryManager {
     return doc ?? null;
   }
 
-  private async _getConfig(entityManager: EntityManager): Promise<QueueConfig> {
-    const config = await entityManager.findOne(QueueConfig, {
+  private async _getConfig(repo: Repository<QueueConfig>): Promise<QueueConfig> {
+    const config = await repo.findOne({
       where: {
         channelId: this.queueChannel.id
       }

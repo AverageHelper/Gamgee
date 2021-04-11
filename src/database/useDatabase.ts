@@ -2,8 +2,14 @@ import path from "path";
 import { DEFAULT_DATABASE_FOLDER } from "../constants/database";
 import { getEnv } from "../helpers/environment";
 import { createConnection } from "typeorm";
+import type {
+  EntityTarget,
+  EntityManager,
+  Repository,
+  Connection,
+  Logger as TypeORMLogger
+} from "typeorm";
 import { v4 as uuid } from "uuid";
-import type { EntityManager, Connection, Logger as TypeORMLogger } from "typeorm";
 import type { Logger as GamgeeLogger } from "../logger";
 import { useLogger } from "../logger";
 import * as entities from "./model";
@@ -42,10 +48,14 @@ export async function useDatabaseConnection<T = undefined>(
 ): Promise<T> {
   const dbFolder = path.normalize(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
   const dbFile = path.join(dbFolder, "db.sqlite");
-  gLogger?.info(`Opening a connection to database at path '${dbFile}'`);
+
+  const name = uuid();
+  gLogger?.debug(
+    `Opening a new connection to database at path '${dbFile}'; Connection ID: ${name}`
+  );
 
   const connection = await createConnection({
-    name: uuid(),
+    name,
     type: "sqlite",
     database: dbFile,
     synchronize: true,
@@ -57,20 +67,23 @@ export async function useDatabaseConnection<T = undefined>(
 
   const result = await cb(connection);
 
-  gLogger?.info(`Closing connection to database at path '${dbFile}'`);
-  void connection.close();
+  gLogger?.debug(`Closing connection ${name}`);
+  await connection.close();
 
   return result;
 }
 
-export async function useDatabase<T = undefined>(
-  cb: (entityManager: EntityManager) => T | Promise<T>,
+export async function useRepository<Entity, T = undefined>(
+  target: EntityTarget<Entity>,
+  cb: (repository: Repository<Entity>) => T | Promise<T>,
   gLogger: GamgeeLogger = logger
 ): Promise<T> {
-  return useDatabaseConnection(connection => cb(connection.manager), gLogger);
+  return useDatabaseConnection(connection => {
+    return cb(connection.getRepository(target));
+  }, gLogger);
 }
 
-export async function useDatabaseTransaction<T = undefined>(
+export async function useTransaction<T = undefined>(
   cb: (entityManager: EntityManager) => T | Promise<T>,
   gLogger: GamgeeLogger = logger
 ): Promise<T> {

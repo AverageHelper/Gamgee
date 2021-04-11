@@ -69,6 +69,12 @@
     {
       "files": ["*.js"],
       "parser": "null"
+    },
+    {
+      "files": ["database/migrations/*.ts"],
+      "rules": {
+        "unicorn/filename-case": "off"
+      }
     }
   ]
 }
