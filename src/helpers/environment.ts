@@ -40,6 +40,6 @@ export function getEnv(key: EnvKey): string | undefined {
  */
 export function requireEnv(key: EnvKey): string {
   const value = getEnv(key);
-  if (value === void 0) throw new EnvVariableNotFoundError(key);
+  if (value === undefined) throw new EnvVariableNotFoundError(key);
   return value;
 }

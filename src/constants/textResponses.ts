@@ -67,6 +67,11 @@ export const phrases = [
   "I yam disgustipated",
   "I'm strong to the finich, 'cause I eats me spinach!",
 
+  // Star Trek: TNG
+  "He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
+  "Tea, Earl grey, hot",
+  "You know, back when I was in the academy, we would follow every toast with a song!",
+
   // Other
   "Bit of a tongue twister",
   "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
@@ -99,6 +104,7 @@ export const phrases = [
   "Quite remarkable",
   "Second star to the right, and straight on until closing time",
   "Sponsored by",
+  "'Tis better to have loved and lost, than never to have loved at all.",
   "That's par for the course",
   "This is just a random phrase. Feel free to add to another.",
   "\\*thoughtful phrase\\*",
