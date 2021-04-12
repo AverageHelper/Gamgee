@@ -32,7 +32,7 @@ export const phrases = [
   "Do you remember the taste of strawberries?",
   "\"Don't you leave him Samwise Gamgee.\" And I don't mean to. I don't mean to.",
   "Hiking to Mordor...",
-  "I’m coming, Mr. Frode.",
+  "I’m coming, Mr. Frodo.",
   "I ain't been droppin' no eaves, sir! Promise!",
   "I made a promise, Mr. Frodo. A promise.",
   'I wonder if people will ever say, "Let\'s hear about Frodo and the ring."',
