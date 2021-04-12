@@ -33,3 +33,20 @@ export async function replyPrivately(message: Discord.Message, content: string):
     return false;
   }
 }
+
+/**
+ * Sends a message in the same channel as the provided `message` with a
+ * mention to the sender.
+ *
+ * @param message The message to which to reply.
+ * @param content The content of the message to send.
+ *
+ * @returns a `Promise` that resolves if the send succeeds.
+ */
+export async function replyWithMention(message: Discord.Message, content: string): Promise<void> {
+  try {
+    await message.reply(content);
+  } catch (error: unknown) {
+    logger.error(richErrorMessage("Failed to send message.", error));
+  }
+}

@@ -13,7 +13,7 @@ node_modules
 db
 db-test
 dist
-config
+./config
 coverage
 src/version.ts
 tmp
