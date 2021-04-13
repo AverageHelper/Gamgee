@@ -3,7 +3,7 @@ import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsAdminForQueueInGuild } from "../../permissions";
 
 const open: NamedSubcommand = {
   name: "open",
@@ -13,15 +13,15 @@ const open: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
-    const [guild, channel] = await Promise.all([
-      useGuildStorage(message.guild),
+    const guild = useGuildStorage(message.guild);
+    const [channel] = await Promise.all([
       getQueueChannel(message),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
     // The queue may only be opened in the queue channel, or by the server owner.
     if (
-      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
@@ -31,7 +31,7 @@ const open: NamedSubcommand = {
     if (!channel) {
       return reply(message, "There's no queue to open. Have you set one up yet?");
     }
-    const isAlreadyOpen = await guild.getQueueOpen();
+    const isAlreadyOpen = await guild.isQueueOpen();
     if (isAlreadyOpen) {
       return reply(message, "The queue's already open! :smiley:");
     }

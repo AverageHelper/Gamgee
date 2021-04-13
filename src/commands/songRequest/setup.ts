@@ -3,7 +3,7 @@ import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
-import userIsQueueCreator from "../../actions/userIsQueueCreator";
+import { userIsAdminInGuild } from "../../permissions";
 
 const setup: NamedSubcommand = {
   name: "setup",
@@ -17,7 +17,7 @@ const setup: NamedSubcommand = {
     await deleteMessage(message, "Users don't need to see this command once it's run.");
 
     // Only the guild owner may touch the queue.
-    if (!(await userIsQueueCreator(message.author, message.guild))) {
+    if (!(await userIsAdminInGuild(message.author, message.guild))) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
@@ -41,7 +41,7 @@ const setup: NamedSubcommand = {
       );
     }
 
-    const guild = await useGuildStorage(message.guild);
+    const guild = useGuildStorage(message.guild);
     logger.info(`Setting up channel '${channel.name}' for queuage.`);
     await Promise.all([
       guild.setQueueChannel(channel.id),

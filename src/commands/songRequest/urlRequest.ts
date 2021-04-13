@@ -16,10 +16,7 @@ const urlRequest: ArbitrarySubcommand = {
       return;
     }
 
-    const [guild, queueChannel] = await Promise.all([
-      useGuildStorage(message.guild),
-      getQueueChannel(message)
-    ]);
+    const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {
       return reject_public(message, "No queue is set up.");
     }
@@ -35,7 +32,8 @@ const urlRequest: ArbitrarySubcommand = {
       return;
     }
 
-    const isQueueOpen = await guild.getQueueOpen();
+    const guild = useGuildStorage(message.guild);
+    const isQueueOpen = await guild.isQueueOpen();
     if (!isQueueOpen) {
       return reject_public(message, "The queue is not open.");
     }

@@ -3,7 +3,7 @@ import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsAdminForQueueInGuild } from "../../permissions";
 
 const close: NamedSubcommand = {
   name: "close",
@@ -13,15 +13,15 @@ const close: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
-    const guild = await useGuildStorage(message.guild);
+    const guild = useGuildStorage(message.guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
-      guild.getQueueOpen(),
+      guild.isQueueOpen(),
       getQueueChannel(message),
       deleteMessage(message, "Users don't need to see this command once it's run.")
     ]);
 
     if (
-      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
       message.channel.id !== queueChannel?.id
     ) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");

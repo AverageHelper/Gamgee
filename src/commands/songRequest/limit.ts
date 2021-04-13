@@ -5,7 +5,7 @@ import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import { replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsAdminForQueueInGuild } from "../../permissions";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 
@@ -40,7 +40,7 @@ const limit: NamedSubcommand = {
       return reply(message, "No queue is set up.");
     }
 
-    const queue = await useQueue(channel);
+    const queue = useQueue(channel);
     const config = await queue.getConfig();
 
     const limitKey = args[1];
@@ -83,7 +83,7 @@ const limit: NamedSubcommand = {
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (
-      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");

@@ -2,7 +2,7 @@ import type { NamedSubcommand } from "../Command";
 import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsAdminForQueueInGuild } from "../../permissions";
 import { bulkDeleteMessagesWithIds, replyPrivately } from "../../actions/messages";
 
 const restart: NamedSubcommand = {
@@ -17,7 +17,7 @@ const restart: NamedSubcommand = {
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (
-      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
@@ -30,10 +30,13 @@ const restart: NamedSubcommand = {
     await reply(message, "Time for a reset! :bucket: Clearing the queue...");
     void message.channel.startTyping(5);
 
-    const queue = await useQueue(channel);
+    const queue = useQueue(channel);
     const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
     await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();
+
+    void message.channel.stopTyping(true);
+
     return reply(message, "The queue has restarted.");
   }
 };

@@ -1,13 +1,12 @@
 import type { Storage } from "./configStorage";
 import Discord from "discord.js";
-import getUserFromMention from "./helpers/getUserFromMention";
+import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { useLogger } from "./logger";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
-import logUser from "./helpers/logUser";
 
 const LOGGING = false;
 const logger = useLogger();
@@ -57,19 +56,17 @@ async function query(
   if (commandOrMention === undefined || commandOrMention === "") return null;
   debugLog(`First word: '${commandOrMention}'`);
 
-  // TODO: Drop this indirection. We don't need more than the user's ID here
-  const mentionedUser = await getUserFromMention(message, commandOrMention);
-  if (mentionedUser) {
-    debugLog(`This mentions ${logUser(mentionedUser)}`);
+  const mentionedUserId = getUserIdFromMention(commandOrMention);
+  if (mentionedUserId !== null && mentionedUserId !== "") {
     // See if it's for us.
-    if (client.user && mentionedUser.id === client.user.id) {
-      debugLog(`This is us! ${client.user.id}`);
+    if (client.user && mentionedUserId === client.user.id) {
+      debugLog(`This mentions us! ${client.user.id}`);
       // It's for us. Return the query verbatim.
       return { query: query.slice(1), usedCommandPrefix: false };
     }
 
     // It's not for us.
-    debugLog(`This is not us. ${client.user?.id ?? "We're not signed in."}`);
+    debugLog(`This is not us.`);
     return null;
   }
 

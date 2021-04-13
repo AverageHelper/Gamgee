@@ -39,7 +39,6 @@ describe("Command as pleb", () => {
         subcommand
         ${"stats"}
         ${"setup"}
-        ${"restart"}
         ${"open"}
         ${"close"}
       `(
@@ -115,7 +114,6 @@ describe("Command as pleb", () => {
         ${"close"}
         ${"limit count"}
         ${"stats"}
-        ${"restart"}
       `(
         "$subcommand yells at the tester because they don't have permission",
         async ({ subcommand }: { subcommand: string }) => {

@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import type { QueueConfig } from "../../actions/database/schemas/queueConfigSchema";
-import type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
-import { useQueueStorage } from "../../queueStorage";
+import type { QueueConfig } from "../../database/model/QueueConfig";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import { useQueueStorage } from "../../useQueueStorage";
 import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
 import { deleteMessage, editMessage } from "../messages";
@@ -16,51 +16,142 @@ import richErrorMessage from "../../helpers/richErrorMessage";
 
 const logger = useLogger();
 
-export type { QueueEntry, UnsentQueueEntry } from "../../queueStorage";
-
 /**
  * A proxy for queue management and feedback. These methods may modify the
  * queue and manage messages in the queue channel.
  */
-export interface QueueManager {
+export class QueueManager {
+  private readonly queueStorage: QueueEntryManager;
+  private readonly queueChannel: Discord.TextChannel;
+
+  constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
+    this.queueStorage = queueStorage;
+    this.queueChannel = queueChannel;
+  }
+
   /** Retrieves the queue's configuration settings. */
-  getConfig: () => Promise<QueueConfig>;
+  async getConfig(): Promise<QueueConfig> {
+    return this.queueStorage.getConfig();
+  }
 
   /** Updates the provided properties of a queue's configuration settings. */
-  updateConfig: (config: Partial<QueueConfig>) => Promise<void>;
+  async updateConfig(config: Partial<QueueConfig>): Promise<void> {
+    return this.queueStorage.updateConfig(config);
+  }
 
   /** Retrieves the number of entries in the queue */
-  count: () => Promise<number>;
+  async count(): Promise<number> {
+    return this.queueStorage.countAll();
+  }
 
   /** Retrieves the number of entries in the queue submitted by the given user. */
-  countFrom: (userId: string) => Promise<number>;
+  async countFrom(userId: string): Promise<number> {
+    return this.queueStorage.countAllFrom(userId);
+  }
 
   /** Retrieves the playtime of the queue's unfinished entries. */
-  playtimeRemaining: () => Promise<number>;
+  async playtimeRemaining(): Promise<number> {
+    const queue = await this.queueStorage.fetchAll();
+    let duration = 0;
+    queue
+      .filter(e => !e.isDone)
+      .forEach(e => {
+        duration += e.seconds;
+      });
+    return duration;
+  }
 
   /** Retrieves the total playtime of the queue's entries. */
-  playtimeTotal: () => Promise<number>;
+  async playtimeTotal(): Promise<number> {
+    const queue = await this.queueStorage.fetchAll();
+    let duration = 0;
+    queue.forEach(e => {
+      duration += e.seconds;
+    });
+    return duration;
+  }
 
   /** Adds an entry to the queue cache and sends the entry to the queue channel. */
-  push: (entry: UnsentQueueEntry) => Promise<QueueEntry>;
+  async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
+    const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
+    messageBuilder.push(" requested a song that's ");
+    messageBuilder.pushBold(durationString(newEntry.seconds));
+    messageBuilder.push(` long: ${newEntry.url}`);
+
+    const queueMessage = await this.queueChannel.send(messageBuilder.result(), {
+      allowedMentions: { users: [] }
+    });
+    try {
+      const entry = await this.queueStorage.create({
+        ...newEntry,
+        queueMessageId: queueMessage.id,
+        isDone: false
+      });
+
+      // Add the "Done" button
+      await queueMessage.react(REACTION_BTN_MUSIC);
+      await queueMessage.react(REACTION_BTN_DONE);
+
+      return entry;
+
+      // If the database write fails...
+    } catch (error: unknown) {
+      await deleteMessage(queueMessage, "We had an error");
+      throw error;
+    }
+  }
 
   /** Fetches an entry with the given message ID. */
-  getEntryFromMessage: (queueMessageId: string) => Promise<QueueEntry | null>;
+  async getEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
+    return this.queueStorage.fetchEntryFromMessage(queueMessageId);
+  }
 
   /** If the message represents a "done" entry, that entry is unmarked. */
-  markNotDone: (queueMessage: Discord.Message) => Promise<void>;
+  async markNotDone(queueMessage: Discord.Message): Promise<void> {
+    await this.queueStorage.markEntryDone(false, queueMessage.id);
+    await Promise.all([
+      editMessage(queueMessage, removeStrikethrough(queueMessage.content)),
+      queueMessage
+        .suppressEmbeds(false)
+        .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
+      queueMessage.reactions.resolve(REACTION_BTN_UNDO)?.remove()
+    ]);
+    if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
+      await queueMessage.react(REACTION_BTN_MUSIC);
+    }
+    await queueMessage.react(REACTION_BTN_DONE);
+  }
 
   /** If the message represents a "not done" entry, that entry is marked "done". */
-  markDone: (queueMessage: Discord.Message) => Promise<void>;
+  async markDone(queueMessage: Discord.Message): Promise<void> {
+    await this.queueStorage.markEntryDone(true, queueMessage.id);
+    await Promise.all([
+      editMessage(queueMessage, addStrikethrough(queueMessage.content)),
+      queueMessage
+        .suppressEmbeds(true)
+        .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
+      queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
+    ]);
+    if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
+      await queueMessage.react(REACTION_BTN_MUSIC);
+    }
+    await queueMessage.react(REACTION_BTN_UNDO);
+  }
 
   /** Returns all entries in the queue. */
-  getAllEntries: () => Promise<Array<QueueEntry>>;
+  async getAllEntries(): Promise<Array<QueueEntry>> {
+    return this.queueStorage.fetchAll();
+  }
 
   /** Returns the latest entry from the user with the provided ID. */
-  getLatestEntryFrom: (userId: string) => Promise<QueueEntry | null>;
+  async getLatestEntryFrom(userId: string): Promise<QueueEntry | null> {
+    return this.queueStorage.fetchLatestFrom(userId);
+  }
 
   /** Resets the queue. Deletes all cached data about the queue. */
-  clear: () => Promise<void>;
+  async clear(): Promise<void> {
+    return this.queueStorage.clear();
+  }
 }
 
 /**
@@ -71,123 +162,12 @@ export interface QueueManager {
  *  one is created. We return that. Otherwise, we just return what we have stored
  *  or cached, whichever is handy.
  */
-export async function useQueue(queueChannel: Discord.TextChannel): Promise<QueueManager> {
+export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
   logger.debug(
     `Preparing persistent queue storage for channel ${queueChannel.id} (#${queueChannel.name})`
   );
-  const queueStorage = await useQueueStorage(queueChannel);
+  const queueStorage = useQueueStorage(queueChannel);
   logger.debug("Storage prepared!");
 
-  return {
-    async getConfig(): Promise<QueueConfig> {
-      return queueStorage.getConfig();
-    },
-
-    async updateConfig(config): Promise<void> {
-      return queueStorage.updateConfig(config);
-    },
-
-    async count(): Promise<number> {
-      return queueStorage.countAll();
-    },
-
-    async countFrom(userId): Promise<number> {
-      return queueStorage.countAllFrom(userId);
-    },
-
-    async playtimeRemaining(): Promise<number> {
-      const queue = await queueStorage.fetchAll();
-      let duration = 0;
-      queue
-        .filter(e => !e.isDone)
-        .forEach(e => {
-          duration += e.seconds;
-        });
-      return duration;
-    },
-
-    async playtimeTotal(): Promise<number> {
-      const queue = await queueStorage.fetchAll();
-      let duration = 0;
-      queue.forEach(e => {
-        duration += e.seconds;
-      });
-      return duration;
-    },
-
-    async push(newEntry): Promise<QueueEntry> {
-      const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
-      messageBuilder.push(" requested a song that's ");
-      messageBuilder.pushBold(durationString(newEntry.seconds));
-      messageBuilder.push(` long: ${newEntry.url}`);
-
-      const queueMessage = await queueChannel.send(messageBuilder.result(), {
-        allowedMentions: { users: [] }
-      });
-      try {
-        const entry = await queueStorage.create({
-          ...newEntry,
-          queueMessageId: queueMessage.id,
-          isDone: false
-        });
-
-        // Add the "Done" button
-        await queueMessage.react(REACTION_BTN_MUSIC);
-        await queueMessage.react(REACTION_BTN_DONE);
-
-        return entry;
-
-        // If the database write fails...
-      } catch (error: unknown) {
-        await deleteMessage(queueMessage, "We had an error");
-        throw error;
-      }
-    },
-
-    async getEntryFromMessage(queueMessageId): Promise<QueueEntry | null> {
-      return queueStorage.fetchEntryFromMessage(queueMessageId);
-    },
-
-    async markNotDone(queueMessage): Promise<void> {
-      await queueStorage.markEntryDone(false, queueMessage.id);
-      await Promise.all([
-        editMessage(queueMessage, removeStrikethrough(queueMessage.content)),
-        queueMessage
-          .suppressEmbeds(false)
-          .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-        queueMessage.reactions.resolve(REACTION_BTN_UNDO)?.remove()
-      ]);
-      if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
-        await queueMessage.react(REACTION_BTN_MUSIC);
-      }
-      await queueMessage.react(REACTION_BTN_DONE);
-    },
-
-    async markDone(queueMessage): Promise<void> {
-      await queueStorage.markEntryDone(true, queueMessage.id);
-      await Promise.all([
-        editMessage(queueMessage, addStrikethrough(queueMessage.content)),
-        queueMessage
-          .suppressEmbeds(true)
-          .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-        queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
-      ]);
-      if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
-        await queueMessage.react(REACTION_BTN_MUSIC);
-      }
-      await queueMessage.react(REACTION_BTN_UNDO);
-    },
-
-    async getAllEntries(): Promise<Array<QueueEntry>> {
-      return queueStorage.fetchAll();
-    },
-
-    async getLatestEntryFrom(userId): Promise<QueueEntry | null> {
-      return queueStorage.fetchLatestFrom(userId);
-    },
-
-    async clear(): Promise<void> {
-      return queueStorage.clear();
-    }
-  };
+  return new QueueManager(queueStorage, queueChannel);
 }
