@@ -2,7 +2,7 @@ jest.mock("./actions");
 jest.mock("../../actions/messages");
 jest.mock("../../actions/queue/useQueue");
 jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../actions/userIsQueueAdmin");
+jest.mock("../../permissions");
 
 import * as messageActions from "./actions";
 const mockReply = messageActions.reply as jest.Mock;
@@ -17,7 +17,7 @@ const mockUseQueue = useQueue as jest.Mock;
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsQueueAdmin } from "../../permissions";
 const mockUserIsQueueAdmin = userIsQueueAdmin as jest.Mock;
 
 const mockGetAllEntries = jest.fn();

@@ -1,6 +1,6 @@
 import type { NamedSubcommand } from "../Command";
 import { useQueue } from "../../actions/queue/useQueue";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsQueueAdmin } from "../../permissions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";

@@ -5,7 +5,7 @@ import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import { replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsQueueAdmin } from "../../permissions";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 

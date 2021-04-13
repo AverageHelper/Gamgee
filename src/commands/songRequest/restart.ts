@@ -2,7 +2,7 @@ import type { NamedSubcommand } from "../Command";
 import { reply } from "./actions";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import userIsQueueAdmin from "../../actions/userIsQueueAdmin";
+import { userIsQueueAdmin } from "../../permissions";
 import { bulkDeleteMessagesWithIds, replyPrivately } from "../../actions/messages";
 
 const restart: NamedSubcommand = {
