@@ -2,7 +2,7 @@ import type { NamedSubcommand } from "../Command";
 import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import { replyPrivately } from "../../actions/messages";
-import { userIsGuildAdmin } from "../../permissions";
+import { userIsAdminInGuild } from "../../permissions";
 
 const teardown: NamedSubcommand = {
   name: "teardown",
@@ -14,7 +14,7 @@ const teardown: NamedSubcommand = {
     }
 
     // Only the guild owner may touch the queue.
-    if (!(await userIsGuildAdmin(message.author, message.guild))) {
+    if (!(await userIsAdminInGuild(message.author, message.guild))) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }

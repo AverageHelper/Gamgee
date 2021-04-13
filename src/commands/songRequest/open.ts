@@ -3,7 +3,7 @@ import { reply } from "./actions";
 import { useGuildStorage } from "../../useGuildStorage";
 import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import { userIsQueueAdmin } from "../../permissions";
+import { userIsAdminForQueueInGuild } from "../../permissions";
 
 const open: NamedSubcommand = {
   name: "open",
@@ -21,7 +21,7 @@ const open: NamedSubcommand = {
 
     // The queue may only be opened in the queue channel, or by the server owner.
     if (
-      !(await userIsQueueAdmin(message.author, message.guild)) &&
+      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
       message.channel.id !== channel?.id
     ) {
       await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");

@@ -4,7 +4,7 @@ import type Discord from "discord.js";
  * Returns `true` of the given user has one of the named roles in the provided guild.
  *
  * @param user The user whose roles to check.
- * @param roleIds The IDs of the requesite roles.
+ * @param roleIds The IDs of the requesite Discord roles.
  * @param guild The guild in which the user should have the roles.
  *
  * @returns a `Promise` that resolves with `true` of the given user has one

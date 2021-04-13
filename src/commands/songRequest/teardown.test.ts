@@ -9,8 +9,8 @@ const mockReply = messageActions.reply as jest.Mock;
 import * as otherMessageActions from "../../actions/messages";
 const mockReplyPrivately = otherMessageActions.replyPrivately as jest.Mock;
 
-import { userIsGuildAdmin } from "../../permissions";
-const mockUserIsGuildAdmin = userIsGuildAdmin as jest.Mock;
+import { userIsAdminInGuild } from "../../permissions";
+const mockUserIsAdminInGuild = userIsAdminInGuild as jest.Mock;
 
 import { useGuildStorage } from "../../useGuildStorage";
 const mockUseGuildStorage = useGuildStorage as jest.Mock;
@@ -26,7 +26,7 @@ const logger = useTestLogger("error");
 describe("Queue teardown", () => {
   beforeEach(() => {
     mockReplyPrivately.mockResolvedValue(undefined);
-    mockUserIsGuildAdmin.mockResolvedValue(true);
+    mockUserIsAdminInGuild.mockResolvedValue(true);
     mockUseGuildStorage.mockReturnValue({
       setQueueChannel: mockSetQueueChannel
     });
@@ -47,7 +47,7 @@ describe("Queue teardown", () => {
   });
 
   test("does nothing when the sender doesn't have permission", async () => {
-    mockUserIsGuildAdmin.mockResolvedValue(false);
+    mockUserIsAdminInGuild.mockResolvedValue(false);
     const context = {
       logger,
       message: {

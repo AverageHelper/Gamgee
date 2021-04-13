@@ -17,8 +17,8 @@ const mockUseQueue = useQueue as jest.Mock;
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { userIsQueueAdmin } from "../../permissions";
-const mockUserIsQueueAdmin = userIsQueueAdmin as jest.Mock;
+import { userIsAdminForQueueInGuild } from "../../permissions";
+const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
 
 const mockGetAllEntries = jest.fn();
 const mockQueueClear = jest.fn();
@@ -39,7 +39,7 @@ describe("Clear queue contents", () => {
     mockGetAllEntries.mockResolvedValue([]);
     mockQueueClear.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
-    mockUserIsQueueAdmin.mockResolvedValue(false);
+    mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
   });
 
   test("does nothing about a message with no guild", async () => {
@@ -57,7 +57,7 @@ describe("Clear queue contents", () => {
 
   test("does nothing when admin and no queue is set up", async () => {
     mockGetQueueChannel.mockResolvedValue(null);
-    mockUserIsQueueAdmin.mockResolvedValue(true);
+    mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
     const context = {
       logger,
       message: {
@@ -81,7 +81,7 @@ describe("Clear queue contents", () => {
 
   test("does nothing when not admin and no queue is set up", async () => {
     mockGetQueueChannel.mockResolvedValue(null);
-    mockUserIsQueueAdmin.mockResolvedValue(false);
+    mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
     const context = {
       logger,
       message: {
@@ -106,7 +106,7 @@ describe("Clear queue contents", () => {
 
   test("does nothing when not admin and not in queue channel", async () => {
     mockGetQueueChannel.mockResolvedValue({ id: "queue-channel" });
-    mockUserIsQueueAdmin.mockResolvedValue(false);
+    mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
     const context = {
       logger,
       message: {
@@ -143,7 +143,7 @@ describe("Clear queue contents", () => {
         { queueMessageId: "message3" }
       ];
       mockGetQueueChannel.mockResolvedValue(queueChannel);
-      mockUserIsQueueAdmin.mockResolvedValue(isAdmin);
+      mockUserIsAdminForQueueInGuild.mockResolvedValue(isAdmin);
       mockGetAllEntries.mockResolvedValue(queueEntries);
       const context = {
         logger,
