@@ -23,6 +23,7 @@ const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
 const mockGetAllEntries = jest.fn();
 const mockQueueClear = jest.fn();
 const mockStartTyping = jest.fn();
+const mockStopTyping = jest.fn();
 
 import restart from "./restart";
 import { useTestLogger } from "../../../tests/testUtils/logger";
@@ -151,7 +152,8 @@ describe("Clear queue contents", () => {
           guild: "the guild",
           channel: {
             id: channelId,
-            startTyping: mockStartTyping
+            startTyping: mockStartTyping,
+            stopTyping: mockStopTyping
           }
         }
       };
@@ -160,6 +162,7 @@ describe("Clear queue contents", () => {
 
       // Feedback
       expect(mockStartTyping).toHaveBeenCalledTimes(1);
+      expect(mockStopTyping).toHaveBeenCalledTimes(1);
       expect(mockReply).toHaveBeenCalledTimes(2);
       expect(mockReply).toHaveBeenNthCalledWith(
         1,
