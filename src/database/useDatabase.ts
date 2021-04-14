@@ -19,7 +19,7 @@ export async function useDatabaseConnection<T = undefined>(
   const dbFile = path.join(dbFolder, "db.sqlite");
 
   const connId = uuid();
-  gLogger.debug(
+  gLogger.silly(
     `Opening a new connection to database at path '${dbFile}'; Connection ID: ${connId}`
   );
 
@@ -36,7 +36,7 @@ export async function useDatabaseConnection<T = undefined>(
 
   const result = await cb(connection);
 
-  gLogger.debug(`Closing connection ${connId}`);
+  gLogger.silly(`Closing connection ${connId}`);
   await connection.close();
 
   return result;

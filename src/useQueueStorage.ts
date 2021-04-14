@@ -105,12 +105,12 @@ export class QueueEntryManager {
   }
 
   /** Removes the queue entry from the database. */
-  async remove(entry: QueueEntry): Promise<void> {
+  async removeEntryFromMessage(queueMessageId: string): Promise<void> {
     await useRepository(QueueEntry, repo =>
       repo.delete({
         channelId: this.queueChannel.id,
         guildId: this.queueChannel.guild.id,
-        queueMessageId: entry.queueMessageId
+        queueMessageId
       })
     );
   }
