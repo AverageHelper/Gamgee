@@ -5,21 +5,19 @@ import { getEnv } from "../helpers/environment";
 import { createConnection } from "typeorm";
 import { useLogger } from "../logger";
 import { DatabaseLogger } from "./DatabaseLogger";
-import type { Logger as GamgeeLogger } from "../logger";
 import type { EntityTarget, EntityManager, Repository, Connection } from "typeorm";
 import * as entities from "./model";
 
 const logger = useLogger();
 
 export async function useDatabaseConnection<T = undefined>(
-  cb: (connection: Connection) => T | Promise<T>,
-  gLogger: GamgeeLogger = logger
+  cb: (connection: Connection) => T | Promise<T>
 ): Promise<T> {
   const dbFolder = path.normalize(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
   const dbFile = path.join(dbFolder, "db.sqlite");
 
   const connId = uuid();
-  gLogger.silly(
+  logger.silly(
     `Opening a new connection to database at path '${dbFile}'; Connection ID: ${connId}`
   );
 
@@ -29,14 +27,14 @@ export async function useDatabaseConnection<T = undefined>(
     database: dbFile,
     synchronize: true,
     logging: "all",
-    logger: new DatabaseLogger(gLogger),
+    logger: new DatabaseLogger(logger),
     busyErrorRetry: 100,
     entities: Object.values(entities)
   });
 
   const result = await cb(connection);
 
-  gLogger.silly(`Closing connection ${connId}`);
+  logger.silly(`Closing connection ${connId}`);
   await connection.close();
 
   return result;
@@ -44,21 +42,19 @@ export async function useDatabaseConnection<T = undefined>(
 
 export async function useRepository<Entity, T = undefined>(
   target: EntityTarget<Entity>,
-  cb: (repository: Repository<Entity>) => T | Promise<T>,
-  gLogger: GamgeeLogger = logger
+  cb: (repository: Repository<Entity>) => T | Promise<T>
 ): Promise<T> {
   return useDatabaseConnection(connection => {
     return cb(connection.getRepository(target));
-  }, gLogger);
+  });
 }
 
 export async function useTransaction<T = undefined>(
-  cb: (entityManager: EntityManager) => T | Promise<T>,
-  gLogger: GamgeeLogger = logger
+  cb: (entityManager: EntityManager) => T | Promise<T>
 ): Promise<T> {
   return useDatabaseConnection(async connection => {
     return connection.transaction(async transaction => {
       return cb(transaction);
     });
-  }, gLogger);
+  });
 }

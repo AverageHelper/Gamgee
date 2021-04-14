@@ -7,13 +7,9 @@ import { useLogger } from "./logger";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
+import logUser from "./helpers/logUser";
 
-const LOGGING = false;
 const logger = useLogger();
-
-function debugLog(msg: string): void {
-  if (LOGGING) logger.debug(msg);
-}
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
@@ -49,36 +45,32 @@ async function query(
   storage: Storage | null
 ): Promise<QueryMessage | null> {
   const content = message.content.trim();
-  debugLog(`Received message: '${content}'`);
   const query = content.split(/ +/u);
 
   const commandOrMention = query[0];
   if (commandOrMention === undefined || commandOrMention === "") return null;
-  debugLog(`First word: '${commandOrMention}'`);
 
-  const mentionedUserId = getUserIdFromMention(commandOrMention);
+  const mentionedUserId = getUserIdFromMention(commandOrMention, logger);
   if (mentionedUserId !== null && mentionedUserId !== "") {
     // See if it's for us.
     if (client.user && mentionedUserId === client.user.id) {
-      debugLog(`This mentions us! ${client.user.id}`);
+      logger.debug("They're talking to me!");
       // It's for us. Return the query verbatim.
       return { query: query.slice(1), usedCommandPrefix: false };
     }
 
     // It's not for us.
-    debugLog(`This is not us.`);
+    logger.debug("They're not talking to me. Ignoring.");
     return null;
   }
 
   // Make sure it's a command
   const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
-  debugLog(`This is not a mention. Checking for the prefix '${COMMAND_PREFIX}'`);
   if (!content.startsWith(COMMAND_PREFIX)) {
-    debugLog("This is just a message. Ignoring.");
+    logger.debug("They're not talking to me. Ignoring.");
     return null;
   }
   query[0] = query[0]?.slice(COMMAND_PREFIX.length) ?? "";
-  debugLog(`query: ${query.toString()}`);
 
   return { query, usedCommandPrefix: true };
 }
@@ -101,18 +93,9 @@ export async function handleCommand(
     message.author.bot &&
     (message.author.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
   ) {
-    logger.silly(
-      `Momma always said not to talk to strangers. They could be *bots*. bot: ${
-        message.author.bot ? "true" : "false"
-      }; env: ${getEnv("NODE_ENV") ?? "undefined"}`
-    );
+    logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
     return;
   }
-  debugLog(
-    `Handling a message. bot: ${message.author.bot ? "true" : "false"}; env: ${
-      getEnv("NODE_ENV") ?? "undefined"
-    }`
-  );
 
   // Ignore self messages
   if (message.author.id === message.client.user?.id) return;
@@ -121,12 +104,12 @@ export async function handleCommand(
   const content = message.content.trim();
   if (!content) return;
 
+  logger.debug(`User ${logUser(message.author)} sent message: '${content}' (trimmed)`);
+
   // Don't bother with regular messages
   const pq = await query(client, message, storage);
   if (!pq) return;
   const { query: q, usedCommandPrefix } = pq;
-
-  logger.info(`Received command '${q[0] ?? ""}' with args [${q.slice(1).join(", ")}]`);
 
   if (q.length === 0) {
     // This is a query for us to handle (we might've been pinged), but it's empty.
@@ -135,16 +118,13 @@ export async function handleCommand(
   }
 
   // Get the command
-  const commandName = q[0]?.toLowerCase();
-
-  if (commandName === undefined || commandName === "") {
-    // Empty, so do nothing lol
-    return;
-  }
+  const commandName = q[0]?.toLowerCase() ?? "";
+  if (!commandName) return;
 
   const command = commands.get(commandName);
   if (command) {
     const args = q.slice(1);
+    logger.debug(`Handling command '${commandName}' with args [${args.join(", ")}]`);
     return command.execute({
       client,
       message,
@@ -154,17 +134,15 @@ export async function handleCommand(
     });
   }
 
-  logger.debug(`Received invalid command '${commandName}' with args [${q.slice(1).join(", ")}]`);
-
   if (!usedCommandPrefix) {
-    void message.channel.startTyping();
-    await new Promise(resolve => setTimeout(resolve, 1000));
     // This is likely a game. Play along!
+    void message.channel.startTyping();
+    await new Promise(resolve => setTimeout(resolve, 2000));
     if (q.map(s => s.toLowerCase()).includes("hello")) {
       await message.channel.send(randomGreeting());
     } else {
       await message.channel.send(randomPhrase());
     }
-    void message.channel.stopTyping();
+    message.channel.stopTyping(true);
   }
 }

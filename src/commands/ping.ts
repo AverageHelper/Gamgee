@@ -1,24 +1,19 @@
 import type { Command } from "./Command";
 import { randomPhrase } from "../helpers/randomStrings";
-import { useLogger } from "../logger";
-
-const logger = useLogger();
 
 const ping: Command = {
   name: "ping",
   description: "Ping my host server to check latency.",
-  async execute(context) {
-    const { client, message } = context;
-
+  async execute({ client, message, logger }) {
     const apiLatency = Math.round(client.ws.ping);
 
     const testMessage = await message.channel.send(randomPhrase());
     const responseTime = testMessage.createdTimestamp - message.createdTimestamp;
 
-    const response = await testMessage.edit(
-      `Pong! Sent response in \`${responseTime}ms\`. API Latency is \`${apiLatency}ms\``
+    await testMessage.edit(
+      `Pong! Sent response in \`${responseTime}ms\`. API latency is \`${apiLatency}ms\``
     );
-    logger.info(`Response: '${response.content}'`);
+    logger.info(`Sent ping response in ${responseTime}ms. API latency is ${apiLatency}ms.`);
   }
 };
 

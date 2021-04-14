@@ -1,11 +1,8 @@
 import type { Command } from "./Command";
-import { useLogger } from "../logger";
 import getVideoDetails from "../actions/getVideoDetails";
 import durationString from "../helpers/durationString";
 import StringBuilder from "../helpers/StringBuilder";
 import richErrorMessage from "../helpers/richErrorMessage";
-
-const logger = useLogger();
 
 const name = "video";
 
@@ -13,8 +10,7 @@ const video: Command = {
   name,
   requiredArgFormat: "<YouTube, SoundCloud, or Bandcamp link>",
   description: "Put the video title and duration in chat.",
-  async execute(context) {
-    const { message, args } = context;
+  async execute({ message, args, logger }) {
     async function reply(body: string): Promise<void> {
       await message.reply(body);
     }

@@ -2,10 +2,8 @@ import type Discord from "discord.js";
 import { deleteMessage, replyPrivately } from "../../../actions/messages";
 
 export async function reply(message: Discord.Message, msg: string): Promise<void> {
-  await Promise.all([
-    message.channel.send(msg), //
-    message.channel.stopTyping(true)
-  ]);
+  await message.channel.send(msg);
+  message.channel.stopTyping(true);
 }
 
 export async function reply_private(message: Discord.Message, msg: string): Promise<void> {

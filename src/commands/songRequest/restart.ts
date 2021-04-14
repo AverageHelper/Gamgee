@@ -35,7 +35,7 @@ const restart: NamedSubcommand = {
     await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();
 
-    void message.channel.stopTyping(true);
+    message.channel.stopTyping(true);
 
     return reply(message, "The queue has restarted.");
   }

@@ -45,7 +45,7 @@ const urlRequest: ArbitrarySubcommand = {
       void queueChannel.startTyping();
     });
     requestQueue.on("finish", () => {
-      void queueChannel.stopTyping(true);
+      queueChannel.stopTyping(true);
     });
 
     requestQueue.createJob({ requestArgs: args, message, queueChannel, logger });
