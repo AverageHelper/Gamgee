@@ -133,8 +133,10 @@ export class QueueManager {
       queueMessage
         .suppressEmbeds(true)
         .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-      queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove(),
-      queueMessage.reactions.resolve(REACTION_BTN_DELETE)?.remove()
+      Promise.all([
+        queueMessage.reactions.resolve(REACTION_BTN_DELETE)?.remove(),
+        queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
+      ])
     ]);
     if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
       await queueMessage.react(REACTION_BTN_MUSIC);
