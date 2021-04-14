@@ -9,7 +9,8 @@ import StringBuilder from "../../helpers/StringBuilder";
 import {
   REACTION_BTN_DONE,
   REACTION_BTN_UNDO,
-  REACTION_BTN_MUSIC
+  REACTION_BTN_MUSIC,
+  REACTION_BTN_DELETE
 } from "../../constants/reactions";
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
 import richErrorMessage from "../../helpers/richErrorMessage";
@@ -91,6 +92,7 @@ export class QueueManager {
       // Add the "Done" button
       await queueMessage.react(REACTION_BTN_MUSIC);
       await queueMessage.react(REACTION_BTN_DONE);
+      await queueMessage.react(REACTION_BTN_DELETE);
 
       return entry;
 
@@ -120,6 +122,7 @@ export class QueueManager {
       await queueMessage.react(REACTION_BTN_MUSIC);
     }
     await queueMessage.react(REACTION_BTN_DONE);
+    await queueMessage.react(REACTION_BTN_DELETE);
   }
 
   /** If the message represents a "not done" entry, that entry is marked "done". */
@@ -130,12 +133,24 @@ export class QueueManager {
       queueMessage
         .suppressEmbeds(true)
         .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-      queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
+      Promise.all([
+        queueMessage.reactions.resolve(REACTION_BTN_DELETE)?.remove(),
+        queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
+      ])
     ]);
     if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
       await queueMessage.react(REACTION_BTN_MUSIC);
     }
     await queueMessage.react(REACTION_BTN_UNDO);
+  }
+
+  /** If the message represents a queue entry, that entry is removed and the message deleted. */
+  async deleteEntryFromMessage(queueMessage: Discord.Message): Promise<void> {
+    const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
+    if (entry === null) return;
+
+    await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+    await deleteMessage(queueMessage);
   }
 
   /** Returns all entries in the queue. */
@@ -163,11 +178,6 @@ export class QueueManager {
  *  or cached, whichever is handy.
  */
 export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
-  logger.debug(
-    `Preparing persistent queue storage for channel ${queueChannel.id} (#${queueChannel.name})`
-  );
   const queueStorage = useQueueStorage(queueChannel);
-  logger.debug("Storage prepared!");
-
   return new QueueManager(queueStorage, queueChannel);
 }

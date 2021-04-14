@@ -100,17 +100,17 @@ export class QueueEntryManager {
       // Add the entry
       const queueEntries = transaction.getRepository(QueueEntry);
       const queueEntry = new QueueEntry(this.queueChannel.id, this.queueChannel.guild.id, entry);
-      return queueEntries.create(queueEntry);
+      return queueEntries.save(queueEntry);
     });
   }
 
   /** Removes the queue entry from the database. */
-  async remove(entry: QueueEntry): Promise<void> {
+  async removeEntryFromMessage(queueMessageId: string): Promise<void> {
     await useRepository(QueueEntry, repo =>
       repo.delete({
         channelId: this.queueChannel.id,
         guildId: this.queueChannel.guild.id,
-        queueMessageId: entry.queueMessageId
+        queueMessageId
       })
     );
   }
