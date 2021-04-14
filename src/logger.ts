@@ -33,8 +33,16 @@ export function useLogger(
         // - Write all logs with level `info` and below to `combined.log`
         //
         // TODO: Delete these periodically
-        new winston.transports.File({ filename: "./logs/error.log", level: "error" }),
-        new winston.transports.File({ filename: "./logs/combined.log", level: "info" })
+        new winston.transports.File({
+          filename: "./logs/error.log",
+          level: "error",
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        }),
+        new winston.transports.File({
+          filename: "./logs/combined.log",
+          level: "info",
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        })
       ]
     });
 
