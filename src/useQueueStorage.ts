@@ -100,7 +100,7 @@ export class QueueEntryManager {
       // Add the entry
       const queueEntries = transaction.getRepository(QueueEntry);
       const queueEntry = new QueueEntry(this.queueChannel.id, this.queueChannel.guild.id, entry);
-      return queueEntries.create(queueEntry);
+      return queueEntries.save(queueEntry);
     });
   }
 
