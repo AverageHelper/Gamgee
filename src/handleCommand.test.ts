@@ -5,6 +5,9 @@ jest.mock("./commands");
 import * as mockCommandDefinitions from "./commands";
 
 import { handleCommand } from "./handleCommand";
+import { useTestLogger } from "../tests/testUtils/logger";
+
+const logger = useTestLogger("error");
 
 describe("Command handler", () => {
   const PREFIX = defaultValueForConfigKey("command_prefix") as string;
@@ -75,7 +78,7 @@ describe("Command handler", () => {
       `does nothing with unknown command '${prefix}$content'`,
       async ({ content }: { content: string }) => {
         mockMessage.content = content;
-        await handleCommand(mockClient, mockMessage, null);
+        await handleCommand(mockClient, mockMessage, null, logger);
 
         Object.values(mockCommandDefinitions).forEach(cmd =>
           expect(cmd.execute).not.toHaveBeenCalled()
@@ -98,7 +101,7 @@ describe("Command handler", () => {
       async ({ command, mock }: { command: string; mock: jest.Mock }) => {
         mockMessage.content = `${prefix}${command}`;
         mockMessage.author.bot = false;
-        await handleCommand(mockClient, mockMessage, null);
+        await handleCommand(mockClient, mockMessage, null, logger);
 
         expect(mock).toHaveBeenCalledTimes(1);
         expect(mock).toHaveBeenCalledWith(
@@ -126,7 +129,7 @@ describe("Command handler", () => {
       async ({ command }: { command: string }) => {
         mockMessage.content = `${prefix}${command}`;
         mockMessage.author.bot = true;
-        await handleCommand(mockClient, mockMessage, null);
+        await handleCommand(mockClient, mockMessage, null, logger);
 
         Object.values(mockCommandDefinitions).forEach(cmd =>
           expect(cmd.execute).not.toHaveBeenCalled()

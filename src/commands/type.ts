@@ -1,14 +1,10 @@
 import type { Command } from "./Command";
 import { deleteMessage } from "../actions/messages/deleteMessage";
-import { useLogger } from "../logger";
-
-const logger = useLogger();
 
 const type: Command = {
   name: "t",
   description: "Start typing. :wink:",
-  async execute(context) {
-    const { message, client } = context;
+  async execute({ message, client, logger }) {
     const channel = message.channel;
 
     logger.debug(

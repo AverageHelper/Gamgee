@@ -1,18 +1,20 @@
+import type { Logger } from "./logger";
 import Discord from "discord.js";
 import storage from "node-persist";
-import { useLogger } from "./logger";
 
 import type { LocalStorage } from "node-persist";
 
 export type Storage = LocalStorage;
 
-const logger = useLogger();
 const localStorageScopes = new Discord.Collection<string, LocalStorage>();
 
 /**
  * Initializes and returns the persistent storage container for the given guild.
  */
-export async function useStorage(guild: Discord.Guild | null): Promise<LocalStorage | null> {
+export async function useStorage(
+  guild: Discord.Guild | null,
+  logger: Logger
+): Promise<LocalStorage | null> {
   if (!guild) return null;
 
   let localStorage = localStorageScopes.get(guild.id);

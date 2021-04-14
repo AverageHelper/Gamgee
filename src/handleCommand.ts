@@ -1,15 +1,13 @@
 import type { Storage } from "./configStorage";
+import type { Logger } from "./logger";
 import Discord from "discord.js";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
-import { useLogger } from "./logger";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 import logUser from "./helpers/logUser";
-
-const logger = useLogger();
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
@@ -42,7 +40,8 @@ interface QueryMessage {
 async function query(
   client: Discord.Client,
   message: Discord.Message,
-  storage: Storage | null
+  storage: Storage | null,
+  logger: Logger
 ): Promise<QueryMessage | null> {
   const content = message.content.trim();
   const query = content.split(/ +/u);
@@ -86,7 +85,8 @@ async function query(
 export async function handleCommand(
   client: Discord.Client,
   message: Discord.Message,
-  storage: Storage | null
+  storage: Storage | null,
+  logger: Logger
 ): Promise<void> {
   // Don't respond to bots unless we're being tested
   if (
@@ -107,7 +107,7 @@ export async function handleCommand(
   logger.debug(`User ${logUser(message.author)} sent message: '${content}' (trimmed)`);
 
   // Don't bother with regular messages
-  const pq = await query(client, message, storage);
+  const pq = await query(client, message, storage, logger);
   if (!pq) return;
   const { query: q, usedCommandPrefix } = pq;
 

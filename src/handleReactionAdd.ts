@@ -1,16 +1,15 @@
 import type Discord from "discord.js";
+import type { Logger } from "./logger";
 import { getEnv } from "./helpers/environment";
-import { useLogger } from "./logger";
 import { useQueue } from "./actions/queue/useQueue";
 import { REACTION_BTN_DELETE, REACTION_BTN_DONE, REACTION_BTN_UNDO } from "./constants/reactions";
 import getQueueChannel from "./actions/queue/getQueueChannel";
 import logUser from "./helpers/logUser";
 
-const logger = useLogger();
-
 export async function handleReactionAdd(
   reaction: Discord.MessageReaction,
-  user: Discord.User
+  user: Discord.User,
+  logger: Logger
 ): Promise<void> {
   // Ignore bot reactions unless we're being tested
   if (user.bot && getEnv("NODE_ENV") !== "test") {
