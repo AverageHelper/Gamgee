@@ -172,11 +172,7 @@ export class QueueEntryManager {
       })
     );
     // const entry = await this.db.QueueEntries.findOne({});
-    const result = entry ?? null;
-    logger.verbose(
-      `Latest submission from user ${senderId}: ${JSON.stringify(result, undefined, 2)}`
-    );
-    return result;
+    return entry ?? null;
   }
 
   /** Fetches the number of entries from the given user in the queue. */

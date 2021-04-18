@@ -31,13 +31,13 @@ async function acceptSongRequest({
   shouldSendUrl,
   logger
 }: SongAcceptance): Promise<void> {
-  logger.debug(`accepted urlRequest from message from ${message.author.id}: ${message.content}`);
   await Promise.all([
     queue.push(entry), //
     shouldSendUrl ? message.channel.send(entry.url) : null
   ]);
+  logger.verbose(`Accepted request from user ${logUser(message.author)}.`);
   logger.debug(
-    `Pushed new entry to queue. Sending public acceptance to user ${logUser(message.author)}`
+    `Pushed new request to queue. Sending public acceptance to user ${logUser(message.author)}`
   );
   // Send acceptance after the potential `send(entry.url)` call
   await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
@@ -62,15 +62,10 @@ export default async function processSongRequest({
   queueChannel,
   logger
 }: SongRequest): Promise<void> {
-  logger.debug(
-    `started processing urlRequest from message from ${message.author.id}: ${message.content}`
-  );
   const senderId = message.author.id;
   const sentAt = message.createdAt;
 
-  logger.debug(`Preparing queue cache for channel ${queueChannel.id} (#${queueChannel.name})`);
   const queue = useQueue(queueChannel);
-  logger.debug("Queue prepared!");
 
   try {
     const [config, latestSubmission, userSubmissionCount] = await Promise.all([
@@ -78,6 +73,8 @@ export default async function processSongRequest({
       queue.getLatestEntryFrom(senderId),
       queue.countFrom(senderId /* since: Date */)
     ]);
+
+    // TODO: Check that the user is not on the blacklist
 
     // ** If the user has used all their submissions, reject!
     const maxSubs = config.submissionMaxQuantity;
@@ -89,6 +86,7 @@ export default async function processSongRequest({
       rejectionBuilder.push("You have used all ");
       rejectionBuilder.pushBold(`${maxSubs}`);
       rejectionBuilder.push(" of your allotted submissions.");
+      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
       return reject_private(message, rejectionBuilder.result());
     }
 
@@ -97,11 +95,19 @@ export default async function processSongRequest({
     const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
     const timeSinceLatest =
       latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
-    logger.verbose(
-      `User ${logUser(message.author)} last submitted a request ${
-        timeSinceLatest ?? "<never>"
-      } seconds ago`
-    );
+    if (timeSinceLatest === null) {
+      logger.verbose(
+        `This is the first song request that I've seen from user ${logUser(
+          message.author
+        )} tonight.`
+      );
+    } else {
+      logger.verbose(
+        `User ${logUser(message.author)} last submitted a request ${durationString(
+          timeSinceLatest
+        )} ago.`
+      );
+    }
     if (
       cooldown !== null &&
       cooldown > 0 &&
@@ -112,14 +118,14 @@ export default async function processSongRequest({
       rejectionBuilder.push("You must wait ");
       rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
       rejectionBuilder.push(" before submitting again.");
-      logger.debug(
-        `rejected urlRequest from message from ${message.author.id}: ${message.content}`
-      );
+      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
       return reject_private(message, rejectionBuilder.result());
     }
 
     const song = await getVideoDetails(args);
     if (song === null) {
+      logger.verbose("Could not find the requested song.");
+      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
       return reject_public(
         message,
         "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube, SoundCloud, or Bandcamp link."
@@ -132,12 +138,13 @@ export default async function processSongRequest({
     // ** If the song is too long, reject!
     const maxDuration = config.entryDurationSeconds;
     logger.verbose(
-      `Request from user ${logUser(message.author)} is ${durationString(seconds)} long`
+      `Request from user ${logUser(message.author)} is ${durationString(seconds)} long.`
     );
     if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
       const rejectionBuilder = new StringBuilder();
       rejectionBuilder.push("That song is too long. The limit is ");
       rejectionBuilder.pushBold(`${durationString(maxDuration)}`);
+      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
       return reject_public(message, rejectionBuilder.result());
     }
 
