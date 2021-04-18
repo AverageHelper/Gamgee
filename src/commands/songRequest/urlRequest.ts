@@ -11,7 +11,6 @@ const urlRequest: ArbitrarySubcommand = {
   format: "<YouTube, SoundCloud, or Bandcamp link>",
   description: "Attempts to add the given content to the queue.",
   async execute({ args, message, logger }): Promise<void> {
-    logger.debug(`received urlRequest from message from ${message.author.id}: ${message.content}`);
     if (!message.guild) {
       return;
     }
@@ -45,7 +44,7 @@ const urlRequest: ArbitrarySubcommand = {
       void queueChannel.startTyping();
     });
     requestQueue.on("finish", () => {
-      void queueChannel.stopTyping(true);
+      queueChannel.stopTyping(true);
     });
 
     requestQueue.createJob({ requestArgs: args, message, queueChannel, logger });

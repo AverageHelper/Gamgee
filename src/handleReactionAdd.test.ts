@@ -14,6 +14,9 @@ const mockDeleteEntryFromMessage = jest.fn().mockResolvedValue(undefined);
 import type Discord from "discord.js";
 import { handleReactionAdd } from "./handleReactionAdd";
 import { REACTION_BTN_DELETE, REACTION_BTN_DONE, REACTION_BTN_UNDO } from "./constants/reactions";
+import { useTestLogger } from "../tests/testUtils/logger";
+
+const logger = useTestLogger("error");
 
 describe("Reaction-add handler", () => {
   const selfId = "this-bot";
@@ -60,7 +63,7 @@ describe("Reaction-add handler", () => {
   });
 
   test("extra emote triggers no action", async () => {
-    await expect(handleReactionAdd(reaction, sender)).resolves.toBeUndefined();
+    await expect(handleReactionAdd(reaction, sender, logger)).resolves.toBeUndefined();
 
     expect(mockMarkDone).not.toHaveBeenCalled();
     expect(mockMarkNotDone).not.toHaveBeenCalled();
@@ -69,7 +72,7 @@ describe("Reaction-add handler", () => {
 
   test("Done button triggers mark-done action", async () => {
     reaction.emoji.name = REACTION_BTN_DONE;
-    await expect(handleReactionAdd(reaction, sender)).resolves.toBeUndefined();
+    await expect(handleReactionAdd(reaction, sender, logger)).resolves.toBeUndefined();
 
     expect(mockMarkDone).toHaveBeenCalledTimes(1);
     expect(mockMarkNotDone).not.toHaveBeenCalled();
@@ -78,7 +81,7 @@ describe("Reaction-add handler", () => {
 
   test("Undo button triggers mark-not-done action", async () => {
     reaction.emoji.name = REACTION_BTN_UNDO;
-    await expect(handleReactionAdd(reaction, sender)).resolves.toBeUndefined();
+    await expect(handleReactionAdd(reaction, sender, logger)).resolves.toBeUndefined();
 
     expect(mockMarkNotDone).toHaveBeenCalledTimes(1);
     expect(mockMarkDone).not.toHaveBeenCalled();
@@ -87,7 +90,7 @@ describe("Reaction-add handler", () => {
 
   test("Delete button triggers delete action", async () => {
     reaction.emoji.name = REACTION_BTN_DELETE;
-    await expect(handleReactionAdd(reaction, sender)).resolves.toBeUndefined();
+    await expect(handleReactionAdd(reaction, sender, logger)).resolves.toBeUndefined();
 
     expect(mockDeleteEntryFromMessage).toHaveBeenCalledTimes(1);
     expect(mockMarkDone).not.toHaveBeenCalled();

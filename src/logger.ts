@@ -31,23 +31,25 @@ export function useLogger(
         //
         // - Write all logs with level `error` and below to `error.log`
         // - Write all logs with level `info` and below to `combined.log`
+        // - Write important runtime logs to console
         //
-        // TODO: Delete these periodically
-        new winston.transports.File({ filename: "./logs/error.log", level: "error" }),
-        new winston.transports.File({ filename: "./logs/combined.log", level: "info" })
+        // TODO: Delete these files periodically
+        new winston.transports.File({
+          filename: "./logs/error.log",
+          level: "error",
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        }),
+        new winston.transports.File({
+          filename: "./logs/combined.log",
+          level: "info",
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        }),
+        new winston.transports.Console({
+          format: winston.format.cli(),
+          level: getEnv("NODE_ENV") === "test" ? "error" : level
+        })
       ]
     });
-
-    //
-    // If we're not in production or test then log to the `console` with the format:
-    // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-    //
-    logger.add(
-      new winston.transports.Console({
-        format: winston.format.cli(),
-        level: getEnv("NODE_ENV") === "test" ? "error" : level
-      })
-    );
 
     loggers.set(level, logger);
   }

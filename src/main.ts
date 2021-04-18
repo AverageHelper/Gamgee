@@ -19,8 +19,8 @@ async function onNewMessage(
 ): Promise<void> {
   try {
     const message = await msg.fetch();
-    const storage = await useStorage(message.guild);
-    await handleCommand(client, message, storage);
+    const storage = await useStorage(message.guild, logger);
+    await handleCommand(client, message, storage, logger);
   } catch (error: unknown) {
     const msgDescription = JSON.stringify(msg, undefined, 2);
     logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
@@ -33,7 +33,7 @@ async function onMessageReactionAdd(
 ): Promise<void> {
   try {
     const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
-    await handleReactionAdd(reaction, user);
+    await handleReactionAdd(reaction, user, logger);
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to handle reaction add.", error));
   }
