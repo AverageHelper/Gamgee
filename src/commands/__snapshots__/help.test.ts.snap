@@ -7,6 +7,7 @@ exports[`Help command describes all commands 1`] = `
     \`?config set\` - Set the value of a configuration setting.
     \`?config unset\` - Reset the value of a configuration setting to default.
 \`?help\` - Print this handy message.
+\`?languages\` - Print my core repository's language statistics.
 \`?ping\` - Ping my host server to check latency.
 \`?sr <YouTube, SoundCloud, or Bandcamp link>\` - Submit a song to the queue.
     \`?sr info\` - Print a handy message to let people know how to queue-up.
@@ -18,7 +19,7 @@ exports[`Help command describes all commands 1`] = `
     \`?sr stats\` - Print statistics on the current queue.
     \`?sr restart\` - Empty the queue and start a fresh queue session.
 \`?t\` - Start typing. :wink:
-\`?video <YouTube, SoundCloud, or Bandcamp link>\` - Put the video title and duration in chat.
 \`?version\` - Display the bot's current codebase version.
+\`?video <YouTube, SoundCloud, or Bandcamp link>\` - Put the video title and duration in chat.
 "
 `;
