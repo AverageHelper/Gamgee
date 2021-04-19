@@ -88,14 +88,15 @@ describe("Command handler", () => {
     );
 
     test.each`
-      command      | mock
-      ${"config"}  | ${mockCommandDefinitions.config.execute}
-      ${"help"}    | ${mockCommandDefinitions.help.execute}
-      ${"ping"}    | ${mockCommandDefinitions.ping.execute}
-      ${"t"}       | ${mockCommandDefinitions.type.execute}
-      ${"sr"}      | ${mockCommandDefinitions.songRequest.execute}
-      ${"video"}   | ${mockCommandDefinitions.video.execute}
-      ${"version"} | ${mockCommandDefinitions.version.execute}
+      command        | mock
+      ${"config"}    | ${mockCommandDefinitions.config.execute}
+      ${"help"}      | ${mockCommandDefinitions.help.execute}
+      ${"languages"} | ${mockCommandDefinitions.languages.execute}
+      ${"ping"}      | ${mockCommandDefinitions.ping.execute}
+      ${"sr"}        | ${mockCommandDefinitions.songRequest.execute}
+      ${"t"}         | ${mockCommandDefinitions.type.execute}
+      ${"version"}   | ${mockCommandDefinitions.version.execute}
+      ${"video"}     | ${mockCommandDefinitions.video.execute}
     `(
       "calls the $command command",
       async ({ command, mock }: { command: string; mock: jest.Mock }) => {
@@ -119,11 +120,12 @@ describe("Command handler", () => {
       command
       ${"config"}
       ${"help"}
+      ${"languages"}
       ${"ping"}
-      ${"t"}
       ${"sr"}
-      ${"video"}
+      ${"t"}
       ${"version"}
+      ${"video"}
     `(
       `ignores bot sending the command '${prefix}$command'`,
       async ({ command }: { command: string }) => {
