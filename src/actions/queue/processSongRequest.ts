@@ -11,7 +11,7 @@ import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
 
-export interface SongAcceptance {
+interface SongAcceptance {
   queue: QueueManager;
   message: Discord.Message;
   entry: UnsentQueueEntry;
@@ -157,9 +157,7 @@ export default async function processSongRequest({
 
     // Handle fetch errors
   } catch (error: unknown) {
-    logger.error(
-      richErrorMessage(`Failed to run query: ${JSON.stringify(args, undefined, 2)}`, error)
-    );
-    return reject_public(message, "That query gave me an error.");
+    logger.error(richErrorMessage("Failed to process song request", error));
+    return reject_public(message, "That query gave me an error. Try again maybe? :shrug:");
   }
 }

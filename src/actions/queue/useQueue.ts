@@ -90,9 +90,16 @@ export class QueueManager {
       });
 
       // Add the "Done" button
-      await queueMessage.react(REACTION_BTN_MUSIC);
-      await queueMessage.react(REACTION_BTN_DONE);
-      await queueMessage.react(REACTION_BTN_DELETE);
+      try {
+        // TODO: Can we parallelize this somehow with other such requests?
+        await queueMessage.react(REACTION_BTN_MUSIC);
+        await queueMessage.react(REACTION_BTN_DONE);
+        await queueMessage.react(REACTION_BTN_DELETE);
+      } catch (error: unknown) {
+        // Reactions failed. Abort!
+        await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+        throw error;
+      }
 
       return entry;
 
