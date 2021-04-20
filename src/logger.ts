@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import winston from "winston";
+import winston, { format } from "winston";
 import { getEnv } from "./helpers/environment";
 
 export type Logger = winston.Logger;
@@ -24,7 +24,7 @@ export function useLogger(
   if (!logger) {
     logger = winston.createLogger({
       level,
-      format: winston.format.json(),
+      format: format.json(),
       defaultMeta,
       // defaultMeta: { service: "user-service" },
       transports: [
@@ -37,15 +37,22 @@ export function useLogger(
         new winston.transports.File({
           filename: "./logs/error.log",
           level: "error",
-          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+          format: format.combine(format.timestamp(), format.json())
         }),
         new winston.transports.File({
           filename: "./logs/combined.log",
           level: "info",
-          format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+          format: format.combine(format.timestamp(), format.json())
         }),
         new winston.transports.Console({
-          format: winston.format.cli(),
+          format: format.combine(
+            format.colorize(),
+            format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
+            format.printf(info => {
+              const formattedDate = info["timestamp"] as string;
+              return `${formattedDate}: ${info.level}: ${info.message}`;
+            })
+          ),
           level: getEnv("NODE_ENV") === "test" ? "error" : level
         })
       ]
