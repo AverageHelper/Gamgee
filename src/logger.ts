@@ -41,7 +41,7 @@ export function useLogger(
         }),
         new winston.transports.File({
           filename: "./logs/combined.log",
-          level: "info",
+          level,
           format: format.combine(format.timestamp(), format.json())
         }),
         new winston.transports.Console({
