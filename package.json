@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
+    "setup": "rm package-lock.json && rm -rf node_modules && npm install && npm run build:clean",
     "lint": "eslint . --ext .ts",
     "build": "npm run export-version && tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
@@ -33,7 +34,7 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "github-metadata": "^2.1.0",
+    "github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
     "humanize-duration": "^3.25.1",
     "node-persist": "^3.1.0",
     "reflect-metadata": "^0.1.13",
