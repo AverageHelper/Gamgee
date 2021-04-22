@@ -33,7 +33,7 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "github-metadata": "^2.1.0",
+    "github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
     "humanize-duration": "^3.25.1",
     "node-persist": "^3.1.0",
     "reflect-metadata": "^0.1.13",
