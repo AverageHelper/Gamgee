@@ -74,7 +74,16 @@ export default async function processSongRequest({
       queue.countFrom(senderId /* since: Date */)
     ]);
 
-    // TODO: Check that the user is not on the blacklist
+    // ** If the user is blacklisted, reject!
+    if (config.blacklistedUsers.some(user => user.id === message.author.id)) {
+      logger.verbose(
+        `${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
+          message.author
+        )} is one of them.`
+      );
+      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
+      return reject_private(message, "You can't do that. My apologies.");
+    }
 
     // ** If the user has used all their submissions, reject!
     const maxSubs = config.submissionMaxQuantity;
