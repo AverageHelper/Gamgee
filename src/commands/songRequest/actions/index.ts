@@ -1,8 +1,16 @@
 import type Discord from "discord.js";
 import { deleteMessage, replyPrivately } from "../../../actions/messages";
 
-export async function reply(message: Discord.Message, msg: string): Promise<void> {
-  await message.channel.send(msg);
+export async function reply(
+  message: Discord.Message,
+  msg: string,
+  allowMentions: boolean = true
+): Promise<void> {
+  if (allowMentions) {
+    await message.channel.send(msg);
+  } else {
+    await message.channel.send(msg, { allowedMentions: { users: [] } });
+  }
   message.channel.stopTyping(true);
 }
 

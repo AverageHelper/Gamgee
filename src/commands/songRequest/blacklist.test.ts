@@ -8,9 +8,8 @@ jest.mock("../../permissions");
 import { reply } from "./actions";
 const mockReply = reply as jest.Mock;
 
-import { deleteMessage, replyPrivately } from "../../actions/messages";
+import { deleteMessage } from "../../actions/messages";
 const mockDeleteMessage = deleteMessage as jest.Mock;
-const mockReplyPrivately = replyPrivately as jest.Mock;
 
 import getUserFromMention from "../../helpers/getUserFromMention";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
@@ -50,7 +49,7 @@ describe("Adding to Queue Blacklist", () => {
         author: { id: "test-user" },
         guild: { ownerID }
       },
-      args: [`<@${badUserId}>`],
+      args: ["blacklist", `<@${badUserId}>`],
       logger
     } as unknown) as CommandContext;
 
@@ -64,7 +63,6 @@ describe("Adding to Queue Blacklist", () => {
     mockUseQueueStorage.mockReturnValue(queue);
     mockBlacklistUser.mockResolvedValue(undefined);
     mockReply.mockResolvedValue(undefined);
-    mockReplyPrivately.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
 
     mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
@@ -176,11 +174,11 @@ describe("Adding to Queue Blacklist", () => {
     expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId);
 
     // response
-    expect(mockReply).not.toHaveBeenCalled();
-    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith(
+    expect(mockReply).toHaveBeenCalledTimes(1);
+    expect(mockReply).toHaveBeenCalledWith(
       context.message,
-      expect.stringContaining(badUserId)
+      expect.stringContaining(badUserId),
+      false
     );
     expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
     expect(mockDeleteMessage).toHaveBeenCalledWith(context.message, expect.toBeString());

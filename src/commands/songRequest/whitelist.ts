@@ -50,11 +50,12 @@ const whitelist: NamedSubcommand = {
 
     const queue = useQueueStorage(queueChannel);
     await queue.whitelistUser(user.id);
-    logger.info(`Restored user ${logUser(user)}'s permission to submit song requests.`);
+    logger.info(`Restored song request permission to user ${logUser(user)}.`);
 
-    await replyPrivately(
+    await reply(
       message,
-      `:checkered_flag: The user <@!${user.id}> is allowed to submit song requests! :grin:`
+      `:checkered_flag: <@!${user.id}> is allowed to submit song requests! :grin:`,
+      false
     );
     await deleteMessage(message, "Users need not see this command when it's run.");
   }

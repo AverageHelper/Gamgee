@@ -248,9 +248,6 @@ export class QueueEntryManager {
 
       await transaction.save(queue);
     });
-
-    const savedUser = await useRepository(User, repo => repo.findOne(userId));
-    logger.info(JSON.stringify(savedUser));
   }
 
   /** Removes the user from the queue's blacklist. */
@@ -262,9 +259,6 @@ export class QueueEntryManager {
       queue.blacklistedUsers = queue.blacklistedUsers.filter(user => user.id !== userId);
       await queues.save(queue);
     });
-
-    const config = await this.getConfig();
-    logger.info(JSON.stringify(config));
   }
 
   private async _getEntryWithMsgId(

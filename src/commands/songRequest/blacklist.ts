@@ -53,11 +53,12 @@ const blacklist: NamedSubcommand = {
 
     const queue = useQueueStorage(queueChannel);
     await queue.blacklistUser(user.id);
-    logger.info(`Blacklisted user ${logUser(user)} from the song request queue.`);
+    logger.info(`Removed song request permission from user ${logUser(user)}.`);
 
-    await replyPrivately(
+    await reply(
       message,
-      `:pirate_flag: The user <@!${user.id}> is no longer allowed to submit song requests.`
+      `:pirate_flag: <@!${user.id}> is no longer allowed to submit song requests.`,
+      false
     );
     await deleteMessage(message, "Users need not see this command when it's run.");
   }
