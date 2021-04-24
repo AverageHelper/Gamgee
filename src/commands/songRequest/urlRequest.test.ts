@@ -80,7 +80,8 @@ describe("Song request via URL", () => {
     getConfig: jest.fn().mockResolvedValue({
       entryDurationSeconds: null,
       cooldownSeconds: 600,
-      submissionMaxQuantity: null
+      submissionMaxQuantity: null,
+      blacklistedUsers: []
     }),
     push: mockQueuePush,
     getLatestEntryFrom: mockQueueGetLatestUserEntry,

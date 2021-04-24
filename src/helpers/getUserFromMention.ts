@@ -11,7 +11,7 @@ const logger = useLogger();
  * @see https://discordjs.guide/miscellaneous/parsing-mention-arguments.html#implementation
  * @param client The Discord client.
  * @param mention The mention string, in the form `<@!?[0-9]>`.
- * @returns A Discord user, or `undefined` if the user cannot be determined from the providedd `mention` string.
+ * @returns A Discord user, or `undefined` if the user cannot be found.
  */
 export default async function getUserFromMention(
   message: Discord.Message,

@@ -5,13 +5,26 @@ import arbitrarySubcommand from "./urlRequest";
 import info from "./info";
 import setup from "./setup";
 import teardown from "./teardown";
+import blacklist from "./blacklist";
+import whitelist from "./whitelist";
 import open from "./open";
 import close from "./close";
 import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
 
-const namedSubcommands = [info, setup, teardown, open, close, limit, stats, restart];
+const namedSubcommands = [
+  info,
+  setup,
+  teardown,
+  blacklist,
+  whitelist,
+  open,
+  close,
+  limit,
+  stats,
+  restart
+];
 
 const sr: Command = {
   name: "sr",
