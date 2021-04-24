@@ -7,7 +7,7 @@ import { userIsAdminInGuild } from "../../permissions";
 
 const setup: NamedSubcommand = {
   name: "setup",
-  requiredArgFormat: "<channel name>",
+  requiredArgFormat: "<channel mention>",
   description: "Set a channel as the 'queue' channel. *(Server owner only. No touch!)*",
   async execute({ message, args, logger }) {
     if (!message.guild) {

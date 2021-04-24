@@ -6,7 +6,7 @@ import { userIsAdminInGuild } from "../../permissions";
 
 const teardown: NamedSubcommand = {
   name: "teardown",
-  requiredArgFormat: "<channel name>",
+  requiredArgFormat: "<channel mention>",
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
   async execute({ message, logger }) {
     if (!message.guild) {
