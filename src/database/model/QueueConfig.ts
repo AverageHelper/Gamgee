@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, ManyToMany, JoinTable } from "typeorm";
+import { User } from "./User";
 
 @Entity({ name: "queue-configs" })
 export class QueueConfig {
@@ -17,6 +18,15 @@ export class QueueConfig {
   /** The maximum number of successful submissions each user may have in the queue. */
   @Column({ type: "integer", nullable: true })
   submissionMaxQuantity: number | null;
+
+  /** An array of users which should be prevented from submitting to the queue. */
+  @ManyToMany(() => User, user => user.blacklistedQueues, {
+    cascade: true,
+    eager: true,
+    nullable: false
+  })
+  @JoinTable()
+  blacklistedUsers!: Array<User>;
 
   constructor(channelId: string, config: Omit<QueueConfig, "channelId">);
   constructor(channelId?: string, config?: Omit<QueueConfig, "channelId">) {

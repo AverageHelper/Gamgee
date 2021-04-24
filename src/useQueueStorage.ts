@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Repository } from "typeorm";
-import { Channel, Guild, QueueConfig, QueueEntry } from "./database/model";
+import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model";
 import { useRepository, useTransaction } from "./database/useDatabase";
 import { useLogger } from "./logger";
 import {
@@ -56,10 +56,19 @@ export class QueueEntryManager {
       } else {
         submissionMaxQuantity = config.submissionMaxQuantity;
       }
+
+      let blacklistedUsers: Array<User>;
+      if (config.blacklistedUsers === undefined) {
+        blacklistedUsers = oldConfig.blacklistedUsers;
+      } else {
+        blacklistedUsers = config.blacklistedUsers;
+      }
+
       const newConfig = new QueueConfig(this.queueChannel.id, {
         entryDurationSeconds,
         cooldownSeconds,
-        submissionMaxQuantity
+        submissionMaxQuantity,
+        blacklistedUsers
       });
       await transaction.save(newConfig);
     });
@@ -93,7 +102,8 @@ export class QueueEntryManager {
         new QueueConfig(this.queueChannel.id, {
           entryDurationSeconds: DEFAULT_ENTRY_DURATION,
           cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-          submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY
+          submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+          blacklistedUsers: []
         });
       await transaction.save(config);
 
@@ -213,6 +223,50 @@ export class QueueEntryManager {
     );
   }
 
+  /** Adds the user to the queue's blacklist. That user will not be able to submit song requests. */
+  async blacklistUser(userId: string): Promise<void> {
+    const config = await this.getConfig();
+
+    // The user is already blacklisted
+    if (config.blacklistedUsers.some(user => user.id === userId)) return;
+
+    // Add the user to the blacklist
+    await useTransaction(async transaction => {
+      const queues = transaction.getRepository(QueueConfig);
+      const users = transaction.getRepository(User);
+
+      const queue = await this._getConfig(queues);
+      let newUser = await users.findOne(userId);
+
+      if (!newUser) {
+        newUser = new User(userId);
+        users.create(newUser);
+      }
+      if (!queue.blacklistedUsers.some(user => user.id === userId)) {
+        queue.blacklistedUsers.push(newUser);
+      }
+
+      await transaction.save(queue);
+    });
+
+    const savedUser = await useRepository(User, repo => repo.findOne(userId));
+    logger.info(JSON.stringify(savedUser));
+  }
+
+  /** Removes the user from the queue's blacklist. */
+  async whitelistUser(userId: string): Promise<void> {
+    await useTransaction(async transaction => {
+      const queues = transaction.getRepository(QueueConfig);
+      const queue = await this._getConfig(queues);
+
+      queue.blacklistedUsers = queue.blacklistedUsers.filter(user => user.id !== userId);
+      await queues.save(queue);
+    });
+
+    const config = await this.getConfig();
+    logger.info(JSON.stringify(config));
+  }
+
   private async _getEntryWithMsgId(
     queueMessageId: string,
     repo: Repository<QueueEntry>
@@ -228,17 +282,19 @@ export class QueueEntryManager {
   }
 
   private async _getConfig(repo: Repository<QueueConfig>): Promise<QueueConfig> {
-    const config = await repo.findOne({
-      where: {
-        channelId: this.queueChannel.id
-      }
-    });
-    return {
-      channelId: config?.channelId ?? this.queueChannel.id,
-      entryDurationSeconds: config?.entryDurationSeconds ?? DEFAULT_ENTRY_DURATION,
-      cooldownSeconds: config?.cooldownSeconds ?? DEFAULT_SUBMISSION_COOLDOWN,
-      submissionMaxQuantity: config?.submissionMaxQuantity ?? DEFAULT_SUBMISSION_MAX_QUANTITY
-    };
+    return (
+      (await repo.findOne({
+        where: {
+          channelId: this.queueChannel.id
+        }
+      })) ??
+      new QueueConfig(this.queueChannel.id, {
+        entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+        cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
+        submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+        blacklistedUsers: []
+      })
+    );
   }
 }
 

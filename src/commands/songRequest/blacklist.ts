@@ -22,7 +22,7 @@ const blacklist: NamedSubcommand = {
       return;
     }
 
-    const userMention = args[0];
+    const userMention = args[1];
     if (userMention === undefined || !userMention) {
       return reply(
         message,

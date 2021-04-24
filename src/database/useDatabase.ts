@@ -7,6 +7,7 @@ import { useLogger } from "../logger";
 import { DatabaseLogger } from "./DatabaseLogger";
 import type { EntityTarget, EntityManager, Repository, Connection } from "typeorm";
 import * as entities from "./model";
+import * as migrations from "./migrations";
 
 const logger = useLogger();
 
@@ -25,11 +26,12 @@ export async function useDatabaseConnection<T = undefined>(
     name: connId,
     type: "sqlite",
     database: dbFile,
-    synchronize: true,
     logging: "all",
     logger: new DatabaseLogger(logger),
     busyErrorRetry: 100,
-    entities: Object.values(entities)
+    entities: Object.values(entities),
+    migrations: Object.values(migrations),
+    synchronize: false
   });
 
   const result = await cb(connection);
