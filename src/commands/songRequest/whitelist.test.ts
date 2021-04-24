@@ -28,17 +28,17 @@ import type Discord from "discord.js";
 import type { QueueEntryManager } from "../../useQueueStorage";
 import type { CommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
-import blacklist from "./blacklist";
+import whitelist from "./whitelist";
 
-const mockBlacklistUser = jest.fn();
+const mockWhitelistUser = jest.fn();
 
 const logger = useTestLogger("error");
 
-describe("Adding to Queue Blacklist", () => {
+describe("Removing from Queue Blacklist", () => {
   const queueChannelId = "queue-channel";
 
   const ownerID = "server-owner";
-  const badUserId = "bad-user";
+  const goodUserId = "good-user";
 
   let context: CommandContext;
   let queue: QueueEntryManager;
@@ -50,19 +50,19 @@ describe("Adding to Queue Blacklist", () => {
         author: { id: "test-user" },
         guild: { ownerID }
       },
-      args: [`<@${badUserId}>`],
+      args: [`<@${goodUserId}>`],
       logger
     } as unknown) as CommandContext;
 
     queue = ({
-      blacklistUser: mockBlacklistUser
+      whitelistUser: mockWhitelistUser
     } as unknown) as QueueEntryManager;
 
     mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
-    mockGetUserFromMention.mockResolvedValue({ id: badUserId });
+    mockGetUserFromMention.mockResolvedValue({ id: goodUserId });
 
     mockUseQueueStorage.mockReturnValue(queue);
-    mockBlacklistUser.mockResolvedValue(undefined);
+    mockWhitelistUser.mockResolvedValue(undefined);
     mockReply.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
@@ -72,9 +72,8 @@ describe("Adding to Queue Blacklist", () => {
 
   test("does nothing without a valid mention (empty space)", async () => {
     context.args = [""];
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
     expect(mockReply).toHaveBeenCalledWith(
       context.message,
@@ -84,9 +83,8 @@ describe("Adding to Queue Blacklist", () => {
 
   test("does nothing without a mention (no further text)", async () => {
     context.args = [];
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
     expect(mockReply).toHaveBeenCalledWith(
       context.message,
@@ -98,71 +96,46 @@ describe("Adding to Queue Blacklist", () => {
     context.message = ({
       guild: null
     } as unknown) as Discord.Message;
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
+    expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
-  test("does nothing against the calling user", async () => {
+  test("does nothing for the calling user", async () => {
     mockGetUserFromMention.mockResolvedValue({ id: context.message.author.id });
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
+    expect(mockWhitelistUser).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
     expect(mockReply).toHaveBeenCalledWith(
       context.message,
-      expect.stringContaining("blacklist yourself")
+      expect.stringContaining("whitelist yourself")
     );
   });
 
-  test("does nothing against the server owner", async () => {
-    mockGetUserFromMention.mockResolvedValue({ id: ownerID });
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
-    expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("blacklist the owner")
-    );
-  });
-
-  test("does nothing against the server owner, even when the owner is the caller", async () => {
-    context.message.author.id = ownerID;
-    mockGetUserFromMention.mockResolvedValue({ id: ownerID });
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
-    expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("blacklist yourself")
-    );
-  });
-
-  test("does nothing against a user not known to the guild", async () => {
+  test("does nothing for a user not known to the guild", async () => {
     mockGetUserFromMention.mockResolvedValue(undefined);
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
+    expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
   test("does nothing when there's no queue", async () => {
     mockGetQueueChannel.mockResolvedValueOnce(null);
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
+    expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
   test("does nothing when the caller is not admin", async () => {
     mockUserIsAdminForQueueInGuild.mockResolvedValueOnce(false);
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
-    expect(mockBlacklistUser).not.toHaveBeenCalled();
+    expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
-  test("calls blacklistUser for queue when the caller is admin", async () => {
-    await expect(blacklist.execute(context)).resolves.toBe(undefined);
+  test("calls whitelistUser for queue when the caller is admin", async () => {
+    await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     // permissions got checked
     expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledTimes(1);
@@ -171,16 +144,16 @@ describe("Adding to Queue Blacklist", () => {
       context.message.guild
     );
 
-    // blacklist effect
-    expect(mockBlacklistUser).toHaveBeenCalledTimes(1);
-    expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId);
+    // whitelist effect
+    expect(mockWhitelistUser).toHaveBeenCalledTimes(1);
+    expect(mockWhitelistUser).toHaveBeenCalledWith(goodUserId);
 
     // response
     expect(mockReply).not.toHaveBeenCalled();
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
     expect(mockReplyPrivately).toHaveBeenCalledWith(
       context.message,
-      expect.stringContaining(badUserId)
+      expect.stringContaining(goodUserId)
     );
     expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
     expect(mockDeleteMessage).toHaveBeenCalledWith(context.message, expect.toBeString());
