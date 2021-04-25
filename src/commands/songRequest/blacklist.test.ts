@@ -49,7 +49,10 @@ describe("Manage the Queue Blacklist", () => {
       message: {
         id: "command-msg",
         author: { id: "test-user" },
-        guild: { ownerID }
+        guild: {
+          ownerID,
+          name: "Test Guild"
+        }
       },
       args: ["blacklist", `<@${badUserId}>`],
       logger
@@ -79,7 +82,8 @@ describe("Manage the Queue Blacklist", () => {
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
-      expect(mockReply).not.toHaveBeenCalled();
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith(context.message, expect.stringContaining("your DMs"));
       expect(mockReplyPrivately).toHaveBeenCalledWith(
         context.message,
         expect.stringContaining(`?sr ${blacklist.name} ${blacklist.requiredArgFormat ?? ""}`)
@@ -91,7 +95,8 @@ describe("Manage the Queue Blacklist", () => {
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
-      expect(mockReply).not.toHaveBeenCalled();
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith(context.message, expect.stringContaining("your DMs"));
       expect(mockReplyPrivately).toHaveBeenCalledWith(
         context.message,
         expect.stringContaining(`?sr ${blacklist.name} ${blacklist.requiredArgFormat ?? ""}`)
