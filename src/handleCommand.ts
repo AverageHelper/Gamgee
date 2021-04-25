@@ -49,7 +49,7 @@ async function query(
   const commandOrMention = query[0];
   if (commandOrMention === undefined || commandOrMention === "") return null;
 
-  const mentionedUserId = getUserIdFromMention(commandOrMention, logger);
+  const mentionedUserId = getUserIdFromMention(commandOrMention);
   if (mentionedUserId !== null && mentionedUserId !== "") {
     // See if it's for us.
     if (client.user && mentionedUserId === client.user.id) {
