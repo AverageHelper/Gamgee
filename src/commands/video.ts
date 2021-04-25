@@ -4,10 +4,8 @@ import durationString from "../helpers/durationString";
 import StringBuilder from "../helpers/StringBuilder";
 import richErrorMessage from "../helpers/richErrorMessage";
 
-const name = "video";
-
 const video: Command = {
-  name,
+  name: "video",
   requiredArgFormat: "<YouTube, SoundCloud, or Bandcamp link>",
   description: "Put the video title and duration in chat.",
   async execute({ message, args, logger }) {
