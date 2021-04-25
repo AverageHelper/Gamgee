@@ -45,15 +45,17 @@ export function useLogger(
           format: format.combine(format.timestamp(), format.json())
         }),
         new winston.transports.Console({
-          format: format.combine(
-            format.colorize(),
-            format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
-            format.printf(info => {
-              const formattedDate = info["timestamp"] as string;
-              return `${formattedDate}: ${info.level}: ${info.message}`;
-            })
-          ),
-          level: getEnv("NODE_ENV") === "test" ? "error" : level
+          // When using PM2, do `pm2 logs gamgee --timestamp`
+          // format: format.combine(
+          //   format.colorize(),
+          //   format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
+          //   format.printf(info => {
+          //     const formattedDate = info["timestamp"] as string;
+          //     return `${formattedDate}: ${info.level}: ${info.message}`;
+          //   })
+          // ),
+          format: format.cli(),
+          level
         })
       ]
     });
