@@ -104,7 +104,11 @@ export async function handleCommand(
   const content = message.content.trim();
   if (!content) return;
 
-  logger.debug(`User ${logUser(message.author)} sent message: '${content}' (trimmed)`);
+  logger.debug(
+    `User ${logUser(message.author)} sent message: '${content.slice(0, 20)}${
+      content.length > 20 ? "...' (trimmed)" : "'"
+    }`
+  );
 
   // Don't bother with regular messages
   const pq = await query(client, message, storage, logger);

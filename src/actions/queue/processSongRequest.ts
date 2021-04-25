@@ -82,7 +82,7 @@ export default async function processSongRequest({
         )} is one of them.`
       );
       logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
-      return reject_private(message, "You can't do that. My apologies.");
+      return reject_private(message, "You're not allowed to submit songs. My apologies.");
     }
 
     // ** If the user has used all their submissions, reject!
