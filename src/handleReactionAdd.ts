@@ -28,13 +28,17 @@ export async function handleReactionAdd(
     `User ${logUser(user)} reacted with ${reaction.emoji.name} to message ${message.id}`
   );
 
-  const channel = await getQueueChannel(message);
-  if (!channel || reaction.message.channel.id !== channel.id) {
+  const queueChannel = await getQueueChannel(message);
+  if (!queueChannel) {
     logger.debug("There is no queue channel for this guild.");
     return;
   }
+  if (reaction.message.channel.id !== queueChannel.id) {
+    logger.debug("This isn't the queue channel. Ignoring.");
+    return;
+  }
 
-  const queue = useQueue(channel);
+  const queue = useQueue(queueChannel);
   const entry = await queue.getEntryFromMessage(message.id);
   if (!entry) {
     logger.debug("The message does not represent a known song request.");
