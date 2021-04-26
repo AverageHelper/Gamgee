@@ -7,6 +7,7 @@ module.exports = {
       source_map_support: true,
       watch: ["dist"],
       watch_delay: 1000,
+      time: true,
       env: {
         NODE_ENV: "development"
       },
