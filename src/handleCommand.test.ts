@@ -88,15 +88,16 @@ describe("Command handler", () => {
     );
 
     test.each`
-      command        | mock
-      ${"config"}    | ${mockCommandDefinitions.config.execute}
-      ${"help"}      | ${mockCommandDefinitions.help.execute}
-      ${"languages"} | ${mockCommandDefinitions.languages.execute}
-      ${"ping"}      | ${mockCommandDefinitions.ping.execute}
-      ${"sr"}        | ${mockCommandDefinitions.songRequest.execute}
-      ${"t"}         | ${mockCommandDefinitions.type.execute}
-      ${"version"}   | ${mockCommandDefinitions.version.execute}
-      ${"video"}     | ${mockCommandDefinitions.video.execute}
+      command          | mock
+      ${"config"}      | ${mockCommandDefinitions.config.execute}
+      ${"help"}        | ${mockCommandDefinitions.help.execute}
+      ${"languages"}   | ${mockCommandDefinitions.languages.execute}
+      ${"now-playing"} | ${mockCommandDefinitions.nowPlaying.execute}
+      ${"ping"}        | ${mockCommandDefinitions.ping.execute}
+      ${"sr"}          | ${mockCommandDefinitions.songRequest.execute}
+      ${"t"}           | ${mockCommandDefinitions.type.execute}
+      ${"version"}     | ${mockCommandDefinitions.version.execute}
+      ${"video"}       | ${mockCommandDefinitions.video.execute}
     `(
       "calls the $command command",
       async ({ command, mock }: { command: string; mock: jest.Mock }) => {
@@ -121,6 +122,7 @@ describe("Command handler", () => {
       ${"config"}
       ${"help"}
       ${"languages"}
+      ${"now-playing"}
       ${"ping"}
       ${"sr"}
       ${"t"}

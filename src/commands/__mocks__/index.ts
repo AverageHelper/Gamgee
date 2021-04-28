@@ -10,6 +10,10 @@ export const languages = {
   name: "languages",
   execute: jest.fn().mockResolvedValue(undefined)
 };
+export const nowPlaying = {
+  name: "now-playing",
+  execute: jest.fn().mockResolvedValue(undefined)
+};
 export const ping = {
   name: "ping",
   execute: jest.fn().mockResolvedValue(undefined)
