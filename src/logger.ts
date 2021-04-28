@@ -43,22 +43,18 @@ export function useLogger(
           filename: "./logs/combined.log",
           level,
           format: format.combine(format.timestamp(), format.json())
-        }),
-        new winston.transports.Console({
-          // When using PM2, do `pm2 logs gamgee --timestamp`
-          // format: format.combine(
-          //   format.colorize(),
-          //   format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
-          //   format.printf(info => {
-          //     const formattedDate = info["timestamp"] as string;
-          //     return `${formattedDate}: ${info.level}: ${info.message}`;
-          //   })
-          // ),
-          format: format.cli(),
-          level
         })
       ]
     });
+
+    if (getEnv("NODE_ENV") !== "test") {
+      logger.add(
+        new winston.transports.Console({
+          format: format.cli(),
+          level
+        })
+      );
+    }
 
     loggers.set(level, logger);
   }
