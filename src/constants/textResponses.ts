@@ -44,33 +44,45 @@ export const phrases = [
   "We're taking the hobbit to Isengard!",
 
   // Pony
-  "*yay*",
-  "Oatmeal!? Are you crazy?",
   "And that's how Equestria was made!",
   "Eternal chaos comes with chocolate rain, you guys!",
-  "What fun is there in making sense?",
   "*Golly*",
-  "That message needs to be about... 20% cooler.",
-  "It's about time...",
-  "Trying to rebuild a house of glass...",
-  "We smile at days gone by...",
-  "What are the odds that I would find myself where I began?",
+  "I think it was Cozy Glow all along.",
   "I used to wonder what friendship could be.",
   "I'm not a fan of puppeteers...",
   "... I've a nagging fear someone else is pulling at the strings!",
-  "I think it was Cozy Glow all along.",
+  "It's about time...",
+  "Oatmeal!? Are you crazy?",
+  "That message needs to be about... 20% cooler.",
+  "Trying to rebuild a house of glass...",
+  "We smile at days gone by...",
+  "What are the odds that I would find myself where I began?",
+  "What fun is there in making sense?",
+  "*yay*",
 
   // Popeye
   "Blow me down!",
   "I yam what I yam an' tha's all I yam",
-  "Shiver me timbers!",
   "I yam disgustipated",
   "I'm strong to the finich, 'cause I eats me spinach!",
+  "Shiver me timbers!",
 
   // Star Trek: TNG
   "He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
   "Tea, Earl grey, hot",
   "You know, back when I was in the academy, we would follow every toast with a song!",
+
+  // Wurtz
+  "A long time ago- Actually, never, and also now, nothing is nowhere. When? Never. Makes sense, right? Like I said, it didn't happen. Nothing was never anywhere. That's why it's been everywhere. It's been so everywhere, you don't need a where. You don't even need a when. That's how \"every\" it gets.",
+  "How did this happen?",
+  "It's so hard to remember what you're doing until it's done.",
+  "It's the people with the horses, and they made an empire, and then everyone else copied their horses.",
+  "just wanna do something reasonable",
+  "Oh nothing I was just shaving my piano",
+  "The sun is a deadly laser",
+  "Weather update: it's raining",
+  "Woah",
+  "You can make a religion out of this",
 
   // Other
   "Bit of a tongue twister",
@@ -80,6 +92,7 @@ export const phrases = [
   "Do you want to know how I got into music? It’s actually a fun story!\nOne day I was… *zzzzzzz*",
   "Don't count your chickens",
   "Down the hall, up the stairs, past the gargoyle",
+  "Everyone says I shouldn’t divide by 0 but I don’t know why. I’m a bot!\nI can do anyth—\n\n[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
   "Fan of squirrels.",
   "Fond of cats.",
   "Jack and Jill ran up the hill...",
