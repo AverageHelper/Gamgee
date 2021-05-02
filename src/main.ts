@@ -2,10 +2,13 @@ import "source-map-support/register";
 import "reflect-metadata";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
+import { version as gamgeeVersion } from "./version";
 
 const logger = useLogger();
-logger.info("Starting...");
-logger.debug(`env: ${getEnv("NODE_ENV") ?? "undefined"}`);
+logger.verbose("*Yawn* Good morning!");
+logger.verbose("Starting...");
+logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
+logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 import Discord from "discord.js";
 import richErrorMessage from "./helpers/richErrorMessage";
@@ -44,7 +47,7 @@ try {
 
   // Handle client events
   client.on("ready", () => {
-    logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}!`);
+    logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
   });
 
   client.on("error", error => {
