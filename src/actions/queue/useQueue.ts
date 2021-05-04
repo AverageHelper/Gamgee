@@ -151,13 +151,19 @@ export class QueueManager {
     await queueMessage.react(REACTION_BTN_UNDO);
   }
 
-  /** If the message represents a queue entry, that entry is removed and the message deleted. */
-  async deleteEntryFromMessage(queueMessage: Discord.Message): Promise<void> {
+  /**
+   * If the message represents a queue entry, that entry is removed and the message deleted.
+   *
+   * @returns the entry that was deleted.
+   */
+  async deleteEntryFromMessage(queueMessage: Discord.Message): Promise<QueueEntry | null> {
     const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
-    if (entry === null) return;
+    if (entry === null) return entry;
 
     await this.queueStorage.removeEntryFromMessage(queueMessage.id);
     await deleteMessage(queueMessage);
+
+    return entry;
   }
 
   /** Returns all entries in the queue. */

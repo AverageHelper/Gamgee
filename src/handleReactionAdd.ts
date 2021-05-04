@@ -3,8 +3,12 @@ import type { Logger } from "./logger";
 import { getEnv } from "./helpers/environment";
 import { useQueue } from "./actions/queue/useQueue";
 import { REACTION_BTN_DELETE, REACTION_BTN_DONE, REACTION_BTN_UNDO } from "./constants/reactions";
+import { sendPrivately } from "./actions/messages";
+import { getUserWithId } from "./helpers/getUserWithId";
+import { useGuildStorage } from "./useGuildStorage";
 import getQueueChannel from "./actions/queue/getQueueChannel";
 import logUser from "./helpers/logUser";
+import StringBuilder from "./helpers/StringBuilder";
 
 export async function handleReactionAdd(
   reaction: Discord.MessageReaction,
@@ -62,11 +66,37 @@ export async function handleReactionAdd(
       logger.debug("Marked an entry undone");
       break;
 
-    case REACTION_BTN_DELETE:
+    case REACTION_BTN_DELETE: {
       logger.debug("Deleting entry...");
-      await queue.deleteEntryFromMessage(message);
+      const entry = await queue.deleteEntryFromMessage(message);
+      if (!entry) {
+        logger.debug("There was no entry to delete.");
+        break;
+      }
       logger.debug("Deleted an entry");
+
+      const userId = entry.senderId;
+      const guild = reaction.message.guild;
+      if (!guild) {
+        logger.debug(`Queue message ${reaction.message.id} has no guild.`);
+        return;
+      }
+      const guildStorage = useGuildStorage(guild);
+      const user = await getUserWithId(guild, userId);
+
+      logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
+      const builder = new StringBuilder();
+      builder.push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ");
+      builder.push(entry.url);
+
+      await sendPrivately(user, builder.result());
+
+      if (await guildStorage.isQueueOpen()) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await sendPrivately(user, "You can resubmit another song if you'd like to. :slight_smile:");
+      }
       break;
+    }
 
     default:
       break;

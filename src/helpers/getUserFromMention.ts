@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import getUserIdFromMention from "./getUserIdFromMention";
+import { getUserWithId } from "./getUserWithId";
 import { useLogger } from "../logger";
 import logUser from "./logUser";
 
@@ -20,13 +21,11 @@ export default async function getUserFromMention(
   const userId = getUserIdFromMention(mention);
   if (userId === null || userId === "") return undefined;
 
-  const user = (await message.guild?.members.fetch(userId))?.user;
+  const guild = message.guild;
+  if (!guild) return undefined;
 
-  if (user) {
-    logger.debug(`Found user ${logUser(user)}`);
-  } else {
-    logger.debug("Did not find user.");
-  }
+  const user = await getUserWithId(guild, userId);
 
+  logger.debug(`Found user ${logUser(user)}`);
   return user;
 }
