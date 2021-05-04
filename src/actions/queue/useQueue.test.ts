@@ -6,21 +6,26 @@ const mockDeleteMessage = deleteMessage as jest.Mock;
 const mockFetchEntryFromMessage = jest.fn();
 const mockRemoveEntryFromMessage = jest.fn();
 const mockCreateEntry = jest.fn();
+const mockGetConfig = jest.fn();
 
 const mockChannelSend = jest.fn();
 const mockMessageReact = jest.fn();
 
 import type Discord from "discord.js";
-import type { QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
 import { QueueManager } from "./useQueue";
 
 describe("Request Queue", () => {
+  const guildId = "the-guild";
   const queueMessageId = "queue-message";
+  const entrySenderId = "some-user";
+  const entryUrl = "the-entry-url";
 
   let storage: QueueEntryManager;
   let queue: QueueManager;
   let queueChannel: Discord.TextChannel;
   let message: Discord.Message;
+  let entry: QueueEntry;
 
   beforeEach(() => {
     queueChannel = ({
@@ -31,24 +36,43 @@ describe("Request Queue", () => {
     storage = ({
       fetchEntryFromMessage: mockFetchEntryFromMessage,
       removeEntryFromMessage: mockRemoveEntryFromMessage,
-      create: mockCreateEntry
+      create: mockCreateEntry,
+      getConfig: mockGetConfig
     } as unknown) as QueueEntryManager;
 
     queue = new QueueManager(storage, queueChannel);
 
     message = ({
-      id: queueMessageId
+      id: queueMessageId,
+      author: {
+        id: entrySenderId
+      },
+      guild: {
+        id: guildId
+      }
     } as unknown) as Discord.Message;
+
+    entry = ({
+      senderId: entrySenderId,
+      url: entryUrl
+    } as unknown) as QueueEntry;
 
     mockFetchEntryFromMessage.mockImplementation(id => {
       if (id === queueMessageId) {
-        return {}; // some entry
+        return entry; // some entry
       }
       return null; // not an entry
     });
     mockRemoveEntryFromMessage.mockResolvedValue(undefined);
     mockCreateEntry.mockImplementation((entry: UnsentQueueEntry) => {
       return Promise.resolve({ ...entry, channelId: queueChannel.id });
+    });
+    mockGetConfig.mockResolvedValue({
+      channelId: queueChannel.id,
+      entryDurationSeconds: 430,
+      cooldownSeconds: 960,
+      submissionMaxQuantity: 3,
+      blacklistedUsers: []
     });
     mockMessageReact.mockResolvedValue(undefined);
     mockChannelSend.mockResolvedValue({
@@ -59,7 +83,7 @@ describe("Request Queue", () => {
 
   test("does nothing when a message has nothing to do with a queue entry", async () => {
     message.id = "not-a-queue-message";
-    await expect(queue.deleteEntryFromMessage(message)).resolves.toBeUndefined();
+    await expect(queue.deleteEntryFromMessage(message)).resolves.toBeNull();
 
     expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
     expect(mockDeleteMessage).not.toHaveBeenCalled();
@@ -67,7 +91,7 @@ describe("Request Queue", () => {
 
   test("deletes a queue entry based on a message", async () => {
     message.id = queueMessageId;
-    await expect(queue.deleteEntryFromMessage(message)).resolves.toBeUndefined();
+    await expect(queue.deleteEntryFromMessage(message)).resolves.toBe(entry);
 
     expect(mockRemoveEntryFromMessage).toHaveBeenCalledTimes(1);
     expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
