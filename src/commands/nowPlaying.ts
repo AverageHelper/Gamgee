@@ -1,5 +1,6 @@
 import type { Command } from "./Command";
 import { replyPrivately, deleteMessage } from "../actions/messages";
+import { reply } from "./songRequest/actions";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import { useQueue } from "../actions/queue/useQueue";
 import randomElementOfArray from "../helpers/randomElementOfArray";
@@ -33,6 +34,10 @@ const nowPlaying: Command = {
   name: "now-playing",
   description: "DM you a link to the current song in the queue (or my best guess).",
   async execute({ message, logger }) {
+    if (!message.guild) {
+      return reply(message, "Can't do that here.");
+    }
+
     await deleteMessage(message, "Users don't need to spam channels with this command.");
 
     const queueChannel = await getQueueChannel(message);

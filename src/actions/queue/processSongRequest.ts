@@ -88,7 +88,9 @@ export default async function processSongRequest({
     // ** If the user has used all their submissions, reject!
     const maxSubs = config.submissionMaxQuantity;
     logger.verbose(
-      `User ${logUser(message.author)} has submitted ${userSubmissionCount} requests in total`
+      `User ${logUser(message.author)} has submitted ${userSubmissionCount} request${
+        userSubmissionCount === 1 ? "" : "s"
+      } before this one`
     );
     if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
       const rejectionBuilder = new StringBuilder();
@@ -147,7 +149,9 @@ export default async function processSongRequest({
     // ** If the song is too long, reject!
     const maxDuration = config.entryDurationSeconds;
     logger.verbose(
-      `Request from user ${logUser(message.author)} is ${durationString(seconds)} long.`
+      `User ${logUser(message.author)} wants to submit a song that is ${durationString(
+        seconds
+      )} long.`
     );
     if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
       const rejectionBuilder = new StringBuilder();
