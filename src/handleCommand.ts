@@ -1,13 +1,15 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
+import type { Command, MessageCommandInteractionOption } from "./commands";
 import Discord from "discord.js";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
-import type { Command } from "./commands";
 import * as commandDefinitions from "./commands";
 import logUser from "./helpers/logUser";
+import { deleteMessage, replyPrivately } from "./actions/messages";
+import { reply as replyToMessage } from "./commands/songRequest/actions";
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
@@ -126,15 +128,38 @@ export async function handleCommand(
   if (!commandName) return;
 
   const command = commands.get(commandName);
-  if (command) {
+  if (command?.execute) {
     const args = q.slice(1);
     logger.debug(`Handling command '${commandName}' with args [${args.join(", ")}]`);
-    return command.execute({
+
+    const options: Array<MessageCommandInteractionOption> = args.map((arg, idx) => ({
+      name: `arg${idx}`,
+      type: "STRING",
+      value: arg
+    }));
+
+    return await command.execute({
+      type: "message",
+      createdTimestamp: message.createdTimestamp,
+      user: message.author,
+      guild: message.guild,
+      channel: message.channel,
       client,
       message,
-      args,
+      options,
       storage,
-      logger
+      logger,
+      replyPrivately: async (content: string) => {
+        await replyPrivately(message, content);
+      },
+      reply: async (content: string, options) => {
+        await replyToMessage(message, content, options?.shouldMention);
+      },
+      deleteInvocation: async () => {
+        await deleteMessage(message);
+      },
+      startTyping: (count?: number) => void message.channel.startTyping(count),
+      stopTyping: () => void message.channel.stopTyping(true)
     });
   }
 

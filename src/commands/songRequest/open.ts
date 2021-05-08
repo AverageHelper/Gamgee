@@ -1,47 +1,43 @@
-import type { NamedSubcommand } from "../Command";
-import { reply } from "./actions";
-import { useGuildStorage } from "../../useGuildStorage";
-import { deleteMessage, replyPrivately } from "../../actions/messages";
+import type { Subcommand } from "../Command";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import { useGuildStorage } from "../../useGuildStorage";
 import { userIsAdminForQueueInGuild } from "../../permissions";
 
-const open: NamedSubcommand = {
+const open: Subcommand = {
   name: "open",
   description: "Start accepting song requests to the queue.",
-  async execute({ message }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
+  type: "SUB_COMMAND",
+  async execute({ user, guild, channel, reply, replyPrivately, deleteInvocation }) {
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
-    const guild = useGuildStorage(message.guild);
-    const [channel] = await Promise.all([
-      getQueueChannel(message), //
-      deleteMessage(message)
+    const guildStorage = useGuildStorage(guild);
+    const [queueChannel] = await Promise.all([
+      getQueueChannel(guild), //
+      deleteInvocation()
     ]);
 
     // The queue may only be opened in the queue channel, or by the server owner.
-    if (
-      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
-      message.channel.id !== channel?.id
-    ) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
+      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
-    if (!channel) {
-      return reply(message, "There's no queue to open. Have you set one up yet?");
+    if (!queueChannel) {
+      return reply("There's no queue to open. Have you set one up yet?");
     }
-    const isAlreadyOpen = await guild.isQueueOpen();
+    const isAlreadyOpen = await guildStorage.isQueueOpen();
     if (isAlreadyOpen) {
-      return reply(message, "The queue's already open! :smiley:");
+      return reply("The queue's already open! :smiley:");
     }
 
-    await guild.setQueueOpen(true);
+    await guildStorage.setQueueOpen(true);
 
-    const queueIsCurrent = message.channel.id === channel.id;
-    await channel.send("This queue is now open! :smiley:");
+    const queueIsCurrent = channel?.id === queueChannel.id;
+    await queueChannel.send("This queue is now open! :smiley:");
     if (!queueIsCurrent) {
-      return reply(message, `The queue is now open! :smiley:`);
+      return reply(`The queue is now open! :smiley:`);
     }
   }
 };

@@ -1,6 +1,5 @@
+import type Discord from "discord.js";
 import type { Command } from "./Command";
-import { replyPrivately, deleteMessage } from "../actions/messages";
-import { reply } from "./songRequest/actions";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import { useQueue } from "../actions/queue/useQueue";
 import randomElementOfArray from "../helpers/randomElementOfArray";
@@ -33,17 +32,18 @@ function randomCurrent(): string {
 const nowPlaying: Command = {
   name: "now-playing",
   description: "DM you a link to the current song in the queue (or my best guess).",
-  async execute({ message, logger }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
+  async execute({ guild, logger, reply, replyPrivately, deleteInvocation }) {
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
-    await deleteMessage(message);
+    await deleteInvocation();
 
-    const queueChannel = await getQueueChannel(message);
+    const queueChannel: Discord.TextChannel | null = await getQueueChannel(guild);
+
     if (!queueChannel) {
       logger.debug("There is no queue channel for this guild.");
-      await replyPrivately(message, "There's no queue set up right now.");
+      await replyPrivately("There's no queue set up right now.");
       return;
     }
 
@@ -53,7 +53,7 @@ const nowPlaying: Command = {
 
     if (!firstNotDone) {
       logger.debug(`The song queue is currently empty.`);
-      await replyPrivately(message, "There's nothing playing right now.");
+      await replyPrivately("There's nothing playing right now.");
       return;
     }
 
@@ -70,7 +70,7 @@ const nowPlaying: Command = {
     response.push(`<@${firstNotDone.senderId}>'s submission: `);
     response.push(firstNotDone.url);
 
-    await replyPrivately(message, response.result());
+    await replyPrivately(response.result());
   }
 };
 

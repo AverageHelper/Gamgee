@@ -22,7 +22,10 @@ export default async function describeAllCommands(
   // Describe all commands
   const bodyBuilder = new StringBuilder();
   commands.array().forEach(command => {
-    const requiredArgFormat = command.arbitrarySubcommand?.format ?? command.requiredArgFormat;
+    const requiredArg: Discord.ApplicationCommandOptionData | undefined = command.options?.find(
+      optn => optn.required
+    );
+    const requiredArgFormat: string | undefined = requiredArg ? `<${requiredArg.name}>` : undefined;
     const cmdDesc = new StringBuilder();
 
     // Describe the command
@@ -37,25 +40,32 @@ export default async function describeAllCommands(
     cmdDesc.push(command.description);
 
     // Describe all subcommands
-    command.namedSubcommands?.forEach(sub => {
-      const requiredSubargFormat = sub.requiredArgFormat;
+    command.options
+      ?.filter(optn => optn.type === "SUB_COMMAND" || optn.type === "SUB_COMMAND_GROUP")
+      ?.forEach(sub => {
+        const requiredSubarg: Discord.ApplicationCommandOptionData | undefined = sub.options?.find(
+          optn => optn.required
+        );
+        const requiredSubargFormat: string | undefined = requiredSubarg
+          ? `<${requiredSubarg.name}>`
+          : undefined;
 
-      // Describe the subcommand
-      const subDesc = new StringBuilder();
-      subDesc.pushNewLine();
-      subDesc.push(INDENT);
+        // Describe the subcommand
+        const subDesc = new StringBuilder();
+        subDesc.pushNewLine();
+        subDesc.push(INDENT);
 
-      subDesc.push(CODE);
-      subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
-      if (requiredSubargFormat !== undefined && requiredSubargFormat !== "") {
-        subDesc.push(` ${requiredSubargFormat}`);
-      }
-      subDesc.push(CODE);
+        subDesc.push(CODE);
+        subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
+        if (requiredSubargFormat !== undefined && requiredSubargFormat !== "") {
+          subDesc.push(` ${requiredSubargFormat}`);
+        }
+        subDesc.push(CODE);
 
-      subDesc.push(DASH);
-      subDesc.push(sub.description);
-      cmdDesc.push(subDesc.result());
-    });
+        subDesc.push(DASH);
+        subDesc.push(sub.description);
+        cmdDesc.push(subDesc.result());
+      });
 
     bodyBuilder.push(cmdDesc.result());
     bodyBuilder.pushNewLine();

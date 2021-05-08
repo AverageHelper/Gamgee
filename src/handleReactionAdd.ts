@@ -34,7 +34,7 @@ export async function handleReactionAdd(
     }`
   );
 
-  const queueChannel = await getQueueChannel(message);
+  const queueChannel = await getQueueChannel(message.guild);
   if (!queueChannel) {
     logger.debug("There is no queue channel for this guild.");
     return;

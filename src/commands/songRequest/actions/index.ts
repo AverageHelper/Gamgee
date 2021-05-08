@@ -1,33 +1,80 @@
 import type Discord from "discord.js";
-import { deleteMessage, replyPrivately } from "../../../actions/messages";
+import type { CommandContext } from "../../Command";
+import { replyPrivately } from "../../../actions/messages";
 
 export async function reply(
-  message: Discord.Message,
-  msg: string,
+  message: Discord.Message | Discord.CommandInteraction,
+  content: string,
   allowMentions: boolean = true
 ): Promise<void> {
   if (allowMentions) {
-    await message.channel.send(msg);
+    await message.reply(content);
   } else {
-    await message.channel.send(msg, { allowedMentions: { users: [] } });
+    await message.reply(content, { allowedMentions: { users: [] } });
   }
-  message.channel.stopTyping(true);
 }
 
-export async function reply_private(message: Discord.Message, msg: string): Promise<void> {
-  await replyPrivately(message, msg);
+export async function reply_private(message: Discord.Message, content: string): Promise<void> {
+  await replyPrivately(message, content);
 }
 
-export async function reject_private(message: Discord.Message, reason: string): Promise<void> {
+export async function replyInChannel(
+  source: Discord.Message | Discord.CommandInteraction,
+  content: string
+): Promise<void> {
+  if ("author" in source) {
+    await source.channel.send(content);
+  } else {
+    await source.reply(content);
+  }
+}
+
+export async function replyToCommandInChannel(
+  context: CommandContext,
+  content: string
+): Promise<void> {
+  if (context.type === "interaction") {
+    return replyInChannel(context.interaction, content);
+  }
+  return replyInChannel(context.message, content);
+}
+
+export function startTypingInChannelFromCommand(context: CommandContext): void {
+  if (context.type === "interaction") {
+    if (context.interaction.channel?.isText() === true) {
+      void (context.interaction.channel as
+        | Discord.TextChannel
+        | Discord.DMChannel
+        | Discord.NewsChannel).startTyping();
+    }
+    return;
+  }
+  return void context.message.channel.startTyping();
+}
+
+export function stopTypingInChannelFromCommand(context: CommandContext): void {
+  if (context.type === "interaction") {
+    if (context.interaction.channel?.isText() === true) {
+      void (context.interaction.channel as
+        | Discord.TextChannel
+        | Discord.DMChannel
+        | Discord.NewsChannel).stopTyping(true);
+    }
+    return;
+  }
+  return void context.message.channel.stopTyping(true);
+}
+
+export async function reject_private(context: CommandContext, reason: string): Promise<void> {
   await Promise.all([
-    deleteMessage(message), //
-    replyPrivately(message, `:hammer: ${reason}`)
+    context.deleteInvocation(), //
+    context.replyPrivately(`:hammer: ${reason}`)
   ]);
 }
 
-export async function reject_public(message: Discord.Message, reason: string): Promise<void> {
-  await Promise.all([
-    message.channel.send(`:hammer: <@!${message.author.id}>, ${reason}`),
-    message.suppressEmbeds(true)
-  ]);
+export async function reject_public(context: CommandContext, reason: string): Promise<void> {
+  await context.reply(`:hammer: ${reason}`);
+  if (context.type === "message") {
+    await context.message.suppressEmbeds(true);
+  }
 }

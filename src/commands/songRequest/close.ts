@@ -1,46 +1,42 @@
-import type { NamedSubcommand } from "../Command";
-import { reply } from "./actions";
+import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
-import { deleteMessage, replyPrivately } from "../../actions/messages";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import { userIsAdminForQueueInGuild } from "../../permissions";
 
-const close: NamedSubcommand = {
+const close: Subcommand = {
   name: "close",
   description: "Stop accepting song requests to the queue.",
-  async execute({ message }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
+  type: "SUB_COMMAND",
+  async execute({ user, guild, channel, reply, replyPrivately, deleteInvocation }) {
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
-    const guild = useGuildStorage(message.guild);
+    const guildStorage = useGuildStorage(guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
-      guild.isQueueOpen(),
-      getQueueChannel(message),
-      deleteMessage(message)
+      guildStorage.isQueueOpen(),
+      getQueueChannel(guild),
+      deleteInvocation()
     ]);
 
-    if (
-      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
-      message.channel.id !== queueChannel?.id
-    ) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
+      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
     if (!queueChannel) {
-      return reply(message, "There's no queue to close. Have you set one up yet?");
+      return reply("There's no queue to close. Have you set one up yet?");
     }
     if (!isQueueOpen) {
-      return reply(message, "The queue is already closed, silly! :stuck_out_tongue:");
+      return reply("The queue is already closed, silly! :stuck_out_tongue:");
     }
 
-    const queueIsCurrent = message.channel.id === queueChannel.id;
-    const promises: Array<Promise<unknown>> = [guild.setQueueOpen(false)];
+    const queueIsCurrent = channel?.id === queueChannel.id;
+    const promises: Array<Promise<unknown>> = [guildStorage.setQueueOpen(false)];
     if (!queueIsCurrent) {
       promises.push(queueChannel.send("This queue is closed. :wave:"));
     }
     await Promise.all(promises);
-    return reply(message, "The queue is now closed. :wave:");
+    return reply("The queue is now closed. :wave:");
   }
 };
 

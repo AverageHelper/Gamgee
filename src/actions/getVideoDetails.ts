@@ -103,12 +103,11 @@ async function getBandcampTrack(url: string): Promise<VideoDetails> {
  * @returns a details about the video, or `null` if no video could be found from the provided query.
  */
 export default async function getVideoDetails(
-  args: Array<string>,
+  urlString: string,
   logger: Logger | null = useLogger()
 ): Promise<VideoDetails | null> {
   // Try the first value as a video URL
-  const urlString = args[0];
-  if (urlString === undefined || urlString === "") return null;
+  if (urlString === "") return null;
 
   try {
     return await any([

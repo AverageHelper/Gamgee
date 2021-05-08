@@ -1,6 +1,6 @@
 import type { Command } from "./Command";
-import gitHubMetadata from "github-metadata";
 import type { GitHubMetadata } from "github-metadata";
+import gitHubMetadata from "github-metadata";
 import richErrorMessage from "../helpers/richErrorMessage";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
@@ -8,46 +8,46 @@ let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 const languages: Command = {
   name: "languages",
   description: "Print my core repository's language statistics.",
-  async execute({ message, logger }) {
+  async execute({ logger, reply, startTyping, stopTyping }) {
     const owner = "AverageHelper";
     const repo = "Gamgee";
     const exclude: Array<string> = [];
 
     if (cachedMetadata === "waiting") {
-      await message.channel.send("Working on it...");
+      await reply("working on it...");
       return;
     }
-    void message.channel.startTyping();
+    startTyping();
 
     if (cachedMetadata === null) {
       try {
         cachedMetadata = "waiting";
-        await message.channel.send("Let me think...");
+        await reply("Let me think...");
 
         // eslint-disable-next-line require-atomic-updates
         cachedMetadata = await gitHubMetadata({ owner, repo, exclude });
       } catch (error: unknown) {
         logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
-        await message.channel.send("Erm... I'm not sure :sweat_smile:");
-        message.channel.stopTyping(true);
+        await reply("Erm... I'm not sure :sweat_smile:");
+        stopTyping();
         return;
       }
     }
 
     const languages = cachedMetadata.languages;
     if (languages === undefined) {
-      await message.channel.send("I'm really not sure. Ask my boss that.");
-      message.channel.stopTyping(true);
+      await reply("I'm really not sure. Ask my boss that.");
+      stopTyping();
       return;
     }
 
     const totalLanguages = Object.keys(languages).length;
     if (totalLanguages > 3) {
       // Lots of languages. Be vague.
-      await message.channel.send(
+      await reply(
         `I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique.`
       );
-      message.channel.stopTyping(true);
+      stopTyping();
       return;
     }
 
@@ -65,14 +65,14 @@ const languages: Command = {
 
     const last = stats.splice(-1)[0] ?? "a secret language only I know the meaning of";
     if (totalLanguages > 2) {
-      await message.channel.send(`I'm made of ${stats.join(", ")}, and ${last}.`);
+      await reply(`I'm made of ${stats.join(", ")}, and ${last}.`);
     } else if (totalLanguages > 1) {
-      await message.channel.send(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
+      await reply(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
     } else {
-      await message.channel.send(`I'm made of ${last}. :blush:`);
+      await reply(`I'm made of ${last}. :blush:`);
     }
 
-    message.channel.stopTyping(true);
+    stopTyping();
   }
 };
 

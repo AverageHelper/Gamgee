@@ -15,13 +15,12 @@ const logger = useLogger();
  * @returns A Discord user, or `undefined` if the user cannot be found.
  */
 export default async function getUserFromMention(
-  message: Discord.Message,
+  guild: Discord.Guild | null,
   mention: string
 ): Promise<Discord.User | undefined> {
   const userId = getUserIdFromMention(mention);
   if (userId === null || userId === "") return undefined;
 
-  const guild = message.guild;
   if (!guild) return undefined;
 
   const user = await getUserWithId(guild, userId);

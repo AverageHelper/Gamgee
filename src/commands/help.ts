@@ -1,12 +1,11 @@
-import Discord from "discord.js";
 import type { Command } from "./Command";
+import Discord from "discord.js";
 import describeAllCommands from "../actions/describeAllCommands";
-import { replyPrivately } from "../actions/messages";
 
 const help: Command = {
   name: "help",
   description: "Print this handy message.",
-  async execute({ storage, message }) {
+  async execute({ storage, replyPrivately }) {
     // Dynamic import here, b/c ./index depends on us to resolve
     const commandDefinitions = await import("./index");
 
@@ -16,7 +15,7 @@ const help: Command = {
     });
 
     const descriptions = await describeAllCommands(storage, commands);
-    await replyPrivately(message, `Commands:\n${descriptions}`);
+    await replyPrivately(`Commands:\n${descriptions}`);
   }
 };
 

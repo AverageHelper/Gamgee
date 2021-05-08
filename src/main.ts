@@ -3,6 +3,8 @@ import "reflect-metadata";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
 import { version as gamgeeVersion } from "./version";
+import type { Command } from "./commands";
+import * as commandDefinitions from "./commands";
 
 const logger = useLogger();
 logger.verbose("*Yawn* Good morning!");
@@ -12,9 +14,17 @@ logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 import Discord from "discord.js";
 import richErrorMessage from "./helpers/richErrorMessage";
+import logUser from "./helpers/logUser";
 import { useStorage } from "./configStorage";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
+import { replyPrivately } from "./actions/messages";
+import { reply } from "./commands/songRequest/actions";
+
+const commands = new Discord.Collection<string, Command>();
+Object.values(commandDefinitions).forEach(command => {
+  commands.set(command.name, command);
+});
 
 async function onNewMessage(
   client: Discord.Client,
@@ -27,6 +37,71 @@ async function onNewMessage(
   } catch (error: unknown) {
     const msgDescription = JSON.stringify(msg, undefined, 2);
     logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
+  }
+}
+
+async function onInteraction(
+  client: Discord.Client,
+  interaction: Discord.Interaction
+): Promise<void> {
+  if (!interaction.isCommand()) return;
+
+  // Don't respond to bots unless we're being tested
+  if (
+    interaction.user.bot &&
+    (interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
+  ) {
+    logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
+    return;
+  }
+
+  // Ignore self interactions
+  if (interaction.user.id === client.user?.id) return;
+
+  logger.debug(`User ${logUser(interaction.user)} sent command: '${interaction.commandName}`);
+
+  const command = commands.get(interaction.commandName);
+  if (command?.execute) {
+    const storage = await useStorage(interaction.guild, logger);
+    // logger.debug(
+    //   `Handling interaction '${interaction.commandName}' with args [${interaction.options
+    //     .map(opt => `${opt.name} (${opt.type.toString()}): ${opt.value?.toString() ?? "undefined"}`)
+    //     .join(", ")}]`
+    // );
+    logger.debug(`Handling interaction: ${JSON.stringify(interaction, undefined, 2)}`);
+    let channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null = null;
+    if (interaction.channel?.isText() === true) {
+      channel = interaction.channel as
+        | Discord.TextChannel
+        | Discord.DMChannel
+        | Discord.NewsChannel;
+    }
+
+    await command.execute({
+      type: "interaction",
+      createdTimestamp: interaction.createdTimestamp,
+      user: interaction.user,
+      guild: interaction.guild,
+      channel,
+      client,
+      interaction,
+      options: interaction.options,
+      storage,
+      logger,
+      replyPrivately: async (content: string) => {
+        await replyPrivately(interaction, content);
+      },
+      reply: async (content: string, options) => {
+        if (interaction.deferred) {
+          await interaction.webhook.send(content);
+        } else {
+          await reply(interaction, content, options?.shouldMention);
+        }
+      },
+      deleteInvocation: () => Promise.resolve(undefined),
+      startTyping: (count?: number) => void channel?.startTyping(count),
+      stopTyping: () => void channel?.stopTyping(true)
+    });
   }
 }
 
@@ -57,6 +132,14 @@ try {
   // Handle client events
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+
+    // Register interactions
+    logger.info(`Registering ${commands.size} commands...`);
+    logger.debug(JSON.stringify(Object.values(commandDefinitions), undefined, 2));
+    // eslint-disable-next-line promise/prefer-await-to-then
+    void client.application?.commands.set(Object.values(commandDefinitions)).then(() => {
+      logger.info("Finished registering commands.");
+    });
   });
 
   client.on("error", error => {
@@ -65,6 +148,10 @@ try {
 
   client.on("message", msg => {
     void onNewMessage(client, msg);
+  });
+
+  client.on("interaction", interaction => {
+    void onInteraction(client, interaction);
   });
 
   client.on("messageReactionAdd", (reaction, user) => {

@@ -1,29 +1,27 @@
-import type { NamedSubcommand } from "../Command";
-import { reply } from "./actions";
+import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
-import { replyPrivately } from "../../actions/messages";
 import { userIsAdminInGuild } from "../../permissions";
 
-const teardown: NamedSubcommand = {
+const teardown: Subcommand = {
   name: "teardown",
-  requiredArgFormat: "<channel mention>",
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
-  async execute({ message, logger }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
+  type: "SUB_COMMAND",
+  async execute({ user, guild, logger, reply, replyPrivately }) {
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
     // Only the guild owner may touch the queue.
-    if (!(await userIsAdminInGuild(message.author, message.guild))) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!(await userIsAdminInGuild(user, guild))) {
+      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
-    const guild = useGuildStorage(message.guild);
-    logger.info(`Forgetting queue channel for guild ${message.guild.id}.`);
+    const guildStorage = useGuildStorage(guild);
+    logger.info(`Forgetting queue channel for guild ${guild.id}.`);
     await Promise.all([
-      guild.setQueueChannel(null), //
-      reply(message, "Queue deleted.")
+      guildStorage.setQueueChannel(null), //
+      reply("Queue deleted.")
     ]);
   }
 };

@@ -1,22 +1,21 @@
 import type { Command } from "./Command";
-import { deleteMessage } from "../actions/messages/deleteMessage";
 
 const type: Command = {
   name: "t",
   description: "Start typing. :wink:",
-  async execute({ message, client, logger }) {
-    const channel = message.channel;
+  async execute({ channel, client, logger, deleteInvocation }) {
+    if (!channel) return;
 
     logger.debug(
       `${client.user?.username.concat(" is") ?? "I am"} typing in channel ${channel.id}...`
     );
-    await deleteMessage(message);
+    await deleteInvocation();
 
-    setTimeout(() => {
-      channel.stopTyping(true);
-    }, 5000);
+    void channel.startTyping();
 
-    await channel.startTyping();
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    channel.stopTyping(true);
+
     logger.debug(`Finished typing in channel ${channel.id}`);
   }
 };

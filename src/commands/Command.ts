@@ -2,33 +2,82 @@ import type Discord from "discord.js";
 import type { Storage } from "../configStorage";
 import type { Logger } from "../logger";
 
-/**
- * Information relevant to a command invocation.
- */
-export interface CommandContext {
+export interface MessageCommandInteractionOption extends Discord.CommandInteractionOption {
+  value: string;
+}
+
+interface ReplyOptions {
+  shouldMention?: boolean;
+  ephemeral?: boolean;
+}
+
+interface BaseCommandContext {
   /** Gamgee's Discord client. */
   client: Discord.Client;
 
-  /** The message that contains the command. */
-  message: Discord.Message;
-
-  /** The command arguments. */
-  args: Array<string>;
-
-  /** A `LocalStorage` instance scoped to the current guild. */
+  /** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
   storage: Storage | null;
 
   /** A logger to use to submit informative debug messages. */
   logger: Logger;
+
+  /** The guild in which the command was invoked. */
+  guild: Discord.Guild | null;
+
+  /** The channel in which the command was invoked. */
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null;
+
+  /** The user which invoked the command. */
+  user: Discord.User;
+
+  /** The UNIX time at which the command was invoked. */
+  createdTimestamp: number;
+
+  /** The options that were passed into the command. */
+  options: Array<Discord.CommandInteractionOption>;
+
+  /** Sends a DM to the command's sender. */
+  replyPrivately: (content: string) => Promise<void>;
+
+  /** Replies to the command invocation message, optionally pinging the command's sender. */
+  reply: (content: string, options?: ReplyOptions) => Promise<void>;
+
+  /** Deletes the command invocation if it was sent as a text message. */
+  deleteInvocation: () => Promise<void>;
+
+  /** Starts the typing indicator in the channel from which the command was invoked. */
+  startTyping: (count?: number) => void;
+
+  /** Stops the typing indicator in the channel from which the command was invoked. */
+  stopTyping: () => void;
 }
 
-interface Subcommand {
-  /** A user-readable description of what the command does. */
-  description: string;
+interface MessageCommandContext extends BaseCommandContext {
+  type: "message";
 
-  /** A user-readable format for a required argument. */
-  requiredArgFormat?: string;
+  /** The message that contains the command invocation. */
+  message: Discord.Message;
 
+  /** The options that were passed into the command. */
+  options: Array<MessageCommandInteractionOption>;
+}
+
+interface InteractionCommandContext extends BaseCommandContext {
+  type: "interaction";
+
+  /** The interaction that represents the command invocation. */
+  interaction: Discord.CommandInteraction;
+}
+
+/**
+ * Information relevant to a command invocation.
+ */
+export type CommandContext = MessageCommandContext | InteractionCommandContext;
+
+/**
+ * A top-level command description.
+ */
+export interface Command extends Discord.ApplicationCommandData {
   /**
    * The command implementation. Receives contextual information about the
    * command invocation. May return a `Promise`.
@@ -38,35 +87,7 @@ interface Subcommand {
   execute: (context: CommandContext) => void | Promise<void>;
 }
 
-export interface ArbitrarySubcommand extends Subcommand {
-  /** The user-readable format of the user input to pass to the command. */
-  format: string;
-}
-
-export interface NamedSubcommand extends Subcommand {
-  /** The string that triggers the command. */
-  name: string;
-}
-
-/**
- * A top-level command description.
- */
-export interface Command {
-  /** The string that triggers the command. */
-  name: string;
-
-  /** A user-readable description of what the command does. */
-  description: string;
-
-  /** A user-readable format for a required argument. */
-  requiredArgFormat?: string;
-
-  /** An array of subcommands with predefined activation trigger words. */
-  namedSubcommands?: Array<NamedSubcommand>;
-
-  /** A subcommand which may be activated by any string that doesn't match one of the named subcommands first. */
-  arbitrarySubcommand?: ArbitrarySubcommand;
-
+export interface Subcommand extends Discord.ApplicationCommandOptionData {
   /**
    * The command implementation. Receives contextual information about the
    * command invocation. May return a `Promise`.

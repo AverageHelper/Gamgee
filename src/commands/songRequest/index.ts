@@ -1,7 +1,7 @@
 import type { Command } from "../Command";
 import { reject_public } from "./actions";
 
-import arbitrarySubcommand from "./urlRequest";
+import urlRequest from "./urlRequest";
 import info from "./info";
 import setup from "./setup";
 import teardown from "./teardown";
@@ -29,24 +29,24 @@ const namedSubcommands = [
 const sr: Command = {
   name: "sr",
   description: "Submit a song to the queue.",
-  namedSubcommands,
-  arbitrarySubcommand,
+  options: [...namedSubcommands, urlRequest],
   async execute(context) {
-    const { message, args } = context;
-
     // Prepare arguments
-    const arg = args[0];
-    if (arg === undefined || arg === "") {
-      return reject_public(message, "You're gonna have to add a song link to that.");
+    const arg: string | undefined = context.options[0]?.name;
+    const argOptions = context.options[0]?.options;
+    if (arg === undefined || arg === "" || !argOptions) {
+      return reject_public(context, "You're gonna have to add a song link to that.");
     }
 
     for (const command of namedSubcommands) {
       if (command.name === arg) {
+        context.options = argOptions;
         return command.execute(context);
       }
     }
 
-    return arbitrarySubcommand.execute(context);
+    // An unnamed command in message mode
+    return urlRequest.execute(context);
   }
 };
 

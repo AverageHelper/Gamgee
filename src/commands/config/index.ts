@@ -1,5 +1,4 @@
-import type { Command } from "./../Command";
-import { replyPrivately, replyWithMention } from "../../actions/messages";
+import type { Command } from "../Command";
 
 import get from "./get";
 import set from "./set";
@@ -15,35 +14,34 @@ const subargsList = namedSubcommands
 const config: Command = {
   name: "config",
   description: "Read and modify config options. *(Server owner only. No touch!)*",
-  namedSubcommands,
+  options: namedSubcommands,
   async execute(context) {
-    const { message, args } = context;
+    const { guild, user, options, reply, replyPrivately } = context;
 
-    if (!message.guild) {
-      return replyWithMention(message, "Can't do that here.");
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
     // Only the guild owner may touch the config.
-    if (message.author.id !== message.guild.ownerID) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (user.id !== guild.ownerID) {
+      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
-    const arg = args[0]?.toLowerCase();
-    if (arg === undefined || arg === "") {
-      return replyWithMention(message, `Missing command structure. Expected ${subargsList}`);
+    const arg: string | undefined = options[0]?.name;
+    const argOptions = options[0]?.options;
+    if (arg === undefined || arg === "" || !argOptions) {
+      return reply(`Missing command structure. Expected ${subargsList}`);
     }
 
     for (const command of namedSubcommands) {
       if (command.name === arg) {
+        context.options = argOptions;
         return command.execute(context);
       }
     }
 
-    return replyWithMention(
-      message,
-      `I don't know what to do with that. I expected one of ${subargsList}`
-    );
+    return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
   }
 };
 

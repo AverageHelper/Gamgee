@@ -1,7 +1,9 @@
 import type Discord from "discord.js";
 import type { Logger } from "../../logger";
-import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import type { QueueManager } from "./useQueue";
+import type { UnsentQueueEntry } from "../../useQueueStorage";
+import type { CommandContext } from "../../commands";
+import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useQueue } from "./useQueue";
 import { reject_public, reject_private } from "../../commands/songRequest/actions";
 import getVideoDetails from "../getVideoDetails";
@@ -9,11 +11,10 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
-import type { UnsentQueueEntry } from "../../useQueueStorage";
 
 interface SongAcceptance {
   queue: QueueManager;
-  message: Discord.Message;
+  context: CommandContext;
   entry: UnsentQueueEntry;
   shouldSendUrl: boolean;
   logger: Logger;
@@ -26,26 +27,26 @@ interface SongAcceptance {
  */
 async function acceptSongRequest({
   queue,
-  message,
+  context,
   entry,
   shouldSendUrl,
   logger
 }: SongAcceptance): Promise<void> {
   await Promise.all([
     queue.push(entry), //
-    shouldSendUrl ? message.channel.send(entry.url) : null
+    shouldSendUrl ? context.reply(entry.url) : null
   ]);
-  logger.verbose(`Accepted request from user ${logUser(message.author)}.`);
+  logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
   logger.debug(
-    `Pushed new request to queue. Sending public acceptance to user ${logUser(message.author)}`
+    `Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
   );
   // Send acceptance after the potential `send(entry.url)` call
-  await message.channel.send(`<@!${message.author.id}>, Submission Accepted!`);
+  await context.reply(`Submission Accepted!`);
 }
 
 export interface SongRequest {
-  requestArgs: Array<string>;
-  message: Discord.Message;
+  songUrl: string;
+  context: CommandContext;
   queueChannel: Discord.TextChannel;
   logger: Logger;
 }
@@ -57,13 +58,13 @@ export interface SongRequest {
  * @param param0 The song request context.
  */
 export default async function processSongRequest({
-  requestArgs: args,
-  message,
+  songUrl,
+  context,
   queueChannel,
   logger
 }: SongRequest): Promise<void> {
-  const senderId = message.author.id;
-  const sentAt = message.createdAt;
+  const senderId = context.user.id;
+  const sentAt = new Date(context.createdTimestamp);
 
   const queue = useQueue(queueChannel);
 
@@ -75,20 +76,20 @@ export default async function processSongRequest({
     ]);
 
     // ** If the user is blacklisted, reject!
-    if (config.blacklistedUsers.some(user => user.id === message.author.id)) {
+    if (config.blacklistedUsers.some(user => user.id === context.user.id)) {
       logger.verbose(
         `${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
-          message.author
+          context.user
         )} is one of them.`
       );
-      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
-      return reject_private(message, "You're not allowed to submit songs. My apologies.");
+      logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+      return reject_private(context, "You're not allowed to submit songs. My apologies.");
     }
 
     // ** If the user has used all their submissions, reject!
     const maxSubs = config.submissionMaxQuantity;
     logger.verbose(
-      `User ${logUser(message.author)} has submitted ${userSubmissionCount} request${
+      `User ${logUser(context.user)} has submitted ${userSubmissionCount} request${
         userSubmissionCount === 1 ? "" : "s"
       } before this one`
     );
@@ -97,8 +98,8 @@ export default async function processSongRequest({
       rejectionBuilder.push("You have used all ");
       rejectionBuilder.pushBold(`${maxSubs}`);
       rejectionBuilder.push(" of your allotted submissions.");
-      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
-      return reject_private(message, rejectionBuilder.result());
+      logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+      return reject_private(context, rejectionBuilder.result());
     }
 
     // ** If the user is still under cooldown, reject!
@@ -108,13 +109,11 @@ export default async function processSongRequest({
       latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
     if (timeSinceLatest === null) {
       logger.verbose(
-        `This is the first song request that I've seen from user ${logUser(
-          message.author
-        )} tonight.`
+        `This is the first song request that I've seen from user ${logUser(context.user)} tonight.`
       );
     } else {
       logger.verbose(
-        `User ${logUser(message.author)} last submitted a request ${durationString(
+        `User ${logUser(context.user)} last submitted a request ${durationString(
           timeSinceLatest
         )} ago.`
       );
@@ -129,16 +128,16 @@ export default async function processSongRequest({
       rejectionBuilder.push("You must wait ");
       rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
       rejectionBuilder.push(" before submitting again.");
-      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
-      return reject_private(message, rejectionBuilder.result());
+      logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+      return reject_private(context, rejectionBuilder.result());
     }
 
-    const song = await getVideoDetails(args);
+    const song = await getVideoDetails(songUrl);
     if (song === null) {
       logger.verbose("Could not find the requested song.");
-      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
+      logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
       return reject_public(
-        message,
+        context,
         "I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube, SoundCloud, or Bandcamp link."
       );
     }
@@ -149,7 +148,7 @@ export default async function processSongRequest({
     // ** If the song is too long, reject!
     const maxDuration = config.entryDurationSeconds;
     logger.verbose(
-      `User ${logUser(message.author)} wants to submit a song that is ${durationString(
+      `User ${logUser(context.user)} wants to submit a song that is ${durationString(
         seconds
       )} long.`
     );
@@ -157,20 +156,20 @@ export default async function processSongRequest({
       const rejectionBuilder = new StringBuilder();
       rejectionBuilder.push("That song is too long. The limit is ");
       rejectionBuilder.pushBold(`${durationString(maxDuration)}`);
-      logger.verbose(`Rejected request from user ${logUser(message.author)}.`);
-      return reject_public(message, rejectionBuilder.result());
+      logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+      return reject_public(context, rejectionBuilder.result());
     }
 
     // Whether We haven't had this link embedded yet
-    const shouldSendUrl = !song.fromUrl;
+    const shouldSendUrl = !song.fromUrl || context.type === "interaction";
     const entry = { url, seconds, sentAt, senderId };
 
     // ** Full send!
-    return await acceptSongRequest({ queue, message, entry, shouldSendUrl, logger });
+    return await acceptSongRequest({ queue, context, entry, shouldSendUrl, logger });
 
     // Handle fetch errors
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to process song request", error));
-    return reject_public(message, "That query gave me an error. Try again maybe? :shrug:");
+    return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
   }
 }

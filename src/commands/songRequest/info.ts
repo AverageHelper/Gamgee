@@ -1,12 +1,12 @@
-import type { NamedSubcommand } from "../Command";
-import { reply } from "./actions";
+import type { Subcommand } from "../Command";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue";
 import StringBuilder from "../../helpers/StringBuilder";
 
-const info: NamedSubcommand = {
+const info: Subcommand = {
   name: "info",
   description: "Print a handy message to let people know how to queue-up.",
-  async execute({ message, storage }) {
+  type: "SUB_COMMAND",
+  async execute({ storage, reply }) {
     const songRequest = (await import("./index")).default;
     const nowPlaying = (await import("../nowPlaying")).default;
 
@@ -29,7 +29,7 @@ const info: NamedSubcommand = {
       `To see the current song, type \`${COMMAND_PREFIX}${nowPlaying.name}\` and check your DMs.`
     );
 
-    return reply(message, helpBuilder.result());
+    return reply(helpBuilder.result());
   }
 };
 

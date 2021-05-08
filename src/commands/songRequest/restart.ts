@@ -1,43 +1,50 @@
-import type { NamedSubcommand } from "../Command";
-import { reply } from "./actions";
-import { useQueue } from "../../actions/queue/useQueue";
+import type { Subcommand } from "../Command";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
+import { useQueue } from "../../actions/queue/useQueue";
 import { userIsAdminForQueueInGuild } from "../../permissions";
-import { bulkDeleteMessagesWithIds, replyPrivately } from "../../actions/messages";
+import { bulkDeleteMessagesWithIds } from "../../actions/messages";
 
-const restart: NamedSubcommand = {
+const restart: Subcommand = {
   name: "restart",
   description: "Empty the queue and start a fresh queue session.",
-  async execute({ message }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
+  type: "SUB_COMMAND",
+  async execute(context) {
+    const {
+      user,
+      guild,
+      channel: messageChannel,
+      reply,
+      replyPrivately,
+      startTyping,
+      stopTyping
+    } = context;
+
+    if (!guild) {
+      return reply("Can't do that here.");
     }
 
-    const channel = await getQueueChannel(message);
+    const channel = await getQueueChannel(guild);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (
-      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
-      message.channel.id !== channel?.id
-    ) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+    if (!(await userIsAdminForQueueInGuild(user, guild)) && messageChannel?.id !== channel?.id) {
+      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
     if (!channel) {
-      return reply(message, "No queue is set up. Maybe that's what you wanted...?");
+      return reply("No queue is set up. Maybe that's what you wanted...?");
     }
 
-    await reply(message, "Time for a reset! :bucket: Clearing the queue...");
-    void message.channel.startTyping(5);
+    await reply("Time for a reset! :bucket: Clearing the queue...");
+    startTyping(5);
 
     const queue = useQueue(channel);
     const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
     await bulkDeleteMessagesWithIds(toBeDeleted, channel);
     await queue.clear();
 
-    message.channel.stopTyping(true);
+    stopTyping();
 
-    return reply(message, "The queue has restarted.");
+    return reply("The queue has restarted.");
   }
 };
 
