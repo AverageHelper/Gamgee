@@ -57,7 +57,7 @@ const whitelist: NamedSubcommand = {
       `:checkered_flag: <@!${user.id}> is allowed to submit song requests! :grin:`,
       false
     );
-    await deleteMessage(message, "Users need not see this command when it's run.");
+    await deleteMessage(message);
   }
 };
 

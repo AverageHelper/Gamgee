@@ -6,13 +6,13 @@ import { useLogger } from "../../logger";
 const logger = useLogger();
 
 function isMessage(
-  toBeDetermined: Discord.Message | Discord.Guild
-): toBeDetermined is Discord.Message {
+  toBeDetermined: Discord.Message | Discord.PartialMessage | Discord.Guild
+): toBeDetermined is Discord.Message | Discord.PartialMessage {
   return "guild" in toBeDetermined;
 }
 
 async function getQueueChannelFromMessage(
-  message: Discord.Message
+  message: Discord.Message | Discord.PartialMessage
 ): Promise<Discord.TextChannel | null> {
   if (!message.guild) return null;
 
@@ -78,7 +78,7 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
  * @returns the guild's queue channel, or `null` if it has none.
  */
 export default async function getQueueChannel(
-  message: Discord.Message
+  message: Discord.Message | Discord.PartialMessage
 ): Promise<Discord.TextChannel | null>;
 
 /**
@@ -93,7 +93,7 @@ export default async function getQueueChannel(
 ): Promise<Discord.TextChannel | null>;
 
 export default async function getQueueChannel(
-  source: Discord.Message | Discord.Guild
+  source: Discord.Message | Discord.PartialMessage | Discord.Guild
 ): Promise<Discord.TextChannel | null> {
   if (isMessage(source)) {
     return getQueueChannelFromMessage(source);

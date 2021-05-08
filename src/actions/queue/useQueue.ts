@@ -105,7 +105,7 @@ export class QueueManager {
 
       // If the database write fails...
     } catch (error: unknown) {
-      await deleteMessage(queueMessage, "We had an error");
+      await deleteMessage(queueMessage);
       throw error;
     }
   }
@@ -116,10 +116,11 @@ export class QueueManager {
   }
 
   /** If the message represents a "done" entry, that entry is unmarked. */
-  async markNotDone(queueMessage: Discord.Message): Promise<void> {
+  async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
+    const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(false, queueMessage.id);
     await Promise.all([
-      editMessage(queueMessage, removeStrikethrough(queueMessage.content)),
+      editMessage(queueMessage, removeStrikethrough(message.content)),
       queueMessage
         .suppressEmbeds(false)
         .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
@@ -133,10 +134,11 @@ export class QueueManager {
   }
 
   /** If the message represents a "not done" entry, that entry is marked "done". */
-  async markDone(queueMessage: Discord.Message): Promise<void> {
+  async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
+    const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(true, queueMessage.id);
     await Promise.all([
-      editMessage(queueMessage, addStrikethrough(queueMessage.content)),
+      editMessage(queueMessage, addStrikethrough(message.content)),
       queueMessage
         .suppressEmbeds(true)
         .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
@@ -156,7 +158,9 @@ export class QueueManager {
    *
    * @returns the entry that was deleted.
    */
-  async deleteEntryFromMessage(queueMessage: Discord.Message): Promise<QueueEntry | null> {
+  async deleteEntryFromMessage(
+    queueMessage: Discord.Message | Discord.PartialMessage
+  ): Promise<QueueEntry | null> {
     const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
     if (entry === null) return entry;
 

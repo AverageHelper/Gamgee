@@ -43,7 +43,16 @@ async function onMessageReactionAdd(
 }
 
 try {
-  const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });
+  const client = new Discord.Client({
+    intents: [
+      "GUILDS",
+      "GUILD_MESSAGES",
+      "GUILD_MESSAGE_REACTIONS",
+      "DIRECT_MESSAGES",
+      "GUILD_MESSAGE_TYPING"
+    ],
+    partials: ["REACTION", "CHANNEL", "MESSAGE"]
+  });
 
   // Handle client events
   client.on("ready", () => {

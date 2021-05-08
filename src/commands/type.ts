@@ -10,7 +10,7 @@ const type: Command = {
     logger.debug(
       `${client.user?.username.concat(" is") ?? "I am"} typing in channel ${channel.id}...`
     );
-    await deleteMessage(message, "Spam: Users don't need to see this command run");
+    await deleteMessage(message);
 
     setTimeout(() => {
       channel.stopTyping(true);

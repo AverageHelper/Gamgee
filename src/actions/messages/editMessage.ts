@@ -15,7 +15,7 @@ const logger = useLogger();
  * @returns a `Promise` that resolves to `true` if the message was edited successfully.
  */
 export async function editMessage(
-  message: Discord.Message,
+  message: Discord.Message | Discord.PartialMessage,
   newContent:
     | Discord.APIMessageContentResolvable
     | Discord.MessageEditOptions

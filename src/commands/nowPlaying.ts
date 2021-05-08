@@ -38,7 +38,7 @@ const nowPlaying: Command = {
       return reply(message, "Can't do that here.");
     }
 
-    await deleteMessage(message, "Users don't need to spam channels with this command.");
+    await deleteMessage(message);
 
     const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {

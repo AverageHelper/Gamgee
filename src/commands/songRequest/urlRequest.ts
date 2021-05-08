@@ -22,7 +22,7 @@ const urlRequest: ArbitrarySubcommand = {
 
     if (message.channel.id === queueChannel?.id) {
       await Promise.all([
-        deleteMessage(message, "Spam; song requests are not permitted in the queue channel."),
+        deleteMessage(message),
         reject_private(
           message,
           "Requesting songs in the queue channel has not been implemented yet."

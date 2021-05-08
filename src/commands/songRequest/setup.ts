@@ -14,7 +14,7 @@ const setup: NamedSubcommand = {
       return reply(message, "Can't do that here.");
     }
 
-    await deleteMessage(message, "Users don't need to see this command once it's run.");
+    await deleteMessage(message);
 
     // Only the guild owner may touch the queue.
     if (!(await userIsAdminInGuild(message.author, message.guild))) {

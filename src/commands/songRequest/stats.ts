@@ -78,7 +78,7 @@ const stats: NamedSubcommand = {
     const response = responseBuilder.result();
     await Promise.all([
       queueIsCurrent ? reply(message, response) : reply_private(message, response), //
-      deleteMessage(message, "Spam; Users shouldn't see this")
+      deleteMessage(message)
     ]);
   }
 };

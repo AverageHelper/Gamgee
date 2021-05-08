@@ -1,6 +1,6 @@
 {
   "name": "gamgee",
-  "version": "1.0.0-alpha.11",
+  "version": "1.0.0",
   "description": "A Discord bot for managing a song request queue.",
   "private": true,
   "scripts": {
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/AverageHelper/Gamgee#readme",
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
     "humanize-duration": "^3.25.1",

@@ -7,7 +7,7 @@ import richErrorMessage from "../helpers/richErrorMessage";
 const video: Command = {
   name: "video",
   requiredArgFormat: "<YouTube, SoundCloud, or Bandcamp link>",
-  description: "Put the video title and duration in chat.",
+  description: "Reply with the video title and duration.",
   async execute({ message, args, logger }) {
     async function reply(body: string): Promise<void> {
       await message.reply(body);

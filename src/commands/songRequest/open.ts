@@ -15,8 +15,8 @@ const open: NamedSubcommand = {
 
     const guild = useGuildStorage(message.guild);
     const [channel] = await Promise.all([
-      getQueueChannel(message),
-      deleteMessage(message, "Users don't need to see this command once it's run.")
+      getQueueChannel(message), //
+      deleteMessage(message)
     ]);
 
     // The queue may only be opened in the queue channel, or by the server owner.

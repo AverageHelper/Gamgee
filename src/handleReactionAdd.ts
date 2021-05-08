@@ -29,7 +29,9 @@ export async function handleReactionAdd(
 
   const message = reaction.message;
   logger.debug(
-    `User ${logUser(user)} reacted with ${reaction.emoji.name} to message ${message.id}`
+    `User ${logUser(user)} reacted with ${reaction.emoji.name ?? "unnamed emoji"} to message ${
+      message.id
+    }`
   );
 
   const queueChannel = await getQueueChannel(message);

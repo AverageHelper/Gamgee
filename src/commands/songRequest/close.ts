@@ -17,7 +17,7 @@ const close: NamedSubcommand = {
     const [isQueueOpen, queueChannel] = await Promise.all([
       guild.isQueueOpen(),
       getQueueChannel(message),
-      deleteMessage(message, "Users don't need to see this command once it's run.")
+      deleteMessage(message)
     ]);
 
     if (

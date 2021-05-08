@@ -19,7 +19,8 @@ export async function userHasOneOfRoles(
     roleIds.map(roleId => guild.roles.resolve(roleId)) //
   );
 
+  // TODO: Test that user IDs match their guild member IDs
   return adminRoles.some(
-    role => role?.members.has(guild.member(user)?.id ?? "") ?? false //
+    role => role?.members.has(user.id) ?? false //
   );
 }

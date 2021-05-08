@@ -101,7 +101,7 @@ const blacklist: NamedSubcommand = {
       `:pirate_flag: <@!${user.id}> is no longer allowed to submit song requests.`,
       false
     );
-    await deleteMessage(message, "Users need not see this command when it's run.");
+    await deleteMessage(message);
   }
 };
 

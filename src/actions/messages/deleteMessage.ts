@@ -10,17 +10,18 @@ const logger = useLogger();
  * function's resulting `Promise` will resolve to `false`.
  *
  * @param message The message to delete.
- * @param reason The reason for the deletion, to provide to Discord's API.
  *
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
-export async function deleteMessage(message: Discord.Message, reason?: string): Promise<boolean> {
+export async function deleteMessage(
+  message: Discord.Message | Discord.PartialMessage
+): Promise<boolean> {
   if (message.channel.type === "dm") {
     logger.debug("Can't delete others' messages in a DM channel.");
     return false;
   }
   try {
-    await message.delete({ reason });
+    await message.delete();
     return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to delete a message.", error));
@@ -35,17 +36,15 @@ export async function deleteMessage(message: Discord.Message, reason?: string): 
  *
  * @param messageId The ID of the message to delete.
  * @param channel The channel in which to search for the message to delete.
- * @param reason The reason for the deletion, to provide to Discord's API.
  *
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessageWithId(
   messageId: string,
-  channel: Discord.TextChannel,
-  reason?: string
+  channel: Discord.TextChannel
 ): Promise<boolean> {
   try {
-    await channel.messages.delete(messageId, reason);
+    await channel.messages.delete(messageId);
     return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to delete a message.", error));
