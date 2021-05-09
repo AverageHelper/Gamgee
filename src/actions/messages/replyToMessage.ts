@@ -1,5 +1,4 @@
 import type Discord from "discord.js";
-import type { CommandContext } from "../../commands";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { getEnv } from "../../helpers/environment";
 import { useLogger } from "../../logger";
@@ -21,7 +20,7 @@ const logger = useLogger();
  * @returns a `Promise` that resolves with `true` if the send succeeds, or
  * `false` if there was an error.
  */
-export async function sendPrivately(user: Discord.User, content: string): Promise<boolean> {
+export async function sendPrivately(user: Discord.User, content: string): Promise<void> {
   try {
     if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
       logger.error(
@@ -31,22 +30,44 @@ export async function sendPrivately(user: Discord.User, content: string): Promis
       await user.send(content);
       logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
     }
-    // Normal bot messages get ignored
-    return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to send direct message.", error));
-    return false;
   }
 }
 
-export async function replyPrivatelyToCommand(
-  context: CommandContext,
-  content: string
-): Promise<boolean> {
-  if (context.type === "interaction") {
-    return replyPrivately(context.interaction, content);
+async function sendDM(source: Discord.Message, content: string): Promise<void> {
+  const user: Discord.User = source.author;
+  try {
+    if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
+      await source.reply(`(DM to <@!${user.id}>)\n${content}`);
+    } else if (!user.bot) {
+      const response = new StringBuilder();
+      response.push(`(Reply from <#${source.channel.id}>)`);
+      response.pushNewLine();
+      await user.send(content);
+      logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
+    } else {
+      // this is a bot
+      logger.error(
+        `I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
+      );
+    }
+  } catch (error: unknown) {
+    logger.error(
+      richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+    );
   }
-  return replyPrivately(context.message, content);
+}
+
+async function sendEphemeralReply(
+  source: Discord.CommandInteraction,
+  content: string
+): Promise<void> {
+  try {
+    await source.reply(content, { ephemeral: true });
+  } catch (error: unknown) {
+    logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
+  }
 }
 
 /**
@@ -65,33 +86,11 @@ export async function replyPrivatelyToCommand(
 export async function replyPrivately(
   source: Discord.Message | Discord.CommandInteraction,
   content: string
-): Promise<boolean> {
-  try {
-    let user: Discord.User;
-
-    if ("author" in source) {
-      user = source.author;
-    } else {
-      user = source.user;
-    }
-    if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-      await source.reply(`(DM to <@!${user.id}>)\n${content}`);
-    } else if (!user.bot) {
-      const response = new StringBuilder();
-      if ("author" in source) {
-        response.push(`(Reply from <#${source.channel.id}>)`);
-      } else if (source.channel) {
-        response.push(`(Reply from <#${source.channel.id}>)`);
-      }
-      response.pushNewLine();
-      await user.send(content);
-      logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
-    }
-    // Normal bot messages get ignored
-    return true;
-  } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to send direct message.", error));
-    return false;
+): Promise<void> {
+  if ("author" in source) {
+    await sendDM(source, content);
+  } else {
+    await sendEphemeralReply(source, content);
   }
 }
 
@@ -101,34 +100,20 @@ export async function replyPrivately(
  *
  * @param message The message to which to reply.
  * @param content The content of the message to send.
+ * @param shouldMention Whether the user should be pinged with the reply.
  *
  * @returns a `Promise` that resolves if the send succeeds.
  */
-export async function replyWithMention(message: Discord.Message, content: string): Promise<void> {
-  try {
-    await message.reply(content);
-  } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to send message.", error));
-  }
-}
-
-/**
- * Sends a message in the same channel as the provided command, pinging the original sender.
- *
- * @param context The command to which to respond.
- * @param content The content of the message to send.
- *
- * @returns a `Promise` that resolves if the reply succeeds.
- */
-export async function replyWithMentionToCommand(
-  context: CommandContext,
-  content: string
+export async function reply(
+  message: Discord.Message,
+  content: string,
+  shouldMention: boolean = false
 ): Promise<void> {
   try {
-    if (context.type === "interaction") {
-      await context.interaction.reply(content);
+    if (shouldMention) {
+      await message.reply(content);
     } else {
-      await context.message.reply(content);
+      await message.reply(content, { allowedMentions: { users: [] } });
     }
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to send message.", error));

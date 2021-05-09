@@ -107,16 +107,17 @@ export default async function getVideoDetails(
   logger: Logger | null = useLogger()
 ): Promise<VideoDetails | null> {
   // Try the first value as a video URL
-  if (urlString === "") return null;
+  const url = urlString.split(/ +/u)[0] ?? "";
+  if (url === "") return null;
 
   try {
     return await any([
-      getYouTubeVideo(urlString), //
-      getSoundCloudTrack(urlString),
-      getBandcampTrack(urlString)
+      getYouTubeVideo(url), //
+      getSoundCloudTrack(url),
+      getBandcampTrack(url)
     ]);
   } catch (error: unknown) {
-    logger?.error(richErrorMessage(`Failed to fetch song using url '${urlString}'`, error));
+    logger?.error(richErrorMessage(`Failed to fetch song using url '${url}'`, error));
     return null;
   }
 }

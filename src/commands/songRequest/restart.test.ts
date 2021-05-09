@@ -1,14 +1,9 @@
-jest.mock("./actions");
 jest.mock("../../actions/messages");
 jest.mock("../../actions/queue/useQueue");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../permissions");
 
-import * as messageActions from "./actions";
-const mockReply = messageActions.reply as jest.Mock;
-
-import { bulkDeleteMessagesWithIds, replyPrivately } from "../../actions/messages";
-const mockReplyPrivately = replyPrivately as jest.Mock;
+import { bulkDeleteMessagesWithIds } from "../../actions/messages";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
 
 import { useQueue } from "../../actions/queue/useQueue";
@@ -25,14 +20,32 @@ const mockQueueClear = jest.fn();
 const mockStartTyping = jest.fn();
 const mockStopTyping = jest.fn();
 
+import type Discord from "discord.js";
+import type { CommandContext } from "../Command";
 import restart from "./restart";
 import { useTestLogger } from "../../../tests/testUtils/logger";
-import type { CommandContext } from "../Command";
+
+const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
 
 describe("Clear queue contents", () => {
+  let context: CommandContext;
+
   beforeEach(() => {
+    context = ({
+      logger,
+      guild: "the guild",
+      channel: {
+        id: "not-queue-channel"
+      },
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately,
+      startTyping: mockStartTyping,
+      stopTyping: mockStopTyping
+    } as unknown) as CommandContext;
+
     mockUseQueue.mockReturnValue({
       getAllEntries: mockGetAllEntries,
       clear: mockQueueClear
@@ -44,62 +57,36 @@ describe("Clear queue contents", () => {
   });
 
   test("does nothing about a message with no guild", async () => {
-    const context = {
-      logger,
-      message: "reply to me"
-    };
-
-    await expect(restart.execute((context as unknown) as CommandContext)).toResolve();
+    context.guild = null;
+    await expect(restart.execute(context)).resolves.toBeUndefined();
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(context.message, "Can't do that here.");
+    expect(mockReply).toHaveBeenCalledWith("Can't do that here.");
     expect(mockUseQueue).not.toHaveBeenCalled();
   });
 
   test("does nothing when admin and no queue is set up", async () => {
     mockGetQueueChannel.mockResolvedValue(null);
     mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
-    const context = {
-      logger,
-      message: {
-        guild: "the guild",
-        channel: {
-          id: "not-queue-channel"
-        }
-      }
-    };
 
-    await expect(restart.execute((context as unknown) as CommandContext)).toResolve();
+    await expect(restart.execute(context)).resolves.toBeUndefined();
 
     expect(mockReplyPrivately).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      "No queue is set up. Maybe that's what you wanted...?"
-    );
+    expect(mockReply).toHaveBeenCalledWith("No queue is set up. Maybe that's what you wanted...?");
     expect(mockUseQueue).not.toHaveBeenCalled();
   });
 
   test("does nothing when not admin and no queue is set up", async () => {
     mockGetQueueChannel.mockResolvedValue(null);
     mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
-    const context = {
-      logger,
-      message: {
-        guild: "the guild",
-        channel: {
-          id: "not-queue-channel"
-        }
-      }
-    };
 
-    await expect(restart.execute((context as unknown) as CommandContext)).toResolve();
+    await expect(restart.execute(context)).resolves.toBeUndefined();
 
     // Non-admins outside the queue channel get a permission error
     expect(mockReply).not.toHaveBeenCalled();
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
     expect(mockReplyPrivately).toHaveBeenCalledWith(
-      context.message,
       "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
     );
     expect(mockUseQueue).not.toHaveBeenCalled();
@@ -108,22 +95,12 @@ describe("Clear queue contents", () => {
   test("does nothing when not admin and not in queue channel", async () => {
     mockGetQueueChannel.mockResolvedValue({ id: "queue-channel" });
     mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
-    const context = {
-      logger,
-      message: {
-        guild: "the guild",
-        channel: {
-          id: "not-queue-channel"
-        }
-      }
-    };
 
-    await expect(restart.execute((context as unknown) as CommandContext)).toResolve();
+    await expect(restart.execute(context)).resolves.toBeUndefined();
 
     expect(mockReply).not.toHaveBeenCalled();
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
     expect(mockReplyPrivately).toHaveBeenCalledWith(
-      context.message,
       "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
     );
     expect(mockUseQueue).not.toHaveBeenCalled();
@@ -146,19 +123,11 @@ describe("Clear queue contents", () => {
       mockGetQueueChannel.mockResolvedValue(queueChannel);
       mockUserIsAdminForQueueInGuild.mockResolvedValue(isAdmin);
       mockGetAllEntries.mockResolvedValue(queueEntries);
-      const context = {
-        logger,
-        message: {
-          guild: "the guild",
-          channel: {
-            id: channelId,
-            startTyping: mockStartTyping,
-            stopTyping: mockStopTyping
-          }
-        }
-      };
+      context.channel = ({
+        id: channelId
+      } as unknown) as Discord.TextChannel;
 
-      await expect(restart.execute((context as unknown) as CommandContext)).toResolve();
+      await expect(restart.execute(context)).resolves.toBeUndefined();
 
       // Feedback
       expect(mockStartTyping).toHaveBeenCalledTimes(1);
@@ -166,10 +135,9 @@ describe("Clear queue contents", () => {
       expect(mockReply).toHaveBeenCalledTimes(2);
       expect(mockReply).toHaveBeenNthCalledWith(
         1,
-        context.message,
         "Time for a reset! :bucket: Clearing the queue..."
       );
-      expect(mockReply).toHaveBeenNthCalledWith(2, context.message, "The queue has restarted.");
+      expect(mockReply).toHaveBeenNthCalledWith(2, "The queue has restarted.");
 
       // Actions
       expect(mockUseQueue).toHaveBeenCalledTimes(1);

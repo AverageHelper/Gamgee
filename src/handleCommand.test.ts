@@ -110,7 +110,7 @@ describe("Command handler", () => {
           expect.toContainEntries([
             ["client", mockClient],
             ["message", mockMessage],
-            ["args", command.split(/ +/u).slice(1)],
+            ["options", command.split(/ +/u).slice(1)],
             ["storage", null]
           ])
         );

@@ -17,30 +17,22 @@ const setup: Subcommand = {
   ],
   type: "SUB_COMMAND",
   async execute(context) {
-    const {
-      user,
-      guild: messageGuild,
-      options,
-      logger,
-      reply,
-      replyPrivately,
-      deleteInvocation
-    } = context;
+    const { user, guild, options, logger, reply, replyPrivately, deleteInvocation } = context;
 
-    if (!messageGuild) {
+    if (!guild) {
       return reply("Can't do that here.");
     }
 
     await deleteInvocation();
 
     // Only the guild owner may touch the queue.
-    if (!(await userIsAdminInGuild(user, messageGuild))) {
+    if (!(await userIsAdminInGuild(user, guild))) {
       await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
-    const channel = options[0]?.channel as Discord.GuildChannel | undefined;
-    if (!channel) return reply(`Please name a text channel to use for the queue!`);
+    const newQueueChannel = options[0]?.channel as Discord.GuildChannel | undefined;
+    if (!newQueueChannel) return reply(`Please name a text channel to use for the queue!`);
 
     // const channel = getChannelFromMention(messageGuild, channelName);
     // if (!channel) {
@@ -49,15 +41,15 @@ const setup: Subcommand = {
     //   );
     // }
 
-    if (!channel.isText()) {
+    if (!newQueueChannel.isText()) {
       return reply("I can't queue in a voice channel. Please specify a text channel instead");
     }
 
-    const guild = useGuildStorage(messageGuild);
-    logger.info(`Setting up channel '${channel.name}' for queuage.`);
+    const guildStorage = useGuildStorage(guild);
+    logger.info(`Setting up channel '${newQueueChannel.name}' for queuage.`);
     await Promise.all([
-      guild.setQueueChannel(channel.id),
-      channel.send("This is a queue now. :smiley:")
+      guildStorage.setQueueChannel(newQueueChannel.id),
+      newQueueChannel.send("This is a queue now. :smiley:")
     ]);
   }
 };

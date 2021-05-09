@@ -11,11 +11,13 @@ const urlRequest: Subcommand = {
   description: "A YouTube, SoundCloud, or Bandcamp link",
   type: "STRING",
   async execute(context) {
-    const { guild: messageGuild, channel, options, logger, deleteInvocation } = context;
+    const { guild, channel, options, logger, reply, deleteInvocation } = context;
 
-    if (!messageGuild) return;
+    if (!guild) {
+      return reply("Can't do that here.");
+    }
 
-    const queueChannel = await getQueueChannel(messageGuild);
+    const queueChannel = await getQueueChannel(guild);
     if (!queueChannel) {
       return reject_public(context, "No queue is set up.");
     }
@@ -31,8 +33,8 @@ const urlRequest: Subcommand = {
       return;
     }
 
-    const guild = useGuildStorage(messageGuild);
-    const isQueueOpen = await guild.isQueueOpen();
+    const guildStorage = useGuildStorage(guild);
+    const isQueueOpen = await guildStorage.isQueueOpen();
     if (!isQueueOpen) {
       return reject_public(context, "The queue is not open.");
     }

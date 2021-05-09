@@ -3,9 +3,9 @@ jest.mock("github-metadata");
 import gitHubMetadata from "github-metadata";
 const mockGithubMetadata = gitHubMetadata as jest.Mock;
 
-const mockSend = jest.fn();
 const mockStartTyping = jest.fn();
 const mockStopTyping = jest.fn();
+const mockReply = jest.fn().mockResolvedValue(undefined);
 
 import type { CommandContext } from "./Command";
 import languages from "./languages";
@@ -14,14 +14,12 @@ import { useTestLogger } from "../../tests/testUtils/logger";
 const logger = useTestLogger("error");
 
 describe("Language Statistics from GitHub", () => {
-  const mockMessage = {
-    channel: {
-      send: mockSend,
-      startTyping: mockStartTyping,
-      stopTyping: mockStopTyping
-    }
-  };
-  const context = ({ logger, message: mockMessage } as unknown) as CommandContext;
+  const context = ({
+    logger,
+    reply: mockReply,
+    startTyping: mockStartTyping,
+    stopTyping: mockStopTyping
+  } as unknown) as CommandContext;
 
   beforeEach(() => {
     mockGithubMetadata.mockResolvedValue({
@@ -32,7 +30,6 @@ describe("Language Statistics from GitHub", () => {
         HTML: 5
       }
     });
-    mockSend.mockResolvedValue(undefined);
     mockStartTyping.mockResolvedValue(undefined);
     mockStopTyping.mockReturnValue(undefined);
   });
@@ -49,8 +46,8 @@ describe("Language Statistics from GitHub", () => {
       exclude: expect.not.arrayContaining(["languages"]) as Array<string>
     });
 
-    expect(mockSend).toHaveBeenCalled();
-    expect(mockSend).toHaveBeenCalledWith(expect.toContainValue("4"));
+    expect(mockReply).toHaveBeenCalled();
+    expect(mockReply).toHaveBeenCalledWith(expect.toContainValue("4"));
 
     // indicates loading properly
     expect(mockStartTyping).toHaveBeenCalledTimes(1);

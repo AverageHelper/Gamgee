@@ -2,14 +2,7 @@ jest.mock("./actions");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
-jest.mock("../../actions/messages");
 jest.mock("../../permissions");
-
-import { reply } from "./actions";
-const mockReply = reply as jest.Mock;
-
-import { deleteMessage } from "../../actions/messages";
-const mockDeleteMessage = deleteMessage as jest.Mock;
 
 import getUserFromMention from "../../helpers/getUserFromMention";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
@@ -23,13 +16,15 @@ const mockGetQueueChannel = getQueueChannel as jest.Mock;
 import { useQueueStorage } from "../../useQueueStorage";
 const mockUseQueueStorage = useQueueStorage as jest.Mock;
 
-import type Discord from "discord.js";
 import type { QueueEntryManager } from "../../useQueueStorage";
 import type { CommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 import whitelist from "./whitelist";
 
 const mockWhitelistUser = jest.fn();
+const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
 
@@ -44,13 +39,18 @@ describe("Removing from Queue Blacklist", () => {
 
   beforeEach(() => {
     context = ({
-      message: {
-        id: "command-msg",
-        author: { id: "test-user" },
-        guild: { ownerID }
-      },
-      args: ["whitelist", `<@${goodUserId}>`],
-      logger
+      user: { id: "test-user" },
+      guild: { ownerID },
+      options: [
+        {
+          name: "user",
+          value: `<@${goodUserId}>`
+        }
+      ],
+      logger,
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately,
+      deleteInvocation: mockDeleteMessage
     } as unknown) as CommandContext;
 
     queue = ({
@@ -69,46 +69,35 @@ describe("Removing from Queue Blacklist", () => {
   });
 
   test("does nothing without a valid mention (empty space)", async () => {
-    context.args = [""];
+    context.options = [];
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("mention someone")
-    );
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"));
   });
 
   test("does nothing without a mention (no further text)", async () => {
-    context.args = [];
+    context.options = [];
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("mention someone")
-    );
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"));
   });
 
   test("does nothing when not in a guild", async () => {
-    context.message = ({
-      guild: null
-    } as unknown) as Discord.Message;
+    context.guild = null;
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
   test("does nothing for the calling user", async () => {
-    mockGetUserFromMention.mockResolvedValue({ id: context.message.author.id });
+    mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockWhitelistUser).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("whitelist yourself")
-    );
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("whitelist yourself"));
   });
 
   test("does nothing for a user not known to the guild", async () => {
@@ -137,10 +126,7 @@ describe("Removing from Queue Blacklist", () => {
 
     // permissions got checked
     expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledTimes(1);
-    expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledWith(
-      context.message.author,
-      context.message.guild
-    );
+    expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledWith(context.user, context.guild);
 
     // whitelist effect
     expect(mockWhitelistUser).toHaveBeenCalledTimes(1);
@@ -148,12 +134,10 @@ describe("Removing from Queue Blacklist", () => {
 
     // response
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining(goodUserId),
-      false
-    );
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(goodUserId), {
+      shouldMention: false
+    });
     expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
-    expect(mockDeleteMessage).toHaveBeenCalledWith(context.message, expect.toBeString());
+    expect(mockDeleteMessage).toHaveBeenCalledWith();
   });
 });

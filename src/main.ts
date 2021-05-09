@@ -19,26 +19,11 @@ import { useStorage } from "./configStorage";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
 import { replyPrivately } from "./actions/messages";
-import { reply } from "./commands/songRequest/actions";
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
   commands.set(command.name, command);
 });
-
-async function onNewMessage(
-  client: Discord.Client,
-  msg: Discord.Message | Discord.PartialMessage
-): Promise<void> {
-  try {
-    const message = await msg.fetch();
-    const storage = await useStorage(message.guild, logger);
-    await handleCommand(client, message, storage, logger);
-  } catch (error: unknown) {
-    const msgDescription = JSON.stringify(msg, undefined, 2);
-    logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
-  }
-}
 
 async function onInteraction(
   client: Discord.Client,
@@ -69,6 +54,7 @@ async function onInteraction(
     //     .join(", ")}]`
     // );
     logger.debug(`Handling interaction: ${JSON.stringify(interaction, undefined, 2)}`);
+    logger.debug(`Found matching command: ${command.name}`);
     let channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null = null;
     if (interaction.channel?.isText() === true) {
       channel = interaction.channel as
@@ -88,20 +74,41 @@ async function onInteraction(
       options: interaction.options,
       storage,
       logger,
+      prepareForLongRunningTasks: async (ephemeral?: boolean) => {
+        await interaction.defer(ephemeral);
+      },
       replyPrivately: async (content: string) => {
         await replyPrivately(interaction, content);
       },
       reply: async (content: string, options) => {
         if (interaction.deferred) {
-          await interaction.webhook.send(content);
+          await interaction.editReply(content);
         } else {
-          await reply(interaction, content, options?.shouldMention);
+          if (!options || options.shouldMention === undefined || options.shouldMention) {
+            await interaction.reply(content);
+          } else {
+            await interaction.reply(content, { allowedMentions: { users: [] } });
+          }
         }
       },
       deleteInvocation: () => Promise.resolve(undefined),
       startTyping: (count?: number) => void channel?.startTyping(count),
       stopTyping: () => void channel?.stopTyping(true)
     });
+  }
+}
+
+async function onNewMessage(
+  client: Discord.Client,
+  msg: Discord.Message | Discord.PartialMessage
+): Promise<void> {
+  try {
+    const message = await msg.fetch();
+    const storage = await useStorage(message.guild, logger);
+    await handleCommand(client, message, storage, logger);
+  } catch (error: unknown) {
+    const msgDescription = JSON.stringify(msg, undefined, 2);
+    logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
   }
 }
 
@@ -115,6 +122,13 @@ async function onMessageReactionAdd(
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to handle reaction add.", error));
   }
+}
+
+async function prepareCommands(client: Discord.Client): Promise<void> {
+  const testGuild = await client.guilds.fetch("820897928654356512");
+
+  await testGuild.commands.set(Object.values(commandDefinitions)); // set test guild commands
+  await client.application?.commands.set([]); // set global commands
 }
 
 try {
@@ -133,13 +147,7 @@ try {
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
 
-    // Register interactions
-    logger.info(`Registering ${commands.size} commands...`);
-    logger.debug(JSON.stringify(Object.values(commandDefinitions), undefined, 2));
-    // eslint-disable-next-line promise/prefer-await-to-then
-    void client.application?.commands.set(Object.values(commandDefinitions)).then(() => {
-      logger.info("Finished registering commands.");
-    });
+    void prepareCommands(client);
   });
 
   client.on("error", error => {

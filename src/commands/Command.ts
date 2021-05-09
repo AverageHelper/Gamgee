@@ -36,6 +36,9 @@ interface BaseCommandContext {
   /** The options that were passed into the command. */
   options: Array<Discord.CommandInteractionOption>;
 
+  /** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
+  prepareForLongRunningTasks: (ephemeral?: boolean) => Promise<void>;
+
   /** Sends a DM to the command's sender. */
   replyPrivately: (content: string) => Promise<void>;
 

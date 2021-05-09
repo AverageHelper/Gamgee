@@ -1,5 +1,4 @@
 jest.mock("./actions");
-jest.mock("../../actions/messages");
 jest.mock("../../useGuildStorage");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../actions/queue/useQueue");
@@ -19,12 +18,12 @@ const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import getVideoDetails from "../../actions/getVideoDetails";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
-mockGetVideoDetails.mockImplementation(async (query: Array<string>) => {
+mockGetVideoDetails.mockImplementation(async (url: string) => {
   // Enough uncertainty that *something* should go out of order if it's going to
   const ms = Math.floor(Math.random() * 50);
   await new Promise(resolve => setTimeout(resolve, ms));
   return {
-    url: query[0],
+    url,
     title: "video-title",
     duration: {
       seconds: 500
@@ -59,6 +58,7 @@ describe("Song request via URL", () => {
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
   const mockChannelStartTyping = jest.fn().mockResolvedValue(undefined);
   const mockChannelStopTyping = jest.fn().mockResolvedValue(undefined);
+  const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
   const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
   const mockQueueUserEntryCount = jest.fn().mockResolvedValue(0);
@@ -146,11 +146,31 @@ describe("Song request via URL", () => {
     });
 
     const context1 = ({
-      args: [urls[0]],
-      message: mockMessage1,
-      logger
+      guild: mockMessage1.guild,
+      channel: mockMessage1.channel,
+      user: mockMessage1.author,
+      options: [
+        {
+          name: "url",
+          value: urls[0]
+        }
+      ],
+      logger,
+      reply: mockReply,
+      deleteInvocation: mockDeleteMessage
     } as unknown) as CommandContext;
-    const context2 = { ...context1, args: [urls[1]], message: mockMessage2 };
+    const context2 = ({
+      ...context1,
+      options: [
+        {
+          name: "url",
+          value: urls[1]
+        }
+      ],
+      user: mockMessage2.author,
+      guild: mockMessage2.guild,
+      channel: mockMessage2.channel
+    } as unknown) as CommandContext;
 
     // Request a song twice in quick succession
     void urlRequest.execute(context1);
@@ -178,11 +198,19 @@ describe("Song request via URL", () => {
     await Promise.all([
       mockMessages
         .map(message => {
-          const args = message.content.split(" ").slice(1);
           return ({
-            args,
-            message,
-            logger
+            options: message.content
+              .split(" ")
+              .slice(1)
+              .map(url => ({
+                name: "url",
+                value: url
+              })),
+            guild: message.guild,
+            channel: message.channel,
+            user: message.author,
+            logger,
+            reply: mockReply
           } as unknown) as CommandContext;
         })
         .map(urlRequest.execute)

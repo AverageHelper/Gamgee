@@ -1,13 +1,5 @@
-jest.mock("./actions");
-jest.mock("../../actions/messages");
 jest.mock("../../permissions");
 jest.mock("../../useGuildStorage");
-
-import * as messageActions from "./actions";
-const mockReply = messageActions.reply as jest.Mock;
-
-import * as otherMessageActions from "../../actions/messages";
-const mockReplyPrivately = otherMessageActions.replyPrivately as jest.Mock;
 
 import { userIsAdminInGuild } from "../../permissions";
 const mockUserIsAdminInGuild = userIsAdminInGuild as jest.Mock;
@@ -15,16 +7,27 @@ const mockUserIsAdminInGuild = userIsAdminInGuild as jest.Mock;
 import { useGuildStorage } from "../../useGuildStorage";
 const mockUseGuildStorage = useGuildStorage as jest.Mock;
 
-const mockSetQueueChannel = jest.fn();
-
-import teardown from "./teardown";
-import { useTestLogger } from "../../../tests/testUtils/logger";
 import type { CommandContext } from "../Command";
+import { useTestLogger } from "../../../tests/testUtils/logger";
+import teardown from "./teardown";
+
+const mockSetQueueChannel = jest.fn();
+const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
 
 describe("Queue teardown", () => {
+  let context: CommandContext;
+
   beforeEach(() => {
+    context = ({
+      guild: "the guild",
+      logger,
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately
+    } as unknown) as CommandContext;
+
     mockReplyPrivately.mockResolvedValue(undefined);
     mockUserIsAdminInGuild.mockResolvedValue(true);
     mockUseGuildStorage.mockReturnValue({
@@ -34,51 +37,32 @@ describe("Queue teardown", () => {
   });
 
   test("does nothing about a message with no guild", async () => {
-    const context = {
-      logger,
-      message: "reply to me"
-    };
-
-    await expect(teardown.execute((context as unknown) as CommandContext)).toResolve();
+    context.guild = null;
+    await expect(teardown.execute(context)).resolves.toBeUndefined();
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(context.message, "Can't do that here.");
+    expect(mockReply).toHaveBeenCalledWith("Can't do that here.");
     expect(mockSetQueueChannel).not.toHaveBeenCalled();
   });
 
   test("does nothing when the sender doesn't have permission", async () => {
     mockUserIsAdminInGuild.mockResolvedValue(false);
-    const context = {
-      logger,
-      message: {
-        guild: "the guild"
-      }
-    };
-
-    await expect(teardown.execute((context as unknown) as CommandContext)).toResolve();
+    await expect(teardown.execute(context)).resolves.toBeUndefined();
 
     expect(mockReply).not.toHaveBeenCalled();
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
     expect(mockReplyPrivately).toHaveBeenCalledWith(
-      context.message,
       "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that..."
     );
     expect(mockSetQueueChannel).not.toHaveBeenCalled();
   });
 
   test("unsets the guild queue", async () => {
-    const context = {
-      logger,
-      message: {
-        guild: "the guild"
-      }
-    };
-
-    await expect(teardown.execute((context as unknown) as CommandContext)).toResolve();
+    await expect(teardown.execute(context)).resolves.toBeUndefined();
 
     expect(mockReplyPrivately).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(context.message, "Queue deleted.");
+    expect(mockReply).toHaveBeenCalledWith("Queue deleted.");
     expect(mockSetQueueChannel).toHaveBeenCalledTimes(1);
     expect(mockSetQueueChannel).toHaveBeenCalledWith(null);
   });

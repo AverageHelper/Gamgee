@@ -1,3 +1,3 @@
-export const sendPrivately = jest.fn().mockResolvedValue(true);
-export const replyPrivately = jest.fn().mockResolvedValue(true);
-export const replyWithMention = jest.fn().mockResolvedValue(undefined);
+export const sendPrivately = jest.fn().mockResolvedValue(undefined);
+export const replyPrivately = jest.fn().mockResolvedValue(undefined);
+export const reply = jest.fn().mockResolvedValue(undefined);

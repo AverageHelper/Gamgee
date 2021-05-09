@@ -9,37 +9,29 @@ const restart: Subcommand = {
   description: "Empty the queue and start a fresh queue session.",
   type: "SUB_COMMAND",
   async execute(context) {
-    const {
-      user,
-      guild,
-      channel: messageChannel,
-      reply,
-      replyPrivately,
-      startTyping,
-      stopTyping
-    } = context;
+    const { user, guild, channel, reply, replyPrivately, startTyping, stopTyping } = context;
 
     if (!guild) {
       return reply("Can't do that here.");
     }
 
-    const channel = await getQueueChannel(guild);
+    const queueChannel = await getQueueChannel(guild);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && messageChannel?.id !== channel?.id) {
+    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
       await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
-    if (!channel) {
+    if (!queueChannel) {
       return reply("No queue is set up. Maybe that's what you wanted...?");
     }
 
     await reply("Time for a reset! :bucket: Clearing the queue...");
     startTyping(5);
 
-    const queue = useQueue(channel);
+    const queue = useQueue(queueChannel);
     const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
-    await bulkDeleteMessagesWithIds(toBeDeleted, channel);
+    await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
     await queue.clear();
 
     stopTyping();

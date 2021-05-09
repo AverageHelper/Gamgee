@@ -6,7 +6,7 @@ import { setConfigValue } from "../../actions/config/setConfigValue";
 
 const set: Subcommand = {
   name: "set",
-  description: "Change the server's prefix for message commands.",
+  description: "Set the value of a configuration setting.",
   type: "SUB_COMMAND_GROUP",
   options: allKeys.map(key => ({
     name: key,

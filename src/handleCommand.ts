@@ -8,8 +8,7 @@ import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import * as commandDefinitions from "./commands";
 import logUser from "./helpers/logUser";
-import { deleteMessage, replyPrivately } from "./actions/messages";
-import { reply as replyToMessage } from "./commands/songRequest/actions";
+import { deleteMessage, reply, replyPrivately } from "./actions/messages";
 
 const commands = new Discord.Collection<string, Command>();
 Object.values(commandDefinitions).forEach(command => {
@@ -132,11 +131,31 @@ export async function handleCommand(
     const args = q.slice(1);
     logger.debug(`Handling command '${commandName}' with args [${args.join(", ")}]`);
 
-    const options: Array<MessageCommandInteractionOption> = args.map((arg, idx) => ({
-      name: `arg${idx}`,
-      type: "STRING",
-      value: arg
-    }));
+    const options: Array<MessageCommandInteractionOption> = [];
+
+    // one argument
+    const firstArg = args.shift();
+    if (firstArg !== undefined) {
+      let lastOption: MessageCommandInteractionOption = {
+        name: firstArg,
+        type: "STRING",
+        value: firstArg,
+        options: []
+      };
+      options.push(lastOption);
+      while (args.length > 0) {
+        // two arguments or more
+        const name = args.shift() as string;
+        const nextOption: MessageCommandInteractionOption = {
+          name,
+          type: "STRING",
+          value: name,
+          options: []
+        };
+        lastOption.options = [nextOption];
+        lastOption = nextOption;
+      }
+    }
 
     return await command.execute({
       type: "message",
@@ -149,11 +168,12 @@ export async function handleCommand(
       options,
       storage,
       logger,
+      prepareForLongRunningTasks: () => Promise.resolve(),
       replyPrivately: async (content: string) => {
         await replyPrivately(message, content);
       },
       reply: async (content: string, options) => {
-        await replyToMessage(message, content, options?.shouldMention);
+        await reply(message, content, options?.shouldMention);
       },
       deleteInvocation: async () => {
         await deleteMessage(message);

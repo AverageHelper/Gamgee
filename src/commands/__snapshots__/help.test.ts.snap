@@ -10,19 +10,19 @@ exports[`Help command describes all commands 1`] = `
 \`?languages\` - Print my core repository's language statistics.
 \`?now-playing\` - DM you a link to the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
-\`?sr <YouTube, SoundCloud, or Bandcamp link>\` - Submit a song to the queue.
+\`?sr\` - Submit a song to the queue.
     \`?sr info\` - Print a handy message to let people know how to queue-up.
-    \`?sr setup <channel mention>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
-    \`?sr teardown <channel mention>\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
-    \`?sr blacklist <user mention>\` - Bars a user from making song requests. *(Server owner only. No touch!)*
-    \`?sr whitelist <user mention>\` - Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*
+    \`?sr setup <channel>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
+    \`?sr teardown\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
+    \`?sr blacklist <user>\` - Bars a user from making song requests. *(Server owner only. No touch!)*
+    \`?sr whitelist <user>\` - Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*
     \`?sr open\` - Start accepting song requests to the queue.
     \`?sr close\` - Stop accepting song requests to the queue.
-    \`?sr limit <entry-duration|cooldown|count>\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?sr limit\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?sr stats\` - Print statistics on the current queue.
     \`?sr restart\` - Empty the queue and start a fresh queue session.
 \`?t\` - Start typing. :wink:
 \`?version\` - Display the bot's current codebase version.
-\`?video <YouTube, SoundCloud, or Bandcamp link>\` - Put the video title and duration in chat.
+\`?video <url>\` - Reply with the video title and duration.
 "
 `;
