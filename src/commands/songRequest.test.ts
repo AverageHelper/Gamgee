@@ -1,22 +1,18 @@
-jest.mock("./actions");
-jest.mock("../../useGuildStorage");
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../actions/queue/useQueue");
-jest.mock("../../actions/getVideoDetails");
+jest.mock("../useGuildStorage");
+jest.mock("../actions/queue/getQueueChannel");
+jest.mock("../actions/queue/useQueue");
+jest.mock("../actions/getVideoDetails");
 
-import * as messageActions from "./actions";
-const mockRejectPrivate = messageActions.reject_private as jest.Mock;
-
-import * as queueActions from "../../actions/queue/useQueue";
+import * as queueActions from "../actions/queue/useQueue";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
 
-import * as guildStorage from "../../useGuildStorage";
+import * as guildStorage from "../useGuildStorage";
 const mockGuildStorage = guildStorage.useGuildStorage as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import getVideoDetails from "../../actions/getVideoDetails";
+import getVideoDetails from "../actions/getVideoDetails";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
   // Enough uncertainty that *something* should go out of order if it's going to
@@ -33,9 +29,9 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type Discord from "discord.js";
-import type { CommandContext } from "../Command";
-import urlRequest from "./urlRequest";
-import { useTestLogger } from "../../../tests/testUtils/logger";
+import type { CommandContext } from "./Command";
+import songRequest from "./songRequest";
+import { useTestLogger } from "../../tests/testUtils/logger";
 
 const logger = useTestLogger("error");
 
@@ -55,6 +51,7 @@ describe("Song request via URL", () => {
   const botId = "this-user";
 
   const mockReply = jest.fn().mockResolvedValue(undefined);
+  const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
   const mockChannelStartTyping = jest.fn().mockResolvedValue(undefined);
   const mockChannelStopTyping = jest.fn().mockResolvedValue(undefined);
@@ -128,6 +125,29 @@ describe("Song request via URL", () => {
     } as unknown) as Discord.Message;
   }
 
+  describe("Song request help", () => {
+    test("descibes how to submit a song", async () => {
+      const context = ({
+        guild: "any-guild",
+        channel: "any-channel",
+        user: "doesn't matter",
+        options: [],
+        logger,
+        reply: mockReply,
+        replyPrivately: mockReplyPrivately,
+        deleteInvocation: mockDeleteMessage
+      } as unknown) as CommandContext;
+
+      await songRequest.execute(context);
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
+
+      const calls = mockReply.mock.calls[0] as Array<unknown>;
+      const description = calls[0];
+      expect(description).toMatchSnapshot();
+    });
+  });
+
   test("only a user's first submission gets in if a cooldown exists", async () => {
     const mockMessage1 = mockMessage("another-user", `?sr ${urls[0]}`);
     const mockMessage2 = mockMessage("another-user", `?sr ${urls[1]}`);
@@ -157,6 +177,7 @@ describe("Song request via URL", () => {
       ],
       logger,
       reply: mockReply,
+      replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
     } as unknown) as CommandContext;
     const context2 = ({
@@ -173,8 +194,8 @@ describe("Song request via URL", () => {
     } as unknown) as CommandContext;
 
     // Request a song twice in quick succession
-    void urlRequest.execute(context1);
-    await urlRequest.execute(context2);
+    void songRequest.execute(context1);
+    await songRequest.execute(context2);
 
     // Wait for handles to close
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -184,7 +205,9 @@ describe("Song request via URL", () => {
     expect(mockQueuePush).toHaveBeenCalledWith(expect.toContainEntry(["url", urls[0]]));
 
     // The submission should have been rejected with a cooldown warning via DMs
-    expect(mockRejectPrivate).toHaveBeenCalledTimes(1);
+    expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait"));
   });
 
   test("submissions enter the queue in order", async () => {
@@ -210,10 +233,11 @@ describe("Song request via URL", () => {
             channel: message.channel,
             user: message.author,
             logger,
-            reply: mockReply
+            reply: mockReply,
+            replyPrivately: mockReplyPrivately
           } as unknown) as CommandContext;
         })
-        .map(urlRequest.execute)
+        .map(songRequest.execute)
     ]);
 
     // Wait for handles to close

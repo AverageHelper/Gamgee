@@ -1,7 +1,6 @@
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../permissions");
-jest.mock("./songRequest/actions");
 
 import { useQueue } from "../actions/queue/useQueue";
 const mockUseQueue = useQueue as jest.Mock;

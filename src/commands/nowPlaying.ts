@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
 import type { Command } from "./Command";
-import getQueueChannel from "../actions/queue/getQueueChannel";
 import { useQueue } from "../actions/queue/useQueue";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 import randomElementOfArray from "../helpers/randomElementOfArray";
 import StringBuilder from "../helpers/StringBuilder";
 

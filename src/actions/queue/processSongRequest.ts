@@ -5,12 +5,25 @@ import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { CommandContext } from "../../commands";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useQueue } from "./useQueue";
-import { reject_public, reject_private } from "../../commands/songRequest/actions";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
+
+export async function reject_private(context: CommandContext, reason: string): Promise<void> {
+  await Promise.all([
+    context.deleteInvocation(), //
+    context.replyPrivately(`:hammer: ${reason}`)
+  ]);
+}
+
+export async function reject_public(context: CommandContext, reason: string): Promise<void> {
+  await context.reply(`:hammer: ${reason}`);
+  if (context.type === "message") {
+    await context.message.suppressEmbeds(true);
+  }
+}
 
 interface SongAcceptance {
   queue: QueueManager;

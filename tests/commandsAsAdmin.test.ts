@@ -9,9 +9,10 @@ import {
 } from "./discordUtils";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
-const TESTER_ID = requireEnv("CORDE_BOT_ID");
 const RUN_CHANNEL_ID = requireEnv("CHANNEL_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
+
+const QUEUE_COMMAND = "queue";
 
 describe("Command as admin", () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";
@@ -22,7 +23,7 @@ describe("Command as admin", () => {
     await sendMessage(`**'${expect.getState().currentTestName}'**`);
 
     await setIsQueueCreator(true);
-    await commandResponseInSameChannel("sr teardown");
+    await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
 
     // Add the Queue Admin role to the tester bot
     await setIsQueueCreator(false);
@@ -36,9 +37,7 @@ describe("Command as admin", () => {
     });
   });
 
-  describe("sr", () => {
-    const needSongLink = `:hammer: <@!${TESTER_ID}>, You're gonna have to add a song link to that.`;
-
+  describe("queue", () => {
     describe("when the queue is not set up", () => {
       const NO_QUEUE = "no queue";
 
@@ -50,7 +49,7 @@ describe("Command as admin", () => {
       `(
         "$subcommand asks the user to set up the queue",
         async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(`sr ${subcommand}`);
+          const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} ${subcommand}`);
           expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
         }
       );
@@ -61,29 +60,24 @@ describe("Command as admin", () => {
       });
     });
 
-    test("asks for a song link", async () => {
-      const response = await commandResponseInSameChannel("sr");
-      expect(response?.content).toBe(needSongLink);
-    });
-
     describe("no queue yet", () => {
       beforeEach(async () => {
         await sendMessage(`**Setup**`);
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
-        await commandResponseInSameChannel("sr teardown");
-        await commandResponseInSameChannel("sr close");
-        await commandResponseInSameChannel("sr restart");
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
         await waitForMessage(
           msg =>
             msg.author.id === UUT_ID &&
             msg.channel.id === RUN_CHANNEL_ID &&
             msg.content.includes("has restarted")
         );
-        await commandResponseInSameChannel("sr limit count null");
-        await commandResponseInSameChannel("sr limit cooldown null");
-        await commandResponseInSameChannel("sr limit entry-duration null");
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit count null`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit cooldown null`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit entry-duration null`);
 
         await setIsQueueCreator(false);
         await sendMessage(`**Run**`);
@@ -91,7 +85,7 @@ describe("Command as admin", () => {
 
       test("fails to set up a queue without a channel mention", async () => {
         await setIsQueueCreator(true);
-        const cmdMessage = await sendCommand("sr setup");
+        const cmdMessage = await sendCommand(`${QUEUE_COMMAND} setup`);
         const response = await waitForMessage(
           msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
         );
@@ -101,12 +95,12 @@ describe("Command as admin", () => {
 
       test("fails to set up a queue with an improper channel mention", async () => {
         await setIsQueueCreator(true);
-        const response = await commandResponseInSameChannel("sr setup queue");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup queue`);
         expect(response?.content).toContain("That's not a real channel");
       });
 
       test("fails to set up a queue without owner permission", async () => {
-        const response = await commandResponseInSameChannel("sr setup queue");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup queue`);
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
       });
 
@@ -116,12 +110,12 @@ describe("Command as admin", () => {
         ${"cooldown"}
         ${"count"}
       `("fails to set $key limits on the queue", async ({ key }: { key: string }) => {
-        const response = await commandResponseInSameChannel(`sr limit ${key} 3`);
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key} 3`);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
       test("fails to get the queue's global limits", async () => {
-        const response = await commandResponseInSameChannel("sr limit");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit`);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
@@ -133,30 +127,30 @@ describe("Command as admin", () => {
       `(
         "allows the tester to get the queue's global $key limit",
         async ({ key }: { key: string }) => {
-          const response = await commandResponseInSameChannel(`sr limit ${key}`);
+          const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key}`);
           expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
         }
       );
 
       test("fails to open the queue", async () => {
-        const response = await commandResponseInSameChannel("sr open");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
       test("fails to close the queue", async () => {
-        const response = await commandResponseInSameChannel("sr close");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
       test("fails to see queue statistics", async () => {
-        const response = await commandResponseInSameChannel("sr stats");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} stats`);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
       // FIXME: This needs to run last b/c it only works once per server. Set up a teardown command.
       test("allows the tester to set up a queue", async () => {
         await setIsQueueCreator(true);
-        await sendCommand(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        await sendCommand(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
         const response = await waitForMessage(
           msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
         );
@@ -170,20 +164,20 @@ describe("Command as admin", () => {
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
-        await commandResponseInSameChannel("sr teardown");
-        await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
-        await commandResponseInSameChannel("sr close");
-        await commandResponseInSameChannel("sr restart");
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
         await waitForMessage(
           msg =>
             msg.author.id === UUT_ID &&
             msg.channel.id === RUN_CHANNEL_ID &&
             msg.content.includes("has restarted")
         );
-        await commandResponseInSameChannel("sr limit count null");
-        await commandResponseInSameChannel("sr limit cooldown null");
-        await commandResponseInSameChannel("sr limit entry-duration null");
-        await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit count null`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit cooldown null`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit entry-duration null`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
 
         await setIsQueueCreator(false);
         await sendMessage(`**Run**`);
@@ -191,23 +185,31 @@ describe("Command as admin", () => {
 
       describe("queue open", () => {
         beforeEach(async () => {
-          await commandResponseInSameChannel("sr open");
+          await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
         });
 
         test("fails to open the queue", async () => {
-          const response = await commandResponseInSameChannel("sr open", undefined, "already open");
+          const response = await commandResponseInSameChannel(
+            `${QUEUE_COMMAND} open`,
+            undefined,
+            "already open"
+          );
           expect(response?.content).toContain("already open");
         });
 
         test("allows the tester to close the queue", async () => {
-          const response = await commandResponseInSameChannel("sr close", undefined, "now closed");
+          const response = await commandResponseInSameChannel(
+            `${QUEUE_COMMAND} close`,
+            undefined,
+            "now closed"
+          );
           expect(response?.content).not.toContain("already");
           expect(response?.content).toContain("now closed");
         });
 
         test("allows the tester to see queue statistics", async () => {
           const response = await commandResponseInSameChannel(
-            "sr stats",
+            `${QUEUE_COMMAND} stats`,
             undefined,
             "Queue channel"
           );
@@ -221,18 +223,22 @@ describe("Command as admin", () => {
 
       describe("queue closed", () => {
         beforeEach(async () => {
-          await commandResponseInSameChannel("sr close");
+          await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         });
 
         test("allows the tester to open the queue", async () => {
-          const response = await commandResponseInSameChannel("sr open", undefined, "now open");
+          const response = await commandResponseInSameChannel(
+            `${QUEUE_COMMAND} open`,
+            undefined,
+            "now open"
+          );
           expect(response?.content).not.toContain("already");
           expect(response?.content).toContain("now open");
         });
 
         test("fails to close the queue", async () => {
           const response = await commandResponseInSameChannel(
-            "sr close",
+            `${QUEUE_COMMAND} close`,
             undefined,
             "already closed"
           );
@@ -241,7 +247,7 @@ describe("Command as admin", () => {
 
         test("allows the tester to see queue statistics", async () => {
           const response = await commandResponseInSameChannel(
-            "sr stats",
+            `${QUEUE_COMMAND} stats`,
             undefined,
             "Queue channel"
           );
@@ -256,8 +262,8 @@ describe("Command as admin", () => {
   });
 
   describe("video", () => {
-    const info = `<@${TESTER_ID}>, Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 33 seconds)`;
-    const needSongLink = `<@${TESTER_ID}>, You're gonna have to add a song link to that.`;
+    const info = `Rick Astley - Never Gonna Give You Up (Video): (3 minutes, 33 seconds)`;
+    const needSongLink = `You're gonna have to add a song link to that.`;
 
     test("asks for a song link", async () => {
       const response = await commandResponseInSameChannel("video");

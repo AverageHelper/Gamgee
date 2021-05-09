@@ -22,17 +22,15 @@ export default async function describeAllCommands(
   // Describe all commands
   const bodyBuilder = new StringBuilder();
   commands.array().forEach(command => {
-    const requiredArg: Discord.ApplicationCommandOptionData | undefined = command.options?.find(
-      optn => optn.required
-    );
-    const requiredArgFormat: string | undefined = requiredArg ? `<${requiredArg.name}>` : undefined;
+    const firstArg: Discord.ApplicationCommandOptionData | undefined = command.options?.[0];
+    const firstArgFormat: string | undefined = firstArg ? `<${firstArg.name}>` : undefined;
     const cmdDesc = new StringBuilder();
 
     // Describe the command
     cmdDesc.push(CODE);
     cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
-    if (requiredArgFormat !== undefined && requiredArgFormat !== "") {
-      cmdDesc.push(` ${requiredArgFormat}`);
+    if (firstArgFormat !== undefined && firstArgFormat !== "") {
+      cmdDesc.push(` ${firstArgFormat}`);
     }
     cmdDesc.push(CODE);
 
@@ -43,12 +41,8 @@ export default async function describeAllCommands(
     command.options
       ?.filter(optn => optn.type === "SUB_COMMAND" || optn.type === "SUB_COMMAND_GROUP")
       ?.forEach(sub => {
-        const requiredSubarg: Discord.ApplicationCommandOptionData | undefined = sub.options?.find(
-          optn => optn.required
-        );
-        const requiredSubargFormat: string | undefined = requiredSubarg
-          ? `<${requiredSubarg.name}>`
-          : undefined;
+        const subarg: Discord.ApplicationCommandOptionData | undefined = sub.options?.[0];
+        const subargFormat: string | undefined = subarg ? `<${subarg.name}>` : undefined;
 
         // Describe the subcommand
         const subDesc = new StringBuilder();
@@ -57,8 +51,8 @@ export default async function describeAllCommands(
 
         subDesc.push(CODE);
         subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
-        if (requiredSubargFormat !== undefined && requiredSubargFormat !== "") {
-          subDesc.push(` ${requiredSubargFormat}`);
+        if (subargFormat !== undefined && subargFormat !== "") {
+          subDesc.push(` ${subargFormat}`);
         }
         subDesc.push(CODE);
 

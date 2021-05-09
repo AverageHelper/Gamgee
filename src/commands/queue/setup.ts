@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Subcommand } from "../Command";
-// import getChannelFromMention from "../../helpers/getChannelFromMention";
+import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { useGuildStorage } from "../../useGuildStorage";
 import { userIsAdminInGuild } from "../../permissions";
 
@@ -31,15 +31,21 @@ const setup: Subcommand = {
       return;
     }
 
-    const newQueueChannel = options[0]?.channel as Discord.GuildChannel | undefined;
-    if (!newQueueChannel) return reply(`Please name a text channel to use for the queue!`);
+    let newQueueChannel: Discord.GuildChannel | string | undefined =
+      (options[0]?.channel as Discord.GuildChannel | undefined) ??
+      (options[0]?.value as string | undefined);
 
-    // const channel = getChannelFromMention(messageGuild, channelName);
-    // if (!channel) {
-    //   return reply(
-    //     "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`."
-    //   );
-    // }
+    if (newQueueChannel === undefined)
+      return reply(`Please name a text channel to use for the queue!`);
+
+    if (typeof newQueueChannel === "string") {
+      newQueueChannel = getChannelFromMention(guild, newQueueChannel);
+      if (!newQueueChannel) {
+        return reply(
+          "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`."
+        );
+      }
+    }
 
     if (!newQueueChannel.isText()) {
       return reply("I can't queue in a voice channel. Please specify a text channel instead");
@@ -51,6 +57,7 @@ const setup: Subcommand = {
       guildStorage.setQueueChannel(newQueueChannel.id),
       newQueueChannel.send("This is a queue now. :smiley:")
     ]);
+    await reply(`New queue set up in <#${newQueueChannel.id}>`, { ephemeral: true });
   }
 };
 

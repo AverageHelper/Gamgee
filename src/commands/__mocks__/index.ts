@@ -18,6 +18,10 @@ export const ping = {
   name: "ping",
   execute: jest.fn().mockResolvedValue(undefined)
 };
+export const queue = {
+  name: "queue",
+  execute: jest.fn().mockResolvedValue(undefined)
+};
 export const songRequest = {
   name: "sr",
   execute: jest.fn().mockResolvedValue(undefined)

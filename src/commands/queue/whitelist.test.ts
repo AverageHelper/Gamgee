@@ -1,4 +1,3 @@
-jest.mock("./actions");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");

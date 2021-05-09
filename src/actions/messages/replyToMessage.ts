@@ -1,7 +1,8 @@
 import type Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage";
+import { DiscordAPIError } from "discord.js";
 import { getEnv } from "../../helpers/environment";
 import { useLogger } from "../../logger";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
 import StringBuilder from "../../helpers/StringBuilder";
 
@@ -94,6 +95,17 @@ export async function replyPrivately(
   }
 }
 
+async function sendMessageInChannel(
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+  content: string
+): Promise<void> {
+  try {
+    await channel.send(content);
+  } catch (error: unknown) {
+    logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
+  }
+}
+
 /**
  * Sends a message in the same channel as the provided `message` with a
  * mention to the sender.
@@ -116,6 +128,12 @@ export async function reply(
       await message.reply(content, { allowedMentions: { users: [] } });
     }
   } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to send message.", error));
+    if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
+      logger.debug(
+        `The message ${message.id} must have been deleted. Sending reply in same channel.`
+      );
+      return sendMessageInChannel(message.channel, content);
+    }
+    logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
   }
 }

@@ -6,8 +6,9 @@ import {
   sendMessage
 } from "./discordUtils";
 
-const TESTER_ID = requireEnv("CORDE_BOT_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
+
+const QUEUE_COMMAND = "queue";
 
 describe("Command as pleb", () => {
   const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
@@ -17,7 +18,7 @@ describe("Command as pleb", () => {
     await sendMessage(`**'${expect.getState().currentTestName}'**`);
 
     await setIsQueueCreator(true);
-    await commandResponseInSameChannel("sr teardown");
+    await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
 
     // Remove the Queue Admin role from the tester bot
     await setIsQueueAdmin(false);
@@ -31,9 +32,7 @@ describe("Command as pleb", () => {
     });
   });
 
-  describe("sr", () => {
-    const needSongLink = `You're gonna have to add a song link to that.`;
-
+  describe("queue", () => {
     describe("when the queue is not set up", () => {
       test.each`
         subcommand
@@ -44,7 +43,7 @@ describe("Command as pleb", () => {
       `(
         "$subcommand yells at the user because they don't have permission",
         async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(`sr ${subcommand}`);
+          const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} ${subcommand}`);
           expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
         }
       );
@@ -64,12 +63,12 @@ describe("Command as pleb", () => {
         await sendMessage(`**Setup**`);
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
-        await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
 
         if (isOpen) {
-          await commandResponseInSameChannel("sr open");
+          await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
         } else {
-          await commandResponseInSameChannel("sr close");
+          await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         }
 
         await setIsQueueCreator(false);
@@ -81,7 +80,7 @@ describe("Command as pleb", () => {
         test("accepts a song request", async () => {
           const response = await commandResponseInSameChannel(`sr ${url}`);
           // Check that the request appears in the queue as well
-          expect(response?.content).toBe(`<@!${TESTER_ID}>, Submission Accepted!`);
+          expect(response?.content).toBe(`Submission Accepted!`);
         });
       } else {
         test("url request tells the user the queue is not open", async () => {
@@ -90,21 +89,18 @@ describe("Command as pleb", () => {
         });
       }
 
-      test("asks for a song link", async () => {
-        const response = await commandResponseInSameChannel("sr");
-        expect(response?.content).toContain(needSongLink);
-      });
-
       test("setup yells at the tester for trying to set up a queue", async () => {
-        let response = await commandResponseInSameChannel("sr setup");
+        let response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup`);
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
 
-        response = await commandResponseInSameChannel(`sr setup <#${QUEUE_CHANNEL_ID}>`);
+        response = await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`
+        );
         expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
       });
 
       test("limit allows the tester to get the queue's global limits", async () => {
-        const response = await commandResponseInSameChannel("sr limit");
+        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit`);
         expect(response?.content).toMatchSnapshot();
       });
 
@@ -117,10 +113,17 @@ describe("Command as pleb", () => {
       `(
         "$subcommand yells at the tester because they don't have permission",
         async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(`sr ${subcommand}`);
+          const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} ${subcommand}`);
           expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
         }
       );
+    });
+  });
+
+  describe("sr", () => {
+    test("provides info on how to use the request command", async () => {
+      const response = await commandResponseInSameChannel("sr");
+      expect(response?.content).toContain("To submit a song, type");
     });
   });
 

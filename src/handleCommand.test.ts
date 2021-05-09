@@ -94,6 +94,7 @@ describe("Command handler", () => {
       ${"languages"}   | ${mockCommandDefinitions.languages.execute}
       ${"now-playing"} | ${mockCommandDefinitions.nowPlaying.execute}
       ${"ping"}        | ${mockCommandDefinitions.ping.execute}
+      ${"queue"}       | ${mockCommandDefinitions.queue.execute}
       ${"sr"}          | ${mockCommandDefinitions.songRequest.execute}
       ${"t"}           | ${mockCommandDefinitions.type.execute}
       ${"version"}     | ${mockCommandDefinitions.version.execute}
@@ -124,6 +125,7 @@ describe("Command handler", () => {
       ${"languages"}
       ${"now-playing"}
       ${"ping"}
+      ${"queue"}
       ${"sr"}
       ${"t"}
       ${"version"}

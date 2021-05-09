@@ -1,8 +1,5 @@
 import type { Command } from "../Command";
-import { reject_public } from "./actions";
-
-import urlRequest from "./urlRequest";
-import info from "./info";
+import StringBuilder from "../../helpers/StringBuilder";
 import setup from "./setup";
 import teardown from "./teardown";
 import blacklist from "./blacklist";
@@ -14,7 +11,6 @@ import stats from "./stats";
 import restart from "./restart";
 
 const namedSubcommands = [
-  info,
   setup,
   teardown,
   blacklist,
@@ -27,15 +23,21 @@ const namedSubcommands = [
 ];
 
 const sr: Command = {
-  name: "sr",
+  name: "queue",
   description: "Submit a song to the queue.",
-  options: [...namedSubcommands, urlRequest],
+  options: namedSubcommands,
   async execute(context) {
-    // Prepare arguments
     const arg: string | undefined = context.options[0]?.name;
     const argOptions = context.options[0]?.options;
     if (arg === undefined || arg === "" || !argOptions) {
-      return reject_public(context, "You're gonna have to add a song link to that.");
+      const response = new StringBuilder("The possible subcommands are:");
+      Object.keys(namedSubcommands).forEach(commandName => {
+        response.pushNewLine();
+        response.push(" - ");
+        response.pushCode(commandName);
+      });
+
+      return context.reply(response.result());
     }
 
     for (const command of namedSubcommands) {
@@ -45,8 +47,7 @@ const sr: Command = {
       }
     }
 
-    // An unnamed command in message mode
-    return urlRequest.execute(context);
+    // Unknown command. Leave it be
   }
 };
 

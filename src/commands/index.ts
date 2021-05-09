@@ -4,6 +4,7 @@ export { default as help } from "./help";
 export { default as languages } from "./languages";
 export { default as nowPlaying } from "./nowPlaying";
 export { default as ping } from "./ping";
+export { default as queue } from "./queue";
 export { default as songRequest } from "./songRequest";
 export { default as type } from "./type";
 export { default as version } from "./version";
