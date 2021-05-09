@@ -21,7 +21,7 @@ exports[`Help command describes all commands 1`] = `
     \`?queue stats\` - Print statistics on the current queue.
     \`?queue restart\` - Empty the queue and start a fresh queue session.
 \`?sr <url>\` - Submit a song to the queue.
-\`?t\` - Start typing. :wink:
+\`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
 \`?video <url>\` - Reply with the video title and duration.
 "

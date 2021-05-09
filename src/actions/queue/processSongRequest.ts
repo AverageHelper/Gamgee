@@ -45,16 +45,17 @@ async function acceptSongRequest({
   shouldSendUrl,
   logger
 }: SongAcceptance): Promise<void> {
-  await Promise.all([
-    queue.push(entry), //
-    shouldSendUrl ? context.reply(entry.url) : null
-  ]);
+  await queue.push(entry);
   logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
   logger.debug(
     `Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
   );
-  // Send acceptance after the potential `send(entry.url)` call
-  await context.reply(`Submission Accepted!`);
+
+  if (shouldSendUrl) {
+    await context.reply(`${entry.url}\nSubmission Accepted!`);
+  } else {
+    await context.reply(`Submission Accepted!`);
+  }
 }
 
 export interface SongRequest {

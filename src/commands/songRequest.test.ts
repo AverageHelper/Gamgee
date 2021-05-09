@@ -50,6 +50,7 @@ describe("Song request via URL", () => {
   ];
   const botId = "this-user";
 
+  const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
   const mockReply = jest.fn().mockResolvedValue(undefined);
   const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
@@ -101,6 +102,7 @@ describe("Song request via URL", () => {
       },
       createdAt: new Date(),
       client: (mockClient as unknown) as Discord.Client,
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
       channel: {
         id: "request-channel-456",
@@ -133,6 +135,7 @@ describe("Song request via URL", () => {
         user: "doesn't matter",
         options: [],
         logger,
+        prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
         reply: mockReply,
         replyPrivately: mockReplyPrivately,
         deleteInvocation: mockDeleteMessage
@@ -176,6 +179,7 @@ describe("Song request via URL", () => {
         }
       ],
       logger,
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
       replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
@@ -233,6 +237,7 @@ describe("Song request via URL", () => {
             channel: message.channel,
             user: message.author,
             logger,
+            prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
             reply: mockReply,
             replyPrivately: mockReplyPrivately
           } as unknown) as CommandContext;

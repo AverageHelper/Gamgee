@@ -24,10 +24,10 @@ const close: Subcommand = {
       return;
     }
     if (!queueChannel) {
-      return reply("There's no queue to close. Have you set one up yet?");
+      return reply("There's no queue to close. Have you set one up yet?", { ephemeral: true });
     }
     if (!isQueueOpen) {
-      return reply("The queue is already closed, silly! :stuck_out_tongue:");
+      return reply("The queue is already closed, silly! :stuck_out_tongue:", { ephemeral: true });
     }
 
     const queueIsCurrent = channel?.id === queueChannel.id;

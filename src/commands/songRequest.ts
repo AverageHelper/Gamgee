@@ -20,11 +20,22 @@ const sr: Command = {
     }
   ],
   async execute(context) {
-    const { guild, channel, options, storage, logger, reply, deleteInvocation } = context;
+    const {
+      guild,
+      channel,
+      options,
+      storage,
+      logger,
+      prepareForLongRunningTasks,
+      reply,
+      deleteInvocation
+    } = context;
 
     if (!guild) {
       return reply("Can't do that here.");
     }
+
+    await prepareForLongRunningTasks();
 
     const queueChannel = await getQueueChannel(guild);
     if (!queueChannel) {
