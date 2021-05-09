@@ -1,6 +1,5 @@
 import type Discord from "discord.js";
-import type { Command } from "../commands";
-import type { Storage } from "../configStorage";
+import type { Command, CommandContext } from "../commands";
 import { getConfigCommandPrefix } from "./config/getConfigValue";
 import StringBuilder from "../helpers/StringBuilder";
 
@@ -11,10 +10,11 @@ import StringBuilder from "../helpers/StringBuilder";
  * @returns a string describing all commands.
  */
 export default async function describeAllCommands(
-  storage: Storage | null,
+  context: CommandContext,
   commands: Discord.Collection<string, Command>
 ): Promise<string> {
-  const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
+  const COMMAND_PREFIX =
+    context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
   const DASH = " - ";
   const INDENT = "    ";
   const CODE = "`";
@@ -23,7 +23,10 @@ export default async function describeAllCommands(
   const bodyBuilder = new StringBuilder();
   commands.array().forEach(command => {
     const firstArg: Discord.ApplicationCommandOptionData | undefined = command.options?.[0];
-    const firstArgFormat: string | undefined = firstArg ? `<${firstArg.name}>` : undefined;
+    const firstArgFormat: string | undefined =
+      firstArg && !["SUB_COMMAND", "SUB_COMMAND_GROUP"].includes(firstArg.type)
+        ? `<${firstArg.name}>`
+        : undefined;
     const cmdDesc = new StringBuilder();
 
     // Describe the command
@@ -41,8 +44,10 @@ export default async function describeAllCommands(
     command.options
       ?.filter(optn => optn.type === "SUB_COMMAND" || optn.type === "SUB_COMMAND_GROUP")
       ?.forEach(sub => {
-        const subarg: Discord.ApplicationCommandOptionData | undefined = sub.options?.[0];
-        const subargFormat: string | undefined = subarg ? `<${subarg.name}>` : undefined;
+        const subargs = sub.options;
+        const subargFormat: string | undefined = subargs
+          ? `<${subargs.map(arg => arg.name).join(" | ")}>`
+          : undefined;
 
         // Describe the subcommand
         const subDesc = new StringBuilder();

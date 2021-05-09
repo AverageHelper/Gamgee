@@ -24,7 +24,7 @@ const namedSubcommands = [
 
 const sr: Command = {
   name: "queue",
-  description: "Submit a song to the queue.",
+  description: "Administrative commands to manage the song queue.",
   options: namedSubcommands,
   async execute(context) {
     if (!context.guild) {

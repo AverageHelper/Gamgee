@@ -130,6 +130,7 @@ describe("Song request via URL", () => {
   describe("Song request help", () => {
     test("descibes how to submit a song", async () => {
       const context = ({
+        type: "message",
         guild: "any-guild",
         channel: "any-channel",
         user: "doesn't matter",

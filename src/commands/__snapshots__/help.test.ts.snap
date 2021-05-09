@@ -2,7 +2,7 @@
 
 exports[`Help command describes all commands 1`] = `
 "Commands:
-\`?config <get>\` - Read and modify config options. *(Server owner only. No touch!)*
+\`?config\` - Read and modify config options. *(Server owner only. No touch!)*
     \`?config get <command_prefix>\` - Get the value of a configuration setting.
     \`?config set <command_prefix>\` - Set the value of a configuration setting.
     \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
@@ -10,14 +10,14 @@ exports[`Help command describes all commands 1`] = `
 \`?languages\` - Print my core repository's language statistics.
 \`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
-\`?queue <setup>\` - Submit a song to the queue.
+\`?queue\` - Administrative commands to manage the song queue.
     \`?queue setup <channel>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
     \`?queue teardown\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
     \`?queue blacklist <user>\` - Show the list of blacklisted users, or add a user to the blacklist. *(Server owner only. No touch!)*
     \`?queue whitelist <user>\` - Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*
     \`?queue open\` - Start accepting song requests to the queue.
     \`?queue close\` - Stop accepting song requests to the queue.
-    \`?queue limit <entry-duration>\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?queue limit <entry-duration | cooldown | count>\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?queue stats\` - Print statistics on the current queue.
     \`?queue restart\` - Empty the queue and start a fresh queue session.
 \`?sr <url>\` - Submit a song to the queue.

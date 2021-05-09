@@ -5,7 +5,7 @@ import describeAllCommands from "../actions/describeAllCommands";
 const help: Command = {
   name: "help",
   description: "Print a handy help message.",
-  async execute({ storage, replyPrivately }) {
+  async execute(context) {
     // Dynamic import here, b/c ./index depends on us to resolve
     const commandDefinitions = await import("./index");
 
@@ -14,8 +14,8 @@ const help: Command = {
       commands.set(command.name, command);
     });
 
-    const descriptions = await describeAllCommands(storage, commands);
-    return replyPrivately(`Commands:\n${descriptions}`);
+    const descriptions = await describeAllCommands(context, commands);
+    return context.replyPrivately(`Commands:\n${descriptions}`);
   }
 };
 

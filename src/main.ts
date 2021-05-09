@@ -135,6 +135,7 @@ async function onMessageReactionAdd(
 }
 
 async function prepareCommands(client: Discord.Client): Promise<void> {
+  // FIXME: Some commands should be global. We need also to install the guild/admin commands correctly.
   const testGuild = await client.guilds.fetch("820897928654356512");
 
   await testGuild.commands.set(Object.values(commandDefinitions)); // set test guild commands

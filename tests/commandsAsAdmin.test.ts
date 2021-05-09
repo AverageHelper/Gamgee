@@ -147,7 +147,6 @@ describe("Command as admin", () => {
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
-      // FIXME: This needs to run last b/c it only works once per server. Set up a teardown command.
       test("allows the tester to set up a queue", async () => {
         await setIsQueueCreator(true);
         await sendCommand(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);

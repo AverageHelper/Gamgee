@@ -6,6 +6,7 @@ const mockReplyPrivately = jest.fn();
 describe("Help command", () => {
   test("describes all commands", async () => {
     const context = ({
+      type: "message",
       storage: null,
       replyPrivately: mockReplyPrivately
     } as unknown) as CommandContext;

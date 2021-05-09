@@ -21,6 +21,7 @@ const sr: Command = {
   ],
   async execute(context) {
     const {
+      type,
       guild,
       channel,
       options,
@@ -46,7 +47,7 @@ const sr: Command = {
       const nowPlaying = (await import("./nowPlaying")).default;
 
       // Print the standard help
-      const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
+      const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
       const helpBuilder = new StringBuilder();
 
       helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`);
@@ -58,9 +59,13 @@ const sr: Command = {
       );
       helpBuilder.pushNewLine();
       helpBuilder.pushNewLine();
-      helpBuilder.push(
-        `To see the current song, type \`${COMMAND_PREFIX}${nowPlaying.name}\` and check your DMs.`
-      );
+
+      helpBuilder.push("To see the current song, type ");
+      helpBuilder.pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`);
+      if (type === "message") {
+        helpBuilder.push(" and check your DMs");
+      }
+      helpBuilder.push(".");
 
       return reply(helpBuilder.result());
     }
