@@ -40,7 +40,7 @@ async function sendDM(source: Discord.Message, content: string): Promise<void> {
   const user: Discord.User = source.author;
   try {
     if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-      await source.reply(`(DM to <@!${user.id}>)\n${content}`);
+      await reply(source, `(DM to <@!${user.id}>)\n${content}`);
     } else if (!user.bot) {
       const response = new StringBuilder();
       response.push(`(Reply from <#${source.channel.id}>)`);

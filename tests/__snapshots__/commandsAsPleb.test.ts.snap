@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Command as pleb sr when the queue is closed limit allows the tester to get the queue's global limits 1`] = `
+exports[`Command as pleb queue when the queue is closed limit allows the tester to get the queue's global limits 1`] = `
 "Queue Limits:
 \`entry-duration\` - **infinite**
 \`cooldown\` - **none**
 \`count\` - **infinite**"
 `;
 
-exports[`Command as pleb sr when the queue is open limit allows the tester to get the queue's global limits 1`] = `
+exports[`Command as pleb queue when the queue is open limit allows the tester to get the queue's global limits 1`] = `
 "Queue Limits:
 \`entry-duration\` - **infinite**
 \`cooldown\` - **none**

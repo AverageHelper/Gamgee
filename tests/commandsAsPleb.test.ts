@@ -82,6 +82,11 @@ describe("Command as pleb", () => {
           // Check that the request appears in the queue as well
           expect(response?.content).toBe(`Submission Accepted!`);
         });
+
+        test("`sr` alone provides info on how to use the request command", async () => {
+          const response = await commandResponseInSameChannel("sr");
+          expect(response?.content).toContain("To submit a song, type");
+        });
       } else {
         test("url request tells the user the queue is not open", async () => {
           const response = await commandResponseInSameChannel(`sr ${url}`);
@@ -117,13 +122,6 @@ describe("Command as pleb", () => {
           expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
         }
       );
-    });
-  });
-
-  describe("sr", () => {
-    test("provides info on how to use the request command", async () => {
-      const response = await commandResponseInSameChannel("sr");
-      expect(response?.content).toContain("To submit a song, type");
     });
   });
 
