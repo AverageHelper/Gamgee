@@ -43,7 +43,7 @@ async function onInteraction(
   // Ignore self interactions
   if (interaction.user.id === client.user?.id) return;
 
-  logger.debug(`User ${logUser(interaction.user)} sent command: '${interaction.commandName}`);
+  logger.debug(`User ${logUser(interaction.user)} sent command: '${interaction.commandName}'`);
 
   const command = commands.get(interaction.commandName);
   if (command?.execute) {
@@ -53,8 +53,15 @@ async function onInteraction(
     //     .map(opt => `${opt.name} (${opt.type.toString()}): ${opt.value?.toString() ?? "undefined"}`)
     //     .join(", ")}]`
     // );
-    logger.debug(`Handling interaction: ${JSON.stringify(interaction, undefined, 2)}`);
-    logger.debug(`Found matching command: ${command.name}`);
+    // logger.debug(`Handling interaction: ${JSON.stringify(interaction, undefined, 2)}`);
+    logger.debug(
+      `Calling command handler '${command.name}' with options ${JSON.stringify(
+        interaction.options,
+        undefined,
+        2
+      )}`
+    );
+
     let channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null = null;
     if (interaction.channel?.isText() === true) {
       channel = interaction.channel as
@@ -85,9 +92,12 @@ async function onInteraction(
           await interaction.editReply(content);
         } else {
           if (!options || options.shouldMention === undefined || options.shouldMention) {
-            await interaction.reply(content);
+            await interaction.reply(content, { ephemeral: options?.ephemeral });
           } else {
-            await interaction.reply(content, { allowedMentions: { users: [] } });
+            await interaction.reply(content, {
+              ephemeral: options?.ephemeral,
+              allowedMentions: { users: [] }
+            });
           }
         }
       },

@@ -13,16 +13,14 @@ const teardown: Subcommand = {
 
     // Only the guild owner may touch the queue.
     if (!(await userIsAdminInGuild(user, guild))) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     const guildStorage = useGuildStorage(guild);
+
     logger.info(`Forgetting queue channel for guild ${guild.id}.`);
-    await Promise.all([
-      guildStorage.setQueueChannel(null), //
-      reply("Queue deleted.")
-    ]);
+    await guildStorage.setQueueChannel(null);
+    await reply("Queue deleted.");
   }
 };
 

@@ -39,6 +39,7 @@ describe("Manage the Queue Blacklist", () => {
 
   beforeEach(() => {
     context = ({
+      type: "message",
       guild: {
         ownerID,
         name: "Test Guild"
@@ -92,7 +93,7 @@ describe("Manage the Queue Blacklist", () => {
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
-      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1); // only called when not a '/' command
       expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
       expect(mockReplyPrivately).toHaveBeenCalledWith(
         expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
@@ -114,7 +115,9 @@ describe("Manage the Queue Blacklist", () => {
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"));
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against the server owner", async () => {
@@ -123,7 +126,9 @@ describe("Manage the Queue Blacklist", () => {
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist the owner"));
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist the owner"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against the server owner, even when the owner is the caller", async () => {
@@ -133,7 +138,9 @@ describe("Manage the Queue Blacklist", () => {
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"));
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against a user not known to the guild", async () => {
@@ -171,7 +178,8 @@ describe("Manage the Queue Blacklist", () => {
       // response
       expect(mockReply).toHaveBeenCalledTimes(1);
       expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(badUserId), {
-        shouldMention: false
+        shouldMention: false,
+        ephemeral: true
       });
       expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
       expect(mockDeleteMessage).toHaveBeenCalledWith();

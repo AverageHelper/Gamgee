@@ -8,12 +8,12 @@ exports[`Help command describes all commands 1`] = `
     \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
 \`?help\` - Print a handy help message.
 \`?languages\` - Print my core repository's language statistics.
-\`?now-playing\` - DM you a link to the current song in the queue (or my best guess).
+\`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
 \`?queue <setup>\` - Submit a song to the queue.
     \`?queue setup <channel>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
     \`?queue teardown\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
-    \`?queue blacklist <user>\` - Bars a user from making song requests. *(Server owner only. No touch!)*
+    \`?queue blacklist <user>\` - Show the list of blacklisted users, or add a user to the blacklist. *(Server owner only. No touch!)*
     \`?queue whitelist <user>\` - Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*
     \`?queue open\` - Start accepting song requests to the queue.
     \`?queue close\` - Stop accepting song requests to the queue.

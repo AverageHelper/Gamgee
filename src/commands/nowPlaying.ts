@@ -31,7 +31,7 @@ function randomCurrent(): string {
 
 const nowPlaying: Command = {
   name: "now-playing",
-  description: "DM you a link to the current song in the queue (or my best guess).",
+  description: "Reveal the current song in the queue (or my best guess).",
   async execute({ guild, logger, reply, replyPrivately, deleteInvocation }) {
     if (!guild) {
       return reply("Can't do that here.");
@@ -43,8 +43,7 @@ const nowPlaying: Command = {
 
     if (!queueChannel) {
       logger.debug("There is no queue channel for this guild.");
-      await replyPrivately("There's no queue set up right now.");
-      return;
+      return replyPrivately("There's no queue set up right now, so nothing is playing.");
     }
 
     const queue = useQueue(queueChannel);
@@ -53,8 +52,7 @@ const nowPlaying: Command = {
 
     if (!firstNotDone) {
       logger.debug(`The song queue is currently empty.`);
-      await replyPrivately("There's nothing playing right now.");
-      return;
+      return replyPrivately("There's nothing playing right now.");
     }
 
     logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
@@ -70,7 +68,7 @@ const nowPlaying: Command = {
     response.push(`<@${firstNotDone.senderId}>'s submission: `);
     response.push(firstNotDone.url);
 
-    await replyPrivately(response.result());
+    return replyPrivately(response.result());
   }
 };
 

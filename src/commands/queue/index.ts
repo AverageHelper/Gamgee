@@ -27,27 +27,54 @@ const sr: Command = {
   description: "Submit a song to the queue.",
   options: namedSubcommands,
   async execute(context) {
+    if (!context.guild) {
+      return context.reply("Can't do that here.");
+    }
+
     const arg: string | undefined = context.options[0]?.name;
-    const argOptions = context.options[0]?.options;
-    if (arg === undefined || arg === "" || !argOptions) {
+    context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
+    const argOptions = context.options[0]?.options ?? [];
+    if (arg === undefined || arg === "") {
       const response = new StringBuilder("The possible subcommands are:");
-      Object.keys(namedSubcommands).forEach(commandName => {
+      Object.values(namedSubcommands).forEach(command => {
         response.pushNewLine();
         response.push(" - ");
-        response.pushCode(commandName);
+        response.pushCode(command.name);
       });
 
       return context.reply(response.result());
     }
 
+    context.logger.debug(
+      `Searching ${
+        namedSubcommands.length
+      } possible subcommands for one named '${arg}': ${JSON.stringify(
+        namedSubcommands.map(c => c.name),
+        undefined,
+        2
+      )}`
+    );
     for (const command of namedSubcommands) {
       if (command.name === arg) {
         context.options = argOptions;
+        context.logger.debug(
+          `Handling subcommand '${command.name}' with options: ${JSON.stringify(
+            context.options,
+            undefined,
+            2
+          )}`
+        );
         return command.execute(context);
       }
     }
 
-    // Unknown command. Leave it be
+    const response = new StringBuilder("The possible subcommands are:");
+    Object.values(namedSubcommands).forEach(command => {
+      response.pushNewLine();
+      response.push(" - ");
+      response.pushCode(command.name);
+    });
+    return context.reply(response.result());
   }
 };
 

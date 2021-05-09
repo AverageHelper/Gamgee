@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command";
 import { useQueueStorage } from "../../useQueueStorage";
 import { userIsAdminForQueueInGuild } from "../../permissions";
+import { resolveUserFromOption } from "../../helpers/resolvers";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import getUserFromMention from "../../helpers/getUserFromMention";
 import logUser from "../../helpers/logUser";
 
 const whitelist: Subcommand = {
@@ -23,32 +23,36 @@ const whitelist: Subcommand = {
       return reply("Can't do that here.");
     }
 
+    await deleteInvocation();
+
     // Only the queue admin or server owner may touch the queue.
     if (!(await userIsAdminForQueueInGuild(user, guild))) {
       await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
       return;
     }
 
-    const userMention = options[0]?.value as string | undefined;
-    if (userMention === undefined || !userMention) {
-      return reply(":x: You'll need to tell me who to whitelist. Try again, and mention someone.");
+    const option = options[0];
+    if (!option) {
+      return reply(":x: You'll need to tell me who to whitelist. Try again, and mention someone.", {
+        ephemeral: true
+      });
     }
 
     const [subject, queueChannel] = await Promise.all([
-      getUserFromMention(guild, userMention),
+      resolveUserFromOption(option, guild),
       getQueueChannel(guild)
     ]);
 
     if (!subject) {
-      return reply(":x: I don't know who that is.");
+      return reply(":x: I don't know who that is.", { ephemeral: true });
     }
 
     if (subject.id === user.id) {
-      return reply(":x: You can't whitelist yourself, silly!");
+      return reply(":x: You can't whitelist yourself, silly!", { ephemeral: true });
     }
 
     if (!queueChannel) {
-      return reply(":x: There's no queue set up yet.");
+      return reply(":x: There's no queue set up yet.", { ephemeral: true });
     }
 
     const queue = useQueueStorage(queueChannel);
@@ -56,9 +60,9 @@ const whitelist: Subcommand = {
     logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
     await reply(`:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`, {
-      shouldMention: false
+      shouldMention: false,
+      ephemeral: true
     });
-    await deleteInvocation();
   }
 };
 

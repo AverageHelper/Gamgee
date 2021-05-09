@@ -17,12 +17,22 @@ const setup: Subcommand = {
   ],
   type: "SUB_COMMAND",
   async execute(context) {
-    const { user, guild, options, logger, reply, replyPrivately, deleteInvocation } = context;
+    const {
+      user,
+      guild,
+      options,
+      logger,
+      prepareForLongRunningTasks,
+      reply,
+      replyPrivately,
+      deleteInvocation
+    } = context;
 
     if (!guild) {
       return reply("Can't do that here.");
     }
 
+    await prepareForLongRunningTasks(true);
     await deleteInvocation();
 
     // Only the guild owner may touch the queue.
@@ -42,13 +52,16 @@ const setup: Subcommand = {
       newQueueChannel = getChannelFromMention(guild, newQueueChannel);
       if (!newQueueChannel) {
         return reply(
-          "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`."
+          "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
+          { ephemeral: true }
         );
       }
     }
 
     if (!newQueueChannel.isText()) {
-      return reply("I can't queue in a voice channel. Please specify a text channel instead");
+      return reply("I can't queue in a voice channel. Please specify a text channel instead", {
+        ephemeral: true
+      });
     }
 
     const guildStorage = useGuildStorage(guild);

@@ -129,8 +129,6 @@ export async function handleCommand(
   const command = commands.get(commandName);
   if (command?.execute) {
     const args = q.slice(1);
-    logger.debug(`Handling command '${commandName}' with args [${args.join(", ")}]`);
-
     const options: Array<MessageCommandInteractionOption> = [];
 
     // one argument
@@ -157,6 +155,14 @@ export async function handleCommand(
       }
     }
 
+    logger.debug(
+      `Calling command handler '${command.name}' with options ${JSON.stringify(
+        options,
+        undefined,
+        2
+      )}`
+    );
+
     return await command.execute({
       type: "message",
       createdTimestamp: message.createdTimestamp,
@@ -168,18 +174,25 @@ export async function handleCommand(
       options,
       storage,
       logger,
-      prepareForLongRunningTasks: () => Promise.resolve(),
+      prepareForLongRunningTasks: async (ephemeral?: boolean) => {
+        await reply(message, "Let me think...", false);
+        if (ephemeral === undefined || !ephemeral) {
+          void message.channel.startTyping(30);
+        }
+      },
       replyPrivately: async (content: string) => {
         await replyPrivately(message, content);
+        message.channel.stopTyping(true);
       },
       reply: async (content: string, options) => {
         await reply(message, content, options?.shouldMention);
+        message.channel.stopTyping(true);
       },
       deleteInvocation: async () => {
         await deleteMessage(message);
       },
       startTyping: (count?: number) => void message.channel.startTyping(count),
-      stopTyping: () => void message.channel.stopTyping(true)
+      stopTyping: () => message.channel.stopTyping(true)
     });
   }
 

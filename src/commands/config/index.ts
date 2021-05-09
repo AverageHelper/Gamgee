@@ -28,15 +28,31 @@ const config: Command = {
       return;
     }
 
-    const arg: string | undefined = options[0]?.name;
-    const argOptions = options[0]?.options;
-    if (arg === undefined || arg === "" || !argOptions) {
+    const arg: string | undefined = options[0]?.name ?? (options[0]?.value as string | undefined);
+    const argOptions = options[0]?.options ?? [];
+    if (arg === undefined || arg === "") {
       return reply(`Missing command structure. Expected ${subargsList}`);
     }
 
+    context.logger.debug(
+      `Searching ${
+        namedSubcommands.length
+      } possible subcommands for one named '${arg}': ${JSON.stringify(
+        namedSubcommands.map(c => c.name),
+        undefined,
+        2
+      )}`
+    );
     for (const command of namedSubcommands) {
       if (command.name === arg) {
         context.options = argOptions;
+        context.logger.debug(
+          `Handling subcommand '${command.name}' with options: ${JSON.stringify(
+            context.options,
+            undefined,
+            2
+          )}`
+        );
         return command.execute(context);
       }
     }

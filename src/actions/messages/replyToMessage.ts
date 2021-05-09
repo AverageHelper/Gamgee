@@ -40,17 +40,20 @@ async function sendDM(source: Discord.Message, content: string): Promise<void> {
   const user: Discord.User = source.author;
   try {
     if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
+      // this is our known tester
+      logger.silly(`Good morning, Miss ${user.username}.`);
       await reply(source, `(DM to <@!${user.id}>)\n${content}`);
     } else if (!user.bot) {
+      logger.silly("This is a human. Or their dog... I love dogs!");
       const response = new StringBuilder();
       response.push(`(Reply from <#${source.channel.id}>)`);
       response.pushNewLine();
-      await user.send(content);
+      response.push(content);
+      await user.send(response.result());
       logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
     } else {
-      // this is a bot
       logger.error(
-        `I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
+        `I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
       );
     }
   } catch (error: unknown) {

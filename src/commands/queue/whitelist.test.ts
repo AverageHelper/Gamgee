@@ -72,7 +72,9 @@ describe("Removing from Queue Blacklist", () => {
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"));
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"), {
+      ephemeral: true
+    });
   });
 
   test("does nothing without a mention (no further text)", async () => {
@@ -80,7 +82,9 @@ describe("Removing from Queue Blacklist", () => {
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"));
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"), {
+      ephemeral: true
+    });
   });
 
   test("does nothing when not in a guild", async () => {
@@ -96,7 +100,9 @@ describe("Removing from Queue Blacklist", () => {
 
     expect(mockWhitelistUser).not.toHaveBeenCalled();
     expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("whitelist yourself"));
+    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("whitelist yourself"), {
+      ephemeral: true
+    });
   });
 
   test("does nothing for a user not known to the guild", async () => {
@@ -134,7 +140,8 @@ describe("Removing from Queue Blacklist", () => {
     // response
     expect(mockReply).toHaveBeenCalledTimes(1);
     expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(goodUserId), {
-      shouldMention: false
+      shouldMention: false,
+      ephemeral: true
     });
     expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
     expect(mockDeleteMessage).toHaveBeenCalledWith();
