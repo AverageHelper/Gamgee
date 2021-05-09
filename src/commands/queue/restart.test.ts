@@ -17,14 +17,13 @@ const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
 
 const mockGetAllEntries = jest.fn();
 const mockQueueClear = jest.fn();
-const mockStartTyping = jest.fn();
-const mockStopTyping = jest.fn();
 
 import type Discord from "discord.js";
 import type { CommandContext } from "../Command";
 import restart from "./restart";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 
+const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 
@@ -40,10 +39,9 @@ describe("Clear queue contents", () => {
       channel: {
         id: "not-queue-channel"
       },
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
-      replyPrivately: mockReplyPrivately,
-      startTyping: mockStartTyping,
-      stopTyping: mockStopTyping
+      replyPrivately: mockReplyPrivately
     } as unknown) as CommandContext;
 
     mockUseQueue.mockReturnValue({
@@ -130,14 +128,9 @@ describe("Clear queue contents", () => {
       await expect(restart.execute(context)).resolves.toBeUndefined();
 
       // Feedback
-      expect(mockStartTyping).toHaveBeenCalledTimes(1);
-      expect(mockStopTyping).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledTimes(2);
-      expect(mockReply).toHaveBeenNthCalledWith(
-        1,
-        "Time for a reset! :bucket: Clearing the queue..."
-      );
-      expect(mockReply).toHaveBeenNthCalledWith(2, "The queue has restarted.");
+      expect(mockPrepareForLongRunningTasks).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith("The queue has restarted.");
 
       // Actions
       expect(mockUseQueue).toHaveBeenCalledTimes(1);

@@ -20,8 +20,7 @@ const close: Subcommand = {
     ]);
 
     if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
     if (!queueChannel) {
       return reply("There's no queue to close. Have you set one up yet?", { ephemeral: true });

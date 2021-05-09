@@ -37,8 +37,7 @@ const setup: Subcommand = {
 
     // Only the guild owner may touch the queue.
     if (!(await userIsAdminInGuild(user, guild))) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     let newQueueChannel: Discord.GuildChannel | string | undefined =
@@ -70,7 +69,7 @@ const setup: Subcommand = {
       guildStorage.setQueueChannel(newQueueChannel.id),
       newQueueChannel.send("This is a queue now. :smiley:")
     ]);
-    await reply(`New queue set up in <#${newQueueChannel.id}>`, { ephemeral: true });
+    return reply(`New queue set up in <#${newQueueChannel.id}>`, { ephemeral: true });
   }
 };
 

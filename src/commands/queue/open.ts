@@ -20,8 +20,7 @@ const open: Subcommand = {
 
     // The queue may only be opened in the queue channel, or by the server owner.
     if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     if (!queueChannel) {

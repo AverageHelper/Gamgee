@@ -56,6 +56,7 @@ const blacklist: Subcommand = {
     if (!option) {
       if (context.type === "message") {
         logger.debug("Private-ness for message commands is restricted to DMs.");
+        // We can reply to text messages twice, since the second one will be a DM. We `await` here, not `return`.
         await reply(":paperclip: Check the list in your DMs");
       }
 
@@ -115,7 +116,7 @@ const blacklist: Subcommand = {
     await queue.blacklistUser(subject.id);
     logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
-    await reply(`:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`, {
+    return reply(`:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`, {
       shouldMention: false,
       ephemeral: true
     });

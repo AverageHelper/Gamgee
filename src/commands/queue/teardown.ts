@@ -20,7 +20,7 @@ const teardown: Subcommand = {
 
     logger.info(`Forgetting queue channel for guild ${guild.id}.`);
     await guildStorage.setQueueChannel(null);
-    await reply("Queue deleted.");
+    return reply("Queue deleted.");
   }
 };
 

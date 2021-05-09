@@ -15,7 +15,7 @@ const help: Command = {
     });
 
     const descriptions = await describeAllCommands(storage, commands);
-    await replyPrivately(`Commands:\n${descriptions}`);
+    return replyPrivately(`Commands:\n${descriptions}`);
   }
 };
 

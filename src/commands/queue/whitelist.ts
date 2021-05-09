@@ -27,8 +27,7 @@ const whitelist: Subcommand = {
 
     // Only the queue admin or server owner may touch the queue.
     if (!(await userIsAdminForQueueInGuild(user, guild))) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     const option = options[0];
@@ -59,7 +58,7 @@ const whitelist: Subcommand = {
     await queue.whitelistUser(subject.id);
     logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
-    await reply(`:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`, {
+    return reply(`:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`, {
       shouldMention: false,
       ephemeral: true
     });

@@ -24,8 +24,7 @@ const config: Command = {
 
     // Only the guild owner may touch the config.
     if (user.id !== guild.ownerID) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     const arg: string | undefined = options[0]?.name ?? (options[0]?.value as string | undefined);

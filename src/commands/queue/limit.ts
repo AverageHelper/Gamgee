@@ -95,8 +95,7 @@ const limit: Subcommand = {
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
     if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel.id) {
-      await replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
+      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     if (!isLimitKey(limitKey)) {

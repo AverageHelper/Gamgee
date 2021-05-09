@@ -11,6 +11,7 @@ const type: Command = {
     );
     await deleteInvocation();
     if (type === "interaction") {
+      // We're going to stop typing in a bit. We `await` here, not `return`.
       await reply("So I started typing here, but I don't think I'll finish my message.", {
         ephemeral: true
       });
