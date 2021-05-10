@@ -78,9 +78,14 @@ interface InteractionCommandContext extends BaseCommandContext {
 export type CommandContext = MessageCommandContext | InteractionCommandContext;
 
 /**
- * A top-level command description.
+ * Information relevant to a command invocation.
  */
-export interface Command extends Discord.ApplicationCommandData {
+export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
+
+interface NormalCommand extends Discord.ApplicationCommandData {
+  /** Whether the command requires a guild present to execute. */
+  requiresGuild: false;
+
   /**
    * The command implementation. Receives contextual information about the
    * command invocation. May return a `Promise`.
@@ -89,6 +94,24 @@ export interface Command extends Discord.ApplicationCommandData {
    */
   execute: (context: CommandContext) => void | Promise<void>;
 }
+
+interface GuildedCommand extends Discord.ApplicationCommandData {
+  /** Whether the command requires a guild present to execute. */
+  requiresGuild: true;
+
+  /**
+   * The command implementation. Receives contextual information about the
+   * command invocation. May return a `Promise`.
+   *
+   * @param context Contextual information about the command invocation.
+   */
+  execute: (context: GuildedCommandContext) => void | Promise<void>;
+}
+
+/**
+ * A top-level command description.
+ */
+export type Command = NormalCommand | GuildedCommand;
 
 export interface Subcommand extends Discord.ApplicationCommandOptionData {
   type: "SUB_COMMAND" | "SUB_COMMAND_GROUP";

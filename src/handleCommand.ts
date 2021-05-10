@@ -1,6 +1,6 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
-import type { Command, MessageCommandInteractionOption } from "./commands";
+import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
 import type Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
@@ -158,7 +158,7 @@ export async function handleCommand(
       )}`
     );
 
-    return await command.execute({
+    const context: CommandContext = {
       type: "message",
       createdTimestamp: message.createdTimestamp,
       user: message.author,
@@ -188,7 +188,19 @@ export async function handleCommand(
       },
       startTyping: (count?: number) => void message.channel.startTyping(count),
       stopTyping: () => message.channel.stopTyping(true)
-    });
+    };
+
+    if (command.requiresGuild) {
+      if (context.guild) {
+        return command.execute({ ...context, guild: context.guild });
+      }
+
+      // No guild found
+      return context.reply("Can't do that here.", { ephemeral: true });
+    }
+
+    // No guild required
+    return command.execute(context);
   }
 
   if (!usedCommandPrefix) {

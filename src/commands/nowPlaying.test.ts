@@ -19,14 +19,14 @@ const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
 import nowPlaying from "./nowPlaying";
 import { useTestLogger } from "../../tests/testUtils/logger";
-import type { CommandContext } from "./Command";
+import type { GuildedCommandContext } from "./Command";
 import type { QueueEntry } from "../useQueueStorage";
 
 const logger = useTestLogger("error");
 
 describe("Now-Playing", () => {
   const queueChannelId = "queue-channel";
-  let context: CommandContext;
+  let context: GuildedCommandContext;
 
   beforeEach(() => {
     context = ({
@@ -35,7 +35,7 @@ describe("Now-Playing", () => {
       reply: mockReply,
       replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
-    } as unknown) as CommandContext;
+    } as unknown) as GuildedCommandContext;
 
     mockUseQueue.mockReturnValue({
       getAllEntries: mockGetAllEntries
@@ -46,16 +46,6 @@ describe("Now-Playing", () => {
     mockDeleteMessage.mockResolvedValue(undefined);
     mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
     mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
-  });
-
-  test("does nothing when not in a guild", async () => {
-    context.guild = null;
-    await expect(nowPlaying.execute(context)).resolves.toBe(undefined);
-
-    expect(mockDeleteMessage).not.toHaveBeenCalled();
-    expect(mockReplyPrivately).not.toHaveBeenCalled();
-    expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith("Can't do that here.");
   });
 
   test("informs the user when no queue is set up", async () => {

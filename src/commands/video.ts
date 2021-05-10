@@ -15,6 +15,7 @@ const video: Command = {
       required: true
     }
   ],
+  requiresGuild: false,
   async execute(context) {
     const { logger, options, reply } = context;
     const url: string | undefined = options[0]?.value as string | undefined;

@@ -29,7 +29,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type Discord from "discord.js";
-import type { CommandContext } from "./Command";
+import type { GuildedCommandContext } from "./Command";
 import songRequest from "./songRequest";
 import { useTestLogger } from "../../tests/testUtils/logger";
 
@@ -140,7 +140,7 @@ describe("Song request via URL", () => {
         reply: mockReply,
         replyPrivately: mockReplyPrivately,
         deleteInvocation: mockDeleteMessage
-      } as unknown) as CommandContext;
+      } as unknown) as GuildedCommandContext;
 
       await songRequest.execute(context);
       expect(mockReply).toHaveBeenCalledTimes(1);
@@ -184,7 +184,7 @@ describe("Song request via URL", () => {
       reply: mockReply,
       replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
-    } as unknown) as CommandContext;
+    } as unknown) as GuildedCommandContext;
     const context2 = ({
       ...context1,
       options: [
@@ -196,7 +196,7 @@ describe("Song request via URL", () => {
       user: mockMessage2.author,
       guild: mockMessage2.guild,
       channel: mockMessage2.channel
-    } as unknown) as CommandContext;
+    } as unknown) as GuildedCommandContext;
 
     // Request a song twice in quick succession
     void songRequest.execute(context1);
@@ -241,7 +241,7 @@ describe("Song request via URL", () => {
             prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
             reply: mockReply,
             replyPrivately: mockReplyPrivately
-          } as unknown) as CommandContext;
+          } as unknown) as GuildedCommandContext;
         })
         .map(songRequest.execute)
     ]);

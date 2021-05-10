@@ -5,6 +5,7 @@ import { randomPhrase } from "../helpers/randomStrings";
 const ping: Command = {
   name: "ping",
   description: "Ping my host server to check latency.",
+  requiresGuild: false,
   async execute(context) {
     const { client, logger } = context;
     const apiLatency = Math.round(client.ws.ping);

@@ -8,6 +8,7 @@ let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 const languages: Command = {
   name: "languages",
   description: "Print my core repository's language statistics.",
+  requiresGuild: false,
   async execute({ logger, prepareForLongRunningTasks, reply }) {
     const owner = "AverageHelper";
     const repo = "Gamgee";

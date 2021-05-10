@@ -15,12 +15,9 @@ const config: Command = {
   name: "config",
   description: "Read and modify config options. *(Server owner only. No touch!)*",
   options: namedSubcommands,
+  requiresGuild: true,
   async execute(context) {
     const { guild, user, options, reply, replyPrivately } = context;
-
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
 
     // Only the guild owner may touch the config.
     if (user.id !== guild.ownerID) {

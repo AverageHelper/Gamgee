@@ -32,11 +32,8 @@ function randomCurrent(): string {
 const nowPlaying: Command = {
   name: "now-playing",
   description: "Reveal the current song in the queue (or my best guess).",
-  async execute({ guild, logger, reply, replyPrivately, deleteInvocation }) {
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
+  requiresGuild: true,
+  async execute({ guild, logger, replyPrivately, deleteInvocation }) {
     await deleteInvocation();
 
     const queueChannel: Discord.TextChannel | null = await getQueueChannel(guild);

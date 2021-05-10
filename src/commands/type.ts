@@ -3,6 +3,7 @@ import type { Command } from "./Command";
 const type: Command = {
   name: "t",
   description: "Start a typing indicator.",
+  requiresGuild: false,
   async execute({ type, channel, client, logger, reply, deleteInvocation }) {
     if (!channel) return;
 

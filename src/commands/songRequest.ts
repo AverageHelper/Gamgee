@@ -19,6 +19,7 @@ const sr: Command = {
       required: false
     }
   ],
+  requiresGuild: true,
   async execute(context) {
     const {
       type,
@@ -31,10 +32,6 @@ const sr: Command = {
       reply,
       deleteInvocation
     } = context;
-
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
 
     await prepareForLongRunningTasks();
 

@@ -1,6 +1,6 @@
 import "source-map-support/register";
 import "reflect-metadata";
-import type { Command } from "./commands";
+import type { Command, CommandContext } from "./commands";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
 import { version as gamgeeVersion } from "./version";
@@ -65,7 +65,7 @@ async function onInteraction(
         | Discord.NewsChannel;
     }
 
-    await command.execute({
+    const context: CommandContext = {
       type: "interaction",
       createdTimestamp: interaction.createdTimestamp,
       user: interaction.user,
@@ -99,7 +99,19 @@ async function onInteraction(
       deleteInvocation: () => Promise.resolve(undefined),
       startTyping: (count?: number) => void channel?.startTyping(count),
       stopTyping: () => void channel?.stopTyping(true)
-    });
+    };
+
+    if (command.requiresGuild) {
+      if (context.guild) {
+        return command.execute({ ...context, guild: context.guild });
+      }
+
+      // No guild found
+      return context.reply("Can't do that here.", { ephemeral: true });
+    }
+
+    // No guild required
+    return command.execute(context);
   }
 }
 

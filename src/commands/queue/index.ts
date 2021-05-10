@@ -26,11 +26,8 @@ const sr: Command = {
   name: "queue",
   description: "Administrative commands to manage the song queue.",
   options: namedSubcommands,
+  requiresGuild: true,
   async execute(context) {
-    if (!context.guild) {
-      return context.reply("Can't do that here.");
-    }
-
     const arg: string | undefined = context.options[0]?.name;
     context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
     const argOptions = context.options[0]?.options ?? [];
