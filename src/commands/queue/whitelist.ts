@@ -7,6 +7,8 @@ import logUser from "../../helpers/logUser";
 
 const whitelist: Subcommand = {
   name: "whitelist",
+  description:
+    "Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*",
   options: [
     {
       name: "user",
@@ -16,8 +18,6 @@ const whitelist: Subcommand = {
     }
   ],
   type: "SUB_COMMAND",
-  description:
-    "Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*",
   async execute({ user, guild, options, logger, reply, replyPrivately, deleteInvocation }) {
     if (!guild) {
       return reply("Can't do that here.");

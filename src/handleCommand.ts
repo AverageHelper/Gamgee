@@ -1,19 +1,14 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
 import type { Command, MessageCommandInteractionOption } from "./commands";
-import Discord from "discord.js";
-import getUserIdFromMention from "./helpers/getUserIdFromMention";
+import type Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
-import * as commandDefinitions from "./commands";
-import logUser from "./helpers/logUser";
+import { allCommands as commands } from "./commands";
 import { deleteMessage, reply, replyPrivately } from "./actions/messages";
-
-const commands = new Discord.Collection<string, Command>();
-Object.values(commandDefinitions).forEach(command => {
-  commands.set(command.name, command);
-});
+import getUserIdFromMention from "./helpers/getUserIdFromMention";
+import logUser from "./helpers/logUser";
 
 interface QueryMessage {
   /** The command and its arguments. */
@@ -126,7 +121,7 @@ export async function handleCommand(
   const commandName = q[0]?.toLowerCase() ?? "";
   if (!commandName) return;
 
-  const command = commands.get(commandName);
+  const command: Command | undefined = commands.get(commandName);
   if (command?.execute) {
     const args = q.slice(1);
     const options: Array<MessageCommandInteractionOption> = [];

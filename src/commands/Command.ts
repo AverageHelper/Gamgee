@@ -91,6 +91,8 @@ export interface Command extends Discord.ApplicationCommandData {
 }
 
 export interface Subcommand extends Discord.ApplicationCommandOptionData {
+  type: "SUB_COMMAND" | "SUB_COMMAND_GROUP";
+
   /**
    * The command implementation. Receives contextual information about the
    * command invocation. May return a `Promise`.

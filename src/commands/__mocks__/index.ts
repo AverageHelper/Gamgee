@@ -1,40 +1,49 @@
-export const config = {
+import Discord from "discord.js";
+
+interface MockCommand {
+  name: string;
+  execute: jest.Mock;
+}
+
+export const allCommands = new Discord.Collection<string, MockCommand>();
+
+allCommands.set("config", {
   name: "config",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const help = {
+});
+allCommands.set("help", {
   name: "help",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const languages = {
+});
+allCommands.set("languages", {
   name: "languages",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const nowPlaying = {
+});
+allCommands.set("now-playing", {
   name: "now-playing",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const ping = {
+});
+allCommands.set("ping", {
   name: "ping",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const queue = {
+});
+allCommands.set("queue", {
   name: "queue",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const songRequest = {
+});
+allCommands.set("sr", {
   name: "sr",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const type = {
+});
+allCommands.set("t", {
   name: "t",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const version = {
+});
+allCommands.set("version", {
   name: "version",
   execute: jest.fn().mockResolvedValue(undefined)
-};
-export const video = {
+});
+allCommands.set("video", {
   name: "video",
   execute: jest.fn().mockResolvedValue(undefined)
-};
+});

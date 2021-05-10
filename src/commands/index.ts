@@ -1,11 +1,27 @@
+import type { Command } from "./Command";
+import Discord from "discord.js";
+
 export * from "./Command";
-export { default as config } from "./config";
-export { default as help } from "./help";
-export { default as languages } from "./languages";
-export { default as nowPlaying } from "./nowPlaying";
-export { default as ping } from "./ping";
-export { default as queue } from "./queue";
-export { default as songRequest } from "./songRequest";
-export { default as type } from "./type";
-export { default as version } from "./version";
-export { default as video } from "./video";
+
+import config from "./config";
+import help from "./help";
+import languages from "./languages";
+import nowPlaying from "./nowPlaying";
+import ping from "./ping";
+import queue from "./queue";
+import songRequest from "./songRequest";
+import type from "./type";
+import version from "./version";
+import video from "./video";
+
+export const allCommands = new Discord.Collection<string, Command>();
+allCommands.set(config.name, config);
+allCommands.set(help.name, help);
+allCommands.set(languages.name, languages);
+allCommands.set(nowPlaying.name, nowPlaying);
+allCommands.set(ping.name, ping);
+allCommands.set(queue.name, queue);
+allCommands.set(songRequest.name, songRequest);
+allCommands.set(type.name, type);
+allCommands.set(version.name, version);
+allCommands.set(video.name, video);

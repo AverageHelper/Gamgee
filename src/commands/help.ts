@@ -1,5 +1,4 @@
 import type { Command } from "./Command";
-import Discord from "discord.js";
 import describeAllCommands from "../actions/describeAllCommands";
 
 const help: Command = {
@@ -7,14 +6,9 @@ const help: Command = {
   description: "Print a handy help message.",
   async execute(context) {
     // Dynamic import here, b/c ./index depends on us to resolve
-    const commandDefinitions = await import("./index");
+    const { allCommands } = await import("./index");
 
-    const commands = new Discord.Collection<string, Command>();
-    Object.values(commandDefinitions).forEach(command => {
-      commands.set(command.name, command);
-    });
-
-    const descriptions = await describeAllCommands(context, commands);
+    const descriptions = await describeAllCommands(context, allCommands);
     return context.replyPrivately(`Commands:\n${descriptions}`);
   }
 };

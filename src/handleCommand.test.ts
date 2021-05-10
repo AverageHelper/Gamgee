@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey";
 
 jest.mock("./commands");
-import * as mockCommandDefinitions from "./commands";
+import { allCommands as mockCommandDefinitions } from "./commands";
 
 import { handleCommand } from "./handleCommand";
 import { useTestLogger } from "../tests/testUtils/logger";
@@ -80,43 +80,40 @@ describe("Command handler", () => {
         mockMessage.content = content;
         await handleCommand(mockClient, mockMessage, null, logger);
 
-        Object.values(mockCommandDefinitions).forEach(cmd =>
-          expect(cmd.execute).not.toHaveBeenCalled()
-        );
-        expect.assertions(Object.keys(mockCommandDefinitions).length);
+        mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+        expect.assertions(mockCommandDefinitions.size);
       }
     );
 
     test.each`
-      command          | mock
-      ${"config"}      | ${mockCommandDefinitions.config.execute}
-      ${"help"}        | ${mockCommandDefinitions.help.execute}
-      ${"languages"}   | ${mockCommandDefinitions.languages.execute}
-      ${"now-playing"} | ${mockCommandDefinitions.nowPlaying.execute}
-      ${"ping"}        | ${mockCommandDefinitions.ping.execute}
-      ${"queue"}       | ${mockCommandDefinitions.queue.execute}
-      ${"sr"}          | ${mockCommandDefinitions.songRequest.execute}
-      ${"t"}           | ${mockCommandDefinitions.type.execute}
-      ${"version"}     | ${mockCommandDefinitions.version.execute}
-      ${"video"}       | ${mockCommandDefinitions.video.execute}
-    `(
-      "calls the $command command",
-      async ({ command, mock }: { command: string; mock: jest.Mock }) => {
-        mockMessage.content = `${prefix}${command}`;
-        mockMessage.author.bot = false;
-        await handleCommand(mockClient, mockMessage, null, logger);
+      command
+      ${"config"}
+      ${"help"}
+      ${"languages"}
+      ${"now-playing"}
+      ${"ping"}
+      ${"queue"}
+      ${"sr"}
+      ${"t"}
+      ${"version"}
+      ${"video"}
+    `("calls the $command command", async ({ command }: { command: string }) => {
+      mockMessage.content = `${prefix}${command}`;
+      mockMessage.author.bot = false;
+      await handleCommand(mockClient, mockMessage, null, logger);
 
-        expect(mock).toHaveBeenCalledTimes(1);
-        expect(mock).toHaveBeenCalledWith(
-          expect.toContainEntries([
-            ["client", mockClient],
-            ["message", mockMessage],
-            ["options", command.split(/ +/u).slice(1)],
-            ["storage", null]
-          ])
-        );
-      }
-    );
+      const mock = mockCommandDefinitions.get(command)?.execute;
+      expect(mock).toBeDefined();
+      expect(mock).toHaveBeenCalledTimes(1);
+      expect(mock).toHaveBeenCalledWith(
+        expect.toContainEntries([
+          ["client", mockClient],
+          ["message", mockMessage],
+          ["options", command.split(/ +/u).slice(1)],
+          ["storage", null]
+        ])
+      );
+    });
 
     test.each`
       command
@@ -137,10 +134,8 @@ describe("Command handler", () => {
         mockMessage.author.bot = true;
         await handleCommand(mockClient, mockMessage, null, logger);
 
-        Object.values(mockCommandDefinitions).forEach(cmd =>
-          expect(cmd.execute).not.toHaveBeenCalled()
-        );
-        expect.assertions(Object.keys(mockCommandDefinitions).length);
+        mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+        expect.assertions(mockCommandDefinitions.size);
       }
     );
   });

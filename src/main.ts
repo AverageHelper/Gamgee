@@ -1,10 +1,10 @@
 import "source-map-support/register";
 import "reflect-metadata";
+import type { Command } from "./commands";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { useLogger } from "./logger";
 import { version as gamgeeVersion } from "./version";
-import type { Command } from "./commands";
-import * as commandDefinitions from "./commands";
+import { allCommands as commands } from "./commands";
 
 const logger = useLogger();
 logger.verbose("*Yawn* Good morning!");
@@ -19,11 +19,6 @@ import { useStorage } from "./configStorage";
 import { handleCommand } from "./handleCommand";
 import { handleReactionAdd } from "./handleReactionAdd";
 import { replyPrivately } from "./actions/messages";
-
-const commands = new Discord.Collection<string, Command>();
-Object.values(commandDefinitions).forEach(command => {
-  commands.set(command.name, command);
-});
 
 async function onInteraction(
   client: Discord.Client,
@@ -138,8 +133,13 @@ async function prepareCommands(client: Discord.Client): Promise<void> {
   // FIXME: Some commands should be global. We need also to install the guild/admin commands correctly.
   const testGuild = await client.guilds.fetch("820897928654356512");
 
-  await testGuild.commands.set(Object.values(commandDefinitions)); // set test guild commands
+  const allCommands: Array<Command> = commands.array();
+  logger.info(`Preparing ${allCommands.length} commands...`);
+
+  await testGuild.commands.set(allCommands); // set guild commands
   await client.application?.commands.set([]); // set global commands
+
+  logger.info(`All ${allCommands.length} commands prepared.`);
 }
 
 try {
