@@ -5,7 +5,7 @@ import type Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
-import { allCommands as commands } from "./commands";
+import { allCommands as commands, invokeCommand } from "./commands";
 import { deleteMessage, reply, replyPrivately } from "./actions/messages";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import logUser from "./helpers/logUser";
@@ -71,8 +71,9 @@ async function query(
 }
 
 /**
- * Performs actions from a Discord message. The command is ignored if the message is from a bot or the message does
- * not begin with the configured command prefix.
+ * Performs actions from a Discord message. The command is ignored if the
+ * message is from a bot or the message does not begin with the guild's
+ * configured command prefix.
  *
  * @param client The Discord client.
  * @param message The Discord message to handle.
@@ -190,17 +191,7 @@ export async function handleCommand(
       stopTyping: () => message.channel.stopTyping(true)
     };
 
-    if (command.requiresGuild) {
-      if (context.guild) {
-        return command.execute({ ...context, guild: context.guild });
-      }
-
-      // No guild found
-      return context.reply("Can't do that here.", { ephemeral: true });
-    }
-
-    // No guild required
-    return command.execute(context);
+    return invokeCommand(command, context);
   }
 
   if (!usedCommandPrefix) {

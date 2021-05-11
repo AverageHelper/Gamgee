@@ -72,6 +72,16 @@ interface InteractionCommandContext extends BaseCommandContext {
   interaction: Discord.CommandInteraction;
 }
 
+export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
+  /** The `id` of the role or user */
+  id: Discord.Snowflake;
+
+  type: "ROLE" | "USER";
+
+  /** `true` to allow, `false` to disallow */
+  permission: boolean;
+}
+
 /**
  * Information relevant to a command invocation.
  */
@@ -82,7 +92,18 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
  */
 export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
 
-interface NormalCommand extends Discord.ApplicationCommandData {
+export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
+  return tbd.guild !== null;
+}
+
+interface BaseCommand extends Discord.ApplicationCommandData {
+  /** Permission overwrites for user or guild command access. */
+  permissions?: (
+    guild: Discord.Guild
+  ) => NonEmptyArray<CommandPermission> | Promise<NonEmptyArray<CommandPermission>>;
+}
+
+export interface NormalCommand extends BaseCommand {
   /** Whether the command requires a guild present to execute. */
   requiresGuild: false;
 
@@ -95,7 +116,7 @@ interface NormalCommand extends Discord.ApplicationCommandData {
   execute: (context: CommandContext) => void | Promise<void>;
 }
 
-interface GuildedCommand extends Discord.ApplicationCommandData {
+export interface GuildedCommand extends BaseCommand {
   /** Whether the command requires a guild present to execute. */
   requiresGuild: true;
 
@@ -112,6 +133,28 @@ interface GuildedCommand extends Discord.ApplicationCommandData {
  * A top-level command description.
  */
 export type Command = NormalCommand | GuildedCommand;
+
+/**
+ * Runs the command if the invocation context satisfies the command's declared invariants.
+ *
+ * @param command The command to execute.
+ * @param context The invocation context.
+ */
+export async function invokeCommand(command: Command, context: CommandContext): Promise<void> {
+  if (command.requiresGuild) {
+    if (isGuildedCommandContext(context)) {
+      // TODO: Check that the caller satisfies the command's declared permission requirements.
+
+      return command.execute(context);
+    }
+
+    // No guild found
+    return context.reply("Can't do that here.", { ephemeral: true });
+  }
+
+  // No guild required
+  return command.execute(context);
+}
 
 export interface Subcommand extends Discord.ApplicationCommandOptionData {
   type: "SUB_COMMAND" | "SUB_COMMAND_GROUP";

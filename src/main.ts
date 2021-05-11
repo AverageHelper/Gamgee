@@ -1,10 +1,15 @@
 import "source-map-support/register";
 import "reflect-metadata";
-import type { Command, CommandContext } from "./commands";
 import { getEnv, requireEnv } from "./helpers/environment";
+import { handleCommand } from "./handleCommand";
+import { handleInteraction } from "./handleInteraction";
+import { handleReactionAdd } from "./handleReactionAdd";
+import { prepareSlashCommands } from "./actions/prepareSlashCommands";
 import { useLogger } from "./logger";
+import { useStorage } from "./configStorage";
 import { version as gamgeeVersion } from "./version";
-import { allCommands as commands } from "./commands";
+import Discord from "discord.js";
+import richErrorMessage from "./helpers/richErrorMessage";
 
 const logger = useLogger();
 logger.verbose("*Yawn* Good morning!");
@@ -12,107 +17,15 @@ logger.verbose("Starting...");
 logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
 logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
-import Discord from "discord.js";
-import richErrorMessage from "./helpers/richErrorMessage";
-import logUser from "./helpers/logUser";
-import { useStorage } from "./configStorage";
-import { handleCommand } from "./handleCommand";
-import { handleReactionAdd } from "./handleReactionAdd";
-import { replyPrivately } from "./actions/messages";
+// ** Handle Events **
 
 async function onInteraction(
   client: Discord.Client,
   interaction: Discord.Interaction
 ): Promise<void> {
   if (!interaction.isCommand()) return;
-
-  // Don't respond to bots unless we're being tested
-  if (
-    interaction.user.bot &&
-    (interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
-  ) {
-    logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
-    return;
-  }
-
-  // Ignore self interactions
-  if (interaction.user.id === client.user?.id) return;
-
-  logger.debug(`User ${logUser(interaction.user)} sent command: '${interaction.commandName}'`);
-
-  const command = commands.get(interaction.commandName);
-  if (command?.execute) {
-    const storage = await useStorage(interaction.guild, logger);
-    // logger.debug(
-    //   `Handling interaction '${interaction.commandName}' with args [${interaction.options
-    //     .map(opt => `${opt.name} (${opt.type.toString()}): ${opt.value?.toString() ?? "undefined"}`)
-    //     .join(", ")}]`
-    // );
-    // logger.debug(`Handling interaction: ${JSON.stringify(interaction, undefined, 2)}`);
-    logger.debug(
-      `Calling command handler '${command.name}' with options ${JSON.stringify(
-        interaction.options,
-        undefined,
-        2
-      )}`
-    );
-
-    let channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null = null;
-    if (interaction.channel?.isText() === true) {
-      channel = interaction.channel as
-        | Discord.TextChannel
-        | Discord.DMChannel
-        | Discord.NewsChannel;
-    }
-
-    const context: CommandContext = {
-      type: "interaction",
-      createdTimestamp: interaction.createdTimestamp,
-      user: interaction.user,
-      guild: interaction.guild,
-      channel,
-      client,
-      interaction,
-      options: interaction.options,
-      storage,
-      logger,
-      prepareForLongRunningTasks: async (ephemeral?: boolean) => {
-        await interaction.defer(ephemeral);
-      },
-      replyPrivately: async (content: string) => {
-        await replyPrivately(interaction, content);
-      },
-      reply: async (content: string, options) => {
-        if (interaction.deferred) {
-          await interaction.editReply(content);
-        } else {
-          if (!options || options.shouldMention === undefined || options.shouldMention) {
-            await interaction.reply(content, { ephemeral: options?.ephemeral });
-          } else {
-            await interaction.reply(content, {
-              ephemeral: options?.ephemeral,
-              allowedMentions: { users: [] }
-            });
-          }
-        }
-      },
-      deleteInvocation: () => Promise.resolve(undefined),
-      startTyping: (count?: number) => void channel?.startTyping(count),
-      stopTyping: () => void channel?.stopTyping(true)
-    };
-
-    if (command.requiresGuild) {
-      if (context.guild) {
-        return command.execute({ ...context, guild: context.guild });
-      }
-
-      // No guild found
-      return context.reply("Can't do that here.", { ephemeral: true });
-    }
-
-    // No guild required
-    return command.execute(context);
-  }
+  const storage = await useStorage(interaction.guild, logger);
+  await handleInteraction(client, interaction, storage, logger);
 }
 
 async function onNewMessage(
@@ -141,18 +54,7 @@ async function onMessageReactionAdd(
   }
 }
 
-async function prepareCommands(client: Discord.Client): Promise<void> {
-  // FIXME: Some commands should be global. We need also to install the guild/admin commands correctly.
-  const testGuild = await client.guilds.fetch("820897928654356512");
-
-  const allCommands: Array<Command> = commands.array();
-  logger.info(`Preparing ${allCommands.length} commands...`);
-
-  await testGuild.commands.set(allCommands); // set guild commands
-  await client.application?.commands.set([]); // set global commands
-
-  logger.info(`All ${allCommands.length} commands prepared.`);
-}
+// ** Setup Discord Client **
 
 try {
   const client = new Discord.Client({
@@ -169,8 +71,7 @@ try {
   // Handle client events
   client.on("ready", () => {
     logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
-
-    void prepareCommands(client);
+    void prepareSlashCommands(client);
   });
 
   client.on("error", error => {
