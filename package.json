@@ -43,7 +43,7 @@
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
     "typeorm": "^0.2.32",
-    "typescript-promise-any": "^2.1.0-alpha.3",
+    "typescript-promise-any": "^2.1.0-alpha.6",
     "url-metadata": "^2.5.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",

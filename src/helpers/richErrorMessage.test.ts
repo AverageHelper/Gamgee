@@ -1,5 +1,5 @@
 import richErrorMessage from "./richErrorMessage";
-import { AggregateError } from "../helpers/any";
+import { AggregateError } from "typescript-promise-any";
 
 describe("Rich error messages", () => {
   test("contains relevant information about the error", () => {
@@ -26,8 +26,11 @@ describe("Rich error messages", () => {
     expect(richMessage).toContain(error1.message);
     expect(richMessage).toContain(error2.message);
     expect(richMessage).toContain(error3.message);
+    expect(error1.stack).toBeDefined();
     expect(richMessage).toContain(error1.stack);
+    expect(error2.stack).toBeDefined();
     expect(richMessage).toContain(error2.stack);
+    expect(error3.stack).toBeDefined();
     expect(richMessage).toContain(error3.stack);
   });
 });
