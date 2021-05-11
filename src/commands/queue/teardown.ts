@@ -6,11 +6,8 @@ const teardown: Subcommand = {
   name: "teardown",
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
   type: "SUB_COMMAND",
+  requiresGuild: true,
   async execute({ user, guild, logger, reply, replyPrivately }) {
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
     // Only the guild owner may touch the queue.
     if (!(await userIsAdminInGuild(user, guild))) {
       return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");

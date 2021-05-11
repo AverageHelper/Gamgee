@@ -16,7 +16,7 @@ import { useQueueStorage } from "../../useQueueStorage";
 const mockUseQueueStorage = useQueueStorage as jest.Mock;
 
 import type { QueueEntryManager } from "../../useQueueStorage";
-import type { CommandContext } from "../Command";
+import type { GuildedCommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 import blacklist from "./blacklist";
 
@@ -34,7 +34,7 @@ describe("Manage the Queue Blacklist", () => {
   const ownerID = "server-owner";
   const badUserId = "bad-user";
 
-  let context: CommandContext;
+  let context: GuildedCommandContext;
   let queue: QueueEntryManager;
 
   beforeEach(() => {
@@ -55,7 +55,7 @@ describe("Manage the Queue Blacklist", () => {
       reply: mockReply,
       replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
-    } as unknown) as CommandContext;
+    } as unknown) as GuildedCommandContext;
 
     queue = ({
       blacklistUser: mockBlacklistUser,
@@ -102,13 +102,6 @@ describe("Manage the Queue Blacklist", () => {
   });
 
   describe("Adding Users", () => {
-    test("does nothing when not in a guild", async () => {
-      context.guild = null;
-      await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      expect(mockBlacklistUser).not.toHaveBeenCalled();
-    });
-
     test("does nothing against the calling user", async () => {
       mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
       await expect(blacklist.execute(context)).resolves.toBe(undefined);

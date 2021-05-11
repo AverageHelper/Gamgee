@@ -16,6 +16,7 @@ const setup: Subcommand = {
     }
   ],
   type: "SUB_COMMAND",
+  requiresGuild: true,
   async execute(context) {
     const {
       user,
@@ -27,11 +28,6 @@ const setup: Subcommand = {
       replyPrivately,
       deleteInvocation
     } = context;
-
-    // TODO: Build a GuildedSubcommand type to handle this
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
 
     await prepareForLongRunningTasks(true);
     await deleteInvocation();

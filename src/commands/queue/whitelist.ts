@@ -18,11 +18,8 @@ const whitelist: Subcommand = {
     }
   ],
   type: "SUB_COMMAND",
+  requiresGuild: true,
   async execute({ user, guild, options, logger, reply, replyPrivately, deleteInvocation }) {
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
     await deleteInvocation();
 
     // Only the queue admin or server owner may touch the queue.

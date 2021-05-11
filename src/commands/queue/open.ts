@@ -7,11 +7,8 @@ const open: Subcommand = {
   name: "open",
   description: "Start accepting song requests to the queue.",
   type: "SUB_COMMAND",
+  requiresGuild: true,
   async execute({ user, guild, channel, reply, replyPrivately, deleteInvocation }) {
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
     const guildStorage = useGuildStorage(guild);
     const [queueChannel] = await Promise.all([
       getQueueChannel(guild), //

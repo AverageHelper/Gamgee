@@ -7,7 +7,6 @@ import { setConfigValue } from "../../actions/config/setConfigValue";
 const set: Subcommand = {
   name: "set",
   description: "Set the value of a configuration setting.",
-  type: "SUB_COMMAND_GROUP",
   options: allKeys.map(key => ({
     name: key,
     description: `Set a new value for the '${key}' config key.`,
@@ -21,6 +20,8 @@ const set: Subcommand = {
       }
     ]
   })),
+  type: "SUB_COMMAND_GROUP",
+  requiresGuild: false,
   async execute({ options, storage, reply }) {
     const key: string | undefined = options[0]?.name;
     if (key === undefined || key === "") {

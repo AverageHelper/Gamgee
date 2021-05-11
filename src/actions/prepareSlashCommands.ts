@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import type { Command, GuildedCommand, NormalCommand } from "../commands";
+import type { Command, GuildedCommand, GlobalCommand } from "../commands";
 import { useLogger } from "../logger";
 import { allCommands } from "../commands";
 import richErrorMessage from "../helpers/richErrorMessage";
@@ -122,7 +122,7 @@ async function prepareGuildedCommands(
 }
 
 async function prepareGlobalCommands(
-  globalCommands: Array<NormalCommand>,
+  globalCommands: Array<GlobalCommand>,
   client: Discord.Client
 ): Promise<void> {
   logger.verbose(
@@ -146,7 +146,7 @@ export async function prepareSlashCommands(client: Discord.Client): Promise<void
   );
 
   const guildCommands: Array<GuildedCommand> = [];
-  const globalCommands: Array<NormalCommand> = [];
+  const globalCommands: Array<GlobalCommand> = [];
   commands.forEach(cmd => {
     if (cmd.requiresGuild) {
       guildCommands.push(cmd);

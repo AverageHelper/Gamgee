@@ -19,7 +19,7 @@ const mockGetAllEntries = jest.fn();
 const mockQueueClear = jest.fn();
 
 import type Discord from "discord.js";
-import type { CommandContext } from "../Command";
+import type { GuildedCommandContext } from "../Command";
 import restart from "./restart";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 
@@ -30,7 +30,7 @@ const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const logger = useTestLogger("error");
 
 describe("Clear queue contents", () => {
-  let context: CommandContext;
+  let context: GuildedCommandContext;
 
   beforeEach(() => {
     context = ({
@@ -42,7 +42,7 @@ describe("Clear queue contents", () => {
       prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
       replyPrivately: mockReplyPrivately
-    } as unknown) as CommandContext;
+    } as unknown) as GuildedCommandContext;
 
     mockUseQueue.mockReturnValue({
       getAllEntries: mockGetAllEntries,
@@ -52,15 +52,6 @@ describe("Clear queue contents", () => {
     mockQueueClear.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
     mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
-  });
-
-  test("does nothing about a message with no guild", async () => {
-    context.guild = null;
-    await expect(restart.execute(context)).resolves.toBeUndefined();
-
-    expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith("Can't do that here.");
-    expect(mockUseQueue).not.toHaveBeenCalled();
   });
 
   test("does nothing when admin and no queue is set up", async () => {

@@ -8,12 +8,13 @@ import { setConfigValue } from "../../actions/config/setConfigValue";
 const unset: Subcommand = {
   name: "unset",
   description: "Reset the value of a configuration setting to default.",
-  type: "SUB_COMMAND_GROUP",
   options: allKeys.map(key => ({
     name: key,
     description: `Reset the value of the ${key} config key to default.`,
     type: "SUB_COMMAND"
   })),
+  type: "SUB_COMMAND_GROUP",
+  requiresGuild: false,
   async execute({ options, storage, reply }) {
     const key: string | undefined = options[0]?.name;
     if (key === undefined || key === "") {

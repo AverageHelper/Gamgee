@@ -13,7 +13,6 @@ const blacklist: Subcommand = {
   name: "blacklist",
   description:
     "Show the list of blacklisted users, or add a user to the blacklist. *(Server owner only. No touch!)*",
-  type: "SUB_COMMAND",
   options: [
     {
       name: "user",
@@ -22,6 +21,8 @@ const blacklist: Subcommand = {
       required: false
     }
   ],
+  type: "SUB_COMMAND",
+  requiresGuild: true,
   async execute(context) {
     const {
       guild,
@@ -33,10 +34,6 @@ const blacklist: Subcommand = {
       replyPrivately,
       deleteInvocation
     } = context;
-
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
 
     // Only the queue admin or server owner may touch the queue.
     if (!(await userIsAdminForQueueInGuild(user, guild))) {

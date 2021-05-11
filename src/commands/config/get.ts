@@ -7,12 +7,13 @@ import { getConfigValue } from "../../actions/config/getConfigValue";
 const get: Subcommand = {
   name: "get",
   description: "Get the value of a configuration setting.",
-  type: "SUB_COMMAND_GROUP",
   options: allKeys.map(key => ({
     name: key,
     description: `Get the value of the ${key} config key.`,
     type: "SUB_COMMAND"
   })),
+  type: "SUB_COMMAND_GROUP",
+  requiresGuild: false,
   async execute({ options, storage, reply }) {
     const key: string | undefined = options[0]?.name;
     if (key === undefined || key === "") {

@@ -26,7 +26,6 @@ function isLimitKey(value: unknown): value is LimitKey {
 const limit: Subcommand = {
   name: "limit",
   description: "Set a limit value on the queue. (Time in seconds, where applicable)",
-  type: "SUB_COMMAND_GROUP",
   options: allLimits.map(key => ({
     name: key,
     description: `Read or write the ${key} limit.`,
@@ -40,11 +39,9 @@ const limit: Subcommand = {
       }
     ]
   })),
+  type: "SUB_COMMAND_GROUP",
+  requiresGuild: true,
   async execute({ guild, channel, user, options, reply, replyPrivately }) {
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
     const queueChannel = await getQueueChannel(guild);
 
     if (!queueChannel) {

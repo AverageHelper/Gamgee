@@ -8,13 +8,8 @@ const restart: Subcommand = {
   name: "restart",
   description: "Empty the queue and start a fresh queue session.",
   type: "SUB_COMMAND",
-  async execute(context) {
-    const { user, guild, channel, prepareForLongRunningTasks, reply, replyPrivately } = context;
-
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
+  requiresGuild: true,
+  async execute({ user, guild, channel, prepareForLongRunningTasks, reply, replyPrivately }) {
     const queueChannel = await getQueueChannel(guild);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.

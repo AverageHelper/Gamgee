@@ -9,34 +9,21 @@ const stats: Subcommand = {
   name: "stats",
   description: "Print statistics on the current queue.",
   type: "SUB_COMMAND",
-  async execute(context) {
-    const {
-      user,
-      guild,
-      channel: messageChannel,
-      logger,
-      reply,
-      replyPrivately,
-      deleteInvocation
-    } = context;
-
-    if (!guild) {
-      return reply("Can't do that here.");
-    }
-
-    const channel = await getQueueChannel(guild);
+  requiresGuild: true,
+  async execute({ user, guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
+    const queueChannel = await getQueueChannel(guild);
 
     // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && messageChannel?.id !== channel?.id) {
+    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
       return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
-    if (!channel) {
+    if (!queueChannel) {
       return reply(`No queue is set up. Would you like to start one?`);
     }
 
     // Get the current queue's status
-    const queueIsCurrent = messageChannel?.id === channel.id;
-    const queue = useQueue(channel);
+    const queueIsCurrent = channel?.id === queueChannel.id;
+    const queue = useQueue(queueChannel);
     const [count, playtimeRemaining, playtimeTotal] = await Promise.all([
       queue.count(),
       queue.playtimeRemaining(),
@@ -50,7 +37,7 @@ const stats: Subcommand = {
     );
 
     const responseBuilder = new StringBuilder();
-    responseBuilder.push(`Queue channel: <#${channel.id}>`);
+    responseBuilder.push(`Queue channel: <#${queueChannel.id}>`);
     if (queueIsCurrent) {
       responseBuilder.push(" (in here)");
     }

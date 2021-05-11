@@ -97,9 +97,9 @@ export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedComm
   return tbd.guild !== null;
 }
 
-type BaseCommand = Discord.ApplicationCommandData;
+interface BaseCommand extends Discord.ApplicationCommandData {}
 
-export interface NormalCommand extends BaseCommand {
+export interface GlobalCommand extends BaseCommand {
   /** Whether the command requires a guild present to execute. */
   requiresGuild: false;
 
@@ -136,10 +136,18 @@ export interface GuildedCommand extends BaseCommand {
 /**
  * A top-level command description.
  */
-export type Command = NormalCommand | GuildedCommand;
+export type Command = GlobalCommand | GuildedCommand;
 
-export interface Subcommand extends Discord.ApplicationCommandOptionData {
+interface BaseSubcommand extends Discord.ApplicationCommandOptionData {
   type: "SUB_COMMAND" | "SUB_COMMAND_GROUP";
+}
+
+export interface GlobalSubcommand extends BaseSubcommand {
+  /** Whether the subcommand requires a guild present to execute. */
+  requiresGuild: false;
+
+  /** Permission overwrites for user or guild subcommand access. */
+  permissions?: undefined;
 
   /**
    * The command implementation. Receives contextual information about the
@@ -149,6 +157,26 @@ export interface Subcommand extends Discord.ApplicationCommandOptionData {
    */
   execute: (context: CommandContext) => void | Promise<void>;
 }
+
+export interface GuildedSubcommand extends BaseSubcommand {
+  /** Whether the subcommand requires a guild present to execute. */
+  requiresGuild: true;
+
+  /** Permission overwrites for user or guild subcommand access. */
+  permissions?: (
+    guild: Discord.Guild
+  ) => NonEmptyArray<CommandPermission> | Promise<NonEmptyArray<CommandPermission>>;
+
+  /**
+   * The command implementation. Receives contextual information about the
+   * command invocation. May return a `Promise`.
+   *
+   * @param context Contextual information about the command invocation.
+   */
+  execute: (context: GuildedCommandContext) => void | Promise<void>;
+}
+
+export type Subcommand = GlobalSubcommand | GuildedSubcommand;
 
 async function failPermissions(context: CommandContext): Promise<void> {
   return context.replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
