@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Storage } from "../configStorage";
 import type { Logger } from "../logger";
+import { userHasRoleInGuild } from "../permissions";
 
 export interface MessageCommandInteractionOption extends Discord.CommandInteractionOption {
   value: string;
@@ -96,16 +97,14 @@ export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedComm
   return tbd.guild !== null;
 }
 
-interface BaseCommand extends Discord.ApplicationCommandData {
-  /** Permission overwrites for user or guild command access. */
-  permissions?: (
-    guild: Discord.Guild
-  ) => NonEmptyArray<CommandPermission> | Promise<NonEmptyArray<CommandPermission>>;
-}
+type BaseCommand = Discord.ApplicationCommandData;
 
 export interface NormalCommand extends BaseCommand {
   /** Whether the command requires a guild present to execute. */
   requiresGuild: false;
+
+  /** Permission overwrites for user or guild command access. */
+  permissions?: undefined;
 
   /**
    * The command implementation. Receives contextual information about the
@@ -119,6 +118,11 @@ export interface NormalCommand extends BaseCommand {
 export interface GuildedCommand extends BaseCommand {
   /** Whether the command requires a guild present to execute. */
   requiresGuild: true;
+
+  /** Permission overwrites for user or guild command access. */
+  permissions?: (
+    guild: Discord.Guild
+  ) => NonEmptyArray<CommandPermission> | Promise<NonEmptyArray<CommandPermission>>;
 
   /**
    * The command implementation. Receives contextual information about the
@@ -134,28 +138,6 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = NormalCommand | GuildedCommand;
 
-/**
- * Runs the command if the invocation context satisfies the command's declared invariants.
- *
- * @param command The command to execute.
- * @param context The invocation context.
- */
-export async function invokeCommand(command: Command, context: CommandContext): Promise<void> {
-  if (command.requiresGuild) {
-    if (isGuildedCommandContext(context)) {
-      // TODO: Check that the caller satisfies the command's declared permission requirements.
-
-      return command.execute(context);
-    }
-
-    // No guild found
-    return context.reply("Can't do that here.", { ephemeral: true });
-  }
-
-  // No guild required
-  return command.execute(context);
-}
-
 export interface Subcommand extends Discord.ApplicationCommandOptionData {
   type: "SUB_COMMAND" | "SUB_COMMAND_GROUP";
 
@@ -166,4 +148,80 @@ export interface Subcommand extends Discord.ApplicationCommandOptionData {
    * @param context Contextual information about the command invocation.
    */
   execute: (context: CommandContext) => void | Promise<void>;
+}
+
+async function failPermissions(context: CommandContext): Promise<void> {
+  return context.replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
+}
+
+async function failNoGuild(context: CommandContext): Promise<void> {
+  return context.reply("Can't do that here.", { ephemeral: true });
+}
+
+function neverFallthrough(val: never): never {
+  throw new TypeError(`Unexpected case: ${JSON.stringify(val)}`);
+}
+
+/**
+ * Runs the command if the invocation context satisfies the command's declared invariants.
+ *
+ * @param command The command to execute.
+ * @param context The invocation context.
+ */
+export async function invokeCommand(command: Command, context: CommandContext): Promise<void> {
+  if (!command.requiresGuild)
+    // No guild required
+    return command.execute(context);
+
+  if (!isGuildedCommandContext(context))
+    // No guild found
+    return failNoGuild(context);
+
+  if (!command.permissions)
+    // No permissions demanded
+    return command.execute(context);
+
+  const permissions = await command.permissions(context.guild);
+  for (const permission of permissions) {
+    switch (permission.type) {
+      case "ROLE": {
+        const userHasRole = await userHasRoleInGuild(context.user, permission.id, context.guild);
+        if (permission.permission) {
+          // User should have a role
+          if (!userHasRole) {
+            return failPermissions(context);
+          }
+        } else {
+          // User shouldn't have a role
+          if (userHasRole) {
+            return failPermissions(context);
+          }
+        }
+        break;
+      }
+
+      case "USER": {
+        // User should (or shouldn't) have an identity
+        const userHasId = context.user.id === permission.id;
+        if (permission.permission) {
+          // User should have an identity
+          if (!userHasId) {
+            return failPermissions(context);
+          }
+        } else {
+          // User shouldn't have an identity
+          if (userHasId) {
+            return failPermissions(context);
+          }
+        }
+        break;
+      }
+
+      default:
+        return neverFallthrough(permission.type);
+    }
+  }
+
+  // Caller passes permissions checks
+  return command.execute(context);
 }

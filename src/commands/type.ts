@@ -5,7 +5,7 @@ const type: Command = {
   description: "Start a typing indicator.",
   requiresGuild: false,
   async execute({ type, channel, client, logger, reply, deleteInvocation }) {
-    if (!channel) return;
+    if (!channel) return reply("This doesn't work as well in DMs.");
 
     logger.debug(
       `${client.user?.username.concat(" is") ?? "I am"} typing in channel ${channel.id}...`

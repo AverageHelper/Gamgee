@@ -5,6 +5,8 @@ interface MockCommand {
   execute: jest.Mock;
 }
 
+export { invokeCommand } from "../Command";
+
 export const allCommands = new Discord.Collection<string, MockCommand>();
 
 allCommands.set("config", {

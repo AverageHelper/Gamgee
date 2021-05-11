@@ -28,6 +28,7 @@ const setup: Subcommand = {
       deleteInvocation
     } = context;
 
+    // TODO: Build a GuildedSubcommand type to handle this
     if (!guild) {
       return reply("Can't do that here.");
     }
@@ -35,11 +36,12 @@ const setup: Subcommand = {
     await prepareForLongRunningTasks(true);
     await deleteInvocation();
 
-    // Only the guild owner may touch the queue.
+    // TODO: Build a GuildedSubcommand type to handle permissions
     if (!(await userIsAdminInGuild(user, guild))) {
       return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
+    // TODO: Build a resolver function that gets a channel or null from a given option.
     let newQueueChannel: Discord.GuildChannel | string | undefined =
       (options[0]?.channel as Discord.GuildChannel | undefined) ??
       (options[0]?.value as string | undefined);
