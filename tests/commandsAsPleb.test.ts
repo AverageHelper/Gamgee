@@ -11,7 +11,7 @@ const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 const QUEUE_COMMAND = "queue";
 
 describe("Command as pleb", () => {
-  const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
+  const PERMISSION_ERROR_RESPONSE = "You don't have permission to run that command.";
   const url = "https://youtu.be/dQw4w9WgXcQ";
 
   beforeEach(async () => {

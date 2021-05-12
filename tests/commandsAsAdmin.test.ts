@@ -16,7 +16,7 @@ const QUEUE_COMMAND = "queue";
 
 describe("Command as admin", () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";
-  const PERMISSION_ERROR_RESPONSE = "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...";
+  const PERMISSION_ERROR_RESPONSE = "You don't have permission to run that command.";
   const NO_QUEUE = "no queue";
 
   beforeEach(async () => {
