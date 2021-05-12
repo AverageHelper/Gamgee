@@ -1,18 +1,13 @@
 import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
-import { userIsAdminInGuild } from "../../permissions";
 
 const teardown: Subcommand = {
   name: "teardown",
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute({ user, guild, logger, reply, replyPrivately }) {
-    // Only the guild owner may touch the queue.
-    if (!(await userIsAdminInGuild(user, guild))) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
-
+  permissions: ["owner"],
+  async execute({ guild, logger, reply }) {
     const guildStorage = useGuildStorage(guild);
 
     logger.info(`Forgetting queue channel for guild ${guild.id}.`);

@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands";
+import { allCommands, resolvePermissions } from "../commands";
 import { useLogger } from "../logger";
-import { allCommands } from "../commands";
 import richErrorMessage from "../helpers/richErrorMessage";
 
 const logger = useLogger();
@@ -58,7 +58,9 @@ async function preparePrivilegedCommands(
         logger.debug(`Created command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`);
 
         if (cmd.permissions) {
-          const permissions = await cmd.permissions(guild);
+          const permissions = Array.isArray(cmd.permissions)
+            ? await resolvePermissions(cmd.permissions, guild)
+            : await cmd.permissions(guild);
           await appCommand.setPermissions(permissions);
           logger.debug(
             `Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`

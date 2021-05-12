@@ -1,7 +1,6 @@
 import type { Subcommand } from "../Command";
-import { useQueueStorage } from "../../useQueueStorage";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 import { resolveUserFromOption } from "../../helpers/resolvers";
+import { useQueueStorage } from "../../useQueueStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import logUser from "../../helpers/logUser";
 
@@ -19,13 +18,9 @@ const whitelist: Subcommand = {
   ],
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute({ user, guild, options, logger, reply, replyPrivately, deleteInvocation }) {
+  permissions: ["owner", "admin", "queue-admin"],
+  async execute({ user, guild, options, logger, reply, deleteInvocation }) {
     await deleteInvocation();
-
-    // Only the queue admin or server owner may touch the queue.
-    if (!(await userIsAdminForQueueInGuild(user, guild))) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
 
     const option = options[0];
     if (!option) {

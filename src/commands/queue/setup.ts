@@ -1,8 +1,7 @@
 import type Discord from "discord.js";
 import type { Subcommand } from "../Command";
-import getChannelFromMention from "../../helpers/getChannelFromMention";
 import { useGuildStorage } from "../../useGuildStorage";
-import { userIsAdminInGuild } from "../../permissions";
+import getChannelFromMention from "../../helpers/getChannelFromMention";
 
 const setup: Subcommand = {
   name: "setup",
@@ -17,25 +16,10 @@ const setup: Subcommand = {
   ],
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute(context) {
-    const {
-      user,
-      guild,
-      options,
-      logger,
-      prepareForLongRunningTasks,
-      reply,
-      replyPrivately,
-      deleteInvocation
-    } = context;
-
+  permissions: ["owner"],
+  async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
     await prepareForLongRunningTasks(true);
     await deleteInvocation();
-
-    // TODO: Build a GuildedSubcommand type to handle permissions
-    if (!(await userIsAdminInGuild(user, guild))) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
 
     // TODO: Build a resolver function that gets a channel or null from a given option.
     let newQueueChannel: Discord.GuildChannel | string | undefined =

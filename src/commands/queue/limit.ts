@@ -1,8 +1,7 @@
-import type { Subcommand } from "../Command";
 import type { ConfigValue } from "../../constants/config";
+import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { useQueue } from "../../actions/queue/useQueue";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
@@ -41,7 +40,8 @@ const limit: Subcommand = {
   })),
   type: "SUB_COMMAND_GROUP",
   requiresGuild: true,
-  async execute({ guild, channel, user, options, reply, replyPrivately }) {
+  permissions: ["owner", "admin", "queue-admin"],
+  async execute({ guild, options, reply }) {
     const queueChannel = await getQueueChannel(guild);
 
     if (!queueChannel) {
@@ -88,11 +88,6 @@ const limit: Subcommand = {
       });
 
       return reply(responseBuilder.result());
-    }
-
-    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel.id) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
     }
 
     if (!isLimitKey(limitKey)) {

@@ -8,9 +8,6 @@ const mockUseQueue = useQueue as jest.Mock;
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { userIsAdminForQueueInGuild } from "../permissions";
-const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
-
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockGetAllEntries = jest.fn().mockResolvedValue(undefined);
 const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
@@ -44,7 +41,6 @@ describe("Now-Playing", () => {
     mockReplyWithMention.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
-    mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
     mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
   });
 

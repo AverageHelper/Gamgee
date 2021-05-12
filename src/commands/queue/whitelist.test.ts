@@ -1,13 +1,9 @@
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
-jest.mock("../../permissions");
 
 import getUserFromMention from "../../helpers/getUserFromMention";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
-
-import { userIsAdminForQueueInGuild } from "../../permissions";
-const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
 
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -22,7 +18,6 @@ import whitelist from "./whitelist";
 
 const mockWhitelistUser = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
@@ -48,7 +43,6 @@ describe("Removing from Queue Blacklist", () => {
       ],
       logger,
       reply: mockReply,
-      replyPrivately: mockReplyPrivately,
       deleteInvocation: mockDeleteMessage
     } as unknown) as GuildedCommandContext;
 
@@ -63,8 +57,6 @@ describe("Removing from Queue Blacklist", () => {
     mockWhitelistUser.mockResolvedValue(undefined);
     mockReply.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
-
-    mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
   });
 
   test("does nothing without a valid mention (empty space)", async () => {
@@ -112,19 +104,8 @@ describe("Removing from Queue Blacklist", () => {
     expect(mockWhitelistUser).not.toHaveBeenCalled();
   });
 
-  test("does nothing when the caller is not admin", async () => {
-    mockUserIsAdminForQueueInGuild.mockResolvedValueOnce(false);
+  test("calls whitelistUser for queue", async () => {
     await expect(whitelist.execute(context)).resolves.toBe(undefined);
-
-    expect(mockWhitelistUser).not.toHaveBeenCalled();
-  });
-
-  test("calls whitelistUser for queue when the caller is admin", async () => {
-    await expect(whitelist.execute(context)).resolves.toBe(undefined);
-
-    // permissions got checked
-    expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledTimes(1);
-    expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledWith(context.user, context.guild);
 
     // whitelist effect
     expect(mockWhitelistUser).toHaveBeenCalledTimes(1);

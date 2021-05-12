@@ -1,24 +1,19 @@
 import type { Subcommand } from "../Command";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
 import { useGuildStorage } from "../../useGuildStorage";
-import { userIsAdminForQueueInGuild } from "../../permissions";
+import getQueueChannel from "../../actions/queue/getQueueChannel";
 
 const open: Subcommand = {
   name: "open",
   description: "Start accepting song requests to the queue.",
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute({ user, guild, channel, reply, replyPrivately, deleteInvocation }) {
+  permissions: ["owner", "queue-admin"],
+  async execute({ guild, channel, reply, deleteInvocation }) {
     const guildStorage = useGuildStorage(guild);
     const [queueChannel] = await Promise.all([
       getQueueChannel(guild), //
       deleteInvocation()
     ]);
-
-    // The queue may only be opened in the queue channel, or by the server owner.
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
 
     if (!queueChannel) {
       return reply("There's no queue to open. Have you set one up yet?", { ephemeral: true });

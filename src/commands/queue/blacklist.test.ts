@@ -6,9 +6,6 @@ jest.mock("../../permissions");
 import getUserFromMention from "../../helpers/getUserFromMention";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
 
-import { userIsAdminForQueueInGuild } from "../../permissions";
-const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
-
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
@@ -71,8 +68,6 @@ describe("Manage the Queue Blacklist", () => {
     mockReply.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
-
-    mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
   });
 
   describe("Listing Blacklisted Users", () => {
@@ -150,19 +145,8 @@ describe("Manage the Queue Blacklist", () => {
       expect(mockBlacklistUser).not.toHaveBeenCalled();
     });
 
-    test("does nothing when the caller is not admin", async () => {
-      mockUserIsAdminForQueueInGuild.mockResolvedValueOnce(false);
+    test("calls blacklistUser for queue", async () => {
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      expect(mockBlacklistUser).not.toHaveBeenCalled();
-    });
-
-    test("calls blacklistUser for queue when the caller is admin", async () => {
-      await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      // permissions got checked
-      expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledTimes(1);
-      expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledWith(context.user, context.guild);
 
       // blacklist effect
       expect(mockBlacklistUser).toHaveBeenCalledTimes(1);

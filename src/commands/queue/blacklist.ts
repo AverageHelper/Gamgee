@@ -1,13 +1,12 @@
 import type { Subcommand } from "../Command";
 import { useQueueStorage } from "../../useQueueStorage";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue";
 import { resolveUserFromOption } from "../../helpers/resolvers";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import logUser from "../../helpers/logUser";
 import parentCommand from "../songRequest";
-import whitelist from "./whitelist";
 import StringBuilder from "../../helpers/StringBuilder";
+import whitelist from "./whitelist";
 
 const blacklist: Subcommand = {
   name: "blacklist",
@@ -23,6 +22,7 @@ const blacklist: Subcommand = {
   ],
   type: "SUB_COMMAND",
   requiresGuild: true,
+  permissions: ["owner", "admin", "queue-admin"],
   async execute(context) {
     const {
       guild,
@@ -34,11 +34,6 @@ const blacklist: Subcommand = {
       replyPrivately,
       deleteInvocation
     } = context;
-
-    // Only the queue admin or server owner may touch the queue.
-    if (!(await userIsAdminForQueueInGuild(user, guild))) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
 
     await deleteInvocation();
 

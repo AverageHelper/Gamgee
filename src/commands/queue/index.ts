@@ -1,4 +1,5 @@
 import type { Command } from "../Command";
+import { invokeCommand } from "../../actions/invokeCommand";
 import StringBuilder from "../../helpers/StringBuilder";
 import setup from "./setup";
 import teardown from "./teardown";
@@ -61,7 +62,7 @@ const sr: Command = {
             2
           )}`
         );
-        return command.execute(context);
+        return invokeCommand(command, context);
       }
     }
 

@@ -1,4 +1,5 @@
 import type { Command } from "../Command";
+import { invokeCommand } from "../../actions/invokeCommand";
 
 import get from "./get";
 import set from "./set";
@@ -15,13 +16,7 @@ const config: Command = {
   name: "config",
   description: "Read and modify config options. *(Server owner only. No touch!)*",
   options: namedSubcommands,
-  permissions: guild => [
-    {
-      id: guild.ownerID,
-      type: "USER",
-      permission: true
-    }
-  ],
+  permissions: ["owner"],
   requiresGuild: true,
   async execute(context) {
     const { options, reply } = context;
@@ -51,7 +46,7 @@ const config: Command = {
             2
           )}`
         );
-        return command.execute(context);
+        return invokeCommand(command, context);
       }
     }
 

@@ -1,6 +1,5 @@
 import type { Subcommand } from "../Command";
 import { useQueue } from "../../actions/queue/useQueue";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
@@ -10,13 +9,10 @@ const stats: Subcommand = {
   description: "Print statistics on the current queue.",
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute({ user, guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
+  permissions: ["owner", "admin", "queue-admin"],
+  async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
     const queueChannel = await getQueueChannel(guild);
 
-    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
     if (!queueChannel) {
       return reply(`No queue is set up. Would you like to start one?`);
     }

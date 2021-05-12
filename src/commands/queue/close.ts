@@ -1,14 +1,14 @@
 import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 
 const close: Subcommand = {
   name: "close",
   description: "Stop accepting song requests to the queue.",
   type: "SUB_COMMAND",
   requiresGuild: true,
-  async execute({ user, guild, channel, reply, replyPrivately, deleteInvocation }) {
+  permissions: ["owner", "admin", "queue-admin"],
+  async execute({ guild, channel, reply, deleteInvocation }) {
     const guildStorage = useGuildStorage(guild);
     const [isQueueOpen, queueChannel] = await Promise.all([
       guildStorage.isQueueOpen(),
@@ -16,9 +16,6 @@ const close: Subcommand = {
       deleteInvocation()
     ]);
 
-    if (!(await userIsAdminForQueueInGuild(user, guild)) && channel?.id !== queueChannel?.id) {
-      return replyPrivately("YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-    }
     if (!queueChannel) {
       return reply("There's no queue to close. Have you set one up yet?", { ephemeral: true });
     }
