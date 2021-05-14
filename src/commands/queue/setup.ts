@@ -16,9 +16,8 @@ const setup: Subcommand = {
   ],
   type: "SUB_COMMAND",
   requiresGuild: true,
-  permissions: ["owner"],
+  permissions: ["owner", "admin"],
   async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
-    await prepareForLongRunningTasks(true);
     await deleteInvocation();
 
     if (!isNonEmptyArray(options)) {
@@ -38,6 +37,8 @@ const setup: Subcommand = {
         ephemeral: true
       });
     }
+
+    await prepareForLongRunningTasks(true);
 
     const guildStorage = useGuildStorage(guild);
     logger.info(`Setting up channel '${newQueueChannel.name}' for queuage.`);

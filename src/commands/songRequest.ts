@@ -34,8 +34,6 @@ const sr: Command = {
       deleteInvocation
     } = context;
 
-    await prepareForLongRunningTasks();
-
     const queueChannel = await getQueueChannel(guild);
     if (!queueChannel) {
       return reject_public(context, "No queue is set up.");
@@ -84,6 +82,8 @@ const sr: Command = {
     if (!isQueueOpen) {
       return reject_public(context, "The queue is not open.");
     }
+
+    await prepareForLongRunningTasks();
 
     const requestQueue = useJobQueue<SongRequest>("urlRequest");
     requestQueue.process(processRequest); // Same function instance, so a nonce call

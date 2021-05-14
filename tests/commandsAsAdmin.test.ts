@@ -23,7 +23,7 @@ describe("Command as admin", () => {
     await sendMessage(`**'${expect.getState().currentTestName}'**`);
 
     await setIsQueueCreator(true);
-    await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
+    await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
 
     // Add the Queue Admin role to the tester bot
     await setIsQueueCreator(false);
@@ -49,14 +49,18 @@ describe("Command as admin", () => {
       `(
         "$subcommand asks the user to set up the queue",
         async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} ${subcommand}`);
+          const response = await commandResponseInSameChannel(
+            `${QUEUE_COMMAND} ${subcommand}`,
+            undefined,
+            NO_QUEUE
+          );
           expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
         }
       );
 
       test("url request does nothing", async () => {
-        const response = await commandResponseInSameChannel(`sr ${url}`);
-        expect(response?.content.toLowerCase()).toContain("no queue");
+        const response = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
     });
 
@@ -66,7 +70,7 @@ describe("Command as admin", () => {
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
         await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
         await waitForMessage(
@@ -115,7 +119,7 @@ describe("Command as admin", () => {
       });
 
       test("fails to get the queue's global limits", async () => {
-        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit`);
+        const response = await commandResponseInSameChannel("limits");
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
@@ -143,7 +147,11 @@ describe("Command as admin", () => {
       });
 
       test("fails to see queue statistics", async () => {
-        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} stats`);
+        const response = await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} stats`,
+          undefined,
+          NO_QUEUE
+        );
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
@@ -163,7 +171,7 @@ describe("Command as admin", () => {
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
 
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`);
+        await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
         await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
@@ -231,8 +239,8 @@ describe("Command as admin", () => {
             undefined,
             "now open"
           );
-          expect(response?.content).not.toContain("already");
           expect(response?.content).toContain("now open");
+          expect(response?.content).not.toContain("already");
         });
 
         test("fails to close the queue", async () => {
@@ -265,17 +273,21 @@ describe("Command as admin", () => {
     const needSongLink = `You're gonna have to add a song link to that.`;
 
     test("asks for a song link", async () => {
-      const response = await commandResponseInSameChannel("video");
+      const response = await commandResponseInSameChannel("video", undefined, needSongLink);
       expect(response?.content).toBe(needSongLink);
     });
 
     test("returns the title and duration of a song with normal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video ${url}`);
+      const response = await commandResponseInSameChannel(`video ${url}`, undefined, info);
       expect(response?.content).toBe(info);
     });
 
     test("returns the title and duration of a song with suboptimal spacing", async () => {
-      const response = await commandResponseInSameChannel(`video             ${url}`);
+      const response = await commandResponseInSameChannel(
+        `video             ${url}`,
+        undefined,
+        info
+      );
       expect(response?.content).toBe(info);
     });
   });

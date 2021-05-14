@@ -47,7 +47,7 @@
     "url-metadata": "^2.5.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
-    "ytdl-core": "^4.7.0"
+    "ytdl-core": "^4.8.0"
   },
   "devDependencies": {
     "@types/humanize-duration": "^3.18.1",

@@ -6,7 +6,7 @@ const teardown: Subcommand = {
   description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
   type: "SUB_COMMAND",
   requiresGuild: true,
-  permissions: ["owner"],
+  permissions: ["owner", "admin"],
   async execute({ guild, logger, reply }) {
     const guildStorage = useGuildStorage(guild);
 
