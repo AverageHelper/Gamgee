@@ -70,17 +70,6 @@ describe("Command as admin", () => {
         await setIsQueueAdmin(true);
 
         await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
-        await waitForMessage(
-          msg =>
-            msg.author.id === UUT_ID &&
-            msg.channel.id === RUN_CHANNEL_ID &&
-            msg.content.includes("has restarted")
-        );
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit count null`);
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit cooldown null`);
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} limit entry-duration null`);
 
         await setIsQueueCreator(false);
         await sendMessage(`**Run**`);
@@ -94,12 +83,6 @@ describe("Command as admin", () => {
         );
         expect(cmdMessage.deleted).toBeTrue();
         expect(response?.content).toContain("name a text channel");
-      });
-
-      test("fails to set up a queue with an improper channel mention", async () => {
-        await setIsQueueCreator(true);
-        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup queue`);
-        expect(response?.content).toContain("That's not a real channel");
       });
 
       test.each`
