@@ -84,6 +84,10 @@ export async function handleInteraction(
             });
           }
         }
+
+        if (options?.ephemeral === true) {
+          logger.verbose(`Sent ephemeral reply to User ${logUser(interaction.user)}: ${content}`);
+        }
       },
       deleteInvocation: () => Promise.resolve(undefined),
       startTyping: (count?: number) => void channel?.startTyping(count),

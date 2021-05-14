@@ -69,6 +69,7 @@ async function sendEphemeralReply(
 ): Promise<void> {
   try {
     await source.reply(content, { ephemeral: true });
+    logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
   } catch (error: unknown) {
     logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
   }
