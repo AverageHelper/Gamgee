@@ -16,7 +16,6 @@ const QUEUE_COMMAND = "queue";
 
 describe("Command as admin", () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";
-  const PERMISSION_ERROR_RESPONSE = "You don't have permission to run that command.";
   const NO_QUEUE = "no queue";
 
   beforeEach(async () => {
@@ -101,11 +100,6 @@ describe("Command as admin", () => {
         await setIsQueueCreator(true);
         const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup queue`);
         expect(response?.content).toContain("That's not a real channel");
-      });
-
-      test("fails to set up a queue without owner permission", async () => {
-        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} setup queue`);
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
       });
 
       test.each`
@@ -210,8 +204,8 @@ describe("Command as admin", () => {
             undefined,
             "now closed"
           );
-          expect(response?.content).not.toContain("already");
           expect(response?.content).toContain("now closed");
+          expect(response?.content).not.toContain("already");
         });
 
         test("allows the tester to see queue statistics", async () => {

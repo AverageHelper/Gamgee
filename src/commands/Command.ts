@@ -5,7 +5,7 @@ import type { CommandPermission, PermissionAlias } from "./CommandPermission";
 export * from "./CommandContext";
 export * from "./CommandPermission";
 
-type PermissionAliasList = NonEmptyArray<PermissionAlias>;
+type PermissionAliasList = Array<PermissionAlias>;
 
 type PermissionGenerator = (
   guild: Discord.Guild

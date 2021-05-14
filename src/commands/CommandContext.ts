@@ -83,5 +83,5 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
 export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
-  return tbd.guild !== null;
+  return Boolean(tbd.guild);
 }

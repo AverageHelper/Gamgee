@@ -14,7 +14,6 @@ const UUT_ID = requireEnv("BOT_TEST_ID");
 const QUEUE_COMMAND = "queue";
 
 describe("Command as pleb", () => {
-  const PERMISSION_ERROR_RESPONSE = "You don't have permission to run that command.";
   const THINKING_RESPONSE = "Let me think...";
   const url = "https://youtu.be/dQw4w9WgXcQ";
 
@@ -56,24 +55,6 @@ describe("Command as pleb", () => {
 
   describe("queue", () => {
     describe("when the queue is not set up", () => {
-      test.each`
-        subcommand
-        ${"stats"}
-        ${"setup"}
-        ${"open"}
-        ${"close"}
-      `(
-        "$subcommand yells at the user because they don't have permission",
-        async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} ${subcommand}`,
-            undefined,
-            PERMISSION_ERROR_RESPONSE
-          );
-          expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-        }
-      );
-
       test("url request does nothing", async () => {
         const response = await commandResponseInSameChannel(`sr ${url}`, undefined, "no queue");
         expect(response?.content.toLowerCase()).toContain("no queue");
@@ -104,7 +85,11 @@ describe("Command as pleb", () => {
 
       if (isOpen) {
         test("accepts a song request", async () => {
-          const waitingResponse = await commandResponseInSameChannel(`sr ${url}`);
+          const waitingResponse = await commandResponseInSameChannel(
+            `sr ${url}`,
+            undefined,
+            THINKING_RESPONSE
+          );
           expect(waitingResponse?.content).toBe(THINKING_RESPONSE);
 
           // TODO: Check that the request appears in the queue as well
@@ -136,40 +121,6 @@ describe("Command as pleb", () => {
           expect(response?.content).toContain("queue is not open");
         });
       }
-
-      test("setup yells at the tester for trying to set up a queue", async () => {
-        let response = await commandResponseInSameChannel(
-          `${QUEUE_COMMAND} setup`,
-          undefined,
-          PERMISSION_ERROR_RESPONSE
-        );
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-
-        response = await commandResponseInSameChannel(
-          `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
-          undefined,
-          PERMISSION_ERROR_RESPONSE
-        );
-        expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-      });
-
-      test.each`
-        subcommand
-        ${"open"}
-        ${"close"}
-        ${"limit count"}
-        ${"stats"}
-      `(
-        "$subcommand yells at the tester because they don't have permission",
-        async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} ${subcommand}`,
-            undefined,
-            PERMISSION_ERROR_RESPONSE
-          );
-          expect(response?.content).toContain(PERMISSION_ERROR_RESPONSE);
-        }
-      );
     });
   });
 

@@ -22,10 +22,7 @@ export interface CommandPermission extends Discord.ApplicationCommandPermissionD
  * @returns a new `CommandPermission` that describes the type of access
  * that a guild owner has to a command.
  */
-export function guildOwnerPermission(
-  guild: Discord.Guild,
-  permission: boolean = true
-): CommandPermission {
+export function guildOwnerPermission(guild: Discord.Guild, permission: boolean): CommandPermission {
   return {
     permission,
     type: "USER",
@@ -46,7 +43,7 @@ export function guildOwnerPermission(
  */
 export async function adminRolePermissions(
   guild: Discord.Guild,
-  permission: boolean = true
+  permission: boolean
 ): Promise<Array<CommandPermission>> {
   const knownAdminRoleIDs = await useGuildStorage(guild).getGuildAdminRoles();
   return knownAdminRoleIDs.map(id => rolePermission(id, permission));
@@ -65,7 +62,7 @@ export async function adminRolePermissions(
  */
 export async function queueAdminRolePermissions(
   guild: Discord.Guild,
-  permission: boolean = true
+  permission: boolean
 ): Promise<Array<CommandPermission>> {
   const knownRoleIDs = await useGuildStorage(guild).getQueueAdminRoles();
   return knownRoleIDs.map(id => rolePermission(id, permission));
@@ -102,15 +99,15 @@ export async function resolvePermissions(
   for (const permAlias of uniqueAliases) {
     switch (permAlias) {
       case "owner":
-        result.push(guildOwnerPermission(guild));
+        result.push(guildOwnerPermission(guild, true));
         break;
 
       case "admin":
-        result.push(...(await adminRolePermissions(guild)));
+        result.push(...(await adminRolePermissions(guild, true)));
         break;
 
       case "queue-admin":
-        result.push(...(await queueAdminRolePermissions(guild)));
+        result.push(...(await queueAdminRolePermissions(guild, true)));
         break;
     }
   }
