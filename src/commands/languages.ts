@@ -1,11 +1,11 @@
-import type { Command } from "./Command";
+import type { GlobalCommand } from "./Command";
 import type { GitHubMetadata } from "github-metadata";
 import gitHubMetadata from "github-metadata";
 import richErrorMessage from "../helpers/richErrorMessage";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
-const languages: Command = {
+const languages: GlobalCommand = {
   name: "languages",
   description: "Print my core repository's language statistics.",
   requiresGuild: false,

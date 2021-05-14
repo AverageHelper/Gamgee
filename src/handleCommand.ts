@@ -71,6 +71,36 @@ async function query(
   return { query, usedCommandPrefix: true };
 }
 
+export function optionsFromArgs(args: Array<string>): Array<MessageCommandInteractionOption> {
+  const options: Array<MessageCommandInteractionOption> = [];
+
+  // one argument
+  const firstArg = args.shift();
+  if (firstArg !== undefined) {
+    const subcommand: MessageCommandInteractionOption = {
+      name: firstArg,
+      type: "STRING",
+      value: firstArg,
+      options: []
+    };
+    options.push(subcommand);
+    while (args.length > 0) {
+      // two arguments or more
+      const name = args.shift() as string;
+      const nextOption: MessageCommandInteractionOption = {
+        name,
+        type: "STRING",
+        value: name,
+        options: []
+      };
+      subcommand.type = "SUB_COMMAND";
+      subcommand.options?.push(nextOption);
+    }
+  }
+
+  return options;
+}
+
 /**
  * Performs actions from a Discord message. The command is ignored if the
  * message is from a bot or the message does not begin with the guild's
@@ -124,33 +154,8 @@ export async function handleCommand(
   if (!commandName) return;
 
   const command: Command | undefined = commands.get(commandName);
-  if (command?.execute) {
-    const args = q.slice(1);
-    const options: Array<MessageCommandInteractionOption> = [];
-
-    // one argument
-    const firstArg = args.shift();
-    if (firstArg !== undefined) {
-      let lastOption: MessageCommandInteractionOption = {
-        name: firstArg,
-        type: "STRING",
-        value: firstArg,
-        options: []
-      };
-      options.push(lastOption);
-      while (args.length > 0) {
-        // two arguments or more
-        const name = args.shift() as string;
-        const nextOption: MessageCommandInteractionOption = {
-          name,
-          type: "STRING",
-          value: name,
-          options: []
-        };
-        lastOption.options = [nextOption];
-        lastOption = nextOption;
-      }
-    }
+  if (command) {
+    const options = optionsFromArgs(q.slice(1));
 
     logger.debug(
       `Calling command handler '${command.name}' with options ${JSON.stringify(

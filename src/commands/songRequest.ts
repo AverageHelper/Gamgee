@@ -7,6 +7,7 @@ import { useJobQueue } from "../actions/queue/jobQueue";
 import { useGuildStorage } from "../useGuildStorage";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import StringBuilder from "../helpers/StringBuilder";
+import { resolveStringFromOption } from "../helpers/optionResolvers";
 
 const sr: Command = {
   name: "sr",
@@ -94,7 +95,8 @@ const sr: Command = {
       queueChannel.stopTyping(true);
     });
 
-    requestQueue.createJob({ songUrl: options[0].value as string, context, queueChannel, logger });
+    const songUrl: string = resolveStringFromOption(options[0]);
+    requestQueue.createJob({ songUrl, context, queueChannel, logger });
   }
 };
 

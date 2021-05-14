@@ -10,6 +10,8 @@ import close from "./close";
 import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
+import { isNonEmptyArray } from "../../helpers/guards";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [
   setup,
@@ -29,10 +31,7 @@ const sr: Command = {
   options: namedSubcommands,
   requiresGuild: true,
   async execute(context) {
-    const arg: string | undefined = context.options[0]?.name;
-    context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
-    const argOptions = context.options[0]?.options ?? [];
-    if (arg === undefined || arg === "") {
+    if (!isNonEmptyArray(context.options)) {
       const response = new StringBuilder("The possible subcommands are:");
       Object.values(namedSubcommands).forEach(command => {
         response.pushNewLine();
@@ -42,6 +41,10 @@ const sr: Command = {
 
       return context.reply(response.result());
     }
+
+    const arg: string = resolveSubcommandNameFromOption(context.options[0]);
+    const argOptions = context.options[0].options ?? [];
+    context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
 
     context.logger.debug(
       `Searching ${

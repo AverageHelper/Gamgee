@@ -4,6 +4,8 @@ import { invokeCommand } from "../../actions/invokeCommand";
 import get from "./get";
 import set from "./set";
 import unset from "./unset";
+import { isNonEmptyArray } from "../../helpers/guards";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [get, set, unset];
 
@@ -21,11 +23,11 @@ const config: Command = {
   async execute(context) {
     const { options, reply } = context;
 
-    const arg: string | undefined = options[0]?.name ?? (options[0]?.value as string | undefined);
-    const argOptions = options[0]?.options ?? [];
-    if (arg === undefined || arg === "") {
+    if (!isNonEmptyArray(options)) {
       return reply(`Missing command structure. Expected ${subargsList}`);
     }
+    const arg: string = resolveSubcommandNameFromOption(options[0]);
+    const argOptions = options[0].options ?? [];
 
     context.logger.debug(
       `Searching ${

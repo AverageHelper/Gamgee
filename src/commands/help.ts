@@ -1,7 +1,7 @@
-import type { Command } from "./Command";
+import type { GlobalCommand } from "./Command";
 import describeAllCommands from "../actions/describeAllCommands";
 
-const help: Command = {
+const help: GlobalCommand = {
   name: "help",
   description: "Print a handy help message.",
   requiresGuild: false,

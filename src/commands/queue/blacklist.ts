@@ -1,12 +1,13 @@
 import type { Subcommand } from "../Command";
 import { useQueueStorage } from "../../useQueueStorage";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue";
-import { resolveUserFromOption } from "../../helpers/resolvers";
+import { resolveUserFromOption } from "../../helpers/optionResolvers";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import logUser from "../../helpers/logUser";
 import parentCommand from "../songRequest";
 import StringBuilder from "../../helpers/StringBuilder";
 import whitelist from "./whitelist";
+import { isNonEmptyArray } from "../../helpers/guards";
 
 const blacklist: Subcommand = {
   name: "blacklist",
@@ -44,8 +45,7 @@ const blacklist: Subcommand = {
 
     const queue = useQueueStorage(queueChannel);
 
-    const option = options[0];
-    if (!option) {
+    if (!isNonEmptyArray(options)) {
       if (context.type === "message") {
         logger.debug("Private-ness for message commands is restricted to DMs.");
         // We can reply to text messages twice, since the second one will be a DM. We `await` here, not `return`.
@@ -92,7 +92,7 @@ const blacklist: Subcommand = {
       return replyPrivately(replyBuilder.result());
     }
 
-    const subject = await resolveUserFromOption(option, guild);
+    const subject = await resolveUserFromOption(options[0], guild);
     if (!subject) {
       return reply(":x: I don't know who that is.", { ephemeral: true });
     }

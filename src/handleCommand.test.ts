@@ -4,7 +4,7 @@ import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKe
 jest.mock("./commands");
 import { allCommands as mockCommandDefinitions } from "./commands";
 
-import { handleCommand } from "./handleCommand";
+import { handleCommand, optionsFromArgs } from "./handleCommand";
 import { useTestLogger } from "../tests/testUtils/logger";
 
 const logger = useTestLogger("error");
@@ -56,6 +56,74 @@ describe("Command handler", () => {
     mockMessage.content = "Some words";
     mockMessage.author.bot = false;
     jest.clearAllMocks();
+  });
+
+  describe("Options Parser", () => {
+    test("parses empty options from a root command", () => {
+      const options = optionsFromArgs([]); // e.g: /help
+      expect(options).toBeArrayOfSize(0);
+    });
+
+    test("parses one option", () => {
+      const url = "https://youtu.be/9Y8ZGLiqXB8";
+      const options = optionsFromArgs([url]); // e.g: /video <url>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: url,
+        type: "STRING",
+        value: url,
+        options: []
+      });
+    });
+
+    test("parses two options as a parameter to a subcomand", () => {
+      const subcommand = "get";
+      const key = "cooldown";
+      const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: subcommand,
+        type: "SUB_COMMAND",
+        value: subcommand,
+        options: expect.toBeArrayOfSize(1) as Array<unknown>
+      });
+      expect(options[0]?.options).toStrictEqual([
+        {
+          name: key,
+          type: "STRING",
+          value: key,
+          options: []
+        }
+      ]);
+    });
+
+    test("parses 3+ options as 2+ parameters to a subcommand", () => {
+      const subcommand = "set";
+      const key = "cooldown";
+      const value = "null";
+      const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: subcommand,
+        type: "SUB_COMMAND",
+        value: subcommand,
+        options: expect.toBeArrayOfSize(2) as Array<unknown>
+      });
+      expect(options[0]?.options).toStrictEqual([
+        {
+          name: key,
+          type: "STRING",
+          value: key,
+          options: []
+        },
+        {
+          name: value,
+          type: "STRING",
+          value: value,
+          options: []
+        }
+      ]);
+    });
   });
 
   describe.each`

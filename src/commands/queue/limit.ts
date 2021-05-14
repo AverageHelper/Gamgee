@@ -1,10 +1,10 @@
-import type { ConfigValue } from "../../constants/config";
 import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
+import { resolveIntegerFromOption, resolveStringFromOption } from "../../helpers/optionResolvers";
 
 const ARG_ENTRY_DURATION = "entry-duration";
 const ARG_SUB_COOLDOWN = "cooldown";
@@ -25,20 +25,24 @@ function isLimitKey(value: unknown): value is LimitKey {
 const limit: Subcommand = {
   name: "limit",
   description: "Set a limit value on the queue. (Time in seconds, where applicable)",
-  options: allLimits.map(key => ({
-    name: key,
-    description: `Read or write the ${key} limit.`,
-    type: "SUB_COMMAND",
-    options: [
-      {
-        name: "value",
-        description: `Set a new value for ${key}.`,
-        type: "INTEGER",
-        required: false
-      }
-    ]
-  })),
-  type: "SUB_COMMAND_GROUP",
+  options: [
+    {
+      name: "key",
+      description: "The name of the limit.",
+      type: "STRING",
+      required: true,
+      choices: allLimits.map(key => ({
+        name: key,
+        value: key
+      }))
+    },
+    {
+      name: "value",
+      description: "The new value to set for the key.",
+      type: "INTEGER"
+    }
+  ],
+  type: "SUB_COMMAND",
   requiresGuild: true,
   permissions: ["owner", "admin", "queue-admin"],
   async execute({ guild, options, reply }) {
@@ -51,9 +55,10 @@ const limit: Subcommand = {
     const queue = useQueue(queueChannel);
     const config = await queue.getConfig();
 
-    const limitKey: string | undefined = options[0]?.name;
-    const argOptions = options[0]?.options;
-    if (limitKey === undefined || limitKey === "" || !argOptions) {
+    const keyOption = options[0];
+    const valueOption = options[1];
+
+    if (!keyOption) {
       // Read out the existing limits
       const responseBuilder = new StringBuilder("Queue Limits:");
 
@@ -90,20 +95,20 @@ const limit: Subcommand = {
       return reply(responseBuilder.result());
     }
 
-    if (!isLimitKey(limitKey)) {
-      const that = limitKey.length <= SAFE_PRINT_LENGTH ? `'${limitKey}'` : "that";
+    const key: string = resolveStringFromOption(keyOption);
+
+    if (!isLimitKey(key)) {
+      const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
       return reply(`I'm not sure what ${that} is. Try one of ${limitsList}`);
     }
 
     // Set limits on the queue
-    let value: ConfigValue | undefined = argOptions[0]?.value as ConfigValue | undefined;
-
-    switch (limitKey) {
+    switch (key) {
       case ARG_ENTRY_DURATION: {
         // Limit each duration entry
-        if (value === undefined) {
+        if (!valueOption) {
           // Read the current limit
-          value = config.entryDurationSeconds;
+          const value = config.entryDurationSeconds;
           if (value === null) {
             return reply(`There is no limit on entry duration.`);
           }
@@ -111,15 +116,11 @@ const limit: Subcommand = {
         }
 
         // Set a new limit
-        value =
-          argOptions[0]?.value === "null"
-            ? null
-            : Number.parseInt((argOptions[0]?.value as string | undefined) ?? "-1", 10);
+        let value = resolveIntegerFromOption(valueOption);
         if (value !== null && Number.isNaN(value)) {
-          value = config.entryDurationSeconds;
           return reply("That doesn't look like an integer. Enter a number value in seconds.");
         }
-        value = value === null || value < 0 ? null : value;
+        value = value === null || value <= 0 ? null : value;
         await queue.updateConfig({ entryDurationSeconds: value });
 
         const responseBuilder = new StringBuilder("Entry duration limit ");
@@ -134,8 +135,9 @@ const limit: Subcommand = {
 
       case ARG_SUB_COOLDOWN: {
         // Limit submission cooldown
-        if (value === undefined) {
-          value = config.cooldownSeconds;
+        if (!valueOption) {
+          // Read the current limit
+          const value = config.cooldownSeconds;
           if (value === null) {
             return reply("There is no submission cooldown time");
           }
@@ -143,15 +145,12 @@ const limit: Subcommand = {
         }
 
         // Set a new limit
-        value =
-          argOptions[0]?.value === "null"
-            ? null
-            : Number.parseInt((argOptions[0]?.value as string | undefined) ?? "-1", 10);
+        let value = resolveIntegerFromOption(valueOption);
         if (value !== null && Number.isNaN(value)) {
           value = config.cooldownSeconds;
           return reply("That doesn't look like an integer. Enter a number value in seconds.");
         }
-        value = value === null || value < 0 ? null : value;
+        value = value === null || value <= 0 ? null : value;
         await queue.updateConfig({ cooldownSeconds: value });
 
         const responseBuilder = new StringBuilder("Submission cooldown ");
@@ -166,8 +165,9 @@ const limit: Subcommand = {
 
       case ARG_SUB_MAX_SUBMISSIONS: {
         // Limit submission count per user
-        if (value === undefined) {
-          value = config.submissionMaxQuantity;
+        if (!valueOption) {
+          // Read the current limit
+          const value = config.submissionMaxQuantity;
           if (value === null) {
             return reply("There is no limit on the number of submissions per user.");
           }
@@ -175,15 +175,12 @@ const limit: Subcommand = {
         }
 
         // Set a new limit
-        value =
-          argOptions[0]?.value === "null"
-            ? null
-            : Number.parseInt((argOptions[0]?.value as string | undefined) ?? "-1", 10);
+        let value = resolveIntegerFromOption(valueOption);
         if (value !== null && Number.isNaN(value)) {
           value = config.submissionMaxQuantity;
           return reply("That doesn't look like an integer. Enter a number value in seconds.");
         }
-        value = value === null || value < 0 ? null : value;
+        value = value === null || value <= 0 ? null : value;
         await queue.updateConfig({ submissionMaxQuantity: value });
 
         const responseBuilder = new StringBuilder("Submission count limit per user ");

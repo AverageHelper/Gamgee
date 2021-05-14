@@ -3,6 +3,8 @@ import getVideoDetails from "../actions/getVideoDetails";
 import durationString from "../helpers/durationString";
 import StringBuilder from "../helpers/StringBuilder";
 import richErrorMessage from "../helpers/richErrorMessage";
+import { resolveStringFromOption } from "../helpers/optionResolvers";
+import { isNonEmptyArray } from "../helpers/guards";
 
 const video: Command = {
   name: "video",
@@ -18,11 +20,10 @@ const video: Command = {
   requiresGuild: false,
   async execute(context) {
     const { logger, options, reply } = context;
-    const url: string | undefined = options[0]?.value as string | undefined;
-
-    if (url === undefined) {
+    if (!isNonEmptyArray(options)) {
       return reply("You're gonna have to add a song link to that.");
     }
+    const url: string = resolveStringFromOption(options[0]);
 
     try {
       const video = await getVideoDetails(url);

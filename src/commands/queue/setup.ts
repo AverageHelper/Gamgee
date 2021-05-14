@@ -1,7 +1,7 @@
-import type Discord from "discord.js";
 import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
-import getChannelFromMention from "../../helpers/getChannelFromMention";
+import { isNonEmptyArray } from "../../helpers/guards";
+import { resolveChannelFromOption } from "../../helpers/optionResolvers";
 
 const setup: Subcommand = {
   name: "setup",
@@ -21,22 +21,16 @@ const setup: Subcommand = {
     await prepareForLongRunningTasks(true);
     await deleteInvocation();
 
-    // TODO: Build a resolver function that gets a channel or null from a given option.
-    let newQueueChannel: Discord.GuildChannel | string | undefined =
-      (options[0]?.channel as Discord.GuildChannel | undefined) ??
-      (options[0]?.value as string | undefined);
-
-    if (newQueueChannel === undefined)
+    if (!isNonEmptyArray(options)) {
       return reply(`Please name a text channel to use for the queue!`);
+    }
 
-    if (typeof newQueueChannel === "string") {
-      newQueueChannel = getChannelFromMention(guild, newQueueChannel);
-      if (!newQueueChannel) {
-        return reply(
-          "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
-          { ephemeral: true }
-        );
-      }
+    const newQueueChannel = resolveChannelFromOption(options[0], guild);
+    if (!newQueueChannel) {
+      return reply(
+        "That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
+        { ephemeral: true }
+      );
     }
 
     if (!newQueueChannel.isText()) {

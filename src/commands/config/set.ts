@@ -2,38 +2,46 @@ import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { listKeys, allKeys } from "../../constants/config/keys";
 import { isConfigKey, isConfigValue } from "../../constants/config";
+import { resolveStringFromOption } from "../../helpers/optionResolvers";
 import { setConfigValue } from "../../actions/config/setConfigValue";
 
 const set: Subcommand = {
   name: "set",
   description: "Set the value of a configuration setting.",
-  options: allKeys.map(key => ({
-    name: key,
-    description: `Set a new value for the '${key}' config key.`,
-    type: "SUB_COMMAND",
-    options: [
-      {
-        name: "value",
-        description: `The new value for the '${key}' config key.`,
-        type: "STRING",
-        required: true
-      }
-    ]
-  })),
-  type: "SUB_COMMAND_GROUP",
+  options: [
+    {
+      name: "key",
+      description: "A config key",
+      type: "STRING",
+      required: true,
+      choices: allKeys.map(key => ({
+        name: key,
+        value: key
+      }))
+    },
+    {
+      name: "value",
+      description: "The new value to set for the config key.",
+      type: "STRING",
+      required: true
+    }
+  ],
+  type: "SUB_COMMAND",
   requiresGuild: false,
   async execute({ options, storage, reply }) {
-    const key: string | undefined = options[0]?.name;
-    if (key === undefined || key === "") {
+    const keyOption = options[0];
+    const valueOption = options[1];
+    if (!keyOption || !valueOption) {
       return reply(listKeys());
     }
+    const key: string = resolveStringFromOption(keyOption);
 
     if (!isConfigKey(key)) {
       const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
       return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
     }
 
-    const value = (options[0]?.options ?? [])[0]?.value as string | undefined;
+    const value = resolveStringFromOption(valueOption);
     if (value === undefined || value === "") {
       return reply("Expected a value to set.");
     }

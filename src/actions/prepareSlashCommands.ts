@@ -36,7 +36,7 @@ async function prepareUnprivilegedCommands(
   successfulUnprivilegedPushes += unprivilegedCommands.length;
 
   logger.verbose(
-    `Set ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}`
+    `Created ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}`
   );
   return successfulUnprivilegedPushes;
 }
@@ -47,9 +47,7 @@ async function preparePrivilegedCommands(
 ): Promise<number> {
   let successfulPrivilegedPushes = 0;
   logger.debug(
-    `Creating remaining ${privilegedCommands.length} privileged command${pluralOf(
-      privilegedCommands
-    )}...`
+    `Creating ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
   );
   await Promise.allSettled(
     privilegedCommands.map(async cmd => {
@@ -78,7 +76,7 @@ async function preparePrivilegedCommands(
     })
   );
   logger.verbose(
-    `Set ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
+    `Created ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
   );
   return successfulPrivilegedPushes;
 }
@@ -157,8 +155,8 @@ export async function prepareSlashCommands(client: Discord.Client): Promise<void
     }
   });
 
-  await prepareGuildedCommands(guildCommands, client);
   await prepareGlobalCommands(globalCommands, client);
+  await prepareGuildedCommands(guildCommands, client);
 
   logger.info(
     `All ${commands.length} command${pluralOf(

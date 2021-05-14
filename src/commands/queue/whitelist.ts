@@ -1,8 +1,9 @@
 import type { Subcommand } from "../Command";
-import { resolveUserFromOption } from "../../helpers/resolvers";
+import { resolveUserFromOption } from "../../helpers/optionResolvers";
 import { useQueueStorage } from "../../useQueueStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import logUser from "../../helpers/logUser";
+import { isNonEmptyArray } from "../../helpers/guards";
 
 const whitelist: Subcommand = {
   name: "whitelist",
@@ -22,15 +23,14 @@ const whitelist: Subcommand = {
   async execute({ user, guild, options, logger, reply, deleteInvocation }) {
     await deleteInvocation();
 
-    const option = options[0];
-    if (!option) {
+    if (!isNonEmptyArray(options)) {
       return reply(":x: You'll need to tell me who to whitelist. Try again, and mention someone.", {
         ephemeral: true
       });
     }
 
     const [subject, queueChannel] = await Promise.all([
-      resolveUserFromOption(option, guild),
+      resolveUserFromOption(options[0], guild),
       getQueueChannel(guild)
     ]);
 
