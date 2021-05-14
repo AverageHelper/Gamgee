@@ -8,6 +8,7 @@ exports[`Help command describes all commands 1`] = `
     \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
 \`?help\` - Print a handy help message.
 \`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
 \`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
 \`?queue\` - Administrative commands to manage the song queue.

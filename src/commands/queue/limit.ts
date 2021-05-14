@@ -6,16 +6,20 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import { resolveIntegerFromOption, resolveStringFromOption } from "../../helpers/optionResolvers";
 
-const ARG_ENTRY_DURATION = "entry-duration";
-const ARG_SUB_COOLDOWN = "cooldown";
-const ARG_SUB_MAX_SUBMISSIONS = "count";
+export const ARG_ENTRY_DURATION = "entry-duration";
+export const ARG_SUB_COOLDOWN = "cooldown";
+export const ARG_SUB_MAX_SUBMISSIONS = "count";
 
 type LimitKey =
   | typeof ARG_ENTRY_DURATION
   | typeof ARG_SUB_COOLDOWN
   | typeof ARG_SUB_MAX_SUBMISSIONS;
 
-const allLimits: Array<LimitKey> = [ARG_ENTRY_DURATION, ARG_SUB_COOLDOWN, ARG_SUB_MAX_SUBMISSIONS];
+export const allLimits: Array<LimitKey> = [
+  ARG_ENTRY_DURATION,
+  ARG_SUB_COOLDOWN,
+  ARG_SUB_MAX_SUBMISSIONS
+];
 const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
@@ -45,7 +49,8 @@ const limit: Subcommand = {
   type: "SUB_COMMAND",
   requiresGuild: true,
   permissions: ["owner", "admin", "queue-admin"],
-  async execute({ guild, options, reply }) {
+  async execute(context) {
+    const { guild, options, reply } = context;
     const queueChannel = await getQueueChannel(guild);
 
     if (!queueChannel) {
@@ -59,40 +64,8 @@ const limit: Subcommand = {
     const valueOption = options[1];
 
     if (!keyOption) {
-      // Read out the existing limits
-      const responseBuilder = new StringBuilder("Queue Limits:");
-
-      allLimits.forEach(key => {
-        responseBuilder.pushNewLine();
-        responseBuilder.pushCode(key);
-        responseBuilder.push(" - ");
-
-        switch (key) {
-          case ARG_SUB_COOLDOWN:
-            if (config.cooldownSeconds !== null && config.cooldownSeconds > 0) {
-              responseBuilder.pushBold(durationString(config.cooldownSeconds));
-            } else {
-              responseBuilder.pushBold("none");
-            }
-            break;
-          case ARG_ENTRY_DURATION:
-            if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-              responseBuilder.pushBold(durationString(config.entryDurationSeconds));
-            } else {
-              responseBuilder.pushBold("infinite");
-            }
-            break;
-          case ARG_SUB_MAX_SUBMISSIONS:
-            if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-              responseBuilder.pushBold(config.submissionMaxQuantity.toString());
-            } else {
-              responseBuilder.pushBold("infinite");
-            }
-            break;
-        }
-      });
-
-      return reply(responseBuilder.result());
+      const { default: limits } = await import("../limits");
+      return limits.execute(context);
     }
 
     const key: string = resolveStringFromOption(keyOption);

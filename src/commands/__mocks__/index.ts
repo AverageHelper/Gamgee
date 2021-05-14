@@ -5,7 +5,7 @@ interface MockCommand {
   execute: jest.Mock;
 }
 
-export { invokeCommand } from "../Command";
+export { invokeCommand } from "../../actions/invokeCommand";
 
 export const allCommands = new Discord.Collection<string, MockCommand>();
 
@@ -19,6 +19,10 @@ allCommands.set("help", {
 });
 allCommands.set("languages", {
   name: "languages",
+  execute: jest.fn().mockResolvedValue(undefined)
+});
+allCommands.set("limits", {
+  name: "limits",
   execute: jest.fn().mockResolvedValue(undefined)
 });
 allCommands.set("now-playing", {

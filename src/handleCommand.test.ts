@@ -158,6 +158,7 @@ describe("Command handler", () => {
       ${"config"}
       ${"help"}
       ${"languages"}
+      ${"limits"}
       ${"now-playing"}
       ${"ping"}
       ${"queue"}
@@ -188,6 +189,7 @@ describe("Command handler", () => {
       ${"config"}
       ${"help"}
       ${"languages"}
+      ${"limits"}
       ${"now-playing"}
       ${"ping"}
       ${"queue"}
