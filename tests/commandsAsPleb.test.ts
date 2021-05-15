@@ -31,28 +31,6 @@ describe("Command as pleb", () => {
     });
   });
 
-  describe("limits", () => {
-    beforeEach(async () => {
-      await sendMessage(`**Setup**`);
-      await setIsQueueCreator(true);
-      await setIsQueueAdmin(true);
-      await commandResponseInSameChannel(
-        `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
-        undefined,
-        "set up"
-      );
-
-      await setIsQueueCreator(false);
-      await setIsQueueAdmin(false);
-      await sendMessage(`**Run**`);
-    });
-
-    test("allows the tester to get the queue's global limits", async () => {
-      const response = await commandResponseInSameChannel("limits");
-      expect(response?.content).toMatchSnapshot();
-    });
-  });
-
   describe("queue", () => {
     describe("when the queue is not set up", () => {
       test("url request does nothing", async () => {

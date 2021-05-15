@@ -78,11 +78,6 @@ describe("Command as admin", () => {
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
       });
 
-      test("fails to get the queue's global limits", async () => {
-        const response = await commandResponseInSameChannel("limits");
-        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-      });
-
       test.each`
         key
         ${"entry-duration"}
