@@ -3,18 +3,14 @@ import {
   setIsQueueAdmin,
   setIsQueueCreator,
   commandResponseInSameChannel,
-  sendMessage,
-  waitForMessage
+  sendMessage
 } from "./discordUtils";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
-const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
-const UUT_ID = requireEnv("BOT_TEST_ID");
 
 const QUEUE_COMMAND = "queue";
 
 describe("Command as pleb", () => {
-  const THINKING_RESPONSE = "Let me think...";
   const url = "https://youtu.be/dQw4w9WgXcQ";
 
   beforeEach(async () => {
@@ -93,22 +89,14 @@ describe("Command as pleb", () => {
 
       if (isOpen) {
         test("accepts a song request", async () => {
-          const waitingResponse = await commandResponseInSameChannel(
+          const response = await commandResponseInSameChannel(
             `sr ${url}`,
             undefined,
-            THINKING_RESPONSE
+            "Submission Accepted!"
           );
-          expect(waitingResponse?.content).toBe(THINKING_RESPONSE);
 
           // TODO: Check that the request appears in the queue as well
-          const finishedResponse = await waitForMessage(
-            msg =>
-              msg.author.id === UUT_ID &&
-              msg.channel.id === TEST_CHANNEL_ID &&
-              msg.createdTimestamp > (waitingResponse?.createdTimestamp ?? 0) &&
-              msg.content === "Submission Accepted!"
-          );
-          expect(finishedResponse?.content).toBe(`Submission Accepted!`);
+          expect(response?.content).toBe(`Submission Accepted!`);
         });
 
         test("`sr` alone provides info on how to use the request command", async () => {

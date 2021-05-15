@@ -176,8 +176,7 @@ export async function handleCommand(
       options,
       storage,
       logger,
-      prepareForLongRunningTasks: async (ephemeral?: boolean) => {
-        await reply(message, "Let me think...", false);
+      prepareForLongRunningTasks: (ephemeral?: boolean) => {
         if (ephemeral === undefined || !ephemeral) {
           void message.channel.startTyping(30);
         }
