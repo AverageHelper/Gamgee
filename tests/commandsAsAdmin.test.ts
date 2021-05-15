@@ -40,21 +40,14 @@ describe("Command as admin", () => {
     describe("when the queue is not set up", () => {
       const NO_QUEUE = "no queue";
 
-      test.each`
-        subcommand
-        ${"stats"}
-        ${"close"}
-      `(
-        "$subcommand asks the user to set up the queue",
-        async ({ subcommand }: { subcommand: string }) => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} ${subcommand}`,
-            undefined,
-            NO_QUEUE
-          );
-          expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-        }
-      );
+      test("stats asks the user to set up the queue", async () => {
+        const response = await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} stats`,
+          undefined,
+          NO_QUEUE
+        );
+        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+      });
 
       test("url request does nothing", async () => {
         const response = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
@@ -112,11 +105,6 @@ describe("Command as admin", () => {
         }
       );
 
-      test("fails to close the queue", async () => {
-        const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
-        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-      });
-
       test("fails to see queue statistics", async () => {
         const response = await commandResponseInSameChannel(
           `${QUEUE_COMMAND} stats`,
@@ -166,16 +154,6 @@ describe("Command as admin", () => {
           await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
         });
 
-        test("allows the tester to close the queue", async () => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} close`,
-            undefined,
-            "now closed"
-          );
-          expect(response?.content).toContain("now closed");
-          expect(response?.content).not.toContain("already");
-        });
-
         test("allows the tester to see queue statistics", async () => {
           const response = await commandResponseInSameChannel(
             `${QUEUE_COMMAND} stats`,
@@ -193,15 +171,6 @@ describe("Command as admin", () => {
       describe("queue closed", () => {
         beforeEach(async () => {
           await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
-        });
-
-        test("fails to close the queue", async () => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} close`,
-            undefined,
-            "already closed"
-          );
-          expect(response?.content).toContain("already closed");
         });
 
         test("allows the tester to see queue statistics", async () => {
