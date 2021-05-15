@@ -17,7 +17,7 @@ export async function userHasRoleInGuild(
 ): Promise<boolean> {
   const adminRole = await guild.roles.fetch(roleId);
   // TODO: Test that user IDs match their guild member IDs
-  return adminRole?.members.has(user.id) ?? false;
+  return adminRole?.members?.has(user.id) ?? false;
 }
 
 /**
@@ -41,6 +41,6 @@ export async function userHasOneOfRoles(
 
   // TODO: Test that user IDs match their guild member IDs
   return adminRoles.some(
-    role => role?.members.has(user.id) ?? false //
+    role => role?.members?.has(user.id) ?? false //
   );
 }
