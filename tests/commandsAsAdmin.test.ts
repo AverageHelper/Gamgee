@@ -40,15 +40,6 @@ describe("Command as admin", () => {
     describe("when the queue is not set up", () => {
       const NO_QUEUE = "no queue";
 
-      test("stats asks the user to set up the queue", async () => {
-        const response = await commandResponseInSameChannel(
-          `${QUEUE_COMMAND} stats`,
-          undefined,
-          NO_QUEUE
-        );
-        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-      });
-
       test("url request does nothing", async () => {
         const response = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
         expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
@@ -105,15 +96,6 @@ describe("Command as admin", () => {
         }
       );
 
-      test("fails to see queue statistics", async () => {
-        const response = await commandResponseInSameChannel(
-          `${QUEUE_COMMAND} stats`,
-          undefined,
-          NO_QUEUE
-        );
-        expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-      });
-
       test("allows the tester to set up a queue", async () => {
         await setIsQueueCreator(true);
         await sendCommand(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
@@ -155,44 +137,6 @@ describe("Command as admin", () => {
 
         await setIsQueueCreator(false);
         await sendMessage(`**Run**`);
-      });
-
-      describe("queue open", () => {
-        beforeEach(async () => {
-          await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
-        });
-
-        test("allows the tester to see queue statistics", async () => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} stats`,
-            undefined,
-            "Queue channel"
-          );
-          expect(response?.content).toContain(
-            `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
-          );
-        });
-
-        // TODO: Add tests for setting queue limits
-      });
-
-      describe("queue closed", () => {
-        beforeEach(async () => {
-          await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
-        });
-
-        test("allows the tester to see queue statistics", async () => {
-          const response = await commandResponseInSameChannel(
-            `${QUEUE_COMMAND} stats`,
-            undefined,
-            "Queue channel"
-          );
-          expect(response?.content).toContain(
-            `Queue channel: <#${QUEUE_CHANNEL_ID}>\nNothing has been added yet.`
-          );
-        });
-
-        // TODO: Add tests for setting queue limits
       });
     });
   });
