@@ -69,7 +69,12 @@ export async function handleInteraction(
         await interaction.defer(ephemeral);
       },
       replyPrivately: async (content: string) => {
-        await replyPrivately(interaction, content);
+        if (interaction.deferred) {
+          // FIXME: These should probs be public always, but we gotta work with deferred interactions
+          await interaction.editReply(content);
+        } else {
+          await replyPrivately(interaction, content);
+        }
       },
       reply: async (content: string, options) => {
         if (interaction.deferred) {
