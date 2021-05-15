@@ -1,10 +1,10 @@
-import type { GlobalCommand } from "./Command";
+import type { GuildedCommand } from "./Command";
 import describeAllCommands from "../actions/describeAllCommands";
 
-const help: GlobalCommand = {
+const help: GuildedCommand = {
   name: "help",
   description: "Print a handy help message.",
-  requiresGuild: false,
+  requiresGuild: true,
   async execute(context) {
     // Dynamic import here, b/c ./index depends on us to resolve
     const { allCommands } = await import("./index");

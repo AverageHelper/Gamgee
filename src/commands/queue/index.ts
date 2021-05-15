@@ -30,6 +30,7 @@ const sr: Command = {
   description: "Administrative commands to manage the song queue.",
   options: namedSubcommands,
   requiresGuild: true,
+  permissions: ["owner", "admin", "queue-admin"],
   async execute(context) {
     if (!isNonEmptyArray(context.options)) {
       const response = new StringBuilder("The possible subcommands are:");

@@ -1,7 +1,8 @@
 import type Discord from "discord.js";
-import type { Command, CommandContext } from "../commands";
+import type { Command, GuildedCommandContext } from "../commands";
 import { getConfigCommandPrefix } from "./config/getConfigValue";
 import StringBuilder from "../helpers/StringBuilder";
+import { assertUserCanRunCommand } from "./invokeCommand";
 
 const DASH = " - ";
 const SEP = " | ";
@@ -20,7 +21,7 @@ const OPT = "?";
  * @returns a string describing all commands.
  */
 export default async function describeAllCommands(
-  context: CommandContext,
+  context: GuildedCommandContext,
   commands: Discord.Collection<string, Command>
 ): Promise<string> {
   const COMMAND_PREFIX =
@@ -28,7 +29,10 @@ export default async function describeAllCommands(
 
   // Describe all commands
   const bodyBuilder = new StringBuilder();
-  commands.array().forEach(command => {
+  for (const command of commands.array()) {
+    const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
+    if (!canRun) continue;
+
     const cmdDesc = new StringBuilder();
 
     // Describe the command
@@ -65,7 +69,7 @@ export default async function describeAllCommands(
 
     bodyBuilder.push(cmdDesc.result());
     bodyBuilder.pushNewLine();
-  });
+  }
 
   return bodyBuilder.result();
 }

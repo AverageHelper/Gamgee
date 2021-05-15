@@ -16,7 +16,7 @@ const subargsList = namedSubcommands
 
 const config: Command = {
   name: "config",
-  description: "Read and modify config options. *(Server owner only. No touch!)*",
+  description: "Read and modify config options.",
   options: namedSubcommands,
   permissions: ["owner"],
   requiresGuild: true,

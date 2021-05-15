@@ -7,8 +7,7 @@ import { isNonEmptyArray } from "../../helpers/guards";
 
 const whitelist: Subcommand = {
   name: "whitelist",
-  description:
-    "Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*",
+  description: "Allows a previously-blacklisted user to make song requests.",
   options: [
     {
       name: "user",

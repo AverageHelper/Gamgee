@@ -3,7 +3,7 @@ import { useGuildStorage } from "../../useGuildStorage";
 
 const teardown: Subcommand = {
   name: "teardown",
-  description: "Deletes and un-sets the current queue. *(Server owner only. No touch!)*",
+  description: "Deletes and un-sets the current queue.",
   type: "SUB_COMMAND",
   requiresGuild: true,
   permissions: ["owner", "admin"],

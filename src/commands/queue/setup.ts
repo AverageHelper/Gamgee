@@ -5,7 +5,7 @@ import { resolveChannelFromOption } from "../../helpers/optionResolvers";
 
 const setup: Subcommand = {
   name: "setup",
-  description: "Set a channel as the 'queue' channel. *(Server owner only. No touch!)*",
+  description: "Set a channel as the 'queue' channel.",
   options: [
     {
       name: "channel",

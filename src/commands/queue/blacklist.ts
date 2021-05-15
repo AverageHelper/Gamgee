@@ -11,8 +11,7 @@ import { isNonEmptyArray } from "../../helpers/guards";
 
 const blacklist: Subcommand = {
   name: "blacklist",
-  description:
-    "Show the list of blacklisted users, or add a user to the blacklist. *(Server owner only. No touch!)*",
+  description: "Show the list of blacklisted users, or add a user to the blacklist.",
   options: [
     {
       name: "user",
