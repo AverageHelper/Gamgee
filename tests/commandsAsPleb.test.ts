@@ -40,7 +40,11 @@ describe("Command as pleb", () => {
       await sendMessage(`**Setup**`);
       await setIsQueueCreator(true);
       await setIsQueueAdmin(true);
-      await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+      await commandResponseInSameChannel(
+        `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+        undefined,
+        "set up"
+      );
 
       await setIsQueueCreator(false);
       await setIsQueueAdmin(false);
@@ -70,7 +74,11 @@ describe("Command as pleb", () => {
         await sendMessage(`**Setup**`);
         await setIsQueueCreator(true);
         await setIsQueueAdmin(true);
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+          undefined,
+          "set up"
+        );
 
         if (isOpen) {
           await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);

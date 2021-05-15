@@ -131,7 +131,11 @@ describe("Command as admin", () => {
         await setIsQueueAdmin(true);
 
         await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+          undefined,
+          "set up"
+        );
         await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} restart`);
         await waitForMessage(
@@ -143,7 +147,11 @@ describe("Command as admin", () => {
         await commandResponseInSameChannel(`${QUEUE_COMMAND} limit count null`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} limit cooldown null`);
         await commandResponseInSameChannel(`${QUEUE_COMMAND} limit entry-duration null`);
-        await commandResponseInSameChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+        await commandResponseInSameChannel(
+          `${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+          undefined,
+          "set up"
+        );
 
         await setIsQueueCreator(false);
         await sendMessage(`**Run**`);
