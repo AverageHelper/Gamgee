@@ -90,7 +90,7 @@ export default async function processSongRequest({
     ]);
 
     // ** If the user is blacklisted, reject!
-    if (config.blacklistedUsers.some(user => user.id === context.user.id)) {
+    if (config.blacklistedUsers?.some(user => user.id === context.user.id)) {
       logger.verbose(
         `${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
           context.user
