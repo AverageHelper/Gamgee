@@ -47,7 +47,8 @@ export function useLogger(
       ]
     });
 
-    if (getEnv("NODE_ENV") !== "test") {
+    // eslint-disable-next-line no-constant-condition
+    if (true || getEnv("NODE_ENV") !== "test") {
       logger.add(
         new winston.transports.Console({
           format: format.cli(),

@@ -70,7 +70,11 @@ try {
 
   // Handle client events
   client.on("ready", () => {
-    logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+    if (getEnv("NODE_ENV") === "test") {
+      logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
+    } else {
+      logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+    }
     void prepareSlashCommands(client);
   });
 
