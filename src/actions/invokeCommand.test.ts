@@ -126,69 +126,79 @@ describe("Invoke Command", () => {
     );
 
     test.each`
-      type          | permission | desc
-      ${"function"} | ${true}    | ${"executes"}
-      ${"array"}    | ${true}    | ${"executes"}
-      ${"function"} | ${false}   | ${"does not execute"}
-      ${"array"}    | ${false}   | ${"does not execute"}
+      type
+      ${"function"}
+      ${"array"}
     `(
-      "$desc for admin if access == $permission ($type-based perm declaration)",
-      async ({ type, permission }: { type: string; permission: boolean }) => {
+      "does not execute for admin if admins are to be permitted ($type-based perm declaration)",
+      async ({ type }: { type: string }) => {
         if (type === "array") {
-          command.permissions = permission ? ["admin"] : [];
+          command.permissions = ["admin"];
         } else {
           mockPermissions.mockResolvedValueOnce([
             {
               id: adminRoleId,
               type: "ROLE",
-              permission
+              permission: true
             }
           ]);
         }
         mockUserHasRoleInGuild.mockResolvedValueOnce(true);
         await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-        /* eslint-disable jest/no-conditional-expect */
-        if (permission) {
-          expect(mockExecute).toHaveBeenCalledTimes(1);
-          expect(mockExecute).toHaveBeenCalledWith(context);
-        } else {
-          expect(mockExecute).not.toHaveBeenCalled();
-        }
-        /* eslint-enable jest/no-conditional-expect */
+        expect(mockExecute).toHaveBeenCalledTimes(1);
+        expect(mockExecute).toHaveBeenCalledWith(context);
       }
     );
 
+    test("does not execute for admin if admins are to be denied", async () => {
+      mockPermissions.mockResolvedValueOnce([
+        {
+          id: adminRoleId,
+          type: "ROLE",
+          permission: false
+        }
+      ]);
+      mockUserHasRoleInGuild.mockResolvedValueOnce(true);
+      await expect(invokeCommand(command, context)).resolves.toBeUndefined();
+      expect(mockExecute).not.toHaveBeenCalled();
+    });
+
     test.each`
-      type          | permission | desc
-      ${"function"} | ${true}    | ${"executes"}
-      ${"array"}    | ${true}    | ${"executes"}
-      ${"function"} | ${false}   | ${"does not execute"}
-      ${"array"}    | ${false}   | ${"does not execute"}
+      type
+      ${"function"}
+      ${"array"}
     `(
-      "$desc for queue admin if access == $permission ($type-based perm declaration)",
-      async ({ type, permission }: { type: string; permission: boolean }) => {
+      "executes for queue admin if admins are to be permitted ($type-based perm declaration)",
+      async ({ type }: { type: string }) => {
         if (type === "array") {
-          command.permissions = permission ? ["queue-admin"] : [];
+          command.permissions = ["queue-admin"];
         } else {
           mockPermissions.mockResolvedValueOnce([
             {
               id: queueAdminRoleId,
               type: "ROLE",
-              permission
+              permission: true
             }
           ]);
         }
         mockUserHasRoleInGuild.mockResolvedValueOnce(true);
         await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-        /* eslint-disable jest/no-conditional-expect */
-        if (permission) {
-          expect(mockExecute).toHaveBeenCalledTimes(1);
-          expect(mockExecute).toHaveBeenCalledWith(context);
-        } else {
-          expect(mockExecute).not.toHaveBeenCalled();
-        }
-        /* eslint-enable jest/no-conditional-expect */
+        expect(mockExecute).toHaveBeenCalledTimes(1);
+        expect(mockExecute).toHaveBeenCalledWith(context);
       }
     );
+
+    test("does not execute for queue admin if queue admins are to be denied", async () => {
+      mockPermissions.mockResolvedValueOnce([
+        {
+          id: queueAdminRoleId,
+          type: "ROLE",
+          permission: false
+        }
+      ]);
+      mockUserHasRoleInGuild.mockResolvedValueOnce(true);
+      await expect(invokeCommand(command, context)).resolves.toBeUndefined();
+      expect(mockExecute).not.toHaveBeenCalled();
+    });
   });
 });

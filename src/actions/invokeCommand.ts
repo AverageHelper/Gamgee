@@ -67,38 +67,19 @@ export async function invokeCommand(command: Invocable, context: CommandContext)
       case "ROLE": {
         const userHasRole = await userHasRoleInGuild(context.user, permission.id, context.guild);
         logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${permission.id}`);
-        if (permission.permission) {
-          // User should have a role
-          if (userHasRole) {
-            logger.debug("\tProceeding...");
-            return command.execute(context);
-          }
-        } else {
-          // User shouldn't have a role
-          if (!userHasRole) {
-            logger.debug("\tProceeding...");
-            return command.execute(context);
-          }
+        if (permission.permission && userHasRole) {
+          logger.debug("\tProceeding...");
+          return command.execute(context);
         }
         break;
       }
 
       case "USER": {
-        // User should (or shouldn't) have an identity
         const userHasId = context.user.id === permission.id;
         logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${permission.id}`);
-        if (permission.permission) {
-          // User should have an identity
-          if (userHasId) {
-            logger.debug("\tProceeding...");
-            return command.execute(context);
-          }
-        } else {
-          // User shouldn't have an identity
-          if (!userHasId) {
-            logger.debug("\tProceeding...");
-            return command.execute(context);
-          }
+        if (permission.permission && userHasId) {
+          logger.debug("\tProceeding...");
+          return command.execute(context);
         }
         break;
       }
