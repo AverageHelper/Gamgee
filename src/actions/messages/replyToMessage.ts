@@ -36,42 +36,75 @@ export async function sendPrivately(user: Discord.User, content: string): Promis
   }
 }
 
-async function sendDM(source: Discord.Message, content: string): Promise<void> {
+/**
+ * Attempts to send a direct message to a user.
+ *
+ * @param user The user to DM.
+ * @param content The message to send.
+ *
+ * @returns `true` if the DM was successful. `false` if there was an error.
+ * This will be the case if the target user has DMs disabled.
+ */
+async function sendDM(user: Discord.User, content: string): Promise<boolean> {
+  try {
+    await user.send(content);
+    return true;
+  } catch (error: unknown) {
+    logger.error(
+      richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+    );
+    return false;
+  }
+}
+
+function replyMessage(channel: { id: string } | null, content: string): string {
+  const msg = new StringBuilder();
+  if (channel) {
+    msg.push(`(Reply from <#${channel.id}>)`);
+    msg.pushNewLine();
+  }
+  msg.push(content);
+  return msg.result();
+}
+
+async function sendDMReply(source: Discord.Message, content: string): Promise<boolean> {
   const user: Discord.User = source.author;
   try {
     if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
       // this is our known tester
       logger.silly(`Good morning, Miss ${user.username}.`);
       await reply(source, `(DM to <@!${user.id}>)\n${content}`);
+      return true;
     } else if (!user.bot) {
       logger.silly("This is a human. Or their dog... I love dogs!");
-      const response = new StringBuilder();
-      response.push(`(Reply from <#${source.channel.id}>)`);
-      response.pushNewLine();
-      response.push(content);
-      await user.send(response.result());
+      const response = replyMessage(source.channel, content);
+      await user.send(response);
       logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
-    } else {
-      logger.error(
-        `I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
-      );
+      return true;
     }
+    logger.error(
+      `I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
+    );
+    return false;
   } catch (error: unknown) {
     logger.error(
       richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
     );
+    return false;
   }
 }
 
 async function sendEphemeralReply(
   source: Discord.CommandInteraction,
   content: string
-): Promise<void> {
+): Promise<boolean> {
   try {
     await source.reply(content, { ephemeral: true });
     logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
+    return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
+    return false;
   }
 }
 
@@ -84,19 +117,23 @@ async function sendEphemeralReply(
  *
  * @param message The message or interaction to which to reply.
  * @param content The content of the message to send.
+ * @param preferDMs If `source` is an interaction, then we'll reply via DMs anyway.
  *
  * @returns a `Promise` that resolves with `true` if the send succeeds, or
  * `false` if there was an error.
  */
 export async function replyPrivately(
   source: Discord.Message | Discord.CommandInteraction,
-  content: string
-): Promise<void> {
+  content: string,
+  preferDMs: boolean
+): Promise<boolean> {
   if ("author" in source) {
-    await sendDM(source, content);
-  } else {
-    await sendEphemeralReply(source, content);
+    return sendDMReply(source, content);
   }
+  if (preferDMs) {
+    return sendDM(source.user, replyMessage(source.channel, content));
+  }
+  return sendEphemeralReply(source, content);
 }
 
 async function sendMessageInChannel(

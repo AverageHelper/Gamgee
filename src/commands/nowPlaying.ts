@@ -66,7 +66,7 @@ const nowPlaying: Command = {
     response.push(firstNotDone.url);
     // TODO: Also read out the song's title. Store this in the database as it comes in.
 
-    return replyPrivately(response.result());
+    return replyPrivately(response.result(), true);
   }
 };
 

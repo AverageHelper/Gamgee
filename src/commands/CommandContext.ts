@@ -39,8 +39,17 @@ interface BaseCommandContext {
   /** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
   prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
 
-  /** Sends a DM to the command's sender. */
-  replyPrivately: (content: string) => Promise<void>;
+  /**
+   * Sends a DM or ephemeral reply to the command's sender.
+   *
+   * In the case of an interaction that was publicly deferred (e.g.
+   * using `prepareForLongRunningTasks(true)`), this function will
+   * edit that reply. The message will therefore be public.
+   *
+   * @param content The message to send.
+   * @param viaDM Whether Gamgee should reply in DMs.
+   */
+  replyPrivately: (content: string, viaDM?: true) => Promise<void>;
 
   /** Replies to the command invocation message, optionally pinging the command's sender. */
   reply: (content: string, options?: ReplyOptions) => Promise<void>;

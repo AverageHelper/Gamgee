@@ -182,7 +182,10 @@ export async function handleCommand(
         }
       },
       replyPrivately: async (content: string) => {
-        await replyPrivately(message, content);
+        const didReply = await replyPrivately(message, content, true);
+        if (!didReply) {
+          logger.info(`User ${logUser(message.author)} has DMs turned off.`);
+        }
         message.channel.stopTyping(true);
       },
       reply: async (content: string, options) => {

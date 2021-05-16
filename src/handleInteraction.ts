@@ -68,12 +68,23 @@ export async function handleInteraction(
       prepareForLongRunningTasks: async (ephemeral?: boolean) => {
         await interaction.defer(ephemeral);
       },
-      replyPrivately: async (content: string) => {
-        if (interaction.deferred) {
-          // FIXME: These should probs be public always, but we gotta work with deferred interactions
+      replyPrivately: async (content: string, viaDM: boolean = false) => {
+        if (viaDM) {
+          const prompt = ":paperclip: Check your DMs";
+          if (interaction.deferred) {
+            await interaction.editReply(prompt);
+          } else {
+            await interaction.reply(prompt, { ephemeral: true });
+          }
+        }
+        if (interaction.deferred && !viaDM) {
+          // FIXME: These should probs be private always, but we gotta work with deferred interactions
           await interaction.editReply(content);
         } else {
-          await replyPrivately(interaction, content);
+          const didReply = await replyPrivately(interaction, content, viaDM);
+          if (!didReply) {
+            logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
+          }
         }
       },
       reply: async (content: string, options) => {
