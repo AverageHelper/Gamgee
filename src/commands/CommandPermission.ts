@@ -46,7 +46,7 @@ export async function adminRolePermissions(
   permission: boolean
 ): Promise<Array<CommandPermission>> {
   const knownAdminRoleIDs = await useGuildStorage(guild).getGuildAdminRoles();
-  return knownAdminRoleIDs.map(id => rolePermission(id, permission));
+  return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 
 /**
@@ -65,7 +65,7 @@ export async function queueAdminRolePermissions(
   permission: boolean
 ): Promise<Array<CommandPermission>> {
   const knownRoleIDs = await useGuildStorage(guild).getQueueAdminRoles();
-  return knownRoleIDs.map(id => rolePermission(id, permission));
+  return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 
 /**
