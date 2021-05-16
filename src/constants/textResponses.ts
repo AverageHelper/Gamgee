@@ -107,7 +107,7 @@ export const phrases = [
   "I have a dream...",
   "I like youtube links, they’re comfortable and easy to manage.",
   "I thought for a second you were joking",
-  "I see Discord has redecorated! ... I don't like it",
+  "I see Discord's redecorated! ... I don't like it",
   "I see friends shaking hands, saying 'How do you do?' :musical_note:",
   "I used to wonder what friendship could be",
   "I’ll give you a proper response when you tell me my purpose in life",
