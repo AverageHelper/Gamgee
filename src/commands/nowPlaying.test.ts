@@ -99,8 +99,8 @@ describe("Now-Playing", () => {
       expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
       expect(mockReplyWithMention).not.toHaveBeenCalled();
       expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("first!"));
-      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("<@me>"));
+      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("first!"), true);
+      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("<@me>"), true);
     }
   );
 });
