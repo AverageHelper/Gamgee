@@ -9,6 +9,7 @@ import { useLogger } from "./logger";
 import { useStorage } from "./configStorage";
 import { version as gamgeeVersion } from "./version";
 import Discord from "discord.js";
+import yargs from "yargs";
 import richErrorMessage from "./helpers/richErrorMessage";
 
 const logger = useLogger();
@@ -68,31 +69,49 @@ try {
     partials: ["REACTION", "CHANNEL", "MESSAGE"]
   });
 
-  // Handle client events
+  const args = yargs
+    .option("command", {
+      alias: "c",
+      description: "Upload Discord commands, then exit",
+      type: "boolean",
+      default: false
+    })
+    .help()
+    .alias("help", "h").argv;
+
   client.on("ready", () => {
     if (getEnv("NODE_ENV") === "test") {
       logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
     } else {
       logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
     }
-    void prepareSlashCommands(client);
+    if (args.command) {
+      // eslint-disable-next-line promise/prefer-await-to-then
+      void prepareSlashCommands(client).then(() => {
+        // eslint-disable-next-line unicorn/no-process-exit
+        process.exit(0);
+      });
+    }
   });
 
-  client.on("error", error => {
-    logger.error(richErrorMessage("Received client error.", error));
-  });
+  if (!args.command) {
+    // Handle client events
+    client.on("error", error => {
+      logger.error(richErrorMessage("Received client error.", error));
+    });
 
-  client.on("message", msg => {
-    void onNewMessage(client, msg);
-  });
+    client.on("message", msg => {
+      void onNewMessage(client, msg);
+    });
 
-  client.on("interaction", interaction => {
-    void onInteraction(client, interaction);
-  });
+    client.on("interaction", interaction => {
+      void onInteraction(client, interaction);
+    });
 
-  client.on("messageReactionAdd", (reaction, user) => {
-    void onMessageReactionAdd(reaction, user);
-  });
+    client.on("messageReactionAdd", (reaction, user) => {
+      void onMessageReactionAdd(reaction, user);
+    });
+  }
 
   // Log in
   void client.login(requireEnv("DISCORD_TOKEN"));
