@@ -4,19 +4,33 @@ import { getEnv, requireEnv } from "./helpers/environment";
 import { handleCommand } from "./handleCommand";
 import { handleInteraction } from "./handleInteraction";
 import { handleReactionAdd } from "./handleReactionAdd";
-import { prepareSlashCommands } from "./actions/prepareSlashCommands";
+import { prepareSlashCommands, revokeSlashCommands } from "./actions/prepareSlashCommands";
 import { useLogger } from "./logger";
 import { useStorage } from "./configStorage";
 import { version as gamgeeVersion } from "./version";
 import Discord from "discord.js";
-import yargs from "yargs";
 import richErrorMessage from "./helpers/richErrorMessage";
+import yargs from "yargs";
+
+const args = yargs
+  .option("deploy-commands", {
+    alias: "c",
+    description: "Upload Discord commands, then exit",
+    type: "boolean",
+    default: false
+  })
+  .option("revoke-commands", {
+    alias: "C",
+    description: "Revoke Discord commands, then exit",
+    type: "boolean",
+    default: false
+  })
+  .help()
+  .alias("help", "h").argv;
+
+const shouldStartNormally = !args["deploy-commands"] && !args["revoke-commands"];
 
 const logger = useLogger();
-logger.verbose("*Yawn* Good morning!");
-logger.verbose("Starting...");
-logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
-logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 // ** Handle Events **
 
@@ -69,32 +83,34 @@ try {
     partials: ["REACTION", "CHANNEL", "MESSAGE"]
   });
 
-  const args = yargs
-    .option("command", {
-      alias: "c",
-      description: "Upload Discord commands, then exit",
-      type: "boolean",
-      default: false
-    })
-    .help()
-    .alias("help", "h").argv;
-
   client.on("ready", () => {
     if (getEnv("NODE_ENV") === "test") {
       logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
     } else {
       logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
     }
-    if (args.command) {
+
+    if (args["deploy-commands"]) {
       // eslint-disable-next-line promise/prefer-await-to-then
       void prepareSlashCommands(client).then(() => {
+        // eslint-disable-next-line unicorn/no-process-exit
+        process.exit(0);
+      });
+    } else if (args["revoke-commands"]) {
+      // eslint-disable-next-line promise/prefer-await-to-then
+      void revokeSlashCommands(client).then(() => {
         // eslint-disable-next-line unicorn/no-process-exit
         process.exit(0);
       });
     }
   });
 
-  if (!args.command) {
+  if (shouldStartNormally) {
+    logger.verbose("*Yawn* Good morning!");
+    logger.verbose("Starting...");
+    logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
+    logger.info(`Started Gamgee Core v${gamgeeVersion}`);
+
     // Handle client events
     client.on("error", error => {
       logger.error(richErrorMessage("Received client error.", error));

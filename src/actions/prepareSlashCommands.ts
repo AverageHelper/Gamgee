@@ -139,11 +139,7 @@ async function prepareGlobalCommands(
 
 export async function prepareSlashCommands(client: Discord.Client): Promise<void> {
   const commands: Array<Command> = allCommands.array();
-  logger.info(
-    `Syncing ${commands.length} command${pluralOf(
-      commands
-    )}. Message commands still work while slash commands are syncing...`
-  );
+  logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
   const guildCommands: Array<GuildedCommand> = [];
   const globalCommands: Array<GlobalCommand> = [];
@@ -163,4 +159,17 @@ export async function prepareSlashCommands(client: Discord.Client): Promise<void
       commands
     )} prepared. Discord will take some time to sync commands to clients.`
   );
+}
+
+export async function revokeSlashCommands(client: Discord.Client): Promise<void> {
+  logger.info("Unregistering global commands...");
+  await client.application?.commands.set([]);
+  logger.info("Unregistered global commands");
+
+  const guilds = client.guilds.cache.array();
+  logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
+  for (const guild of guilds) {
+    await guild.commands.set([]);
+    logger.info(`Unregistered commands in guild ${guild.id}`);
+  }
 }

@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
-    "setup": "npm ci && npm run build:clean && npm run migrate && node . -c",
+    "setup": "npm ci && npm run build:clean && npm run migrate && npm run commands:deploy",
+    "commands:deploy": "node . --deploy-commands",
+    "commands:revoke": "node . --revoke-commands",
     "migrate": "./node_modules/.bin/typeorm migration:run",
     "lint": "eslint . --ext .ts",
     "build": "npm run export-version && tsc -p tsconfig.prod.json",
