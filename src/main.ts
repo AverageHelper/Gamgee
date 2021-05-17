@@ -1,8 +1,16 @@
 import "source-map-support/register";
 import "reflect-metadata";
 import { getEnv, requireEnv } from "./helpers/environment";
+import { handleCommand } from "./handleCommand";
+import { handleInteraction } from "./handleInteraction";
+import { handleReactionAdd } from "./handleReactionAdd";
+import { prepareSlashCommands } from "./actions/prepareSlashCommands";
 import { useLogger } from "./logger";
+import { useStorage } from "./configStorage";
 import { version as gamgeeVersion } from "./version";
+import Discord from "discord.js";
+import yargs from "yargs";
+import richErrorMessage from "./helpers/richErrorMessage";
 
 const logger = useLogger();
 logger.verbose("*Yawn* Good morning!");
@@ -10,11 +18,16 @@ logger.verbose("Starting...");
 logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
 logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
-import Discord from "discord.js";
-import richErrorMessage from "./helpers/richErrorMessage";
-import { useStorage } from "./configStorage";
-import { handleCommand } from "./handleCommand";
-import { handleReactionAdd } from "./handleReactionAdd";
+// ** Handle Events **
+
+async function onInteraction(
+  client: Discord.Client,
+  interaction: Discord.Interaction
+): Promise<void> {
+  if (!interaction.isCommand()) return;
+  const storage = await useStorage(interaction.guild, logger);
+  await handleInteraction(client, interaction, storage, logger);
+}
 
 async function onNewMessage(
   client: Discord.Client,
@@ -42,25 +55,63 @@ async function onMessageReactionAdd(
   }
 }
 
+// ** Setup Discord Client **
+
 try {
-  const client = new Discord.Client({ partials: ["REACTION", "CHANNEL", "MESSAGE"] });
+  const client = new Discord.Client({
+    intents: [
+      "GUILDS",
+      "GUILD_MESSAGES",
+      "GUILD_MESSAGE_REACTIONS",
+      "DIRECT_MESSAGES",
+      "GUILD_MESSAGE_TYPING"
+    ],
+    partials: ["REACTION", "CHANNEL", "MESSAGE"]
+  });
 
-  // Handle client events
+  const args = yargs
+    .option("command", {
+      alias: "c",
+      description: "Upload Discord commands, then exit",
+      type: "boolean",
+      default: false
+    })
+    .help()
+    .alias("help", "h").argv;
+
   client.on("ready", () => {
-    logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+    if (getEnv("NODE_ENV") === "test") {
+      logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
+    } else {
+      logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+    }
+    if (args.command) {
+      // eslint-disable-next-line promise/prefer-await-to-then
+      void prepareSlashCommands(client).then(() => {
+        // eslint-disable-next-line unicorn/no-process-exit
+        process.exit(0);
+      });
+    }
   });
 
-  client.on("error", error => {
-    logger.error(richErrorMessage("Received client error.", error));
-  });
+  if (!args.command) {
+    // Handle client events
+    client.on("error", error => {
+      logger.error(richErrorMessage("Received client error.", error));
+    });
 
-  client.on("message", msg => {
-    void onNewMessage(client, msg);
-  });
+    client.on("message", msg => {
+      void onNewMessage(client, msg);
+    });
 
-  client.on("messageReactionAdd", (reaction, user) => {
-    void onMessageReactionAdd(reaction, user);
-  });
+    client.on("interaction", interaction => {
+      void onInteraction(client, interaction);
+    });
+
+    client.on("messageReactionAdd", (reaction, user) => {
+      void onMessageReactionAdd(reaction, user);
+    });
+  }
 
   // Log in
   void client.login(requireEnv("DISCORD_TOKEN"));

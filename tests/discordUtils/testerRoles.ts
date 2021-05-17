@@ -22,9 +22,7 @@ async function setAdminRole(
   const queueAdminRole = await guild.roles.fetch(roleId);
   if (!queueAdminRole) throw new Error(`No role found with ID ${roleId}`);
 
-  const tester = guild.member(user);
-  if (!tester) throw new Error("The tester bot has no guild member data");
-
+  const tester = await guild.members.fetch(user);
   const didHaveAdmin = queueAdminRole.members.has(tester.id);
   if (isAdmin) {
     await tester.roles.add(queueAdminRole);

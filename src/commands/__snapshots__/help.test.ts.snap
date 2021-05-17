@@ -1,28 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Help command describe pleb commands 1`] = `
+"Commands:
+\`?help\` - Print a handy help message.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?sr [?url]\` - Submit a song to the queue.
+\`?t\` - Start a typing indicator.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
 exports[`Help command describes all commands 1`] = `
 "Commands:
-\`?config\` - Read and modify config options. *(Server owner only. No touch!)*
-    \`?config get\` - Get the value of a configuration setting.
-    \`?config set\` - Set the value of a configuration setting.
-    \`?config unset\` - Reset the value of a configuration setting to default.
-\`?help\` - Print this handy message.
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?help\` - Print a handy help message.
 \`?languages\` - Print my core repository's language statistics.
-\`?now-playing\` - DM you a link to the current song in the queue (or my best guess).
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
-\`?sr <YouTube, SoundCloud, or Bandcamp link>\` - Submit a song to the queue.
-    \`?sr info\` - Print a handy message to let people know how to queue-up.
-    \`?sr setup <channel mention>\` - Set a channel as the 'queue' channel. *(Server owner only. No touch!)*
-    \`?sr teardown <channel mention>\` - Deletes and un-sets the current queue. *(Server owner only. No touch!)*
-    \`?sr blacklist <user mention>\` - Bars a user from making song requests. *(Server owner only. No touch!)*
-    \`?sr whitelist <user mention>\` - Allows a previously-blacklisted user to make song requests. *(Server owner only. No touch!)*
-    \`?sr open\` - Start accepting song requests to the queue.
-    \`?sr close\` - Stop accepting song requests to the queue.
-    \`?sr limit <entry-duration|cooldown|count>\` - Set a limit value on the queue. (Time in seconds, where applicable)
-    \`?sr stats\` - Print statistics on the current queue.
-    \`?sr restart\` - Empty the queue and start a fresh queue session.
-\`?t\` - Start typing. :wink:
+\`?queue\` - Administrative commands to manage the song queue.
+    \`?queue setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?queue teardown\` - Deletes and un-sets the current queue.
+    \`?queue blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?queue whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?queue open\` - Start accepting song requests to the queue.
+    \`?queue close\` - Stop accepting song requests to the queue.
+    \`?queue limit <entry-duration | cooldown | count> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?queue stats\` - Print statistics on the current queue.
+    \`?queue restart\` - Empty the queue and start a fresh queue session.
+\`?sr [?url]\` - Submit a song to the queue.
+\`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
-\`?video <YouTube, SoundCloud, or Bandcamp link>\` - Put the video title and duration in chat.
+\`?video [url]\` - Reply with the video title and duration.
 "
 `;

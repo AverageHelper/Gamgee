@@ -1,11 +1,11 @@
 {
   "name": "gamgee",
-  "version": "1.0.0-alpha.11",
+  "version": "1.0.0-beta.1",
   "description": "A Discord bot for managing a song request queue.",
   "private": true,
   "scripts": {
     "start": "NODE_ENV=development nodemon --inspect dist/main.js",
-    "setup": "npm install && npm run build:clean && npm run migrate",
+    "setup": "npm ci && npm run build:clean && npm run migrate && node . -c",
     "migrate": "./node_modules/.bin/typeorm migration:run",
     "lint": "eslint . --ext .ts",
     "build": "npm run export-version && tsc -p tsconfig.prod.json",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/AverageHelper/Gamgee#readme",
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
     "humanize-duration": "^3.25.1",
@@ -43,11 +43,12 @@
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
     "typeorm": "^0.2.32",
-    "typescript-promise-any": "^2.1.0-alpha.3",
+    "typescript-promise-any": "^2.1.0-alpha.6",
     "url-metadata": "^2.5.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
-    "ytdl-core": "^4.5.0"
+    "yargs": "^17.0.1",
+    "ytdl-core": "^4.8.0"
   },
   "devDependencies": {
     "@types/humanize-duration": "^3.18.1",
@@ -74,7 +75,7 @@
     "jest-extended": "^0.11.5",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
-    "ts-jest": "^26.5.2",
-    "typescript": "^4.2.3"
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.2.4"
   }
 }

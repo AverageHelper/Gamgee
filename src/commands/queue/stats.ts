@@ -1,37 +1,25 @@
-import type { NamedSubcommand } from "../Command";
+import type { Subcommand } from "../Command";
 import { useQueue } from "../../actions/queue/useQueue";
-import { userIsAdminForQueueInGuild } from "../../permissions";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import { deleteMessage, replyPrivately } from "../../actions/messages";
-import { reply, reply_private } from "./actions";
 
-const stats: NamedSubcommand = {
+const stats: Subcommand = {
   name: "stats",
   description: "Print statistics on the current queue.",
-  async execute({ message, logger }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
-    }
+  type: "SUB_COMMAND",
+  requiresGuild: true,
+  permissions: ["owner", "admin", "queue-admin"],
+  async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
+    const queueChannel = await getQueueChannel(guild);
 
-    const channel = await getQueueChannel(message);
-
-    // Only the queue admin may touch the queue, unless we're in the privileged queue channel.
-    if (
-      !(await userIsAdminForQueueInGuild(message.author, message.guild)) &&
-      message.channel.id !== channel?.id
-    ) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
-    }
-    if (!channel) {
-      return reply(message, `No queue is set up. Would you like to start one?`);
+    if (!queueChannel) {
+      return reply(`No queue is set up. Would you like to start one?`);
     }
 
     // Get the current queue's status
-    const queueIsCurrent = message.channel.id === channel.id;
-    const queue = useQueue(channel);
+    const queueIsCurrent = channel?.id === queueChannel.id;
+    const queue = useQueue(queueChannel);
     const [count, playtimeRemaining, playtimeTotal] = await Promise.all([
       queue.count(),
       queue.playtimeRemaining(),
@@ -45,7 +33,7 @@ const stats: NamedSubcommand = {
     );
 
     const responseBuilder = new StringBuilder();
-    responseBuilder.push(`Queue channel: <#${channel.id}>`);
+    responseBuilder.push(`Queue channel: <#${queueChannel.id}>`);
     if (queueIsCurrent) {
       responseBuilder.push(" (in here)");
     }
@@ -77,8 +65,8 @@ const stats: NamedSubcommand = {
     }
     const response = responseBuilder.result();
     await Promise.all([
-      queueIsCurrent ? reply(message, response) : reply_private(message, response), //
-      deleteMessage(message, "Spam; Users shouldn't see this")
+      queueIsCurrent ? reply(response) : replyPrivately(response), //
+      deleteInvocation()
     ]);
   }
 };

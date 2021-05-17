@@ -1,25 +1,4 @@
-import isError from "./isError";
-
-export class AggregateError extends Error {
-  errors: ReadonlyArray<unknown>;
-
-  constructor(errors: Array<unknown>) {
-    super(
-      `No promises resolved successfully: ${JSON.stringify(
-        errors.map(err => {
-          if (isError(err)) {
-            return `${err.name}: ${err.message}`;
-          }
-          return `${typeof err}: ${JSON.stringify(err, undefined, 2)}`;
-        }),
-        undefined,
-        2
-      )}`
-    );
-    this.errors = errors;
-    this.name = "AggregateError";
-  }
-}
+import { AggregateError } from "typescript-promise-any";
 
 /**
  * See https://esdiscuss.org/topic/promise-any#content-0

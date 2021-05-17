@@ -8,7 +8,7 @@ A Discord bot to play around with APIs and things. As for the name, I thought it
 
 ## Prerequisites
 
-This project requires [NodeJS](https://nodejs.org/) (version 12 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
+This project requires [NodeJS](https://nodejs.org/) (version 14 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 To make sure you have them available on your machine,
 try running the following command:
 

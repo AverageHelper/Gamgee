@@ -1,26 +1,41 @@
-import type { NamedSubcommand } from "../Command";
+import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { listKeys } from "../../constants/config/keys";
-import { isConfigKey } from "../../constants/config";
+import { isConfigKey, allKeys } from "../../constants/config";
 import { getConfigValue } from "../../actions/config/getConfigValue";
-import { replyWithMention } from "../../actions/messages";
+import { isNonEmptyArray } from "../../helpers/guards";
+import { resolveStringFromOption } from "../../helpers/optionResolvers";
 
-const get: NamedSubcommand = {
+const get: Subcommand = {
   name: "get",
   description: "Get the value of a configuration setting.",
-  async execute({ message, args, storage }) {
-    const key = args[1];
-    if (key === undefined || key === "") {
-      return replyWithMention(message, listKeys());
+  options: [
+    {
+      name: "key",
+      description: "The config key to get",
+      type: "STRING",
+      required: true,
+      choices: allKeys.map(key => ({
+        name: key,
+        value: key
+      }))
     }
+  ],
+  type: "SUB_COMMAND",
+  requiresGuild: false,
+  async execute({ options, storage, reply }) {
+    if (!isNonEmptyArray(options)) {
+      return reply(listKeys());
+    }
+    const key: string = resolveStringFromOption(options[0]);
 
     if (isConfigKey(key)) {
       const value = await getConfigValue(storage, key);
-      return replyWithMention(message, `**${key}**: ${JSON.stringify(value)}`);
+      return reply(`**${key}**: ${JSON.stringify(value)}`);
     }
 
     const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-    return replyWithMention(message, `I'm not sure what ${that} is. Try one of ${listKeys()}`);
+    return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
   }
 };
 

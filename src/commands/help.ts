@@ -1,22 +1,16 @@
-import Discord from "discord.js";
-import type { Command } from "./Command";
+import type { GuildedCommand } from "./Command";
 import describeAllCommands from "../actions/describeAllCommands";
-import { replyPrivately } from "../actions/messages";
 
-const help: Command = {
+const help: GuildedCommand = {
   name: "help",
-  description: "Print this handy message.",
-  async execute({ storage, message }) {
+  description: "Print a handy help message.",
+  requiresGuild: true,
+  async execute(context) {
     // Dynamic import here, b/c ./index depends on us to resolve
-    const commandDefinitions = await import("./index");
+    const { allCommands } = await import("./index");
 
-    const commands = new Discord.Collection<string, Command>();
-    Object.values(commandDefinitions).forEach(command => {
-      commands.set(command.name, command);
-    });
-
-    const descriptions = await describeAllCommands(storage, commands);
-    await replyPrivately(message, `Commands:\n${descriptions}`);
+    const descriptions = await describeAllCommands(context, allCommands);
+    return context.replyPrivately(`Commands:\n${descriptions}`);
   }
 };
 

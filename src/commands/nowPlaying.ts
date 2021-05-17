@@ -1,8 +1,7 @@
+import type Discord from "discord.js";
 import type { Command } from "./Command";
-import { replyPrivately, deleteMessage } from "../actions/messages";
-import { reply } from "./songRequest/actions";
-import getQueueChannel from "../actions/queue/getQueueChannel";
 import { useQueue } from "../actions/queue/useQueue";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 import randomElementOfArray from "../helpers/randomElementOfArray";
 import StringBuilder from "../helpers/StringBuilder";
 
@@ -32,19 +31,16 @@ function randomCurrent(): string {
 
 const nowPlaying: Command = {
   name: "now-playing",
-  description: "DM you a link to the current song in the queue (or my best guess).",
-  async execute({ message, logger }) {
-    if (!message.guild) {
-      return reply(message, "Can't do that here.");
-    }
+  description: "Reveal the current song in the queue (or my best guess).",
+  requiresGuild: true,
+  async execute({ guild, logger, replyPrivately, deleteInvocation }) {
+    await deleteInvocation();
 
-    await deleteMessage(message, "Users don't need to spam channels with this command.");
+    const queueChannel: Discord.TextChannel | null = await getQueueChannel(guild);
 
-    const queueChannel = await getQueueChannel(message);
     if (!queueChannel) {
       logger.debug("There is no queue channel for this guild.");
-      await replyPrivately(message, "There's no queue set up right now.");
-      return;
+      return replyPrivately("There's no queue set up right now, so nothing is playing.");
     }
 
     const queue = useQueue(queueChannel);
@@ -53,8 +49,7 @@ const nowPlaying: Command = {
 
     if (!firstNotDone) {
       logger.debug(`The song queue is currently empty.`);
-      await replyPrivately(message, "There's nothing playing right now.");
-      return;
+      return replyPrivately("There's nothing playing right now.");
     }
 
     logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
@@ -69,8 +64,9 @@ const nowPlaying: Command = {
 
     response.push(`<@${firstNotDone.senderId}>'s submission: `);
     response.push(firstNotDone.url);
+    // TODO: Also read out the song's title. Store this in the database as it comes in.
 
-    await replyPrivately(message, response.result());
+    return replyPrivately(response.result(), true);
   }
 };
 

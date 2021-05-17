@@ -1,13 +1,6 @@
-jest.mock("../actions/messages");
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../permissions");
-jest.mock("./songRequest/actions");
-
-import * as messageActions from "../actions/messages";
-const mockReplyWithMention = messageActions.replyWithMention as jest.Mock;
-const mockReplyPrivately = messageActions.replyPrivately as jest.Mock;
-const mockDeleteMessage = messageActions.deleteMessage as jest.Mock;
 
 import { useQueue } from "../actions/queue/useQueue";
 const mockUseQueue = useQueue as jest.Mock;
@@ -15,36 +8,31 @@ const mockUseQueue = useQueue as jest.Mock;
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { userIsAdminForQueueInGuild } from "../permissions";
-const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
+const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockGetAllEntries = jest.fn().mockResolvedValue(undefined);
+const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
-import { reply } from "./songRequest/actions";
-const mockReply = reply as jest.Mock;
-
-const mockGetAllEntries = jest.fn();
-
-import type Discord from "discord.js";
 import nowPlaying from "./nowPlaying";
 import { useTestLogger } from "../../tests/testUtils/logger";
-import type { CommandContext } from "./Command";
+import type { GuildedCommandContext } from "./Command";
 import type { QueueEntry } from "../useQueueStorage";
 
 const logger = useTestLogger("error");
 
 describe("Now-Playing", () => {
   const queueChannelId = "queue-channel";
-  let context: CommandContext;
+  let context: GuildedCommandContext;
 
   beforeEach(() => {
     context = ({
+      guild: "the guild",
       logger,
-      message: {
-        guild: "the guild",
-        channel: {
-          id: "not-queue-channel"
-        }
-      }
-    } as unknown) as CommandContext;
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately,
+      deleteInvocation: mockDeleteMessage
+    } as unknown) as GuildedCommandContext;
 
     mockUseQueue.mockReturnValue({
       getAllEntries: mockGetAllEntries
@@ -53,20 +41,7 @@ describe("Now-Playing", () => {
     mockReplyWithMention.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
-    mockUserIsAdminForQueueInGuild.mockResolvedValue(false);
     mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
-  });
-
-  test("does nothing when not in a guild", async () => {
-    context.message = ({
-      guild: null
-    } as unknown) as Discord.Message;
-    await expect(nowPlaying.execute(context)).resolves.toBe(undefined);
-
-    expect(mockDeleteMessage).not.toHaveBeenCalled();
-    expect(mockReplyPrivately).not.toHaveBeenCalled();
-    expect(mockReply).toHaveBeenCalledTimes(1);
-    expect(mockReply).toHaveBeenCalledWith(context.message, "Can't do that here.");
   });
 
   test("informs the user when no queue is set up", async () => {
@@ -79,10 +54,7 @@ describe("Now-Playing", () => {
     expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
     expect(mockReplyWithMention).not.toHaveBeenCalled();
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith(
-      context.message,
-      expect.stringContaining("no queue")
-    );
+    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("no queue"));
   });
 
   test.each`
@@ -103,10 +75,7 @@ describe("Now-Playing", () => {
       expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
       expect(mockReplyWithMention).not.toHaveBeenCalled();
       expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-      expect(mockReplyPrivately).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("nothing")
-      );
+      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("nothing"));
     }
   );
 
@@ -130,14 +99,8 @@ describe("Now-Playing", () => {
       expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
       expect(mockReplyWithMention).not.toHaveBeenCalled();
       expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-      expect(mockReplyPrivately).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("first!")
-      );
-      expect(mockReplyPrivately).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("<@me>")
-      );
+      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("first!"), true);
+      expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("<@me>"), true);
     }
   );
 });

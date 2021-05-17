@@ -2,9 +2,9 @@ import type Discord from "discord.js";
 import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey";
 
 jest.mock("./commands");
-import * as mockCommandDefinitions from "./commands";
+import { allCommands as mockCommandDefinitions } from "./commands";
 
-import { handleCommand } from "./handleCommand";
+import { handleCommand, optionsFromArgs } from "./handleCommand";
 import { useTestLogger } from "../tests/testUtils/logger";
 
 const logger = useTestLogger("error");
@@ -58,6 +58,74 @@ describe("Command handler", () => {
     jest.clearAllMocks();
   });
 
+  describe("Options Parser", () => {
+    test("parses empty options from a root command", () => {
+      const options = optionsFromArgs([]); // e.g: /help
+      expect(options).toBeArrayOfSize(0);
+    });
+
+    test("parses one option", () => {
+      const url = "https://youtu.be/9Y8ZGLiqXB8";
+      const options = optionsFromArgs([url]); // e.g: /video <url>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: url,
+        type: "STRING",
+        value: url,
+        options: []
+      });
+    });
+
+    test("parses two options as a parameter to a subcomand", () => {
+      const subcommand = "get";
+      const key = "cooldown";
+      const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: subcommand,
+        type: "SUB_COMMAND",
+        value: subcommand,
+        options: expect.toBeArrayOfSize(1) as Array<unknown>
+      });
+      expect(options[0]?.options).toStrictEqual([
+        {
+          name: key,
+          type: "STRING",
+          value: key,
+          options: []
+        }
+      ]);
+    });
+
+    test("parses 3+ options as 2+ parameters to a subcommand", () => {
+      const subcommand = "set";
+      const key = "cooldown";
+      const value = "null";
+      const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
+      expect(options).toBeArrayOfSize(1);
+      expect(options[0]).toStrictEqual({
+        name: subcommand,
+        type: "SUB_COMMAND",
+        value: subcommand,
+        options: expect.toBeArrayOfSize(2) as Array<unknown>
+      });
+      expect(options[0]?.options).toStrictEqual([
+        {
+          name: key,
+          type: "STRING",
+          value: key,
+          options: []
+        },
+        {
+          name: value,
+          type: "STRING",
+          value: value,
+          options: []
+        }
+      ]);
+    });
+  });
+
   describe.each`
     prefix             | desc
     ${PREFIX}          | ${"command prefix"}
@@ -80,40 +148,8 @@ describe("Command handler", () => {
         mockMessage.content = content;
         await handleCommand(mockClient, mockMessage, null, logger);
 
-        Object.values(mockCommandDefinitions).forEach(cmd =>
-          expect(cmd.execute).not.toHaveBeenCalled()
-        );
-        expect.assertions(Object.keys(mockCommandDefinitions).length);
-      }
-    );
-
-    test.each`
-      command          | mock
-      ${"config"}      | ${mockCommandDefinitions.config.execute}
-      ${"help"}        | ${mockCommandDefinitions.help.execute}
-      ${"languages"}   | ${mockCommandDefinitions.languages.execute}
-      ${"now-playing"} | ${mockCommandDefinitions.nowPlaying.execute}
-      ${"ping"}        | ${mockCommandDefinitions.ping.execute}
-      ${"sr"}          | ${mockCommandDefinitions.songRequest.execute}
-      ${"t"}           | ${mockCommandDefinitions.type.execute}
-      ${"version"}     | ${mockCommandDefinitions.version.execute}
-      ${"video"}       | ${mockCommandDefinitions.video.execute}
-    `(
-      "calls the $command command",
-      async ({ command, mock }: { command: string; mock: jest.Mock }) => {
-        mockMessage.content = `${prefix}${command}`;
-        mockMessage.author.bot = false;
-        await handleCommand(mockClient, mockMessage, null, logger);
-
-        expect(mock).toHaveBeenCalledTimes(1);
-        expect(mock).toHaveBeenCalledWith(
-          expect.toContainEntries([
-            ["client", mockClient],
-            ["message", mockMessage],
-            ["args", command.split(/ +/u).slice(1)],
-            ["storage", null]
-          ])
-        );
+        mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+        expect.assertions(mockCommandDefinitions.size);
       }
     );
 
@@ -122,8 +158,41 @@ describe("Command handler", () => {
       ${"config"}
       ${"help"}
       ${"languages"}
+      ${"limits"}
       ${"now-playing"}
       ${"ping"}
+      ${"queue"}
+      ${"sr"}
+      ${"t"}
+      ${"version"}
+      ${"video"}
+    `("calls the $command command", async ({ command }: { command: string }) => {
+      mockMessage.content = `${prefix}${command}`;
+      mockMessage.author.bot = false;
+      await handleCommand(mockClient, mockMessage, null, logger);
+
+      const mock = mockCommandDefinitions.get(command)?.execute;
+      expect(mock).toBeDefined();
+      expect(mock).toHaveBeenCalledTimes(1);
+      expect(mock).toHaveBeenCalledWith(
+        expect.toContainEntries([
+          ["client", mockClient],
+          ["message", mockMessage],
+          ["options", command.split(/ +/u).slice(1)],
+          ["storage", null]
+        ])
+      );
+    });
+
+    test.each`
+      command
+      ${"config"}
+      ${"help"}
+      ${"languages"}
+      ${"limits"}
+      ${"now-playing"}
+      ${"ping"}
+      ${"queue"}
       ${"sr"}
       ${"t"}
       ${"version"}
@@ -135,10 +204,8 @@ describe("Command handler", () => {
         mockMessage.author.bot = true;
         await handleCommand(mockClient, mockMessage, null, logger);
 
-        Object.values(mockCommandDefinitions).forEach(cmd =>
-          expect(cmd.execute).not.toHaveBeenCalled()
-        );
-        expect.assertions(Object.keys(mockCommandDefinitions).length);
+        mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+        expect.assertions(mockCommandDefinitions.size);
       }
     );
   });

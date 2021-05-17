@@ -1,18 +1,15 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
-import Discord from "discord.js";
-import getUserIdFromMention from "./helpers/getUserIdFromMention";
+import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
+import type Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
-import type { Command } from "./commands";
-import * as commandDefinitions from "./commands";
+import { invokeCommand } from "./actions/invokeCommand";
+import { allCommands as commands } from "./commands";
+import { deleteMessage, reply, replyPrivately } from "./actions/messages";
+import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import logUser from "./helpers/logUser";
-
-const commands = new Discord.Collection<string, Command>();
-Object.values(commandDefinitions).forEach(command => {
-  commands.set(command.name, command);
-});
 
 interface QueryMessage {
   /** The command and its arguments. */
@@ -74,9 +71,40 @@ async function query(
   return { query, usedCommandPrefix: true };
 }
 
+export function optionsFromArgs(args: Array<string>): Array<MessageCommandInteractionOption> {
+  const options: Array<MessageCommandInteractionOption> = [];
+
+  // one argument
+  const firstArg = args.shift();
+  if (firstArg !== undefined) {
+    const subcommand: MessageCommandInteractionOption = {
+      name: firstArg,
+      type: "STRING",
+      value: firstArg,
+      options: []
+    };
+    options.push(subcommand);
+    while (args.length > 0) {
+      // two arguments or more
+      const name = args.shift() as string;
+      const nextOption: MessageCommandInteractionOption = {
+        name,
+        type: "STRING",
+        value: name,
+        options: []
+      };
+      subcommand.type = "SUB_COMMAND";
+      subcommand.options?.push(nextOption);
+    }
+  }
+
+  return options;
+}
+
 /**
- * Performs actions from a Discord message. The command is ignored if the message is from a bot or the message does
- * not begin with the configured command prefix.
+ * Performs actions from a Discord message. The command is ignored if the
+ * message is from a bot or the message does not begin with the guild's
+ * configured command prefix.
  *
  * @param client The Discord client.
  * @param message The Discord message to handle.
@@ -125,17 +153,53 @@ export async function handleCommand(
   const commandName = q[0]?.toLowerCase() ?? "";
   if (!commandName) return;
 
-  const command = commands.get(commandName);
+  const command: Command | undefined = commands.get(commandName);
   if (command) {
-    const args = q.slice(1);
-    logger.debug(`Handling command '${commandName}' with args [${args.join(", ")}]`);
-    return command.execute({
+    const options = optionsFromArgs(q.slice(1));
+
+    logger.debug(
+      `Calling command handler '${command.name}' with options ${JSON.stringify(
+        options,
+        undefined,
+        2
+      )}`
+    );
+
+    const context: CommandContext = {
+      type: "message",
+      createdTimestamp: message.createdTimestamp,
+      user: message.author,
+      guild: message.guild,
+      channel: message.channel,
       client,
       message,
-      args,
+      options,
       storage,
-      logger
-    });
+      logger,
+      prepareForLongRunningTasks: (ephemeral?: boolean) => {
+        if (ephemeral === undefined || !ephemeral) {
+          void message.channel.startTyping(30);
+        }
+      },
+      replyPrivately: async (content: string) => {
+        const didReply = await replyPrivately(message, content, true);
+        if (!didReply) {
+          logger.info(`User ${logUser(message.author)} has DMs turned off.`);
+        }
+        message.channel.stopTyping(true);
+      },
+      reply: async (content: string, options) => {
+        await reply(message, content, options?.shouldMention);
+        message.channel.stopTyping(true);
+      },
+      deleteInvocation: async () => {
+        await deleteMessage(message);
+      },
+      startTyping: (count?: number) => void message.channel.startTyping(count),
+      stopTyping: () => message.channel.stopTyping(true)
+    };
+
+    return invokeCommand(command, context);
   }
 
   if (!usedCommandPrefix) {

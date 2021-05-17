@@ -5,7 +5,7 @@ import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 
-const DEFAULT_TIMEOUT = 5000;
+const DEFAULT_TIMEOUT = 10000;
 
 function uuid(): number {
   return Date.now();

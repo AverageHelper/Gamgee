@@ -1,22 +1,28 @@
 import type { Command } from "./Command";
-import { deleteMessage } from "../actions/messages/deleteMessage";
 
 const type: Command = {
   name: "t",
-  description: "Start typing. :wink:",
-  async execute({ message, client, logger }) {
-    const channel = message.channel;
+  description: "Start a typing indicator.",
+  requiresGuild: false,
+  async execute({ type, channel, client, logger, reply, deleteInvocation }) {
+    if (!channel) return reply("This doesn't work as well in DMs.");
 
     logger.debug(
       `${client.user?.username.concat(" is") ?? "I am"} typing in channel ${channel.id}...`
     );
-    await deleteMessage(message, "Spam: Users don't need to see this command run");
+    await deleteInvocation();
+    if (type === "interaction") {
+      // We're going to stop typing in a bit. We `await` here, not `return`.
+      await reply("So I started typing here, but I don't think I'll finish my message.", {
+        ephemeral: true
+      });
+    }
 
-    setTimeout(() => {
-      channel.stopTyping(true);
-    }, 5000);
+    void channel.startTyping();
 
-    await channel.startTyping();
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    channel.stopTyping(true);
+
     logger.debug(`Finished typing in channel ${channel.id}`);
   }
 };

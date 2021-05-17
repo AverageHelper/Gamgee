@@ -3,7 +3,15 @@ import { requireEnv } from "../../src/helpers/environment";
 import { useDispatchLoop } from "./dispatchLoop";
 
 let isClientLoggedIn = false;
-const client = new Discord.Client();
+const client = new Discord.Client({
+  intents: [
+    "GUILDS",
+    "GUILD_MESSAGES",
+    "GUILD_MESSAGE_REACTIONS",
+    "DIRECT_MESSAGES",
+    "GUILD_MESSAGE_TYPING"
+  ]
+});
 
 /**
  * A collection of functions that expect a message to arrive within a

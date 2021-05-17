@@ -1,33 +1,55 @@
-import type { NamedSubcommand } from "../Command";
+import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
-import { listKeys } from "../../constants/config/keys";
+import { listKeys, allKeys } from "../../constants/config/keys";
 import { isConfigKey, isConfigValue } from "../../constants/config";
+import { resolveStringFromOption } from "../../helpers/optionResolvers";
 import { setConfigValue } from "../../actions/config/setConfigValue";
-import { replyWithMention } from "../../actions/messages";
 
-const set: NamedSubcommand = {
+const set: Subcommand = {
   name: "set",
   description: "Set the value of a configuration setting.",
-  async execute({ message, args, storage }) {
-    const key = args[1];
-    if (key === undefined || key === "") {
-      return replyWithMention(message, listKeys());
+  options: [
+    {
+      name: "key",
+      description: "A config key",
+      type: "STRING",
+      required: true,
+      choices: allKeys.map(key => ({
+        name: key,
+        value: key
+      }))
+    },
+    {
+      name: "value",
+      description: "The new value to set for the config key.",
+      type: "STRING",
+      required: true
     }
+  ],
+  type: "SUB_COMMAND",
+  requiresGuild: false,
+  async execute({ options, storage, reply }) {
+    const keyOption = options[0];
+    const valueOption = options[1];
+    if (!keyOption || !valueOption) {
+      return reply(listKeys());
+    }
+    const key: string = resolveStringFromOption(keyOption);
 
     if (!isConfigKey(key)) {
       const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-      return replyWithMention(message, `I'm not sure what ${that} is. Try one of ${listKeys()}`);
+      return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
     }
 
-    const value = args[2];
+    const value = resolveStringFromOption(valueOption);
     if (value === undefined || value === "") {
-      return replyWithMention(message, "Expected a value to set.");
+      return reply("Expected a value to set.");
     }
     if (!isConfigValue(value)) {
-      return replyWithMention(message, "Invalid value type.");
+      return reply("Invalid value type.");
     }
     await setConfigValue(storage, key, value);
-    return replyWithMention(message, `**${key}**: ${JSON.stringify(value)}`);
+    return reply(`**${key}**: ${JSON.stringify(value)}`);
   }
 };
 

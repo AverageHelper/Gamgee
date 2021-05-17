@@ -22,7 +22,7 @@ export async function sendMessage(
 ): Promise<Discord.Message> {
   const client = await testerClient();
   const channel = await client.channels.fetch(channelId);
-  if (!channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
+  if (!channel || !channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
 
   return channel.send(content);
 }

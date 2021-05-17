@@ -1,33 +1,24 @@
 import type Discord from "discord.js";
-import type { Storage } from "../configStorage";
-import type { Logger } from "../logger";
+import type { CommandContext, GuildedCommandContext } from "./CommandContext";
+import type { CommandPermission, PermissionAlias } from "./CommandPermission";
 
-/**
- * Information relevant to a command invocation.
- */
-export interface CommandContext {
-  /** Gamgee's Discord client. */
-  client: Discord.Client;
+export * from "./CommandContext";
+export * from "./CommandPermission";
 
-  /** The message that contains the command. */
-  message: Discord.Message;
+type PermissionAliasList = Array<PermissionAlias>;
 
-  /** The command arguments. */
-  args: Array<string>;
+type PermissionGenerator = (
+  guild: Discord.Guild
+) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-  /** A `LocalStorage` instance scoped to the current guild. */
-  storage: Storage | null;
+interface BaseCommand extends Discord.ApplicationCommandData {}
 
-  /** A logger to use to submit informative debug messages. */
-  logger: Logger;
-}
+export interface GlobalCommand extends BaseCommand {
+  /** Whether the command requires a guild present to execute. */
+  requiresGuild: false;
 
-interface Subcommand {
-  /** A user-readable description of what the command does. */
-  description: string;
-
-  /** A user-readable format for a required argument. */
-  requiredArgFormat?: string;
+  /** Permission overwrites for user or guild command access. */
+  permissions?: undefined;
 
   /**
    * The command implementation. Receives contextual information about the
@@ -38,34 +29,37 @@ interface Subcommand {
   execute: (context: CommandContext) => void | Promise<void>;
 }
 
-export interface ArbitrarySubcommand extends Subcommand {
-  /** The user-readable format of the user input to pass to the command. */
-  format: string;
-}
+export interface GuildedCommand extends BaseCommand {
+  /** Whether the command requires a guild present to execute. */
+  requiresGuild: true;
 
-export interface NamedSubcommand extends Subcommand {
-  /** The string that triggers the command. */
-  name: string;
+  /** Permission overwrites for user or guild command access. */
+  permissions?: PermissionGenerator | PermissionAliasList;
+
+  /**
+   * The command implementation. Receives contextual information about the
+   * command invocation. May return a `Promise`.
+   *
+   * @param context Contextual information about the command invocation.
+   */
+  execute: (context: GuildedCommandContext) => void | Promise<void>;
 }
 
 /**
  * A top-level command description.
  */
-export interface Command {
-  /** The string that triggers the command. */
-  name: string;
+export type Command = GlobalCommand | GuildedCommand;
 
-  /** A user-readable description of what the command does. */
-  description: string;
+interface BaseSubcommand extends Discord.ApplicationCommandOptionData {
+  type: "SUB_COMMAND";
+}
 
-  /** A user-readable format for a required argument. */
-  requiredArgFormat?: string;
+export interface GlobalSubcommand extends BaseSubcommand {
+  /** Whether the subcommand requires a guild present to execute. */
+  requiresGuild: false;
 
-  /** An array of subcommands with predefined activation trigger words. */
-  namedSubcommands?: Array<NamedSubcommand>;
-
-  /** A subcommand which may be activated by any string that doesn't match one of the named subcommands first. */
-  arbitrarySubcommand?: ArbitrarySubcommand;
+  /** Permission overwrites for user or guild subcommand access. */
+  permissions?: undefined;
 
   /**
    * The command implementation. Receives contextual information about the
@@ -75,3 +69,21 @@ export interface Command {
    */
   execute: (context: CommandContext) => void | Promise<void>;
 }
+
+export interface GuildedSubcommand extends BaseSubcommand {
+  /** Whether the subcommand requires a guild present to execute. */
+  requiresGuild: true;
+
+  /** Permission overwrites for user or guild subcommand access. */
+  permissions?: PermissionGenerator | PermissionAliasList;
+
+  /**
+   * The command implementation. Receives contextual information about the
+   * command invocation. May return a `Promise`.
+   *
+   * @param context Contextual information about the command invocation.
+   */
+  execute: (context: GuildedCommandContext) => void | Promise<void>;
+}
+
+export type Subcommand = GlobalSubcommand | GuildedSubcommand;

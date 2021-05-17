@@ -1,22 +1,10 @@
-jest.mock("./actions");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
-jest.mock("../../actions/messages");
 jest.mock("../../permissions");
-
-import { reply } from "./actions";
-const mockReply = reply as jest.Mock;
-
-import { deleteMessage, replyPrivately } from "../../actions/messages";
-const mockDeleteMessage = deleteMessage as jest.Mock;
-const mockReplyPrivately = replyPrivately as jest.Mock;
 
 import getUserFromMention from "../../helpers/getUserFromMention";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
-
-import { userIsAdminForQueueInGuild } from "../../permissions";
-const mockUserIsAdminForQueueInGuild = userIsAdminForQueueInGuild as jest.Mock;
 
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -24,14 +12,16 @@ const mockGetQueueChannel = getQueueChannel as jest.Mock;
 import { useQueueStorage } from "../../useQueueStorage";
 const mockUseQueueStorage = useQueueStorage as jest.Mock;
 
-import type Discord from "discord.js";
 import type { QueueEntryManager } from "../../useQueueStorage";
-import type { CommandContext } from "../Command";
+import type { GuildedCommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
 import blacklist from "./blacklist";
 
 const mockBlacklistUser = jest.fn();
 const mockGetConfig = jest.fn();
+const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
 
@@ -41,22 +31,28 @@ describe("Manage the Queue Blacklist", () => {
   const ownerID = "server-owner";
   const badUserId = "bad-user";
 
-  let context: CommandContext;
+  let context: GuildedCommandContext;
   let queue: QueueEntryManager;
 
   beforeEach(() => {
     context = ({
-      message: {
-        id: "command-msg",
-        author: { id: "test-user" },
-        guild: {
-          ownerID,
-          name: "Test Guild"
-        }
+      type: "message",
+      guild: {
+        ownerID,
+        name: "Test Guild"
       },
-      args: ["blacklist", `<@${badUserId}>`],
-      logger
-    } as unknown) as CommandContext;
+      user: { id: "test-user" },
+      options: [
+        {
+          name: "user",
+          value: `<@${badUserId}>`
+        }
+      ],
+      logger,
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately,
+      deleteInvocation: mockDeleteMessage
+    } as unknown) as GuildedCommandContext;
 
     queue = ({
       blacklistUser: mockBlacklistUser,
@@ -72,58 +68,44 @@ describe("Manage the Queue Blacklist", () => {
     mockReply.mockResolvedValue(undefined);
     mockDeleteMessage.mockResolvedValue(undefined);
     mockReplyPrivately.mockResolvedValue(undefined);
-
-    mockUserIsAdminForQueueInGuild.mockResolvedValue(true);
   });
 
   describe("Listing Blacklisted Users", () => {
     test("reads off the list of blacklisted users when no user is provided (empty space)", async () => {
-      context.args = [""];
+      context.options = [];
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(context.message, expect.stringContaining("your DMs"));
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
       expect(mockReplyPrivately).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining(`?sr ${blacklist.name} ${blacklist.requiredArgFormat ?? ""}`)
+        expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
       );
     });
 
     test("reads off the list of blacklisted users when no user is provided (no further text)", async () => {
-      context.args = [];
+      context.options = [];
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
-      expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(context.message, expect.stringContaining("your DMs"));
+      expect(mockReply).toHaveBeenCalledTimes(1); // only called when not a '/' command
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
       expect(mockReplyPrivately).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining(`?sr ${blacklist.name} ${blacklist.requiredArgFormat ?? ""}`)
+        expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
       );
     });
   });
 
   describe("Adding Users", () => {
-    test("does nothing when not in a guild", async () => {
-      context.message = ({
-        guild: null
-      } as unknown) as Discord.Message;
-      await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      expect(mockBlacklistUser).not.toHaveBeenCalled();
-    });
-
     test("does nothing against the calling user", async () => {
-      mockGetUserFromMention.mockResolvedValue({ id: context.message.author.id });
+      mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("blacklist yourself")
-      );
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against the server owner", async () => {
@@ -132,23 +114,21 @@ describe("Manage the Queue Blacklist", () => {
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("blacklist the owner")
-      );
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist the owner"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against the server owner, even when the owner is the caller", async () => {
-      context.message.author.id = ownerID;
+      context.user.id = ownerID;
       mockGetUserFromMention.mockResolvedValue({ id: ownerID });
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
       expect(mockBlacklistUser).not.toHaveBeenCalled();
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining("blacklist yourself")
-      );
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("blacklist yourself"), {
+        ephemeral: true
+      });
     });
 
     test("does nothing against a user not known to the guild", async () => {
@@ -165,22 +145,8 @@ describe("Manage the Queue Blacklist", () => {
       expect(mockBlacklistUser).not.toHaveBeenCalled();
     });
 
-    test("does nothing when the caller is not admin", async () => {
-      mockUserIsAdminForQueueInGuild.mockResolvedValueOnce(false);
+    test("calls blacklistUser for queue", async () => {
       await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      expect(mockBlacklistUser).not.toHaveBeenCalled();
-    });
-
-    test("calls blacklistUser for queue when the caller is admin", async () => {
-      await expect(blacklist.execute(context)).resolves.toBe(undefined);
-
-      // permissions got checked
-      expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledTimes(1);
-      expect(mockUserIsAdminForQueueInGuild).toHaveBeenCalledWith(
-        context.message.author,
-        context.message.guild
-      );
 
       // blacklist effect
       expect(mockBlacklistUser).toHaveBeenCalledTimes(1);
@@ -188,13 +154,12 @@ describe("Manage the Queue Blacklist", () => {
 
       // response
       expect(mockReply).toHaveBeenCalledTimes(1);
-      expect(mockReply).toHaveBeenCalledWith(
-        context.message,
-        expect.stringContaining(badUserId),
-        false
-      );
+      expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(badUserId), {
+        shouldMention: false,
+        ephemeral: true
+      });
       expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
-      expect(mockDeleteMessage).toHaveBeenCalledWith(context.message, expect.toBeString());
+      expect(mockDeleteMessage).toHaveBeenCalledWith();
     });
   });
 });

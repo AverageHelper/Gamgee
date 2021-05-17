@@ -1,23 +1,56 @@
-jest.mock("../actions/messages/replyToMessage");
-import * as replyToMessage from "../actions/messages/replyToMessage";
-import type { CommandContext } from "./Command";
-const mockReplyPrivately = replyToMessage.replyPrivately as jest.Mock;
+jest.mock("../actions/invokeCommand");
 
+import { assertUserCanRunCommand } from "../actions/invokeCommand";
+const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
+
+import type { GuildedCommand, GuildedCommandContext } from "./Command";
 import help from "./help";
 
+const mockReplyPrivately = jest.fn();
+
 describe("Help command", () => {
-  test("describes all commands", async () => {
-    const context = ({
+  let context: GuildedCommandContext;
+
+  beforeEach(() => {
+    context = ({
+      type: "message",
+      guild: {
+        id: "the-guild"
+      },
       storage: null,
-      message: "Reply to this"
-    } as unknown) as CommandContext;
+      replyPrivately: mockReplyPrivately
+    } as unknown) as GuildedCommandContext;
+
+    mockAssertUserCanRunCommand.mockResolvedValue(true);
+  });
+
+  test("describes all commands", async () => {
+    await help.execute(context);
+    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+
+    const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
+    const description = calls[0];
+    expect(description).toMatchSnapshot();
+  });
+
+  test("describe pleb commands", async () => {
+    mockAssertUserCanRunCommand.mockImplementation((user, command: GuildedCommand) => {
+      if (
+        Array.isArray(command.permissions) &&
+        command.permissions.some(perm => ["owner", "admin", "queue-admin"].includes(perm))
+      ) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    });
 
     await help.execute(context);
     expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith(context.message, expect.toBeString());
+    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
     const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
-    const description = calls[1];
+    const description = calls[0];
     expect(description).toMatchSnapshot();
   });
 });

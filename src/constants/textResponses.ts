@@ -87,6 +87,7 @@ export const phrases = [
 
   // Other
   "Bit of a tongue twister",
+  "Blurple.",
   "Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
   "Did you ever hear the tragedy of Darth Tirek the Wise?",
   "Do you know how painful my training was? The song *Never Gonna Give You Up* by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
@@ -106,6 +107,8 @@ export const phrases = [
   "I have a dream...",
   "I like youtube links, they’re comfortable and easy to manage.",
   "I thought for a second you were joking",
+  "I see Discord's redecorated! ... I don't like it",
+  "I see friends shaking hands, saying 'How do you do?' :musical_note:",
   "I used to wonder what friendship could be",
   "I’ll give you a proper response when you tell me my purpose in life",
   "I'm so hungry, I could eat a... *nevermind*.\n>.>\n<.<",
@@ -124,6 +127,7 @@ export const phrases = [
   "\\*thoughtful phrase\\*",
   "Truly inspirational!",
   "What are the odds that I would find myself where I began",
+  'What\'s my favorite colour? I think they call it "OG Blurple"',
   "Where it is, or anything else relevant",
   "Your free trial has expired. Would you like to purchase WinRAR?"
 ]

@@ -1,30 +1,25 @@
-jest.mock("./actions");
-jest.mock("../../actions/messages");
-jest.mock("../../useGuildStorage");
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../actions/queue/useQueue");
-jest.mock("../../actions/getVideoDetails");
+jest.mock("../useGuildStorage");
+jest.mock("../actions/queue/getQueueChannel");
+jest.mock("../actions/queue/useQueue");
+jest.mock("../actions/getVideoDetails");
 
-import * as messageActions from "./actions";
-const mockRejectPrivate = messageActions.reject_private as jest.Mock;
-
-import * as queueActions from "../../actions/queue/useQueue";
+import * as queueActions from "../actions/queue/useQueue";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
 
-import * as guildStorage from "../../useGuildStorage";
+import * as guildStorage from "../useGuildStorage";
 const mockGuildStorage = guildStorage.useGuildStorage as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import getVideoDetails from "../../actions/getVideoDetails";
+import getVideoDetails from "../actions/getVideoDetails";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
-mockGetVideoDetails.mockImplementation(async (query: Array<string>) => {
+mockGetVideoDetails.mockImplementation(async (url: string) => {
   // Enough uncertainty that *something* should go out of order if it's going to
   const ms = Math.floor(Math.random() * 50);
   await new Promise(resolve => setTimeout(resolve, ms));
   return {
-    url: query[0],
+    url,
     title: "video-title",
     duration: {
       seconds: 500
@@ -34,9 +29,9 @@ mockGetVideoDetails.mockImplementation(async (query: Array<string>) => {
 });
 
 import type Discord from "discord.js";
-import type { CommandContext } from "../Command";
-import urlRequest from "./urlRequest";
-import { useTestLogger } from "../../../tests/testUtils/logger";
+import type { GuildedCommandContext } from "./Command";
+import songRequest from "./songRequest";
+import { useTestLogger } from "../../tests/testUtils/logger";
 
 const logger = useTestLogger("error");
 
@@ -55,10 +50,13 @@ describe("Song request via URL", () => {
   ];
   const botId = "this-user";
 
+  const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
   const mockReply = jest.fn().mockResolvedValue(undefined);
+  const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
   const mockChannelStartTyping = jest.fn().mockResolvedValue(undefined);
   const mockChannelStopTyping = jest.fn().mockResolvedValue(undefined);
+  const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
   const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
   const mockQueueUserEntryCount = jest.fn().mockResolvedValue(0);
@@ -104,6 +102,7 @@ describe("Song request via URL", () => {
       },
       createdAt: new Date(),
       client: (mockClient as unknown) as Discord.Client,
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
       channel: {
         id: "request-channel-456",
@@ -128,6 +127,31 @@ describe("Song request via URL", () => {
     } as unknown) as Discord.Message;
   }
 
+  describe("Song request help", () => {
+    test("descibes how to submit a song", async () => {
+      const context = ({
+        type: "message",
+        guild: "any-guild",
+        channel: "any-channel",
+        user: "doesn't matter",
+        options: [],
+        logger,
+        prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
+        reply: mockReply,
+        replyPrivately: mockReplyPrivately,
+        deleteInvocation: mockDeleteMessage
+      } as unknown) as GuildedCommandContext;
+
+      await songRequest.execute(context);
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
+
+      const calls = mockReply.mock.calls[0] as Array<unknown>;
+      const description = calls[0];
+      expect(description).toMatchSnapshot();
+    });
+  });
+
   test("only a user's first submission gets in if a cooldown exists", async () => {
     const mockMessage1 = mockMessage("another-user", `?sr ${urls[0]}`);
     const mockMessage2 = mockMessage("another-user", `?sr ${urls[1]}`);
@@ -146,15 +170,37 @@ describe("Song request via URL", () => {
     });
 
     const context1 = ({
-      args: [urls[0]],
-      message: mockMessage1,
-      logger
-    } as unknown) as CommandContext;
-    const context2 = { ...context1, args: [urls[1]], message: mockMessage2 };
+      guild: mockMessage1.guild,
+      channel: mockMessage1.channel,
+      user: mockMessage1.author,
+      options: [
+        {
+          name: "url",
+          value: urls[0]
+        }
+      ],
+      logger,
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
+      reply: mockReply,
+      replyPrivately: mockReplyPrivately,
+      deleteInvocation: mockDeleteMessage
+    } as unknown) as GuildedCommandContext;
+    const context2 = ({
+      ...context1,
+      options: [
+        {
+          name: "url",
+          value: urls[1]
+        }
+      ],
+      user: mockMessage2.author,
+      guild: mockMessage2.guild,
+      channel: mockMessage2.channel
+    } as unknown) as GuildedCommandContext;
 
     // Request a song twice in quick succession
-    void urlRequest.execute(context1);
-    await urlRequest.execute(context2);
+    void songRequest.execute(context1);
+    await songRequest.execute(context2);
 
     // Wait for handles to close
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -164,7 +210,9 @@ describe("Song request via URL", () => {
     expect(mockQueuePush).toHaveBeenCalledWith(expect.toContainEntry(["url", urls[0]]));
 
     // The submission should have been rejected with a cooldown warning via DMs
-    expect(mockRejectPrivate).toHaveBeenCalledTimes(1);
+    expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait"));
   });
 
   test("submissions enter the queue in order", async () => {
@@ -178,14 +226,24 @@ describe("Song request via URL", () => {
     await Promise.all([
       mockMessages
         .map(message => {
-          const args = message.content.split(" ").slice(1);
           return ({
-            args,
-            message,
-            logger
-          } as unknown) as CommandContext;
+            options: message.content
+              .split(" ")
+              .slice(1)
+              .map(url => ({
+                name: "url",
+                value: url
+              })),
+            guild: message.guild,
+            channel: message.channel,
+            user: message.author,
+            logger,
+            prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
+            reply: mockReply,
+            replyPrivately: mockReplyPrivately
+          } as unknown) as GuildedCommandContext;
         })
-        .map(urlRequest.execute)
+        .map(songRequest.execute)
     ]);
 
     // Wait for handles to close

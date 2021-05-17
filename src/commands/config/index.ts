@@ -1,9 +1,11 @@
-import type { Command } from "./../Command";
-import { replyPrivately, replyWithMention } from "../../actions/messages";
+import type { Command } from "../Command";
+import { invokeCommand } from "../../actions/invokeCommand";
 
 import get from "./get";
 import set from "./set";
 import unset from "./unset";
+import { isNonEmptyArray } from "../../helpers/guards";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [get, set, unset];
 
@@ -14,36 +16,43 @@ const subargsList = namedSubcommands
 
 const config: Command = {
   name: "config",
-  description: "Read and modify config options. *(Server owner only. No touch!)*",
-  namedSubcommands,
+  description: "Read and modify config options.",
+  options: namedSubcommands,
+  permissions: ["owner"],
+  requiresGuild: true,
   async execute(context) {
-    const { message, args } = context;
+    const { options, reply } = context;
 
-    if (!message.guild) {
-      return replyWithMention(message, "Can't do that here.");
+    if (!isNonEmptyArray(options)) {
+      return reply(`Missing command structure. Expected ${subargsList}`);
     }
+    const arg: string = resolveSubcommandNameFromOption(options[0]);
+    const argOptions = options[0].options ?? [];
 
-    // Only the guild owner may touch the config.
-    if (message.author.id !== message.guild.ownerID) {
-      await replyPrivately(message, "YOU SHALL NOT PAAAAAASS!\nOr, y'know, something like that...");
-      return;
-    }
-
-    const arg = args[0]?.toLowerCase();
-    if (arg === undefined || arg === "") {
-      return replyWithMention(message, `Missing command structure. Expected ${subargsList}`);
-    }
-
+    context.logger.debug(
+      `Searching ${
+        namedSubcommands.length
+      } possible subcommands for one named '${arg}': ${JSON.stringify(
+        namedSubcommands.map(c => c.name),
+        undefined,
+        2
+      )}`
+    );
     for (const command of namedSubcommands) {
       if (command.name === arg) {
-        return command.execute(context);
+        context.options = argOptions;
+        context.logger.debug(
+          `Handling subcommand '${command.name}' with options: ${JSON.stringify(
+            context.options,
+            undefined,
+            2
+          )}`
+        );
+        return invokeCommand(command, context);
       }
     }
 
-    return replyWithMention(
-      message,
-      `I don't know what to do with that. I expected one of ${subargsList}`
-    );
+    return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
   }
 };
 

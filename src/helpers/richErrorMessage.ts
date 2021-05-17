@@ -1,5 +1,5 @@
 import isError from "./isError";
-import { AggregateError } from "./any";
+import { AggregateError } from "typescript-promise-any";
 import StringBuilder from "./StringBuilder";
 
 export default function richErrorMessage(preamble: string, error: unknown): string {
