@@ -3,6 +3,7 @@
 
 # Secret files
 .env
+Dockerfile
 
 # Useless files
 *.log
