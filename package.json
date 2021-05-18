@@ -12,6 +12,8 @@
     "lint": "eslint . --ext .ts",
     "build": "npm run export-version && tsc -p tsconfig.prod.json",
     "build:clean": "rm -rf dist && npm run build",
+    "docker:build": "docker build -t gamgee .",
+    "docker": "docker run -d gamgee",
     "export-version": "genversion ./src/version.ts -es",
     "test": "npm run test:src && npm run test:e2e",
     "test:src": "jest --selectProjects src --verbose --coverage",
