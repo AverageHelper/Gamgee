@@ -123,10 +123,26 @@ describe("Job queue", () => {
     expect(onFinished).not.toHaveBeenCalled();
 
     queue.process(cb);
-
     await flushPromises();
 
     expect(onFinished).toHaveBeenCalledTimes(1);
+    expect(cb).toHaveBeenCalledTimes(3);
+  });
+
+  test("calls a callback on error", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn().mockRejectedValueOnce("throw me");
+    const onError = jest.fn();
+
+    queue.createJobs([1, 2, 3]);
+    queue.on("error", onError);
+    expect(onError).not.toHaveBeenCalled();
+
+    queue.process(cb);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith("throw me", 1);
     expect(cb).toHaveBeenCalledTimes(3);
   });
 

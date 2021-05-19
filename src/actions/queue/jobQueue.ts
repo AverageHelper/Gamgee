@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import { EventEmitter } from "events";
 
-type JobQueueLifecycleEvent = "start" | "finish";
+type JobQueueLifecycleEvent = "start" | "error" | "finish";
 
 /**
  * A queue of work items to be processed sequentially.
@@ -24,17 +24,26 @@ export class JobQueue<Job> {
     void this.tryToStart();
   }
 
+  /* eslint-disable @typescript-eslint/unified-signatures */
   /**
    * Registers a function to be called when the queue starts processing its workload,
    * or the workload increases in size.
    */
   on(event: "start", cb: () => void): void;
 
-  /** Registers a function to be called on completion of the queue's workload. */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
-  on(event: "finish", cb: () => void): void;
+  /**
+   * Registers a function to be called when processing fails for an item.
+   */
+  on(event: "error", cb: (error: unknown, failedJob: Job) => void): void;
 
-  on(event: JobQueueLifecycleEvent, cb: () => void): void {
+  /** Registers a function to be called on completion of the queue's workload. */
+  on(event: "finish", cb: () => void): void;
+  /* eslint-enable @typescript-eslint/unified-signatures */
+
+  on(
+    event: JobQueueLifecycleEvent,
+    cb: (() => void) | ((error: unknown, failedJob: Job) => void)
+  ): void {
     this.#bus.on(event, cb);
   }
 
@@ -76,7 +85,11 @@ export class JobQueue<Job> {
       const workItem = this.#workItems.shift() ?? null;
       this.#currentJob = workItem;
       if (workItem) {
-        await worker(workItem);
+        try {
+          await worker(workItem);
+        } catch (error: unknown) {
+          this.#bus.emit("error", error, workItem);
+        }
       }
     }
 
