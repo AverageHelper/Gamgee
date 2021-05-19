@@ -1,5 +1,6 @@
 import { useJobQueue, jobQueues } from "./jobQueue";
 import { useTestLogger } from "../../../tests/testUtils/logger";
+import { flushPromises } from "../../../tests/testUtils/flushPromises";
 
 const logger = useTestLogger("error");
 
@@ -123,8 +124,7 @@ describe("Job queue", () => {
 
     queue.process(cb);
 
-    // Wait for the queue to finish (should take under 25 ms)
-    await new Promise(resolve => setTimeout(resolve, 25));
+    await flushPromises();
 
     expect(onFinished).toHaveBeenCalledTimes(1);
     expect(cb).toHaveBeenCalledTimes(3);

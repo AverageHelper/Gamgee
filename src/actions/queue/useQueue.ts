@@ -91,7 +91,7 @@ export class QueueManager {
 
       // Add the "Done" button
       try {
-        // TODO: Can we parallelize this somehow with other such requests?
+        // TODO: Use DiscordInterface
         await queueMessage.react(REACTION_BTN_MUSIC);
         await queueMessage.react(REACTION_BTN_DONE);
         await queueMessage.react(REACTION_BTN_DELETE);
