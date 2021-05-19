@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import { EventEmitter } from "events";
 
 type JobQueueLifecycleEvent = "start" | "finish";
 
@@ -6,12 +7,10 @@ type JobQueueLifecycleEvent = "start" | "finish";
  * A queue of work items to be processed sequentially.
  */
 export class JobQueue<Job> {
-  #workItems: Array<Job> = [];
+  readonly #bus: EventEmitter = new EventEmitter();
+  readonly #workItems: Array<Job> = [];
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
-
-  #startHandlers: Array<() => void> = [];
-  #completionHandlers: Array<() => void> = [];
 
   /** Enqueues a work item to be processed. */
   createJob(job: Job): void {
@@ -36,15 +35,7 @@ export class JobQueue<Job> {
   on(event: "finish", cb: () => void): void;
 
   on(event: JobQueueLifecycleEvent, cb: () => void): void {
-    switch (event) {
-      case "start":
-        this.#startHandlers.push(cb);
-        break;
-
-      case "finish":
-        this.#completionHandlers.push(cb);
-        break;
-    }
+    this.#bus.on(event, cb);
   }
 
   /** The work items that have yet to be processed. */
@@ -76,7 +67,7 @@ export class JobQueue<Job> {
     // Don't start processing if we have no worker
     if (!worker) return;
 
-    this.callStarts();
+    this.#bus.emit("start");
 
     // Don't start processing again if we're already processing
     if (this.#currentJob) return;
@@ -89,15 +80,7 @@ export class JobQueue<Job> {
       }
     }
 
-    this.callCompletions();
-  }
-
-  private callStarts(): void {
-    this.#startHandlers.forEach(cb => cb());
-  }
-
-  private callCompletions(): void {
-    this.#completionHandlers.forEach(cb => cb());
+    this.#bus.emit("finish");
   }
 }
 
