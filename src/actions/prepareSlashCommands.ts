@@ -137,7 +137,7 @@ async function prepareGlobalCommands(
   logger.verbose(`Set ${globalCommands.length} global command${pluralOf(globalCommands)}.`);
 }
 
-export async function prepareSlashCommands(client: Discord.Client): Promise<void> {
+export async function prepareSlashCommandsThenExit(client: Discord.Client): Promise<void> {
   const commands: Array<Command> = allCommands.array();
   logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
@@ -159,9 +159,12 @@ export async function prepareSlashCommands(client: Discord.Client): Promise<void
       commands
     )} prepared. Discord will take some time to sync commands to clients.`
   );
+
+  // eslint-disable-next-line unicorn/no-process-exit
+  process.exit(0);
 }
 
-export async function revokeSlashCommands(client: Discord.Client): Promise<void> {
+export async function revokeSlashCommandsThenExit(client: Discord.Client): Promise<void> {
   logger.info("Unregistering global commands...");
   await client.application?.commands.set([]);
   logger.info("Unregistered global commands");
@@ -172,4 +175,7 @@ export async function revokeSlashCommands(client: Discord.Client): Promise<void>
     await guild.commands.set([]);
     logger.info(`Unregistered commands in guild ${guild.id}`);
   }
+
+  // eslint-disable-next-line unicorn/no-process-exit
+  process.exit(0);
 }
