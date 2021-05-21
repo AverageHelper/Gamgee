@@ -160,7 +160,7 @@ async function sendMessageInChannel(
 export async function reply(
   message: Discord.Message,
   content: string,
-  shouldMention: boolean = false
+  shouldMention: boolean = true
 ): Promise<void> {
   try {
     if (shouldMention) {

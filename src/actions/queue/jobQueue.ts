@@ -1,17 +1,28 @@
 import Discord from "discord.js";
+import { EventEmitter } from "events";
 
-type JobQueueLifecycleEvent = "start" | "finish";
+type JobQueueLifecycleEvent = "start" | "error" | "finish";
+
+type JobErrorNotificationHandler<Job> = (error: unknown, failedJob: Job) => void | Promise<void>;
+
+type JobErrorContinuationHandler<Job> = (
+  error: unknown,
+  failedJob: Job
+) => boolean | Promise<boolean>;
+
+export type JobErrorHandler<Job> =
+  | JobErrorNotificationHandler<Job>
+  | JobErrorContinuationHandler<Job>;
 
 /**
  * A queue of work items to be processed sequentially.
  */
 export class JobQueue<Job> {
-  #workItems: Array<Job> = [];
+  readonly #bus: EventEmitter = new EventEmitter();
+  readonly #workItems: Array<Job> = [];
+  #errorHandler: JobErrorHandler<Job> | null = null;
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
-
-  #startHandlers: Array<() => void> = [];
-  #completionHandlers: Array<() => void> = [];
 
   /** Enqueues a work item to be processed. */
   createJob(job: Job): void {
@@ -25,25 +36,27 @@ export class JobQueue<Job> {
     void this.tryToStart();
   }
 
+  /* eslint-disable @typescript-eslint/unified-signatures */
   /**
    * Registers a function to be called when the queue starts processing its workload,
    * or the workload increases in size.
    */
   on(event: "start", cb: () => void): void;
 
+  /**
+   * Registers a function to be called when processing fails for an item.
+   */
+  on(event: "error", cb: JobErrorHandler<Job>): void;
+
   /** Registers a function to be called on completion of the queue's workload. */
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
   on(event: "finish", cb: () => void): void;
+  /* eslint-enable @typescript-eslint/unified-signatures */
 
-  on(event: JobQueueLifecycleEvent, cb: () => void): void {
-    switch (event) {
-      case "start":
-        this.#startHandlers.push(cb);
-        break;
-
-      case "finish":
-        this.#completionHandlers.push(cb);
-        break;
+  on(event: JobQueueLifecycleEvent, cb: (() => void) | JobErrorHandler<Job>): void {
+    if (event === "error") {
+      this.#errorHandler = cb as JobErrorHandler<Job>;
+    } else {
+      this.#bus.on(event, cb as () => void);
     }
   }
 
@@ -76,7 +89,7 @@ export class JobQueue<Job> {
     // Don't start processing if we have no worker
     if (!worker) return;
 
-    this.callStarts();
+    this.#bus.emit("start");
 
     // Don't start processing again if we're already processing
     if (this.#currentJob) return;
@@ -85,19 +98,20 @@ export class JobQueue<Job> {
       const workItem = this.#workItems.shift() ?? null;
       this.#currentJob = workItem;
       if (workItem) {
-        await worker(workItem);
+        try {
+          await worker(workItem);
+        } catch (error: unknown) {
+          if (!this.#errorHandler) throw error;
+
+          const shouldContinue = (await this.#errorHandler(error, workItem)) ?? true;
+          if (shouldContinue === false) {
+            this.#workItems.splice(0, this.#workItems.length);
+          }
+        }
       }
     }
 
-    this.callCompletions();
-  }
-
-  private callStarts(): void {
-    this.#startHandlers.forEach(cb => cb());
-  }
-
-  private callCompletions(): void {
-    this.#completionHandlers.forEach(cb => cb());
+    this.#bus.emit("finish");
   }
 }
 
@@ -119,4 +133,11 @@ export function useJobQueue<T = never>(key: string): JobQueue<T> {
   }
 
   return queue;
+}
+
+export function forgetJobQueue(key: string): void {
+  const queue = jobQueues.get(key);
+  if (!queue) return;
+
+  jobQueues.delete(key);
 }

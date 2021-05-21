@@ -4,7 +4,10 @@ import { getEnv, requireEnv } from "./helpers/environment";
 import { handleCommand } from "./handleCommand";
 import { handleInteraction } from "./handleInteraction";
 import { handleReactionAdd } from "./handleReactionAdd";
-import { prepareSlashCommands, revokeSlashCommands } from "./actions/prepareSlashCommands";
+import {
+  prepareSlashCommandsThenExit,
+  revokeSlashCommandsThenExit
+} from "./actions/prepareSlashCommands";
 import { useLogger } from "./logger";
 import { useStorage } from "./configStorage";
 import { version as gamgeeVersion } from "./version";
@@ -91,17 +94,9 @@ try {
     }
 
     if (args["deploy-commands"]) {
-      // eslint-disable-next-line promise/prefer-await-to-then
-      void prepareSlashCommands(client).then(() => {
-        // eslint-disable-next-line unicorn/no-process-exit
-        process.exit(0);
-      });
+      void prepareSlashCommandsThenExit(client);
     } else if (args["revoke-commands"]) {
-      // eslint-disable-next-line promise/prefer-await-to-then
-      void revokeSlashCommands(client).then(() => {
-        // eslint-disable-next-line unicorn/no-process-exit
-        process.exit(0);
-      });
+      void revokeSlashCommandsThenExit(client);
     }
   });
 
