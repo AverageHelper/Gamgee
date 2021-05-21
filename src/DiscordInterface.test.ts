@@ -4,7 +4,7 @@ import { DiscordInterface } from "./DiscordInterface";
 import { REACTION_BTN_MUSIC } from "./constants/reactions";
 import { flushPromises } from "../tests/testUtils/flushPromises";
 
-const mockRemoveAll = jest.fn().mockResolvedValue(undefined);
+const mockRxnRemove = jest.fn().mockResolvedValue(undefined);
 const mockReact = jest.fn().mockResolvedValue(undefined);
 
 describe("Discord Interface", () => {
@@ -27,7 +27,20 @@ describe("Discord Interface", () => {
         },
         react: mockReact,
         reactions: {
-          removeAll: mockRemoveAll
+          cache: [
+            {
+              emoji: {
+                name: REACTION_BTN_MUSIC
+              },
+              remove: mockRxnRemove
+            },
+            {
+              emoji: {
+                name: "something"
+              },
+              remove: mockRxnRemove
+            }
+          ]
         }
       } as unknown) as Discord.Message;
     });
@@ -46,8 +59,8 @@ describe("Discord Interface", () => {
         await flushPromises();
 
         // Removes old emotes first
-        expect(mockRemoveAll).toHaveBeenCalledTimes(1);
-        expect(mockRemoveAll).not.toHaveBeenCalledAfter(mockReact);
+        expect(mockRxnRemove).toHaveBeenCalledTimes(1);
+        expect(mockRxnRemove).not.toHaveBeenCalledAfter(mockReact);
 
         // Adds spacer
         expect(mockReact).toHaveBeenCalledTimes(1 + buttons.length);
