@@ -54,7 +54,7 @@ async function makeInteractive(job: InteractionConfig): Promise<void> {
   );
 
   // Add the spacer if it's not there already
-  if (allReactions.size !== buttonReactions.size) {
+  if (allReactions.size === buttonReactions.size) {
     await job.message.react(spacerButton.emoji);
     debugLog(`Added rxn with emote ${spacerButton.emoji.toString()}`);
   }

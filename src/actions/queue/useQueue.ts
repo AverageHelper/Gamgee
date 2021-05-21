@@ -133,7 +133,9 @@ export class QueueManager {
     await this.queueStorage.markEntryDone(false, queueMessage.id);
 
     await suppressEmbedsForMessage(message, false);
-    await editMessage(queueMessage, removeStrikethrough(message.content));
+    await editMessage(queueMessage, removeStrikethrough(message.content), {
+      allowedMentions: { users: [] }
+    });
 
     const entryButtons: NonEmptyArray<MessageButton> = [
       { emoji: REACTION_BTN_DONE }, //
@@ -149,7 +151,9 @@ export class QueueManager {
     const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(true, queueMessage.id);
 
-    await editMessage(queueMessage, addStrikethrough(message.content));
+    await editMessage(queueMessage, addStrikethrough(message.content), {
+      allowedMentions: { users: [] }
+    });
     await suppressEmbedsForMessage(message);
 
     const doneEntryButton: NonEmptyArray<MessageButton> = [{ emoji: REACTION_BTN_UNDO }];

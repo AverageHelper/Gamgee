@@ -20,10 +20,11 @@ export async function editMessage(
     | Discord.APIMessageContentResolvable
     | Discord.MessageEditOptions
     | Discord.MessageEmbed
-    | Discord.APIMessage
+    | Discord.APIMessage,
+  options: Discord.MessageEditOptions | Discord.MessageEmbed = {}
 ): Promise<boolean> {
   try {
-    await message.edit(newContent);
+    await message.edit(newContent, options);
     return true;
   } catch (error: unknown) {
     logger.error(richErrorMessage("Failed to edit a message.", error));
@@ -48,18 +49,19 @@ export async function suppressEmbedsForMessage(
 
       if (suppress) {
         flags.add(Discord.MessageFlags.FLAGS.SUPPRESS_EMBEDS);
+        await message.edit({ flags, allowedMentions: { users: [] } }); // Suppress pings, too
       } else {
         flags.remove(Discord.MessageFlags.FLAGS.SUPPRESS_EMBEDS);
       }
 
-      // Still don't ping them
-      await message.edit({ flags, allowedMentions: { users: [] } });
       return;
     }
 
     // We sent this. We can edit it.
     if (suppress) {
-      await editMessage(message, escapeUriInString(message.content));
+      await editMessage(message, escapeUriInString(message.content), {
+        allowedMentions: { users: [] }
+      });
     } else {
       await editMessage(message, stopEscapingUriInString(message.content));
     }
