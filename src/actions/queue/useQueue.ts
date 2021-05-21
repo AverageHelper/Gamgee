@@ -1,21 +1,21 @@
 import type Discord from "discord.js";
+import type { Logger } from "../../logger";
+import type { MessageButton } from "../../DiscordInterface";
 import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
-import { useQueueStorage } from "../../useQueueStorage";
-import { useLogger } from "../../logger";
 import durationString from "../../helpers/durationString";
-import { deleteMessage, editMessage } from "../messages";
 import StringBuilder from "../../helpers/StringBuilder";
+import richErrorMessage from "../../helpers/richErrorMessage";
+import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
+import { deleteMessage, editMessage, suppressEmbedsForMessage } from "../messages";
+import { DiscordInterface } from "../../DiscordInterface";
+import { useLogger } from "../../logger";
+import { useQueueStorage } from "../../useQueueStorage";
 import {
   REACTION_BTN_DONE,
   REACTION_BTN_UNDO,
-  REACTION_BTN_MUSIC,
   REACTION_BTN_DELETE
 } from "../../constants/reactions";
-import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
-import richErrorMessage from "../../helpers/richErrorMessage";
-
-const logger = useLogger();
 
 /**
  * A proxy for queue management and feedback. These methods may modify the
@@ -24,10 +24,18 @@ const logger = useLogger();
 export class QueueManager {
   private readonly queueStorage: QueueEntryManager;
   private readonly queueChannel: Discord.TextChannel;
+  private readonly ui: DiscordInterface;
+  private readonly logger: Logger;
 
-  constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
+  constructor(
+    queueStorage: QueueEntryManager,
+    queueChannel: Discord.TextChannel,
+    logger: Logger = useLogger()
+  ) {
     this.queueStorage = queueStorage;
     this.queueChannel = queueChannel;
+    this.ui = new DiscordInterface(queueChannel.client);
+    this.logger = logger;
   }
 
   /** Retrieves the queue's configuration settings. */
@@ -82,32 +90,36 @@ export class QueueManager {
     const queueMessage = await this.queueChannel.send(messageBuilder.result(), {
       allowedMentions: { users: [] }
     });
+    let entry: QueueEntry;
     try {
-      const entry = await this.queueStorage.create({
+      entry = await this.queueStorage.create({
         ...newEntry,
         queueMessageId: queueMessage.id,
         isDone: false
       });
-
-      // Add the "Done" button
-      try {
-        // TODO: Use DiscordInterface
-        await queueMessage.react(REACTION_BTN_MUSIC);
-        await queueMessage.react(REACTION_BTN_DONE);
-        await queueMessage.react(REACTION_BTN_DELETE);
-      } catch (error: unknown) {
-        // Reactions failed. Abort!
-        await this.queueStorage.removeEntryFromMessage(queueMessage.id);
-        throw error;
-      }
-
-      return entry;
 
       // If the database write fails...
     } catch (error: unknown) {
       await deleteMessage(queueMessage);
       throw error;
     }
+
+    // Add the buttons
+    const newEntryButtons: NonEmptyArray<MessageButton> = [
+      { emoji: REACTION_BTN_DONE }, //
+      { emoji: REACTION_BTN_DELETE }
+    ];
+
+    this.ui.makeInteractive(queueMessage, newEntryButtons, async error => {
+      this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
+      await Promise.allSettled([
+        this.queueStorage.removeEntryFromMessage(queueMessage.id),
+        deleteMessage(queueMessage)
+      ]);
+      return false;
+    });
+
+    return entry;
   }
 
   /** Fetches an entry with the given message ID. */
@@ -119,38 +131,31 @@ export class QueueManager {
   async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
     const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(false, queueMessage.id);
-    await Promise.all([
-      editMessage(queueMessage, removeStrikethrough(message.content)),
-      queueMessage
-        .suppressEmbeds(false)
-        .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-      queueMessage.reactions.resolve(REACTION_BTN_UNDO)?.remove()
-    ]);
-    if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
-      await queueMessage.react(REACTION_BTN_MUSIC);
-    }
-    await queueMessage.react(REACTION_BTN_DONE);
-    await queueMessage.react(REACTION_BTN_DELETE);
+
+    await suppressEmbedsForMessage(message, false);
+    await editMessage(queueMessage, removeStrikethrough(message.content));
+
+    const entryButtons: NonEmptyArray<MessageButton> = [
+      { emoji: REACTION_BTN_DONE }, //
+      { emoji: REACTION_BTN_DELETE }
+    ];
+    this.ui.makeInteractive(message, entryButtons, error => {
+      this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
+    });
   }
 
   /** If the message represents a "not done" entry, that entry is marked "done". */
   async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
     const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(true, queueMessage.id);
-    await Promise.all([
-      editMessage(queueMessage, addStrikethrough(message.content)),
-      queueMessage
-        .suppressEmbeds(true)
-        .catch(error => logger.error(richErrorMessage("Cannot suppress message embeds.", error))),
-      Promise.all([
-        queueMessage.reactions.resolve(REACTION_BTN_DELETE)?.remove(),
-        queueMessage.reactions.resolve(REACTION_BTN_DONE)?.remove()
-      ])
-    ]);
-    if (!queueMessage.reactions.resolve(REACTION_BTN_MUSIC)) {
-      await queueMessage.react(REACTION_BTN_MUSIC);
-    }
-    await queueMessage.react(REACTION_BTN_UNDO);
+
+    await editMessage(queueMessage, addStrikethrough(message.content));
+    await suppressEmbedsForMessage(message);
+
+    const doneEntryButton: NonEmptyArray<MessageButton> = [{ emoji: REACTION_BTN_UNDO }];
+    this.ui.makeInteractive(message, doneEntryButton, error => {
+      this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
+    });
   }
 
   /**

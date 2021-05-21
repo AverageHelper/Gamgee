@@ -3,12 +3,24 @@ import { EventEmitter } from "events";
 
 type JobQueueLifecycleEvent = "start" | "error" | "finish";
 
+type JobErrorNotificationHandler<Job> = (error: unknown, failedJob: Job) => void | Promise<void>;
+
+type JobErrorContinuationHandler<Job> = (
+  error: unknown,
+  failedJob: Job
+) => boolean | Promise<boolean>;
+
+export type JobErrorHandler<Job> =
+  | JobErrorNotificationHandler<Job>
+  | JobErrorContinuationHandler<Job>;
+
 /**
  * A queue of work items to be processed sequentially.
  */
 export class JobQueue<Job> {
   readonly #bus: EventEmitter = new EventEmitter();
   readonly #workItems: Array<Job> = [];
+  #errorHandler: JobErrorHandler<Job> | null = null;
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
 
@@ -34,17 +46,18 @@ export class JobQueue<Job> {
   /**
    * Registers a function to be called when processing fails for an item.
    */
-  on(event: "error", cb: (error: unknown, failedJob: Job) => void): void;
+  on(event: "error", cb: JobErrorHandler<Job>): void;
 
   /** Registers a function to be called on completion of the queue's workload. */
   on(event: "finish", cb: () => void): void;
   /* eslint-enable @typescript-eslint/unified-signatures */
 
-  on(
-    event: JobQueueLifecycleEvent,
-    cb: (() => void) | ((error: unknown, failedJob: Job) => void)
-  ): void {
-    this.#bus.on(event, cb);
+  on(event: JobQueueLifecycleEvent, cb: (() => void) | JobErrorHandler<Job>): void {
+    if (event === "error") {
+      this.#errorHandler = cb as JobErrorHandler<Job>;
+    } else {
+      this.#bus.on(event, cb as () => void);
+    }
   }
 
   /** The work items that have yet to be processed. */
@@ -88,7 +101,12 @@ export class JobQueue<Job> {
         try {
           await worker(workItem);
         } catch (error: unknown) {
-          this.#bus.emit("error", error, workItem);
+          if (!this.#errorHandler) throw error;
+
+          const shouldContinue = (await this.#errorHandler(error, workItem)) ?? true;
+          if (shouldContinue === false) {
+            this.#workItems.splice(0, this.#workItems.length);
+          }
         }
       }
     }
@@ -115,4 +133,11 @@ export function useJobQueue<T = never>(key: string): JobQueue<T> {
   }
 
   return queue;
+}
+
+export function forgetJobQueue(key: string): void {
+  const queue = jobQueues.get(key);
+  if (!queue) return;
+
+  jobQueues.delete(key);
 }

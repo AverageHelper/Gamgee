@@ -1,3 +1,6 @@
+import { addCharactersAround } from "./wrappedText";
+import { removeCharactersAround } from "./unwrappedText";
+
 /**
  * Adds Markdown strikethrough markers to the string.
  *
@@ -5,9 +8,7 @@
  * @returns The given text, with strikethrough.
  */
 export function addStrikethrough(straightText: string): string {
-  if (!straightText) return straightText;
-  if (straightText.startsWith("~~") && straightText.endsWith("~~")) return straightText;
-  return `~~${straightText}~~`;
+  return addCharactersAround(straightText, "~~");
 }
 
 /**
@@ -17,9 +18,5 @@ export function addStrikethrough(straightText: string): string {
  * @returns The given text, sans strikethrough.
  */
 export function removeStrikethrough(strickenText: string): string {
-  if (!strickenText) return strickenText;
-  if (!strickenText.startsWith("~~") || !strickenText.endsWith("~~")) {
-    return strickenText;
-  }
-  return strickenText.slice(2, -2);
+  return removeCharactersAround(strickenText, "~~");
 }

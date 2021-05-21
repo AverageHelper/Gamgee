@@ -10,10 +10,18 @@ const mockGetConfig = jest.fn();
 
 const mockChannelSend = jest.fn();
 const mockMessageReact = jest.fn();
+const mockRemoveAllReactions = jest.fn();
 
 import type Discord from "discord.js";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import type { Logger } from "../../../tests/testUtils/logger";
+import { flushPromises } from "../../../tests/testUtils/flushPromises";
+import { forgetJobQueue } from "./jobQueue";
 import { QueueManager } from "./useQueue";
+
+const logger = ({
+  error: jest.fn()
+} as unknown) as Logger;
 
 describe("Request Queue", () => {
   const guildId = "the-guild";
@@ -40,10 +48,13 @@ describe("Request Queue", () => {
       getConfig: mockGetConfig
     } as unknown) as QueueEntryManager;
 
-    queue = new QueueManager(storage, queueChannel);
+    queue = new QueueManager(storage, queueChannel, logger);
 
     message = ({
       id: queueMessageId,
+      channel: {
+        id: "the-channel"
+      },
       author: {
         id: entrySenderId
       },
@@ -56,6 +67,8 @@ describe("Request Queue", () => {
       senderId: entrySenderId,
       url: entryUrl
     } as unknown) as QueueEntry;
+
+    forgetJobQueue(`${message.channel.id}_${message.id}`);
 
     mockFetchEntryFromMessage.mockImplementation(id => {
       if (id === queueMessageId) {
@@ -75,9 +88,16 @@ describe("Request Queue", () => {
       blacklistedUsers: []
     });
     mockMessageReact.mockResolvedValue(undefined);
+    mockRemoveAllReactions.mockResolvedValue(undefined);
     mockChannelSend.mockResolvedValue({
       id: "new-message",
-      react: mockMessageReact
+      channel: {
+        id: queueChannel.id
+      },
+      react: mockMessageReact,
+      reactions: {
+        removeAll: mockRemoveAllReactions
+      }
     });
   });
 
@@ -112,6 +132,8 @@ describe("Request Queue", () => {
       ["channelId", queueChannel.id]
     ]);
 
+    await flushPromises();
+
     expect(mockCreateEntry).toHaveBeenCalledTimes(1);
     expect(mockCreateEntry).toHaveBeenCalledWith({
       ...request,
@@ -130,7 +152,12 @@ describe("Request Queue", () => {
     const error = new Error("You're gonna have a bad time.");
     mockMessageReact.mockRejectedValueOnce(error);
 
-    await expect(queue.push(request)).rejects.toBe(error);
+    await expect(queue.push(request)).resolves.toContainEntries([
+      ...Object.entries(request),
+      ["channelId", queueChannel.id]
+    ]);
+
+    await flushPromises();
 
     expect(mockCreateEntry).toHaveBeenCalledTimes(1);
     expect(mockCreateEntry).toHaveBeenCalledWith({

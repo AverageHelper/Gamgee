@@ -146,6 +146,61 @@ describe("Job queue", () => {
     expect(cb).toHaveBeenCalledTimes(3);
   });
 
+  test("calls the error callback for every failing job", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn().mockRejectedValue("throw me");
+    const onError = jest.fn().mockResolvedValue(true);
+
+    queue.createJobs([1, 2, 3]);
+    queue.on("error", onError);
+    expect(onError).not.toHaveBeenCalled();
+
+    queue.process(cb);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(onError).toHaveBeenCalledTimes(3);
+    expect(onError).toHaveBeenNthCalledWith(1, "throw me", 1);
+    expect(onError).toHaveBeenNthCalledWith(2, "throw me", 2);
+    expect(onError).toHaveBeenNthCalledWith(3, "throw me", 3);
+    expect(cb).toHaveBeenCalledTimes(3);
+  });
+
+  test("optionally cancels remaining items based on the result of the error callback", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn().mockRejectedValueOnce("throw me");
+    const onError = jest.fn().mockReturnValue(false);
+
+    queue.createJobs([1, 2, 3]);
+    queue.on("error", onError);
+    expect(onError).not.toHaveBeenCalled();
+
+    queue.process(cb);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith("throw me", 1);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb).toHaveBeenCalledWith(1);
+  });
+
+  test("optionally awaits the result of the error callback, and cancels remaining items if false", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn().mockRejectedValueOnce("throw me");
+    const onError = jest.fn().mockResolvedValue(false);
+
+    queue.createJobs([1, 2, 3]);
+    queue.on("error", onError);
+    expect(onError).not.toHaveBeenCalled();
+
+    queue.process(cb);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith("throw me", 1);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb).toHaveBeenCalledWith(1);
+  });
+
   test("runs worker functions sequentially", async () => {
     const queue = useJobQueue<number>(queueKey);
     const cb = jest.fn();
