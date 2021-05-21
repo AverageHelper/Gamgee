@@ -80,6 +80,7 @@ export default async function processSongRequest({
   const senderId = context.user.id;
   const sentAt = new Date(context.createdTimestamp);
 
+  const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
   const queue = useQueue(queueChannel);
 
   try {
@@ -146,7 +147,7 @@ export default async function processSongRequest({
       return reject_private(context, rejectionBuilder.result());
     }
 
-    const song = await getVideoDetails(songUrl);
+    const song = await songInfoPromise; // we need this info now
     if (song === null) {
       logger.verbose("Could not find the requested song.");
       logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
