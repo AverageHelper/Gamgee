@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import isError from "../../helpers/isError";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { useLogger } from "../../logger";
 
@@ -70,6 +71,13 @@ export async function bulkDeleteMessagesWithIds(
     await channel.bulkDelete(messageIds);
     return true;
   } catch (error: unknown) {
+    if (isError(error) && error.code === "50034") {
+      // Error 50034: You can only bulk delete messages that are under 14 days old.
+      logger.info(error.message);
+      await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel)));
+      return true;
+    }
+
     logger.error(richErrorMessage(`Failed to delete ${messageIds.length} messages.`, error));
     return false;
   }
