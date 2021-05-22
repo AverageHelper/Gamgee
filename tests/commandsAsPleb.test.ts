@@ -74,7 +74,7 @@ describe("Command as pleb", () => {
           );
 
           // TODO: Check that the request appears in the queue as well
-          expect(response?.content).toBe(`Submission Accepted!`);
+          expect(response?.content).toContain(`Submission Accepted!`);
         });
 
         test("`sr` alone provides info on how to use the request command", async () => {
