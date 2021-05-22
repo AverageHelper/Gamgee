@@ -136,7 +136,13 @@ export async function replyPrivately(
   return sendEphemeralReply(source, content);
 }
 
-async function sendMessageInChannel(
+/**
+ * Attempts to send a message in the provided channel.
+ *
+ * @param channel The text channel in which to send the message.
+ * @param content The message to send.
+ */
+export async function sendMessageInChannel(
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
   content: string
 ): Promise<void> {
