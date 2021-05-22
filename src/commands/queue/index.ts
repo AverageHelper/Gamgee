@@ -26,22 +26,21 @@ const namedSubcommands = [
 ];
 
 const sr: Command = {
-  name: "queue",
+  name: "sradmin",
   description: "Administrative commands to manage the song queue.",
   options: namedSubcommands,
   requiresGuild: true,
   permissions: ["owner", "admin", "queue-admin"],
   async execute(context) {
     if (!isNonEmptyArray(context.options)) {
-      // const response = new StringBuilder("The possible subcommands are:");
-      // Object.values(namedSubcommands).forEach(command => {
-      //   response.pushNewLine();
-      //   response.push(" - ");
-      //   response.pushCode(command.name);
-      // });
+      const response = new StringBuilder("The possible subcommands are:");
+      Object.values(namedSubcommands).forEach(command => {
+        response.pushNewLine();
+        response.push(" - ");
+        response.pushCode(command.name);
+      });
 
-      // return context.reply(response.result());
-      return; // do nothing
+      return context.reply(response.result());
     }
 
     const arg: string = resolveSubcommandNameFromOption(context.options[0]);
