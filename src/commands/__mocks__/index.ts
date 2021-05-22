@@ -33,8 +33,8 @@ allCommands.set("ping", {
   name: "ping",
   execute: jest.fn().mockResolvedValue(undefined)
 });
-allCommands.set("queue", {
-  name: "queue",
+allCommands.set("quo", {
+  name: "quo",
   execute: jest.fn().mockResolvedValue(undefined)
 });
 allCommands.set("sr", {

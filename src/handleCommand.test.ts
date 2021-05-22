@@ -161,7 +161,7 @@ describe("Command handler", () => {
       ${"limits"}
       ${"now-playing"}
       ${"ping"}
-      ${"queue"}
+      ${"quo"}
       ${"sr"}
       ${"t"}
       ${"version"}
@@ -192,7 +192,7 @@ describe("Command handler", () => {
       ${"limits"}
       ${"now-playing"}
       ${"ping"}
-      ${"queue"}
+      ${"quo"}
       ${"sr"}
       ${"t"}
       ${"version"}

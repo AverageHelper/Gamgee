@@ -25,16 +25,16 @@ exports[`Help command describes all commands 1`] = `
 \`?limits\` - Display the song queue's submission limits.
 \`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
-\`?queue\` - Administrative commands to manage the song queue.
-    \`?queue setup [channel]\` - Set a channel as the 'queue' channel.
-    \`?queue teardown\` - Deletes and un-sets the current queue.
-    \`?queue blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
-    \`?queue whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?queue open\` - Start accepting song requests to the queue.
-    \`?queue close\` - Stop accepting song requests to the queue.
-    \`?queue limit <entry-duration | cooldown | count> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
-    \`?queue stats\` - Print statistics on the current queue.
-    \`?queue restart\` - Empty the queue and start a fresh queue session.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit <entry-duration | cooldown | count> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?sr [?url]\` - Submit a song to the queue.
 \`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
