@@ -26,7 +26,7 @@ const namedSubcommands = [
 ];
 
 const sr: Command = {
-  name: "sradmin",
+  name: "qu",
   description: "Administrative commands to manage the song queue.",
   options: namedSubcommands,
   requiresGuild: true,
