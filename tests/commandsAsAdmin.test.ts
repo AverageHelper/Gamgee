@@ -12,7 +12,7 @@ const UUT_ID = requireEnv("BOT_TEST_ID");
 const RUN_CHANNEL_ID = requireEnv("CHANNEL_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
-const QUEUE_COMMAND = "queue";
+const QUEUE_COMMAND = "quo";
 
 describe("Command as admin", () => {
   const url = "https://youtu.be/dQw4w9WgXcQ";
