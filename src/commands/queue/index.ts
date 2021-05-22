@@ -33,14 +33,15 @@ const sr: Command = {
   permissions: ["owner", "admin", "queue-admin"],
   async execute(context) {
     if (!isNonEmptyArray(context.options)) {
-      const response = new StringBuilder("The possible subcommands are:");
-      Object.values(namedSubcommands).forEach(command => {
-        response.pushNewLine();
-        response.push(" - ");
-        response.pushCode(command.name);
-      });
+      // const response = new StringBuilder("The possible subcommands are:");
+      // Object.values(namedSubcommands).forEach(command => {
+      //   response.pushNewLine();
+      //   response.push(" - ");
+      //   response.pushCode(command.name);
+      // });
 
-      return context.reply(response.result());
+      // return context.reply(response.result());
+      return; // do nothing
     }
 
     const arg: string = resolveSubcommandNameFromOption(context.options[0]);
