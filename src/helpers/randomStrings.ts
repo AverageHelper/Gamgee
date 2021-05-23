@@ -1,4 +1,5 @@
 import {
+  celebratoryEmoji,
   greetings,
   philosophy,
   phrases,
@@ -7,6 +8,8 @@ import {
 } from "../constants/textResponses";
 import Discord from "discord.js";
 import randomElementOfArray from "./randomElementOfArray";
+
+export type ResponseRepository = [string, string, ...Array<string>];
 
 /* Greetings */
 
@@ -38,6 +41,12 @@ export function randomAcceptance(): string {
   return randomResponseFromArray("songAccepted", songAccepted);
 }
 
+/* Celebration */
+
+export function randomCelebration(): string {
+  return randomResponseFromArray("celebration", celebratoryEmoji);
+}
+
 const lastResponses = new Discord.Collection<string, string>();
 
 /**
@@ -49,10 +58,10 @@ const lastResponses = new Discord.Collection<string, string>();
  *
  * @returns A string from the array.
  */
-function randomResponseFromArray(key: string, array: Array<string>): string {
+function randomResponseFromArray(key: string, array: ResponseRepository): string {
   let result = randomElementOfArray(array) ?? "";
   const lastResult = lastResponses.get(key);
-  while (array.length > 1 && result === lastResult) {
+  while (result === lastResult) {
     result = randomElementOfArray(array) ?? "";
   }
   lastResponses.set(key, result);
