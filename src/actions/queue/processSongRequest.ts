@@ -4,7 +4,6 @@ import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { CommandContext } from "../../commands";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
-import { sendMessageInChannel } from "../messages";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
@@ -54,13 +53,12 @@ async function acceptSongRequest({
 
   const mention = `<@!${context.user.id}>`;
   const acceptance = `${mention}, Submission Accepted!`;
-  const response = shouldSendUrl ? `${entry.url}\n${acceptance}` : acceptance;
 
-  if (context.channel) {
-    await sendMessageInChannel(context.channel, response);
-  } else {
-    await context.reply(response);
+  if (shouldSendUrl) {
+    await context.reply(entry.url);
   }
+
+  await context.followUp(acceptance, { reply: false });
 }
 
 export interface SongRequest {

@@ -54,6 +54,12 @@ interface BaseCommandContext {
   /** Replies to the command invocation message, optionally pinging the command's sender. */
   reply: (content: string, options?: ReplyOptions) => Promise<void>;
 
+  /** Sends a message in the same channel to the user who invoked the command. Does not constitute a "reply." */
+  followUp: (
+    content: string,
+    options?: Discord.InteractionReplyOptions & { reply?: boolean }
+  ) => Promise<void>;
+
   /** Deletes the command invocation if it was sent as a text message. */
   deleteInvocation: () => Promise<void>;
 

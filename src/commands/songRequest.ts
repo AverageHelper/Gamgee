@@ -17,7 +17,7 @@ const sr: Command = {
       name: "url",
       description: "A YouTube, SoundCloud, or Bandcamp link",
       type: "STRING",
-      required: false
+      required: false // TODO: Make this required; Move info function to ?howto
     }
   ],
   requiresGuild: true,

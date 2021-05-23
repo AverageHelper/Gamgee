@@ -7,7 +7,7 @@ import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import { invokeCommand } from "./actions/invokeCommand";
 import { allCommands as commands } from "./commands";
-import { deleteMessage, reply, replyPrivately } from "./actions/messages";
+import { deleteMessage, reply, replyPrivately, sendMessageInChannel } from "./actions/messages";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import logUser from "./helpers/logUser";
 
@@ -178,7 +178,7 @@ export async function handleCommand(
       logger,
       prepareForLongRunningTasks: (ephemeral?: boolean) => {
         if (ephemeral === undefined || !ephemeral) {
-          void message.channel.startTyping(30);
+          void message.channel.startTyping();
         }
       },
       replyPrivately: async (content: string) => {
@@ -190,6 +190,14 @@ export async function handleCommand(
       },
       reply: async (content: string, options) => {
         await reply(message, content, options?.shouldMention);
+        message.channel.stopTyping(true);
+      },
+      followUp: async (content: string, options = {}) => {
+        if (options.ephemeral === true) {
+          await replyPrivately(message, content, true);
+        } else {
+          await sendMessageInChannel(message.channel, content);
+        }
         message.channel.stopTyping(true);
       },
       deleteInvocation: async () => {
