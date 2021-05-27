@@ -24,6 +24,12 @@ export class JobQueue<Job> {
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
 
+  constructor() {
+    // Permit unlimited listeners
+    // FIXME: This is likely bad practice. See about unsubscribing once done
+    this.#bus.setMaxListeners(Number.POSITIVE_INFINITY);
+  }
+
   /** Enqueues a work item to be processed. */
   createJob(job: Job): void {
     this.#workItems.push(job);
