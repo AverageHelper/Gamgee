@@ -42,7 +42,7 @@ async function acceptSongRequest({
   queue,
   context,
   entry,
-  shouldSendUrl,
+  // shouldSendUrl,
   logger
 }: SongAcceptance): Promise<void> {
   await queue.push(entry);
@@ -53,10 +53,6 @@ async function acceptSongRequest({
 
   const mention = `<@!${context.user.id}>`;
   const acceptance = `${mention}, Submission Accepted!`;
-
-  if (shouldSendUrl) {
-    await context.reply(entry.url);
-  }
 
   await context.followUp(acceptance, { reply: false });
 }

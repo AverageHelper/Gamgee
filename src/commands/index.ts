@@ -5,6 +5,7 @@ export * from "./Command";
 
 import config from "./config";
 import help from "./help";
+import howto from "./howto";
 import languages from "./languages";
 import limits from "./limits";
 import nowPlaying from "./nowPlaying";
@@ -16,14 +17,25 @@ import version from "./version";
 import video from "./video";
 
 export const allCommands = new Discord.Collection<string, Command>();
-allCommands.set(config.name, config);
-allCommands.set(help.name, help);
-allCommands.set(languages.name, languages);
-allCommands.set(limits.name, limits);
-allCommands.set(nowPlaying.name, nowPlaying);
-allCommands.set(ping.name, ping);
-allCommands.set(queue.name, queue);
-allCommands.set(songRequest.name, songRequest);
-allCommands.set(type.name, type);
-allCommands.set(version.name, version);
-allCommands.set(video.name, video);
+
+function add(command: Command): void {
+  if (allCommands.has(command.name)) {
+    throw new TypeError(
+      `Failed to add command ${command.name} when a command with that name was already added`
+    );
+  }
+  allCommands.set(command.name, command);
+}
+
+add(config);
+add(help);
+add(howto);
+add(languages);
+add(limits);
+add(nowPlaying);
+add(ping);
+add(queue);
+add(songRequest);
+add(type);
+add(version);
+add(video);

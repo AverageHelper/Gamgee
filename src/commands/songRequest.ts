@@ -1,13 +1,11 @@
 import type { Command } from "./Command";
 import type { SongRequest } from "../actions/queue/processSongRequest";
-import processRequest, { reject_private, reject_public } from "../actions/queue/processSongRequest";
 import { isNonEmptyArray } from "../helpers/guards";
-import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
-import { useJobQueue } from "../actions/queue/jobQueue";
-import { useGuildStorage } from "../useGuildStorage";
-import getQueueChannel from "../actions/queue/getQueueChannel";
-import StringBuilder from "../helpers/StringBuilder";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
+import { useGuildStorage } from "../useGuildStorage";
+import { useJobQueue } from "../actions/queue/jobQueue";
+import getQueueChannel from "../actions/queue/getQueueChannel";
+import processRequest, { reject_private, reject_public } from "../actions/queue/processSongRequest";
 
 const sr: Command = {
   name: "sr",
@@ -17,20 +15,17 @@ const sr: Command = {
       name: "url",
       description: "A YouTube, SoundCloud, or Bandcamp link",
       type: "STRING",
-      required: false // TODO: Make this required; Move info function to ?howto
+      required: true
     }
   ],
   requiresGuild: true,
   async execute(context) {
     const {
-      type,
       guild,
       channel,
       options,
-      storage,
       logger,
       prepareForLongRunningTasks,
-      reply,
       deleteInvocation
     } = context;
 
@@ -40,30 +35,8 @@ const sr: Command = {
     }
 
     if (!isNonEmptyArray(options)) {
-      const nowPlaying = (await import("./nowPlaying")).default;
-
-      // Print the standard help
-      const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
-      const helpBuilder = new StringBuilder();
-
-      helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`);
-      helpBuilder.pushNewLine();
-      helpBuilder.push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``);
-      helpBuilder.pushNewLine();
-      helpBuilder.push(
-        "I will respond with a text verification indicating your song has joined the queue!"
-      );
-      helpBuilder.pushNewLine();
-      helpBuilder.pushNewLine();
-
-      helpBuilder.push("To see the current song, type ");
-      helpBuilder.pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`);
-      if (type === "message") {
-        helpBuilder.push(" and check your DMs");
-      }
-      helpBuilder.push(".");
-
-      return reply(helpBuilder.result());
+      const howTo = (await import("./howto")).default;
+      return howTo.execute(context);
     }
 
     if (channel?.id === queueChannel.id) {
@@ -85,6 +58,11 @@ const sr: Command = {
 
     await prepareForLongRunningTasks();
 
+    const songUrl: string = resolveStringFromOption(options[0]);
+    if (context.type === "interaction") {
+      await context.reply(songUrl);
+    }
+
     const requestQueue = useJobQueue<SongRequest>("urlRequest");
     requestQueue.process(processRequest); // Same function instance, so a nonce call
 
@@ -95,7 +73,6 @@ const sr: Command = {
       queueChannel.stopTyping(true);
     });
 
-    const songUrl: string = resolveStringFromOption(options[0]);
     requestQueue.createJob({ songUrl, context, queueChannel, logger });
   }
 };

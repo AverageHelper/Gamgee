@@ -78,8 +78,7 @@ export async function handleInteraction(
           }
         }
         if (interaction.deferred && !viaDM) {
-          // FIXME: These should probs be private always, but we gotta work with deferred interactions
-          await interaction.editReply(content);
+          await interaction.followUp(content);
         } else {
           const didReply = await replyPrivately(interaction, content, viaDM);
           if (!didReply) {

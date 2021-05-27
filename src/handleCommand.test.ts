@@ -157,6 +157,7 @@ describe("Command handler", () => {
       command
       ${"config"}
       ${"help"}
+      ${"howto"}
       ${"languages"}
       ${"limits"}
       ${"now-playing"}
@@ -188,6 +189,7 @@ describe("Command handler", () => {
       command
       ${"config"}
       ${"help"}
+      ${"howto"}
       ${"languages"}
       ${"limits"}
       ${"now-playing"}
