@@ -5,7 +5,7 @@ import type { Storage } from "./configStorage";
 import { invokeCommand } from "./actions/invokeCommand";
 import { allCommands } from "./commands";
 import { getEnv } from "./helpers/environment";
-import { replyPrivately } from "./actions/messages";
+import { replyPrivately, sendMessageInChannel } from "./actions/messages";
 import logUser from "./helpers/logUser";
 
 /**
@@ -78,8 +78,7 @@ export async function handleInteraction(
           }
         }
         if (interaction.deferred && !viaDM) {
-          // FIXME: These should probs be private always, but we gotta work with deferred interactions
-          await interaction.editReply(content);
+          await interaction.followUp(content);
         } else {
           const didReply = await replyPrivately(interaction, content, viaDM);
           if (!didReply) {
@@ -103,6 +102,13 @@ export async function handleInteraction(
 
         if (options?.ephemeral === true) {
           logger.verbose(`Sent ephemeral reply to User ${logUser(interaction.user)}: ${content}`);
+        }
+      },
+      followUp: async (content: string, options) => {
+        if (options?.reply === false && interaction.channel && interaction.channel.isText()) {
+          await sendMessageInChannel(interaction.channel, content);
+        } else {
+          await interaction.followUp(content, options);
         }
       },
       deleteInvocation: () => Promise.resolve(undefined),

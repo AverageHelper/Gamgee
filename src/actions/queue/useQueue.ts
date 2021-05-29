@@ -7,10 +7,15 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
-import { deleteMessage, editMessage, suppressEmbedsForMessage } from "../messages";
 import { DiscordInterface } from "../../DiscordInterface";
 import { useLogger } from "../../logger";
 import { useQueueStorage } from "../../useQueueStorage";
+import {
+  deleteMessage,
+  editMessage,
+  escapeUriInString,
+  stopEscapingUriInString
+} from "../messages";
 import {
   REACTION_BTN_DONE,
   REACTION_BTN_UNDO,
@@ -132,8 +137,7 @@ export class QueueManager {
     const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(false, queueMessage.id);
 
-    await suppressEmbedsForMessage(message, false);
-    await editMessage(queueMessage, removeStrikethrough(message.content), {
+    await editMessage(message, stopEscapingUriInString(removeStrikethrough(message.content)), {
       allowedMentions: { users: [] }
     });
 
@@ -151,10 +155,9 @@ export class QueueManager {
     const message = await queueMessage.fetch();
     await this.queueStorage.markEntryDone(true, queueMessage.id);
 
-    await editMessage(queueMessage, addStrikethrough(message.content), {
+    await editMessage(message, addStrikethrough(escapeUriInString(message.content)), {
       allowedMentions: { users: [] }
     });
-    await suppressEmbedsForMessage(message);
 
     const doneEntryButton: NonEmptyArray<MessageButton> = [{ emoji: REACTION_BTN_UNDO }];
     this.ui.makeInteractive(message, doneEntryButton, error => {

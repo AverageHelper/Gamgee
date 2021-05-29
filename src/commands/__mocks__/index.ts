@@ -17,6 +17,10 @@ allCommands.set("help", {
   name: "help",
   execute: jest.fn().mockResolvedValue(undefined)
 });
+allCommands.set("howto", {
+  name: "howto",
+  execute: jest.fn().mockResolvedValue(undefined)
+});
 allCommands.set("languages", {
   name: "languages",
   execute: jest.fn().mockResolvedValue(undefined)

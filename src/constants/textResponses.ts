@@ -1,11 +1,13 @@
-export const songAccepted = [
+import type { ResponseRepository } from "../helpers/randomStrings";
+
+export const songAccepted: ResponseRepository = [
   "I got your request\nI used to wonder what music could be",
   "Just got your request\nAnd this is crazy\nbut I hope the host\nwill play it maybe",
   "Gonna take this song to the old town queue and gonna riiiiiide till I can’t no more",
   "Somepony once told me that I would get this request\n it’s time to put it into the queue"
 ];
 
-export const greetings = [
+export const greetings: ResponseRepository = [
   "Hello there :wave:",
   "Hi",
   "Good afternoon.",
@@ -14,7 +16,7 @@ export const greetings = [
   "*Yawns* Good morn— what time is it??"
 ];
 
-export const philosophy = [
+export const philosophy: ResponseRepository = [
   "What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?",
   "The way the light shimmers off everything, like, like it all suddenly woke up the moment you saw it. And you realize maybe the water and the mountains and the forest and the... yes, the rainbow and the stars and the sky are all looking back at you thinking the same thing? That we are a part of the everything. That maybe there's just one thing and we are all it.",
   "Has anyone really been far even as decided to use even go want to do look more like?",
@@ -25,7 +27,7 @@ export const copypasta = [
   "The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, …."
 ];
 
-export const phrases = [
+export const phrases: ResponseRepository = [
   // LOTR
   "A wizard is never late!",
   "Books ought to have good endings.",
@@ -130,12 +132,13 @@ export const phrases = [
   "What are the odds that I would find myself where I began",
   'What\'s my favorite colour? I think they call it "OG Blurple"',
   "Where it is, or anything else relevant",
-  "Your free trial has expired. Would you like to purchase WinRAR?"
-]
-  .concat(philosophy)
-  .concat(copypasta);
+  "Your free trial has expired. Would you like to purchase WinRAR?",
 
-export const questions = [
+  ...philosophy,
+  ...copypasta
+];
+
+export const questions: ResponseRepository = [
   "You rang?",
   "What's up?",
   "I got pinged.",
@@ -154,4 +157,13 @@ export const questions = [
   ":eyes:",
   ":eyes: :eyes: :eyes:",
   "I'm not a fan of spam"
+];
+
+export const celebratoryEmoji: ResponseRepository = [
+  ":tada:",
+  ":partying_face:",
+  ":cake:",
+  ":cupcake:",
+  ":grin:",
+  ":smile:"
 ];
