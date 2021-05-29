@@ -99,6 +99,7 @@ export const phrases: ResponseRepository = [
   "Everyone says I shouldn’t divide by 0 but I don’t know why. I’m a bot!\nI can do anyth—\n\n[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
   "Fan of squirrels.",
   "Fond of cats.",
+  "\\*happy robot noises\\*",
   "Jack and Jill ran up the hill...",
   "Keep moving forward!",
   "I actually understand everything you’re saying. It’s just fun to troll you with nonsense replies :stuck_out_tongue_winking_eye:",

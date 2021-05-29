@@ -66,13 +66,6 @@ const sr: Command = {
     const requestQueue = useJobQueue<SongRequest>("urlRequest");
     requestQueue.process(processRequest); // Same function instance, so a nonce call
 
-    requestQueue.on("start", () => {
-      void queueChannel.startTyping();
-    });
-    requestQueue.on("finish", () => {
-      queueChannel.stopTyping(true);
-    });
-
     requestQueue.createJob({ songUrl, context, queueChannel, logger });
   }
 };

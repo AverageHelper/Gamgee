@@ -87,12 +87,8 @@ export class DiscordInterface {
 
     queue.process(makeInteractive);
 
-    queue.on("start", () => {
-      logger.verbose(`Started making message ${message.id} interactive with ${ct} buttons`);
-    });
-    queue.on("finish", () => {
-      logger.verbose(`Finished making message ${message.id} interactive`);
-    });
+    logger.verbose(`Started making message ${message.id} interactive with ${ct} buttons`);
+
     if (onFailure) {
       queue.on("error", onFailure);
     }

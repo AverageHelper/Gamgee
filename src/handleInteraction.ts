@@ -66,7 +66,7 @@ export async function handleInteraction(
       storage,
       logger,
       prepareForLongRunningTasks: async (ephemeral?: boolean) => {
-        await interaction.defer(ephemeral);
+        await interaction.defer({ ephemeral });
       },
       replyPrivately: async (content: string, viaDM: boolean = false) => {
         if (viaDM) {
@@ -112,7 +112,14 @@ export async function handleInteraction(
         }
       },
       deleteInvocation: () => Promise.resolve(undefined),
-      startTyping: (count?: number) => void channel?.startTyping(count),
+      startTyping: (count?: number) => {
+        void channel?.startTyping(count);
+        logger.debug(
+          `Started typing in channel ${
+            channel?.id ?? "nowhere"
+          } due to Context.prepareForLongRunningTasks`
+        );
+      },
       stopTyping: () => void channel?.stopTyping(true)
     };
 
