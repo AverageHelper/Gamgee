@@ -50,8 +50,9 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = GlobalCommand | GuildedCommand;
 
-interface BaseSubcommand extends Discord.ApplicationCommandOptionData {
+interface BaseSubcommand extends Omit<Discord.ApplicationCommandOptionData, "options"> {
   type: "SUB_COMMAND";
+  options?: Array<Discord.ApplicationCommandOption>;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {
