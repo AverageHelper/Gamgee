@@ -37,15 +37,16 @@
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
+    "es-aggregate-error": "^1.0.5",
     "github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
     "humanize-duration": "^3.25.1",
     "node-persist": "^3.1.0",
+    "promise.any": "^2.0.2",
     "reflect-metadata": "^0.1.13",
     "soundcloud-scraper": "^4.0.3",
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
     "typeorm": "^0.2.32",
-    "typescript-promise-any": "^2.1.0-alpha.6",
     "url-metadata": "^2.5.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
@@ -53,6 +54,7 @@
     "ytdl-core": "^4.8.2"
   },
   "devDependencies": {
+    "@types/es-aggregate-error": "^1.0.0",
     "@types/humanize-duration": "^3.18.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.35",

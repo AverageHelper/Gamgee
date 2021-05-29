@@ -34,7 +34,7 @@ describe("Video details", () => {
     "returns info for a YouTube link that $desc, $duration seconds long",
     async ({ params, result, duration }: { params: string; result: string; duration: number }) => {
       const details = await getVideoDetails(params, null);
-      expect(details?.url).toBe(result);
+      expect(details).toHaveProperty("url", result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
     }
@@ -51,7 +51,7 @@ describe("Video details", () => {
     "returns info for a SoundCloud link that $desc, $duration seconds long",
     async ({ params, result, duration }: { params: string; result: string; duration: number }) => {
       const details = await getVideoDetails(params, null);
-      expect(details?.url).toBe(result);
+      expect(details).toHaveProperty("url", result);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
     }
@@ -74,7 +74,7 @@ describe("Video details", () => {
     "returns info Bandcamp track $url, $duration seconds long",
     async ({ url, duration }: { url: string; duration: number }) => {
       const details = await getVideoDetails(url, null);
-      expect(details?.url).toBe(url);
+      expect(details).toHaveProperty("url", url);
       expect(details?.duration.seconds).toBeDefined();
       expect(details?.duration.seconds).toBe(duration);
     }

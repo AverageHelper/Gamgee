@@ -1,10 +1,10 @@
-import ytdl from "ytdl-core";
-import SoundCloud from "soundcloud-scraper";
-import urlMetadata from "url-metadata";
-import richErrorMessage from "../helpers/richErrorMessage";
-import any from "../helpers/any";
 import type { Logger } from "../logger";
 import { useLogger } from "../logger";
+import any = require("promise.any"); // FIXME: A new TypeScript version should fix this
+import richErrorMessage from "../helpers/richErrorMessage";
+import SoundCloud from "soundcloud-scraper";
+import urlMetadata from "url-metadata";
+import ytdl from "ytdl-core";
 
 interface VideoDetails {
   url: string;
