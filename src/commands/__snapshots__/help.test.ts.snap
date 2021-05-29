@@ -3,11 +3,12 @@
 exports[`Help command describe pleb commands 1`] = `
 "Commands:
 \`?help\` - Print a handy help message.
+\`?howto\` - Print instructions for using the common queue commands.
 \`?languages\` - Print my core repository's language statistics.
 \`?limits\` - Display the song queue's submission limits.
 \`?now-playing\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
-\`?sr [?url]\` - Submit a song to the queue.
+\`?sr [url]\` - Submit a song to the queue.
 \`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
 \`?video [url]\` - Reply with the video title and duration.
@@ -21,6 +22,7 @@ exports[`Help command describes all commands 1`] = `
     \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
     \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
 \`?help\` - Print a handy help message.
+\`?howto\` - Print instructions for using the common queue commands.
 \`?languages\` - Print my core repository's language statistics.
 \`?limits\` - Display the song queue's submission limits.
 \`?now-playing\` - Reveal the current song in the queue (or my best guess).
@@ -35,7 +37,7 @@ exports[`Help command describes all commands 1`] = `
     \`?quo limit <entry-duration | cooldown | count> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
-\`?sr [?url]\` - Submit a song to the queue.
+\`?sr [url]\` - Submit a song to the queue.
 \`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
 \`?video [url]\` - Reply with the video title and duration.
