@@ -1,5 +1,7 @@
 import Discord from "discord.js";
+import richErrorMessage from "../../helpers/richErrorMessage";
 import { EventEmitter } from "events";
+import { useLogger } from "../../logger";
 
 type JobQueueLifecycleEvent = "start" | "error" | "finish";
 
@@ -14,15 +16,29 @@ export type JobErrorHandler<Job> =
   | JobErrorNotificationHandler<Job>
   | JobErrorContinuationHandler<Job>;
 
+interface JobQueueErrorLogger {
+  error: (msg: string) => unknown;
+}
+
 /**
  * A queue of work items to be processed sequentially.
  */
-export class JobQueue<Job> {
+export class JobQueue<Job = never> {
   readonly #bus: EventEmitter = new EventEmitter();
   readonly #workItems: Array<Job> = [];
   #errorHandler: JobErrorHandler<Job> | null = null;
   #currentJob: Job | null = null;
   #worker: ((job: Job) => void | Promise<void>) | null = null;
+
+  private readonly logger: JobQueueErrorLogger | null;
+
+  constructor(logger?: JobQueueErrorLogger | null) {
+    if (logger === undefined) {
+      this.logger = useLogger(); // console
+    } else {
+      this.logger = logger;
+    }
+  }
 
   /** Enqueues a work item to be processed. */
   createJob(job: Job): void {
@@ -57,6 +73,17 @@ export class JobQueue<Job> {
       this.#errorHandler = cb as JobErrorHandler<Job>;
     } else {
       this.#bus.on(event, cb as () => void);
+    }
+  }
+
+  /**
+   * Removes all listeners for the given event.
+   */
+  removeAllListeners(event: JobQueueLifecycleEvent): void {
+    if (event === "error") {
+      this.#errorHandler = null;
+    } else {
+      this.#bus.removeAllListeners(event);
     }
   }
 
@@ -101,11 +128,14 @@ export class JobQueue<Job> {
         try {
           await worker(workItem);
         } catch (error: unknown) {
-          if (!this.#errorHandler) throw error;
-
-          const shouldContinue = (await this.#errorHandler(error, workItem)) ?? true;
-          if (shouldContinue === false) {
-            this.#workItems.splice(0, this.#workItems.length);
+          // Print the error if we have no handler
+          if (!this.#errorHandler) {
+            this.logger?.error(richErrorMessage("Unhandled error from JobQueue worker.", error));
+          } else {
+            const shouldContinue = (await this.#errorHandler(error, workItem)) ?? true;
+            if (shouldContinue === false) {
+              this.#workItems.splice(0, this.#workItems.length);
+            }
           }
         }
       }
@@ -135,6 +165,11 @@ export function useJobQueue<T = never>(key: string): JobQueue<T> {
   return queue;
 }
 
+/**
+ * Unregisters the job queue for the given key.
+ *
+ * @param key A string that identifies the job queue.
+ */
 export function forgetJobQueue(key: string): void {
   const queue = jobQueues.get(key);
   if (!queue) return;
