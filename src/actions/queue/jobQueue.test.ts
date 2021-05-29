@@ -1,6 +1,5 @@
-import { useJobQueue, jobQueues } from "./jobQueue";
+import { useJobQueue, jobQueues, JobQueue } from "./jobQueue";
 import { useTestLogger } from "../../../tests/testUtils/logger";
-import { flushPromises } from "../../../tests/testUtils/flushPromises";
 
 const logger = useTestLogger("error");
 
@@ -123,7 +122,7 @@ describe("Job queue", () => {
     expect(onFinished).not.toHaveBeenCalled();
 
     queue.process(cb);
-    await flushPromises();
+    await new Promise<void>(resolve => queue.on("finish", resolve));
 
     expect(onFinished).toHaveBeenCalledTimes(1);
     expect(cb).toHaveBeenCalledTimes(3);
@@ -146,6 +145,24 @@ describe("Job queue", () => {
     expect(cb).toHaveBeenCalledTimes(3);
   });
 
+  test("doesn't call the error callback if the callback was removed", async () => {
+    const queue = new JobQueue<number>(null);
+    const cb = jest.fn().mockRejectedValue("throw me");
+    const onError = jest.fn().mockResolvedValue(true);
+
+    queue.createJobs([1, 2, 3]);
+    queue.on("error", onError);
+    expect(onError).not.toHaveBeenCalled();
+
+    queue.removeAllListeners("error");
+
+    queue.process(cb);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(cb).toHaveBeenCalledTimes(3);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   test("calls the error callback for every failing job", async () => {
     const queue = useJobQueue<number>(queueKey);
     const cb = jest.fn().mockRejectedValue("throw me");
@@ -158,11 +175,11 @@ describe("Job queue", () => {
     queue.process(cb);
     await new Promise<void>(resolve => queue.on("finish", resolve));
 
+    expect(cb).toHaveBeenCalledTimes(3);
     expect(onError).toHaveBeenCalledTimes(3);
     expect(onError).toHaveBeenNthCalledWith(1, "throw me", 1);
     expect(onError).toHaveBeenNthCalledWith(2, "throw me", 2);
     expect(onError).toHaveBeenNthCalledWith(3, "throw me", 3);
-    expect(cb).toHaveBeenCalledTimes(3);
   });
 
   test("optionally cancels remaining items based on the result of the error callback", async () => {
@@ -237,7 +254,29 @@ describe("Job queue", () => {
     }
   });
 
-  test("calls a callback when work starts", () => {
+  test("doesn't call a start callback when the callback was removed", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn();
+    const onStart = jest.fn();
+
+    queue.on("start", onStart);
+    expect(onStart).not.toHaveBeenCalled();
+
+    queue.removeAllListeners("start");
+
+    queue.process(cb); // "start" would get called
+    expect(cb).not.toHaveBeenCalled();
+    expect(onStart).not.toHaveBeenCalled();
+
+    queue.createJob(1);
+    queue.createJobs([2, 3]);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(cb).toHaveBeenCalledTimes(3);
+    expect(onStart).not.toHaveBeenCalled();
+  });
+
+  test("calls a start callback when work starts", async () => {
     const queue = useJobQueue<number>(queueKey);
     const cb = jest.fn();
     const onStart = jest.fn();
@@ -250,8 +289,30 @@ describe("Job queue", () => {
 
     queue.createJob(1); // "start" gets called
     queue.createJobs([2, 3]); // "start" get called once more
+    await new Promise<void>(resolve => queue.on("finish", resolve));
 
+    expect(cb).toHaveBeenCalledTimes(3);
     expect(onStart).toHaveBeenCalledTimes(3);
+  });
+
+  test("doesn't call finish if the callback was removed", async () => {
+    const queue = useJobQueue<number>(queueKey);
+    const cb = jest.fn();
+    const onFinish = jest.fn();
+
+    queue.on("finish", onFinish);
+    expect(onFinish).not.toHaveBeenCalled();
+
+    queue.removeAllListeners("finish");
+
+    queue.process(cb); // "finish" would get called right away
+    expect(onFinish).not.toHaveBeenCalled();
+
+    queue.createJobs([1, 2, 3]);
+    await new Promise<void>(resolve => queue.on("finish", resolve));
+
+    expect(cb).toHaveBeenCalledTimes(3);
+    expect(onFinish).not.toHaveBeenCalled();
   });
 
   test("calls finish only after start", async () => {

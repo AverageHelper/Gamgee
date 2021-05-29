@@ -1,6 +1,6 @@
 {
   "name": "gamgee",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "description": "A Discord bot for managing a song request queue.",
   "private": true,
   "scripts": {
@@ -50,7 +50,7 @@
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
     "yargs": "^17.0.1",
-    "ytdl-core": "^4.8.0"
+    "ytdl-core": "^4.8.2"
   },
   "devDependencies": {
     "@types/humanize-duration": "^3.18.1",

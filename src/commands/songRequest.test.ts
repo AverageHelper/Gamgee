@@ -54,8 +54,6 @@ describe("Song request via URL", () => {
   const mockReply = jest.fn().mockResolvedValue(undefined);
   const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
-  const mockChannelStartTyping = jest.fn().mockResolvedValue(undefined);
-  const mockChannelStopTyping = jest.fn().mockResolvedValue(undefined);
   const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
   const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
@@ -69,9 +67,7 @@ describe("Song request via URL", () => {
 
   mockGetQueueChannel.mockResolvedValue({
     id: "queue-channel-123",
-    name: "queue",
-    startTyping: mockChannelStartTyping,
-    stopTyping: mockChannelStopTyping
+    name: "queue"
   });
 
   mockUseQueue.mockReturnValue({
@@ -106,9 +102,7 @@ describe("Song request via URL", () => {
       reply: mockReply,
       channel: {
         id: "request-channel-456",
-        send: mockChannelSend,
-        startTyping: mockChannelStartTyping,
-        stopTyping: mockChannelStopTyping
+        send: mockChannelSend
       },
       guild: {
         members: {

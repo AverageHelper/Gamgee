@@ -4,7 +4,16 @@ const type: Command = {
   name: "t",
   description: "Start a typing indicator.",
   requiresGuild: false,
-  async execute({ type, channel, client, logger, reply, deleteInvocation }) {
+  async execute({
+    type,
+    channel,
+    client,
+    logger,
+    reply,
+    deleteInvocation,
+    startTyping,
+    stopTyping
+  }) {
     if (!channel) return reply("This doesn't work as well in DMs.");
 
     logger.debug(
@@ -18,10 +27,10 @@ const type: Command = {
       });
     }
 
-    void channel.startTyping();
+    startTyping();
 
     await new Promise(resolve => setTimeout(resolve, 5000));
-    channel.stopTyping(true);
+    stopTyping();
 
     logger.debug(`Finished typing in channel ${channel.id}`);
   }

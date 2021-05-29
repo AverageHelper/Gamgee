@@ -178,7 +178,10 @@ export async function handleCommand(
       logger,
       prepareForLongRunningTasks: (ephemeral?: boolean) => {
         if (ephemeral === undefined || !ephemeral) {
-          void message.channel.startTyping(30);
+          void message.channel.startTyping();
+          logger.debug(
+            `Started typing in channel ${message.channel.id} due to Context.prepareForLongRunningTasks`
+          );
         }
       },
       replyPrivately: async (content: string) => {
@@ -195,7 +198,10 @@ export async function handleCommand(
       deleteInvocation: async () => {
         await deleteMessage(message);
       },
-      startTyping: (count?: number) => void message.channel.startTyping(count),
+      startTyping: (count?: number) => {
+        void message.channel.startTyping(count);
+        logger.debug(`Started typing in channel ${message.channel.id} due to Context.startTyping`);
+      },
       stopTyping: () => message.channel.stopTyping(true)
     };
 
@@ -205,6 +211,9 @@ export async function handleCommand(
   if (!usedCommandPrefix) {
     // This is likely a game. Play along!
     void message.channel.startTyping();
+    logger.debug(
+      `Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
+    );
     await new Promise(resolve => setTimeout(resolve, 2000));
     if (q.map(s => s.toLowerCase()).includes("hello")) {
       await message.channel.send(randomGreeting());
