@@ -13,13 +13,15 @@ import { useTestLogger } from "../../tests/testUtils/logger";
 const logger = useTestLogger("error");
 
 describe("Language Statistics from GitHub", () => {
-  const context = ({
-    logger,
-    prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
-    reply: mockReply
-  } as unknown) as CommandContext;
+  let context: CommandContext;
 
   beforeEach(() => {
+    context = ({
+      logger,
+      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
+      reply: mockReply
+    } as unknown) as CommandContext;
+
     mockGithubMetadata.mockResolvedValue({
       languages: {
         English: 80,

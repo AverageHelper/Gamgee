@@ -55,6 +55,7 @@ describe("Song request via URL", () => {
   const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
   const mockChannelSend = jest.fn().mockResolvedValue(undefined);
   const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
+  const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 
   const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
   const mockQueueUserEntryCount = jest.fn().mockResolvedValue(0);
@@ -133,7 +134,8 @@ describe("Song request via URL", () => {
         prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
         reply: mockReply,
         replyPrivately: mockReplyPrivately,
-        deleteInvocation: mockDeleteMessage
+        deleteInvocation: mockDeleteMessage,
+        followUp: mockFollowUp
       } as unknown) as GuildedCommandContext;
 
       await songRequest.execute(context);
@@ -177,7 +179,8 @@ describe("Song request via URL", () => {
       prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
       reply: mockReply,
       replyPrivately: mockReplyPrivately,
-      deleteInvocation: mockDeleteMessage
+      deleteInvocation: mockDeleteMessage,
+      followUp: mockFollowUp
     } as unknown) as GuildedCommandContext;
     const context2 = ({
       ...context1,
@@ -234,7 +237,8 @@ describe("Song request via URL", () => {
             logger,
             prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
             reply: mockReply,
-            replyPrivately: mockReplyPrivately
+            replyPrivately: mockReplyPrivately,
+            followUp: mockFollowUp
           } as unknown) as GuildedCommandContext;
         })
         .map(songRequest.execute)
