@@ -1,5 +1,5 @@
 import isError from "./isError";
-import { AggregateError } from "typescript-promise-any";
+import AggregateError from "es-aggregate-error";
 import StringBuilder from "./StringBuilder";
 
 export default function richErrorMessage(preamble: string, error: unknown): string {
@@ -10,7 +10,7 @@ export default function richErrorMessage(preamble: string, error: unknown): stri
     if (error instanceof AggregateError) {
       // Describe sub-errors
       messageBuilder.push(`${error.name}: ${error.message}`);
-      error.errors.forEach((err, index) => {
+      error.errors.forEach((err: unknown, index) => {
         messageBuilder.pushNewLine();
         messageBuilder.push(`${index + 1}: `);
         if (isError(err)) {

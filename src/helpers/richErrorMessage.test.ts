@@ -1,5 +1,5 @@
 import richErrorMessage from "./richErrorMessage";
-import { AggregateError } from "typescript-promise-any";
+import AggregateError from "es-aggregate-error";
 
 describe("Rich error messages", () => {
   test("contains relevant information about the error", () => {
