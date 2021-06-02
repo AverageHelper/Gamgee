@@ -19,12 +19,12 @@ import video from "./video";
 export const allCommands = new Discord.Collection<string, Command>();
 
 function add(command: Command): void {
-  if (allCommands.has(command.name)) {
-    throw new TypeError(
-      `Failed to add command ${command.name} when a command with that name was already added`
-    );
-  }
-  allCommands.set(command.name, command);
+	if (allCommands.has(command.name)) {
+		throw new TypeError(
+			`Failed to add command ${command.name} when a command with that name was already added`
+		);
+	}
+	allCommands.set(command.name, command);
 }
 
 add(config);

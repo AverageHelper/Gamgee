@@ -21,95 +21,95 @@ const OPT = "?";
  * @returns a string describing all commands.
  */
 export default async function describeAllCommands(
-  context: GuildedCommandContext,
-  commands: Discord.Collection<string, Command>
+	context: GuildedCommandContext,
+	commands: Discord.Collection<string, Command>
 ): Promise<string> {
-  const COMMAND_PREFIX =
-    context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
+	const COMMAND_PREFIX =
+		context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
 
-  // Describe all commands
-  const bodyBuilder = new StringBuilder();
-  for (const command of commands.array()) {
-    const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
-    if (!canRun) continue;
+	// Describe all commands
+	const bodyBuilder = new StringBuilder();
+	for (const command of commands.array()) {
+		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
+		if (!canRun) continue;
 
-    const cmdDesc = new StringBuilder();
+		const cmdDesc = new StringBuilder();
 
-    // Describe the command
-    cmdDesc.push(CODE);
-    cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
+		// Describe the command
+		cmdDesc.push(CODE);
+		cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
 
-    describeParameters(command, cmdDesc);
+		describeParameters(command, cmdDesc);
 
-    cmdDesc.push(CODE);
+		cmdDesc.push(CODE);
 
-    cmdDesc.push(DASH);
-    cmdDesc.push(command.description);
+		cmdDesc.push(DASH);
+		cmdDesc.push(command.description);
 
-    // Describe all subcommands
-    command.options
-      ?.filter(optn => optn.type === "SUB_COMMAND")
-      ?.forEach(sub => {
-        // Describe the subcommand
-        const subDesc = new StringBuilder();
-        subDesc.pushNewLine();
-        subDesc.push(INDENT);
+		// Describe all subcommands
+		command.options
+			?.filter(optn => optn.type === "SUB_COMMAND")
+			?.forEach(sub => {
+				// Describe the subcommand
+				const subDesc = new StringBuilder();
+				subDesc.pushNewLine();
+				subDesc.push(INDENT);
 
-        subDesc.push(CODE);
-        subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
+				subDesc.push(CODE);
+				subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
 
-        describeParameters(sub, subDesc);
+				describeParameters(sub, subDesc);
 
-        subDesc.push(CODE);
+				subDesc.push(CODE);
 
-        subDesc.push(DASH);
-        subDesc.push(sub.description);
-        cmdDesc.push(subDesc.result());
-      });
+				subDesc.push(DASH);
+				subDesc.push(sub.description);
+				cmdDesc.push(subDesc.result());
+			});
 
-    bodyBuilder.push(cmdDesc.result());
-    bodyBuilder.pushNewLine();
-  }
+		bodyBuilder.push(cmdDesc.result());
+		bodyBuilder.pushNewLine();
+	}
 
-  return bodyBuilder.result();
+	return bodyBuilder.result();
 }
 
 function describeParameters(
-  command: { options?: Array<Discord.ApplicationCommandOption> },
-  cmdDesc: StringBuilder
+	command: { options?: Array<Discord.ApplicationCommandOption> },
+	cmdDesc: StringBuilder
 ): void {
-  command.options
-    ?.filter(optn => optn.type !== "SUB_COMMAND")
-    ?.forEach(option => {
-      // Describe the parameter
-      const subDesc = new StringBuilder();
-      subDesc.push(" ");
+	command.options
+		?.filter(optn => optn.type !== "SUB_COMMAND")
+		?.forEach(option => {
+			// Describe the parameter
+			const subDesc = new StringBuilder();
+			subDesc.push(" ");
 
-      if (option.required === true && option.choices) {
-        subDesc.push(REQ_START);
-      } else {
-        subDesc.push(VAL_START);
-      }
+			if (option.required === true && option.choices) {
+				subDesc.push(REQ_START);
+			} else {
+				subDesc.push(VAL_START);
+			}
 
-      if (option.required === undefined || !option.required) {
-        subDesc.push(OPT);
-      }
+			if (option.required === undefined || !option.required) {
+				subDesc.push(OPT);
+			}
 
-      if (option.choices) {
-        // specific value
-        const choiceValues = option.choices.map(ch => ch.value.toString());
-        subDesc.push(choiceValues.join(SEP) ?? "");
-      } else {
-        // arbitrary value
-        subDesc.push(option.name);
-      }
+			if (option.choices) {
+				// specific value
+				const choiceValues = option.choices.map(ch => ch.value.toString());
+				subDesc.push(choiceValues.join(SEP) ?? "");
+			} else {
+				// arbitrary value
+				subDesc.push(option.name);
+			}
 
-      if (option.required === true && option.choices) {
-        subDesc.push(REQ_END);
-      } else {
-        subDesc.push(VAL_END);
-      }
+			if (option.required === true && option.choices) {
+				subDesc.push(REQ_END);
+			} else {
+				subDesc.push(VAL_END);
+			}
 
-      cmdDesc.push(subDesc.result());
-    });
+			cmdDesc.push(subDesc.result());
+		});
 }

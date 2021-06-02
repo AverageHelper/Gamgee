@@ -7,21 +7,21 @@
  * @returns The ID string between the mention markers.
  */
 export default function getUserIdFromMention(mention: string): string | null {
-  let id = mention.slice();
-  if (!id) return null;
+	let id = mention.slice();
+	if (!id) return null;
 
-  const startsRight = id.startsWith("<@");
-  const endsRight = id.endsWith(">");
+	const startsRight = id.startsWith("<@");
+	const endsRight = id.endsWith(">");
 
-  if (startsRight && endsRight) {
-    id = id.slice(2, -1);
+	if (startsRight && endsRight) {
+		id = id.slice(2, -1);
 
-    if (id.startsWith("!")) {
-      id = id.slice(1);
-    }
+		if (id.startsWith("!")) {
+			id = id.slice(1);
+		}
 
-    return id;
-  }
+		return id;
+	}
 
-  return null;
+	return null;
 }

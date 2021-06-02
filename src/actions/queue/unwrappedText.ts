@@ -8,13 +8,13 @@
  * @returns The given text, without the stated pre- and postfix.
  */
 export function removeCharactersAround(
-  dirtyText: string,
-  prefix: string,
-  postfix?: string
+	dirtyText: string,
+	prefix: string,
+	postfix?: string
 ): string {
-  if (!dirtyText) return dirtyText;
-  if (!dirtyText.startsWith(prefix) || !dirtyText.endsWith(postfix ?? prefix)) {
-    return dirtyText;
-  }
-  return dirtyText.slice(prefix.length, -(postfix ?? prefix).length);
+	if (!dirtyText) return dirtyText;
+	if (!dirtyText.startsWith(prefix) || !dirtyText.endsWith(postfix ?? prefix)) {
+		return dirtyText;
+	}
+	return dirtyText.slice(prefix.length, -(postfix ?? prefix).length);
 }

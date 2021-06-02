@@ -4,5 +4,5 @@ import { logOut } from "./discordUtils";
 jest.setTimeout(45000);
 
 afterAll(() => {
-  logOut();
+	logOut();
 });

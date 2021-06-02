@@ -12,19 +12,19 @@ const logger = useLogger();
  * @returns A Discord channel, or `undefined` if the user cannot be determined from the providedd `mention` string.
  */
 export default function getChannelFromMention(
-  guild: Discord.Guild | null,
-  mention: string
+	guild: Discord.Guild | null,
+	mention: string
 ): Discord.GuildChannel | undefined {
-  const channelId = getChannelIdFromMention(mention);
-  if (channelId === null || channelId === "") return undefined;
+	const channelId = getChannelIdFromMention(mention);
+	if (channelId === null || channelId === "") return undefined;
 
-  const channel = guild?.channels.resolve(channelId) ?? undefined;
+	const channel = guild?.channels.resolve(channelId) ?? undefined;
 
-  if (channel) {
-    logger.debug(`Found channel ${channel.name}`);
-  } else {
-    logger.debug("Did not find channel.");
-  }
+	if (channel) {
+		logger.debug(`Found channel ${channel.name}`);
+	} else {
+		logger.debug("Did not find channel.");
+	}
 
-  return channel;
+	return channel;
 }

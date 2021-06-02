@@ -14,70 +14,70 @@ import { isNonEmptyArray } from "../../helpers/guards";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [
-  setup,
-  teardown,
-  blacklist,
-  whitelist,
-  open,
-  close,
-  limit,
-  stats,
-  restart
+	setup,
+	teardown,
+	blacklist,
+	whitelist,
+	open,
+	close,
+	limit,
+	stats,
+	restart
 ];
 
 const sr: Command = {
-  name: "quo",
-  description: "Administrative commands to manage the song queue.",
-  options: namedSubcommands,
-  requiresGuild: true,
-  permissions: ["owner", "admin", "queue-admin"],
-  async execute(context) {
-    if (!isNonEmptyArray(context.options)) {
-      const response = new StringBuilder("The possible subcommands are:");
-      Object.values(namedSubcommands).forEach(command => {
-        response.pushNewLine();
-        response.push(" - ");
-        response.pushCode(command.name);
-      });
+	name: "quo",
+	description: "Administrative commands to manage the song queue.",
+	options: namedSubcommands,
+	requiresGuild: true,
+	permissions: ["owner", "admin", "queue-admin"],
+	async execute(context) {
+		if (!isNonEmptyArray(context.options)) {
+			const response = new StringBuilder("The possible subcommands are:");
+			Object.values(namedSubcommands).forEach(command => {
+				response.pushNewLine();
+				response.push(" - ");
+				response.pushCode(command.name);
+			});
 
-      return context.reply(response.result());
-    }
+			return context.reply(response.result());
+		}
 
-    const arg: string = resolveSubcommandNameFromOption(context.options[0]);
-    const argOptions = context.options[0].options ?? [];
-    context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
+		const arg: string = resolveSubcommandNameFromOption(context.options[0]);
+		const argOptions = context.options[0].options ?? [];
+		context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
 
-    context.logger.debug(
-      `Searching ${
-        namedSubcommands.length
-      } possible subcommands for one named '${arg}': ${JSON.stringify(
-        namedSubcommands.map(c => c.name),
-        undefined,
-        2
-      )}`
-    );
-    for (const command of namedSubcommands) {
-      if (command.name === arg) {
-        context.options = argOptions;
-        context.logger.debug(
-          `Handling subcommand '${command.name}' with options: ${JSON.stringify(
-            context.options,
-            undefined,
-            2
-          )}`
-        );
-        return invokeCommand(command, context);
-      }
-    }
+		context.logger.debug(
+			`Searching ${
+				namedSubcommands.length
+			} possible subcommands for one named '${arg}': ${JSON.stringify(
+				namedSubcommands.map(c => c.name),
+				undefined,
+				2
+			)}`
+		);
+		for (const command of namedSubcommands) {
+			if (command.name === arg) {
+				context.options = argOptions;
+				context.logger.debug(
+					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
+						context.options,
+						undefined,
+						2
+					)}`
+				);
+				return invokeCommand(command, context);
+			}
+		}
 
-    const response = new StringBuilder("The possible subcommands are:");
-    Object.values(namedSubcommands).forEach(command => {
-      response.pushNewLine();
-      response.push(" - ");
-      response.pushCode(command.name);
-    });
-    return context.reply(response.result());
-  }
+		const response = new StringBuilder("The possible subcommands are:");
+		Object.values(namedSubcommands).forEach(command => {
+			response.pushNewLine();
+			response.push(" - ");
+			response.pushCode(command.name);
+		});
+		return context.reply(response.result());
+	}
 };
 
 export default sr;

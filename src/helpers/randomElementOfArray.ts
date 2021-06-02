@@ -7,5 +7,5 @@
  * @returns A random element of the array.
  */
 export default function randomElementOfArray<T>(array: Array<T>): T | undefined {
-  return array[Math.floor(Math.random() * array.length)];
+	return array[Math.floor(Math.random() * array.length)];
 }

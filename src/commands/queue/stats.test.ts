@@ -22,41 +22,41 @@ const mockPlaytimeRemaining = jest.fn();
 const mockPlaytimeTotal = jest.fn();
 
 describe("Queue Statistics", () => {
-  let context: GuildedCommandContext;
+	let context: GuildedCommandContext;
 
-  beforeEach(() => {
-    context = ({
-      guild: "the-guild",
-      channel: undefined,
-      logger,
-      reply: mockReply,
-      replyPrivately: mockReplyPrivately,
-      deleteInvocation: mockDeleteInvocation
-    } as unknown) as GuildedCommandContext;
+	beforeEach(() => {
+		context = ({
+			guild: "the-guild",
+			channel: undefined,
+			logger,
+			reply: mockReply,
+			replyPrivately: mockReplyPrivately,
+			deleteInvocation: mockDeleteInvocation
+		} as unknown) as GuildedCommandContext;
 
-    mockCount.mockResolvedValue(0);
-    mockPlaytimeRemaining.mockResolvedValue(0);
-    mockPlaytimeTotal.mockResolvedValue(0);
+		mockCount.mockResolvedValue(0);
+		mockPlaytimeRemaining.mockResolvedValue(0);
+		mockPlaytimeTotal.mockResolvedValue(0);
 
-    mockGetQueueChannel.mockResolvedValue({
-      id: "queue-channel"
-    });
-    mockUseQueue.mockReturnValue({
-      count: mockCount,
-      playtimeRemaining: mockPlaytimeRemaining,
-      playtimeTotal: mockPlaytimeTotal
-    });
-  });
+		mockGetQueueChannel.mockResolvedValue({
+			id: "queue-channel"
+		});
+		mockUseQueue.mockReturnValue({
+			count: mockCount,
+			playtimeRemaining: mockPlaytimeRemaining,
+			playtimeTotal: mockPlaytimeTotal
+		});
+	});
 
-  test("does nothing when the guild has no queue", async () => {
-    mockGetQueueChannel.mockResolvedValue(null);
-    await expect(stats.execute(context)).resolves.toBeUndefined();
-    expect(mockUseQueue).not.toHaveBeenCalled();
-  });
+	test("does nothing when the guild has no queue", async () => {
+		mockGetQueueChannel.mockResolvedValue(null);
+		await expect(stats.execute(context)).resolves.toBeUndefined();
+		expect(mockUseQueue).not.toHaveBeenCalled();
+	});
 
-  test("displays queue statistics to the user", async () => {
-    await expect(stats.execute(context)).resolves.toBeUndefined();
-    expect(mockUseQueue).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-  });
+	test("displays queue statistics to the user", async () => {
+		await expect(stats.execute(context)).resolves.toBeUndefined();
+		expect(mockUseQueue).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+	});
 });

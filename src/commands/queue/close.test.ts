@@ -18,53 +18,53 @@ const mockIsQueueOpen = jest.fn();
 const mockSetQueueOpen = jest.fn();
 
 describe("Close the Queue", () => {
-  let context: GuildedCommandContext;
+	let context: GuildedCommandContext;
 
-  beforeEach(() => {
-    context = ({
-      guild: "the-guild",
-      channel: undefined,
-      reply: mockReply,
-      deleteInvocation: mockDeleteInvocation
-    } as unknown) as GuildedCommandContext;
+	beforeEach(() => {
+		context = ({
+			guild: "the-guild",
+			channel: undefined,
+			reply: mockReply,
+			deleteInvocation: mockDeleteInvocation
+		} as unknown) as GuildedCommandContext;
 
-    mockGetQueueChannel.mockResolvedValue({
-      id: "queue-channel",
-      send: mockChannelSend
-    });
-    mockIsQueueOpen.mockResolvedValue(false);
-    mockSetQueueOpen.mockResolvedValue(undefined);
+		mockGetQueueChannel.mockResolvedValue({
+			id: "queue-channel",
+			send: mockChannelSend
+		});
+		mockIsQueueOpen.mockResolvedValue(false);
+		mockSetQueueOpen.mockResolvedValue(undefined);
 
-    mockUseGuildStorage.mockReturnValue({
-      isQueueOpen: mockIsQueueOpen,
-      setQueueOpen: mockSetQueueOpen
-    });
-  });
+		mockUseGuildStorage.mockReturnValue({
+			isQueueOpen: mockIsQueueOpen,
+			setQueueOpen: mockSetQueueOpen
+		});
+	});
 
-  test("cannot close without a queue in the guild", async () => {
-    mockGetQueueChannel.mockResolvedValue(null);
-    await expect(close.execute(context)).resolves.toBeUndefined();
-    expect(mockSetQueueOpen).not.toHaveBeenCalled();
-    expect(mockChannelSend).not.toHaveBeenCalled();
-  });
+	test("cannot close without a queue in the guild", async () => {
+		mockGetQueueChannel.mockResolvedValue(null);
+		await expect(close.execute(context)).resolves.toBeUndefined();
+		expect(mockSetQueueOpen).not.toHaveBeenCalled();
+		expect(mockChannelSend).not.toHaveBeenCalled();
+	});
 
-  test("cannot close a queue when the queue is already closed", async () => {
-    mockIsQueueOpen.mockResolvedValue(false);
-    await expect(close.execute(context)).resolves.toBeUndefined();
-    expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
-    expect(mockSetQueueOpen).not.toHaveBeenCalled();
-    expect(mockChannelSend).not.toHaveBeenCalled();
-  });
+	test("cannot close a queue when the queue is already closed", async () => {
+		mockIsQueueOpen.mockResolvedValue(false);
+		await expect(close.execute(context)).resolves.toBeUndefined();
+		expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
+		expect(mockSetQueueOpen).not.toHaveBeenCalled();
+		expect(mockChannelSend).not.toHaveBeenCalled();
+	});
 
-  test("closes the queue when the queue exists and is open", async () => {
-    mockIsQueueOpen.mockResolvedValue(true);
-    await expect(close.execute(context)).resolves.toBeUndefined();
-    expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
-    expect(mockSetQueueOpen).toHaveBeenCalledTimes(1);
-    expect(mockSetQueueOpen).toHaveBeenCalledWith(false);
-    expect(mockChannelSend).toHaveBeenCalledTimes(1);
+	test("closes the queue when the queue exists and is open", async () => {
+		mockIsQueueOpen.mockResolvedValue(true);
+		await expect(close.execute(context)).resolves.toBeUndefined();
+		expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
+		expect(mockSetQueueOpen).toHaveBeenCalledTimes(1);
+		expect(mockSetQueueOpen).toHaveBeenCalledWith(false);
+		expect(mockChannelSend).toHaveBeenCalledTimes(1);
 
-    expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("is closed"));
-    expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("now closed"));
-  });
+		expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("is closed"));
+		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("now closed"));
+	});
 });

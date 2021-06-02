@@ -7,5 +7,5 @@ import type Discord from "discord.js";
  * @returns a string of the form `"{user ID} ({username})"`
  */
 export default function logUser(user: Discord.User): string {
-  return `${user.id} (${user.username})`;
+	return `${user.id} (${user.username})`;
 }

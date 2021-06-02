@@ -17,14 +17,14 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
  * @returns a `Promise` that resolves to the message that was sent.
  */
 export async function sendMessage(
-  content: string,
-  channelId: string = TEST_CHANNEL_ID
+	content: string,
+	channelId: string = TEST_CHANNEL_ID
 ): Promise<Discord.Message> {
-  const client = await testerClient();
-  const channel = await client.channels.fetch(channelId);
-  if (!channel || !channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
+	const client = await testerClient();
+	const channel = await client.channels.fetch(channelId);
+	if (!channel || !channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
 
-  return channel.send(content);
+	return channel.send(content);
 }
 
 /**
@@ -41,8 +41,8 @@ export async function sendMessage(
  * @returns a `Promise` that resolves to the message that was sent.
  */
 export async function sendCommand(
-  name: string,
-  channelId: string = TEST_CHANNEL_ID
+	name: string,
+	channelId: string = TEST_CHANNEL_ID
 ): Promise<Discord.Message> {
-  return sendMessage(`${COMMAND_PREFIX}${name}`, channelId);
+	return sendMessage(`${COMMAND_PREFIX}${name}`, channelId);
 }

@@ -15,20 +15,20 @@ const logger = useTestLogger();
  * @returns an event receiver function.
  */
 export function useDispatchLoop<T>(
-  waiterCollection: Discord.Collection<number, (arg: T) => boolean>
+	waiterCollection: Discord.Collection<number, (arg: T) => boolean>
 ): (arg: T) => void {
-  return function handleEvent(arg): void {
-    if (waiterCollection.size === 0) return;
+	return function handleEvent(arg): void {
+		if (waiterCollection.size === 0) return;
 
-    const removed = waiterCollection.sweep((waiter, id) => {
-      const shouldRemove = waiter(arg);
-      if (shouldRemove) {
-        logger.debug(`Waiter ${id} handled a deleted message. Removing from the loop...`);
-      } else {
-        logger.debug(`Waiter ${id} did not handle the message. Keeping in the loop.`);
-      }
-      return shouldRemove;
-    });
-    logger.debug(`Removed ${removed} finished waiters.`);
-  };
+		const removed = waiterCollection.sweep((waiter, id) => {
+			const shouldRemove = waiter(arg);
+			if (shouldRemove) {
+				logger.debug(`Waiter ${id} handled a deleted message. Removing from the loop...`);
+			} else {
+				logger.debug(`Waiter ${id} did not handle the message. Keeping in the loop.`);
+			}
+			return shouldRemove;
+		});
+		logger.debug(`Removed ${removed} finished waiters.`);
+	};
 }

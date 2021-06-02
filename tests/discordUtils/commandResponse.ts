@@ -21,19 +21,19 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
  * message was found within the timeout duration.
  */
 export async function commandResponseInSameChannel(
-  command: string,
-  channelId: string = TEST_CHANNEL_ID,
-  expectToContain: string | undefined = undefined
+	command: string,
+	channelId: string = TEST_CHANNEL_ID,
+	expectToContain: string | undefined = undefined
 ): Promise<Discord.Message | null> {
-  const commandMsg = await sendCommand(command, channelId);
-  return waitForMessage(response => {
-    return (
-      response.author.id === UUT_ID &&
-      response.channel.id === channelId &&
-      response.createdTimestamp > commandMsg.createdTimestamp &&
-      (expectToContain === undefined ||
-        expectToContain === "" ||
-        response.content.toLowerCase().includes(expectToContain.toLowerCase()))
-    );
-  });
+	const commandMsg = await sendCommand(command, channelId);
+	return waitForMessage(response => {
+		return (
+			response.author.id === UUT_ID &&
+			response.channel.id === channelId &&
+			response.createdTimestamp > commandMsg.createdTimestamp &&
+			(expectToContain === undefined ||
+				expectToContain === "" ||
+				response.content.toLowerCase().includes(expectToContain.toLowerCase()))
+		);
+	});
 }

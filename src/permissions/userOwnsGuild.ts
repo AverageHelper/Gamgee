@@ -12,5 +12,5 @@ import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild";
  * user owns the provided guild
  */
 export async function userOwnsGuild(user: Discord.User, guild: Discord.Guild): Promise<boolean> {
-  return await userHasRoleCategoryInGuild(user, ROLE_CATEGORY_OWNER, guild);
+	return await userHasRoleCategoryInGuild(user, ROLE_CATEGORY_OWNER, guild);
 }

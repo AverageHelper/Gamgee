@@ -3,17 +3,17 @@ import { QueueConfig } from "./QueueConfig";
 
 @Entity()
 export class User {
-  @PrimaryColumn({ unique: true })
-  id: string;
+	@PrimaryColumn({ unique: true })
+	id: string;
 
-  /** Queues from which the user is barred from submitting requests. */
-  @ManyToMany(() => QueueConfig, queue => queue.blacklistedUsers, {
-    nullable: false
-  })
-  blacklistedQueues!: Array<QueueConfig>;
+	/** Queues from which the user is barred from submitting requests. */
+	@ManyToMany(() => QueueConfig, queue => queue.blacklistedUsers, {
+		nullable: false
+	})
+	blacklistedQueues!: Array<QueueConfig>;
 
-  constructor(id: string);
-  constructor(id?: string) {
-    this.id = id ?? "";
-  }
+	constructor(id: string);
+	constructor(id?: string) {
+		this.id = id ?? "";
+	}
 }

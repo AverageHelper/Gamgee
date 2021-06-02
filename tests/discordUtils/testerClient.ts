@@ -4,13 +4,13 @@ import { useDispatchLoop } from "./dispatchLoop";
 
 let isClientLoggedIn = false;
 const client = new Discord.Client({
-  intents: [
-    "GUILDS",
-    "GUILD_MESSAGES",
-    "GUILD_MESSAGE_REACTIONS",
-    "DIRECT_MESSAGES",
-    "GUILD_MESSAGE_TYPING"
-  ]
+	intents: [
+		"GUILDS",
+		"GUILD_MESSAGES",
+		"GUILD_MESSAGE_REACTIONS",
+		"DIRECT_MESSAGES",
+		"GUILD_MESSAGE_TYPING"
+	]
 });
 
 /**
@@ -36,8 +36,8 @@ client.on("message", useDispatchLoop(messageWaiters));
  * timeout elapses before a matching message arrives.
  */
 export const messageDeleteWaiters = new Discord.Collection<
-  number,
-  (msg: Discord.Message | Discord.PartialMessage) => boolean
+	number,
+	(msg: Discord.Message | Discord.PartialMessage) => boolean
 >();
 
 client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
@@ -49,19 +49,19 @@ client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
  * @returns the logged-in Discord client for the tester bot.
  */
 export async function testerClient(): Promise<Discord.Client> {
-  const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
-  if (!isClientLoggedIn) {
-    isClientLoggedIn = true;
-    await client.login(TESTER_TOKEN);
-  }
-  return client;
+	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
+	if (!isClientLoggedIn) {
+		isClientLoggedIn = true;
+		await client.login(TESTER_TOKEN);
+	}
+	return client;
 }
 
 /**
  * Logs out of the tester bot's Discord client.
  */
 export function logOut(): void {
-  if (isClientLoggedIn) {
-    client.destroy();
-  }
+	if (isClientLoggedIn) {
+		client.destroy();
+	}
 }
