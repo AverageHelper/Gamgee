@@ -22,8 +22,8 @@ describe("User ID from mention string", () => {
 	});
 
 	test("returns the string between valid mention identifiers", () => {
-		expect(getUserIdFromMention("<@>")).toBe("");
-		expect(getUserIdFromMention("<@!>")).toBe("");
+		expect(getUserIdFromMention("<@>")).toBeNull();
+		expect(getUserIdFromMention("<@!>")).toBeNull();
 		expect(getUserIdFromMention("<@54321>")).toBe("54321");
 		expect(getUserIdFromMention("<@!54321>")).toBe("54321");
 		expect(getUserIdFromMention("<@percy>")).toBe("percy");

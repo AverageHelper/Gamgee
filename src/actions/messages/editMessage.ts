@@ -16,11 +16,7 @@ const logger = useLogger();
  */
 export async function editMessage(
 	message: Discord.Message | Discord.PartialMessage,
-	newContent:
-		| Discord.APIMessageContentResolvable
-		| Discord.MessageEditOptions
-		| Discord.MessageEmbed
-		| Discord.APIMessage,
+	newContent: string | null,
 	options: Discord.MessageEditOptions | Discord.MessageEmbed = {}
 ): Promise<boolean> {
 	try {

@@ -1,9 +1,10 @@
 import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
 import { useGuildStorage } from "../useGuildStorage";
 
 export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
 	/** The `id` of the role or user */
-	id: Discord.Snowflake;
+	id: Snowflake;
 
 	type: "ROLE" | "USER";
 
@@ -79,7 +80,7 @@ export async function queueAdminRolePermissions(
  * @returns a new `CommandPermission` that describes the type of access
  * that members of a guild role have to a command.
  */
-export function rolePermission(roleId: string, permission: boolean = true): CommandPermission {
+export function rolePermission(roleId: Snowflake, permission: boolean = true): CommandPermission {
 	return {
 		permission,
 		type: "ROLE",

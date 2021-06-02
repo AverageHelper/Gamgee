@@ -52,7 +52,7 @@ export type Command = GlobalCommand | GuildedCommand;
 
 interface BaseSubcommand extends Omit<Discord.ApplicationCommandOptionData, "options"> {
 	type: "SUB_COMMAND";
-	options?: Array<Discord.ApplicationCommandOption>;
+	options?: Array<Discord.ApplicationCommandOptionData>;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {

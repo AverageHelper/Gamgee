@@ -3,6 +3,7 @@ import type { Logger } from "../../logger";
 import type { MessageButton } from "../../DiscordInterface";
 import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import type { Snowflake } from "discord.js";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
@@ -135,7 +136,7 @@ export class QueueManager {
 	/** If the message represents a "done" entry, that entry is unmarked. */
 	async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		const message = await queueMessage.fetch();
-		await this.queueStorage.markEntryDone(false, queueMessage.id);
+		await this.queueStorage.markEntryDone(false, queueMessage.id as Snowflake);
 
 		await editMessage(message, stopEscapingUriInString(removeStrikethrough(message.content)), {
 			allowedMentions: { users: [] }
@@ -153,7 +154,7 @@ export class QueueManager {
 	/** If the message represents a "not done" entry, that entry is marked "done". */
 	async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		const message = await queueMessage.fetch();
-		await this.queueStorage.markEntryDone(true, queueMessage.id);
+		await this.queueStorage.markEntryDone(true, queueMessage.id as Snowflake);
 
 		await editMessage(message, addStrikethrough(escapeUriInString(message.content)), {
 			allowedMentions: { users: [] }
@@ -176,7 +177,8 @@ export class QueueManager {
 		const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
 		if (entry === null) return entry;
 
-		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
+		await this.queueStorage.removeEntryFromMessage(queueMessage.id as Snowflake);
 		await deleteMessage(queueMessage);
 
 		return entry;

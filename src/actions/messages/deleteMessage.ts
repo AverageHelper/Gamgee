@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
 import isError from "../../helpers/isError";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import { useLogger } from "../../logger";
@@ -41,7 +42,7 @@ export async function deleteMessage(
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessageWithId(
-	messageId: string,
+	messageId: Snowflake,
 	channel: Discord.TextChannel
 ): Promise<boolean> {
 	try {
@@ -64,7 +65,7 @@ export async function deleteMessageWithId(
  * @returns A `Promise` that resolves to `true` if the messages were deleted successfully.
  */
 export async function bulkDeleteMessagesWithIds(
-	messageIds: Array<string>,
+	messageIds: Array<Snowflake>,
 	channel: Discord.TextChannel
 ): Promise<boolean> {
 	try {

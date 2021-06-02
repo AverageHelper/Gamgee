@@ -47,7 +47,7 @@ async function query(
 	if (commandOrMention === undefined || commandOrMention === "") return null;
 
 	const mentionedUserId = getUserIdFromMention(commandOrMention);
-	if (mentionedUserId !== null && mentionedUserId !== "") {
+	if (mentionedUserId !== null) {
 		// See if it's for us.
 		if (client.user && mentionedUserId === client.user.id) {
 			logger.debug("They're talking to me!");

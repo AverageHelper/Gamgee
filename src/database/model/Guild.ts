@@ -1,19 +1,20 @@
+import { Snowflake } from "discord.js";
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "guilds" })
 export class Guild {
 	@PrimaryColumn({ unique: true })
-	id: string;
+	id: Snowflake;
 
 	@Column()
 	isQueueOpen: boolean;
 
 	@Column({ type: "text", nullable: true })
-	currentQueue: string | null;
+	currentQueue: Snowflake | null;
 
-	constructor(id: string, isQueueOpen: boolean, currentQueue: string | null);
-	constructor(id?: string, isQueueOpen: boolean = false, currentQueue: string | null = null) {
-		this.id = id ?? "";
+	constructor(id: Snowflake, isQueueOpen: boolean, currentQueue: Snowflake | null);
+	constructor(id?: Snowflake, isQueueOpen: boolean = false, currentQueue: Snowflake | null = null) {
+		this.id = id ?? "0";
 		this.isQueueOpen = isQueueOpen;
 		this.currentQueue = currentQueue;
 	}

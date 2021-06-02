@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import type { Repository } from "typeorm";
+import type { Snowflake } from "discord.js";
 import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model";
 import { useRepository, useTransaction } from "./database/useDatabase";
 import { useLogger } from "./logger";
@@ -115,7 +116,7 @@ export class QueueEntryManager {
 	}
 
 	/** Removes the queue entry from the database. */
-	async removeEntryFromMessage(queueMessageId: string): Promise<void> {
+	async removeEntryFromMessage(queueMessageId: Snowflake): Promise<void> {
 		await useRepository(QueueEntry, repo =>
 			repo.delete({
 				channelId: this.queueChannel.id,
@@ -199,7 +200,7 @@ export class QueueEntryManager {
 	}
 
 	/** Sets the entry's "done" value. */
-	async markEntryDone(isDone: boolean, queueMessageId: string): Promise<void> {
+	async markEntryDone(isDone: boolean, queueMessageId: Snowflake): Promise<void> {
 		logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
 		await useRepository(QueueEntry, repo =>
 			repo.update(

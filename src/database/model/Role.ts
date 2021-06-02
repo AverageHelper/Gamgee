@@ -1,12 +1,13 @@
+import { Snowflake } from "discord.js";
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Role {
 	@PrimaryColumn({ unique: true })
-	id: string;
+	id: Snowflake;
 
 	@Column()
-	guildId: string;
+	guildId: Snowflake;
 
 	@Column()
 	definesGuildAdmin: boolean;
@@ -14,10 +15,10 @@ export class Role {
 	@Column()
 	definesQueueAdmin: boolean;
 
-	constructor(id: string, guildId: string);
-	constructor(id?: string, guildId?: string) {
-		this.id = id ?? "";
-		this.guildId = guildId ?? "";
+	constructor(id: Snowflake, guildId: Snowflake);
+	constructor(id?: Snowflake, guildId?: Snowflake) {
+		this.id = id ?? "0";
+		this.guildId = guildId ?? "0";
 		this.definesGuildAdmin = false;
 		this.definesQueueAdmin = false;
 	}
