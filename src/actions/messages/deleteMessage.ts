@@ -15,19 +15,19 @@ const logger = useLogger();
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessage(
-  message: Discord.Message | Discord.PartialMessage
+	message: Discord.Message | Discord.PartialMessage
 ): Promise<boolean> {
-  if (message.channel.type === "dm") {
-    logger.debug("Can't delete others' messages in a DM channel.");
-    return false;
-  }
-  try {
-    await message.delete();
-    return true;
-  } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to delete a message.", error));
-    return false;
-  }
+	if (message.channel.type === "dm") {
+		logger.debug("Can't delete others' messages in a DM channel.");
+		return false;
+	}
+	try {
+		await message.delete();
+		return true;
+	} catch (error: unknown) {
+		logger.error(richErrorMessage("Failed to delete a message.", error));
+		return false;
+	}
 }
 
 /**
@@ -41,16 +41,16 @@ export async function deleteMessage(
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
 export async function deleteMessageWithId(
-  messageId: string,
-  channel: Discord.TextChannel
+	messageId: string,
+	channel: Discord.TextChannel
 ): Promise<boolean> {
-  try {
-    await channel.messages.delete(messageId);
-    return true;
-  } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to delete a message.", error));
-    return false;
-  }
+	try {
+		await channel.messages.delete(messageId);
+		return true;
+	} catch (error: unknown) {
+		logger.error(richErrorMessage("Failed to delete a message.", error));
+		return false;
+	}
 }
 
 /**
@@ -64,21 +64,21 @@ export async function deleteMessageWithId(
  * @returns A `Promise` that resolves to `true` if the messages were deleted successfully.
  */
 export async function bulkDeleteMessagesWithIds(
-  messageIds: Array<string>,
-  channel: Discord.TextChannel
+	messageIds: Array<string>,
+	channel: Discord.TextChannel
 ): Promise<boolean> {
-  try {
-    await channel.bulkDelete(messageIds);
-    return true;
-  } catch (error: unknown) {
-    if (isError(error) && error.code === "50034") {
-      // Error 50034: You can only bulk delete messages that are under 14 days old.
-      logger.info(error.message);
-      await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel)));
-      return true;
-    }
+	try {
+		await channel.bulkDelete(messageIds);
+		return true;
+	} catch (error: unknown) {
+		if (isError(error) && error.code === "50034") {
+			// Error 50034: You can only bulk delete messages that are under 14 days old.
+			logger.info(error.message);
+			await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel)));
+			return true;
+		}
 
-    logger.error(richErrorMessage(`Failed to delete ${messageIds.length} messages.`, error));
-    return false;
-  }
+		logger.error(richErrorMessage(`Failed to delete ${messageIds.length} messages.`, error));
+		return false;
+	}
 }

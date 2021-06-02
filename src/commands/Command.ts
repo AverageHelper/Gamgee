@@ -8,41 +8,41 @@ export * from "./CommandPermission";
 type PermissionAliasList = Array<PermissionAlias>;
 
 type PermissionGenerator = (
-  guild: Discord.Guild
+	guild: Discord.Guild
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
 interface BaseCommand extends Discord.ApplicationCommandData {}
 
 export interface GlobalCommand extends BaseCommand {
-  /** Whether the command requires a guild present to execute. */
-  requiresGuild: false;
+	/** Whether the command requires a guild present to execute. */
+	requiresGuild: false;
 
-  /** Permission overwrites for user or guild command access. */
-  permissions?: undefined;
+	/** Permission overwrites for user or guild command access. */
+	permissions?: undefined;
 
-  /**
-   * The command implementation. Receives contextual information about the
-   * command invocation. May return a `Promise`.
-   *
-   * @param context Contextual information about the command invocation.
-   */
-  execute: (context: CommandContext) => void | Promise<void>;
+	/**
+	 * The command implementation. Receives contextual information about the
+	 * command invocation. May return a `Promise`.
+	 *
+	 * @param context Contextual information about the command invocation.
+	 */
+	execute: (context: CommandContext) => void | Promise<void>;
 }
 
 export interface GuildedCommand extends BaseCommand {
-  /** Whether the command requires a guild present to execute. */
-  requiresGuild: true;
+	/** Whether the command requires a guild present to execute. */
+	requiresGuild: true;
 
-  /** Permission overwrites for user or guild command access. */
-  permissions?: PermissionGenerator | PermissionAliasList;
+	/** Permission overwrites for user or guild command access. */
+	permissions?: PermissionGenerator | PermissionAliasList;
 
-  /**
-   * The command implementation. Receives contextual information about the
-   * command invocation. May return a `Promise`.
-   *
-   * @param context Contextual information about the command invocation.
-   */
-  execute: (context: GuildedCommandContext) => void | Promise<void>;
+	/**
+	 * The command implementation. Receives contextual information about the
+	 * command invocation. May return a `Promise`.
+	 *
+	 * @param context Contextual information about the command invocation.
+	 */
+	execute: (context: GuildedCommandContext) => void | Promise<void>;
 }
 
 /**
@@ -51,40 +51,40 @@ export interface GuildedCommand extends BaseCommand {
 export type Command = GlobalCommand | GuildedCommand;
 
 interface BaseSubcommand extends Omit<Discord.ApplicationCommandOptionData, "options"> {
-  type: "SUB_COMMAND";
-  options?: Array<Discord.ApplicationCommandOption>;
+	type: "SUB_COMMAND";
+	options?: Array<Discord.ApplicationCommandOption>;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {
-  /** Whether the subcommand requires a guild present to execute. */
-  requiresGuild: false;
+	/** Whether the subcommand requires a guild present to execute. */
+	requiresGuild: false;
 
-  /** Permission overwrites for user or guild subcommand access. */
-  permissions?: undefined;
+	/** Permission overwrites for user or guild subcommand access. */
+	permissions?: undefined;
 
-  /**
-   * The command implementation. Receives contextual information about the
-   * command invocation. May return a `Promise`.
-   *
-   * @param context Contextual information about the command invocation.
-   */
-  execute: (context: CommandContext) => void | Promise<void>;
+	/**
+	 * The command implementation. Receives contextual information about the
+	 * command invocation. May return a `Promise`.
+	 *
+	 * @param context Contextual information about the command invocation.
+	 */
+	execute: (context: CommandContext) => void | Promise<void>;
 }
 
 export interface GuildedSubcommand extends BaseSubcommand {
-  /** Whether the subcommand requires a guild present to execute. */
-  requiresGuild: true;
+	/** Whether the subcommand requires a guild present to execute. */
+	requiresGuild: true;
 
-  /** Permission overwrites for user or guild subcommand access. */
-  permissions?: PermissionGenerator | PermissionAliasList;
+	/** Permission overwrites for user or guild subcommand access. */
+	permissions?: PermissionGenerator | PermissionAliasList;
 
-  /**
-   * The command implementation. Receives contextual information about the
-   * command invocation. May return a `Promise`.
-   *
-   * @param context Contextual information about the command invocation.
-   */
-  execute: (context: GuildedCommandContext) => void | Promise<void>;
+	/**
+	 * The command implementation. Receives contextual information about the
+	 * command invocation. May return a `Promise`.
+	 *
+	 * @param context Contextual information about the command invocation.
+	 */
+	execute: (context: GuildedCommandContext) => void | Promise<void>;
 }
 
 export type Subcommand = GlobalSubcommand | GuildedSubcommand;

@@ -8,12 +8,12 @@
  * @returns The given text, with added pre- and postfix.
  */
 export function addCharactersAround(
-  straightText: string,
-  prefix: string,
-  postfix?: string
+	straightText: string,
+	prefix: string,
+	postfix?: string
 ): string {
-  if (!straightText) return straightText;
-  if (straightText.startsWith(prefix) && straightText.endsWith(postfix ?? prefix))
-    return straightText;
-  return `${prefix}${straightText}${postfix ?? prefix}`;
+	if (!straightText) return straightText;
+	if (straightText.startsWith(prefix) && straightText.endsWith(postfix ?? prefix))
+		return straightText;
+	return `${prefix}${straightText}${postfix ?? prefix}`;
 }

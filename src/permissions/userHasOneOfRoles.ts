@@ -11,13 +11,13 @@ import type Discord from "discord.js";
  * named role in the provided guild
  */
 export async function userHasRoleInGuild(
-  user: Discord.User,
-  roleId: string,
-  guild: Discord.Guild
+	user: Discord.User,
+	roleId: string,
+	guild: Discord.Guild
 ): Promise<boolean> {
-  const adminRole = await guild.roles.fetch(roleId);
-  // TODO: Test that user IDs match their guild member IDs
-  return adminRole?.members?.has(user.id) ?? false;
+	const adminRole = await guild.roles.fetch(roleId);
+	// TODO: Test that user IDs match their guild member IDs
+	return adminRole?.members?.has(user.id) ?? false;
 }
 
 /**
@@ -31,16 +31,16 @@ export async function userHasRoleInGuild(
  * of the named roles in the provided guild
  */
 export async function userHasOneOfRoles(
-  user: Discord.User,
-  roleIds: ReadonlyArray<string>,
-  guild: Discord.Guild
+	user: Discord.User,
+	roleIds: ReadonlyArray<string>,
+	guild: Discord.Guild
 ): Promise<boolean> {
-  const adminRoles = await Promise.all(
-    roleIds.map(roleId => guild.roles.fetch(roleId)) //
-  );
+	const adminRoles = await Promise.all(
+		roleIds.map(roleId => guild.roles.fetch(roleId)) //
+	);
 
-  // TODO: Test that user IDs match their guild member IDs
-  return adminRoles.some(
-    role => role?.members?.has(user.id) ?? false //
-  );
+	// TODO: Test that user IDs match their guild member IDs
+	return adminRoles.some(
+		role => role?.members?.has(user.id) ?? false //
+	);
 }

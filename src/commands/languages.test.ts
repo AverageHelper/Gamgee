@@ -13,38 +13,38 @@ import { useTestLogger } from "../../tests/testUtils/logger";
 const logger = useTestLogger("error");
 
 describe("Language Statistics from GitHub", () => {
-  let context: CommandContext;
+	let context: CommandContext;
 
-  beforeEach(() => {
-    context = ({
-      logger,
-      prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
-      reply: mockReply
-    } as unknown) as CommandContext;
+	beforeEach(() => {
+		context = ({
+			logger,
+			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
+			reply: mockReply
+		} as unknown) as CommandContext;
 
-    mockGithubMetadata.mockResolvedValue({
-      languages: {
-        English: 80,
-        Spanish: 10,
-        Indonesian: 5,
-        HTML: 5
-      }
-    });
-  });
+		mockGithubMetadata.mockResolvedValue({
+			languages: {
+				English: 80,
+				Spanish: 10,
+				Indonesian: 5,
+				HTML: 5
+			}
+		});
+	});
 
-  test("asks GitHub about my language statistics", async () => {
-    await expect(languages.execute(context)).resolves.toBe(undefined);
+	test("asks GitHub about my language statistics", async () => {
+		await expect(languages.execute(context)).resolves.toBe(undefined);
 
-    const owner = "AverageHelper";
-    const repo = "Gamgee";
-    expect(mockGithubMetadata).toHaveBeenCalledTimes(1);
-    expect(mockGithubMetadata).toHaveBeenCalledWith({
-      owner,
-      repo,
-      exclude: expect.not.arrayContaining(["languages"]) as Array<string>
-    });
+		const owner = "AverageHelper";
+		const repo = "Gamgee";
+		expect(mockGithubMetadata).toHaveBeenCalledTimes(1);
+		expect(mockGithubMetadata).toHaveBeenCalledWith({
+			owner,
+			repo,
+			exclude: expect.not.arrayContaining(["languages"]) as Array<string>
+		});
 
-    expect(mockReply).toHaveBeenCalled();
-    expect(mockReply).toHaveBeenCalledWith(expect.toContainValue("4"));
-  });
+		expect(mockReply).toHaveBeenCalled();
+		expect(mockReply).toHaveBeenCalledWith(expect.toContainValue("4"));
+	});
 });

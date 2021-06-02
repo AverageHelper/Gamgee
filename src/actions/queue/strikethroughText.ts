@@ -8,7 +8,7 @@ import { removeCharactersAround } from "./unwrappedText";
  * @returns The given text, with strikethrough.
  */
 export function addStrikethrough(straightText: string): string {
-  return addCharactersAround(straightText, "~~");
+	return addCharactersAround(straightText, "~~");
 }
 
 /**
@@ -18,5 +18,5 @@ export function addStrikethrough(straightText: string): string {
  * @returns The given text, sans strikethrough.
  */
 export function removeStrikethrough(strickenText: string): string {
-  return removeCharactersAround(strickenText, "~~");
+	return removeCharactersAround(strickenText, "~~");
 }

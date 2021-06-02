@@ -22,18 +22,18 @@ const logger = useLogger();
  * `false` if there was an error.
  */
 export async function sendPrivately(user: Discord.User, content: string): Promise<void> {
-  try {
-    if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-      logger.error(
-        `I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
-      );
-    } else if (!user.bot) {
-      await user.send(content);
-      logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
-    }
-  } catch (error: unknown) {
-    logger.error(richErrorMessage("Failed to send direct message.", error));
-  }
+	try {
+		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
+			logger.error(
+				`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
+			);
+		} else if (!user.bot) {
+			await user.send(content);
+			logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
+		}
+	} catch (error: unknown) {
+		logger.error(richErrorMessage("Failed to send direct message.", error));
+	}
 }
 
 /**
@@ -46,66 +46,66 @@ export async function sendPrivately(user: Discord.User, content: string): Promis
  * This will be the case if the target user has DMs disabled.
  */
 async function sendDM(user: Discord.User, content: string): Promise<boolean> {
-  try {
-    await user.send(content);
-    return true;
-  } catch (error: unknown) {
-    logger.error(
-      richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
-    );
-    return false;
-  }
+	try {
+		await user.send(content);
+		return true;
+	} catch (error: unknown) {
+		logger.error(
+			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+		);
+		return false;
+	}
 }
 
 function replyMessage(channel: { id: string } | null, content: string): string {
-  const msg = new StringBuilder();
-  if (channel) {
-    msg.push(`(Reply from <#${channel.id}>)`);
-    msg.pushNewLine();
-  }
-  msg.push(content);
-  return msg.result();
+	const msg = new StringBuilder();
+	if (channel) {
+		msg.push(`(Reply from <#${channel.id}>)`);
+		msg.pushNewLine();
+	}
+	msg.push(content);
+	return msg.result();
 }
 
 async function sendDMReply(source: Discord.Message, content: string): Promise<boolean> {
-  const user: Discord.User = source.author;
-  try {
-    if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-      // this is our known tester
-      logger.silly(`Good morning, Miss ${user.username}.`);
-      await reply(source, `(DM to <@!${user.id}>)\n${content}`);
-      return true;
-    } else if (!user.bot) {
-      logger.silly("This is a human. Or their dog... I love dogs!");
-      const response = replyMessage(source.channel, content);
-      await user.send(response);
-      logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
-      return true;
-    }
-    logger.error(
-      `I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
-    );
-    return false;
-  } catch (error: unknown) {
-    logger.error(
-      richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
-    );
-    return false;
-  }
+	const user: Discord.User = source.author;
+	try {
+		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
+			// this is our known tester
+			logger.silly(`Good morning, Miss ${user.username}.`);
+			await reply(source, `(DM to <@!${user.id}>)\n${content}`);
+			return true;
+		} else if (!user.bot) {
+			logger.silly("This is a human. Or their dog... I love dogs!");
+			const response = replyMessage(source.channel, content);
+			await user.send(response);
+			logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
+			return true;
+		}
+		logger.error(
+			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
+		);
+		return false;
+	} catch (error: unknown) {
+		logger.error(
+			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+		);
+		return false;
+	}
 }
 
 async function sendEphemeralReply(
-  source: Discord.CommandInteraction,
-  content: string
+	source: Discord.CommandInteraction,
+	content: string
 ): Promise<boolean> {
-  try {
-    await source.reply(content, { ephemeral: true });
-    logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
-    return true;
-  } catch (error: unknown) {
-    logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
-    return false;
-  }
+	try {
+		await source.reply(content, { ephemeral: true });
+		logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
+		return true;
+	} catch (error: unknown) {
+		logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
+		return false;
+	}
 }
 
 /**
@@ -123,17 +123,17 @@ async function sendEphemeralReply(
  * `false` if there was an error.
  */
 export async function replyPrivately(
-  source: Discord.Message | Discord.CommandInteraction,
-  content: string,
-  preferDMs: boolean
+	source: Discord.Message | Discord.CommandInteraction,
+	content: string,
+	preferDMs: boolean
 ): Promise<boolean> {
-  if ("author" in source) {
-    return sendDMReply(source, content);
-  }
-  if (preferDMs) {
-    return sendDM(source.user, replyMessage(source.channel, content));
-  }
-  return sendEphemeralReply(source, content);
+	if ("author" in source) {
+		return sendDMReply(source, content);
+	}
+	if (preferDMs) {
+		return sendDM(source.user, replyMessage(source.channel, content));
+	}
+	return sendEphemeralReply(source, content);
 }
 
 /**
@@ -143,14 +143,14 @@ export async function replyPrivately(
  * @param content The message to send.
  */
 export async function sendMessageInChannel(
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
-  content: string
+	channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+	content: string
 ): Promise<void> {
-  try {
-    await channel.send(content);
-  } catch (error: unknown) {
-    logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
-  }
+	try {
+		await channel.send(content);
+	} catch (error: unknown) {
+		logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
+	}
 }
 
 /**
@@ -164,23 +164,23 @@ export async function sendMessageInChannel(
  * @returns a `Promise` that resolves if the send succeeds.
  */
 export async function reply(
-  message: Discord.Message,
-  content: string,
-  shouldMention: boolean = true
+	message: Discord.Message,
+	content: string,
+	shouldMention: boolean = true
 ): Promise<void> {
-  try {
-    if (shouldMention) {
-      await message.reply(content);
-    } else {
-      await message.reply(content, { allowedMentions: { users: [] } });
-    }
-  } catch (error: unknown) {
-    if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
-      logger.debug(
-        `The message ${message.id} must have been deleted. Sending reply in same channel.`
-      );
-      return sendMessageInChannel(message.channel, content);
-    }
-    logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
-  }
+	try {
+		if (shouldMention) {
+			await message.reply(content);
+		} else {
+			await message.reply(content, { allowedMentions: { users: [] } });
+		}
+	} catch (error: unknown) {
+		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
+			logger.debug(
+				`The message ${message.id} must have been deleted. Sending reply in same channel.`
+			);
+			return sendMessageInChannel(message.channel, content);
+		}
+		logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
+	}
 }

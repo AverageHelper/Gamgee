@@ -9,5 +9,5 @@ import type Discord from "discord.js";
  * @returns a `Promise` which resolves with the user.
  */
 export async function getUserWithId(guild: Discord.Guild, userId: string): Promise<Discord.User> {
-  return (await guild.members.fetch(userId)).user;
+	return (await guild.members.fetch(userId)).user;
 }

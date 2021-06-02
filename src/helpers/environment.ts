@@ -4,20 +4,20 @@ dotenv.config();
 import EnvVariableNotFoundError from "./EnvVariableNotFoundError";
 
 type EnvKey =
-  | "NODE_ENV"
-  | "DISCORD_TOKEN"
-  | "DATABASE_FOLDER"
-  | "BOT_PREFIX"
-  | "BOT_TEST_ID"
-  | "CORDE_TEST_TOKEN"
-  | "CORDE_BOT_ID"
-  | "CHANNEL_ID"
-  | "QUEUE_CHANNEL_ID"
-  | "GUILD_ID"
-  | "QUEUE_ADMIN_ROLE_ID"
-  | "QUEUE_CREATOR_ROLE_ID"
-  | "EVENTS_ROLE_ID"
-  | "BOT_ADMIN_ROLE_ID";
+	| "NODE_ENV"
+	| "DISCORD_TOKEN"
+	| "DATABASE_FOLDER"
+	| "BOT_PREFIX"
+	| "BOT_TEST_ID"
+	| "CORDE_TEST_TOKEN"
+	| "CORDE_BOT_ID"
+	| "CHANNEL_ID"
+	| "QUEUE_CHANNEL_ID"
+	| "GUILD_ID"
+	| "QUEUE_ADMIN_ROLE_ID"
+	| "QUEUE_CREATOR_ROLE_ID"
+	| "EVENTS_ROLE_ID"
+	| "BOT_ADMIN_ROLE_ID";
 
 /**
  * Fetches the value of an environment variable key.
@@ -27,7 +27,7 @@ type EnvKey =
  * @returns the value of the environment variable key.
  */
 export function getEnv(key: EnvKey): string | undefined {
-  return process.env[key];
+	return process.env[key];
 }
 
 /**
@@ -39,7 +39,7 @@ export function getEnv(key: EnvKey): string | undefined {
  * @returns the value of the environment variable key.
  */
 export function requireEnv(key: EnvKey): string {
-  const value = getEnv(key);
-  if (value === undefined) throw new EnvVariableNotFoundError(key);
-  return value;
+	const value = getEnv(key);
+	if (value === undefined) throw new EnvVariableNotFoundError(key);
+	return value;
 }

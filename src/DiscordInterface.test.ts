@@ -8,69 +8,69 @@ const mockRxnRemove = jest.fn().mockResolvedValue(undefined);
 const mockReact = jest.fn().mockResolvedValue(undefined);
 
 describe("Discord Interface", () => {
-  let mockClient: Discord.Client;
-  let uut: DiscordInterface;
+	let mockClient: Discord.Client;
+	let uut: DiscordInterface;
 
-  beforeEach(() => {
-    mockClient = ("the client" as unknown) as Discord.Client;
-    uut = new DiscordInterface(mockClient);
-  });
+	beforeEach(() => {
+		mockClient = ("the client" as unknown) as Discord.Client;
+		uut = new DiscordInterface(mockClient);
+	});
 
-  describe("Add Reaction Buttons", () => {
-    let message: Discord.Message;
+	describe("Add Reaction Buttons", () => {
+		let message: Discord.Message;
 
-    beforeEach(() => {
-      message = ({
-        id: "the-message",
-        channel: {
-          id: "the-message-channel"
-        },
-        react: mockReact,
-        reactions: {
-          cache: [
-            {
-              emoji: {
-                name: REACTION_BTN_MUSIC
-              },
-              remove: mockRxnRemove
-            },
-            {
-              emoji: {
-                name: "something"
-              },
-              remove: mockRxnRemove
-            }
-          ]
-        }
-      } as unknown) as Discord.Message;
-    });
+		beforeEach(() => {
+			message = ({
+				id: "the-message",
+				channel: {
+					id: "the-message-channel"
+				},
+				react: mockReact,
+				reactions: {
+					cache: [
+						{
+							emoji: {
+								name: REACTION_BTN_MUSIC
+							},
+							remove: mockRxnRemove
+						},
+						{
+							emoji: {
+								name: "something"
+							},
+							remove: mockRxnRemove
+						}
+					]
+				}
+			} as unknown) as Discord.Message;
+		});
 
-    // adds a spacer before provided button
-    test.each`
-      buttons                                        | length
-      ${[{ emoji: "anything" }]}                     | ${1}
-      ${[{ emoji: "neigh" }, { emoji: "anything" }]} | ${2}
-    `(
-      "adds a spacer before the $length provided buttons",
-      async ({ buttons }: { buttons: NonEmptyArray<MessageButton> }) => {
-        expect.assertions(5 + buttons.length);
-        expect(uut.makeInteractive(message, buttons)).toBeUndefined();
+		// adds a spacer before provided button
+		test.each`
+			buttons                                        | length
+			${[{ emoji: "anything" }]}                     | ${1}
+			${[{ emoji: "neigh" }, { emoji: "anything" }]} | ${2}
+		`(
+			"adds a spacer before the $length provided buttons",
+			async ({ buttons }: { buttons: NonEmptyArray<MessageButton> }) => {
+				expect.assertions(5 + buttons.length);
+				expect(uut.makeInteractive(message, buttons)).toBeUndefined();
 
-        await flushPromises();
+				await flushPromises();
 
-        // Removes old emotes first
-        expect(mockRxnRemove).toHaveBeenCalledTimes(1);
-        expect(mockRxnRemove).not.toHaveBeenCalledAfter(mockReact);
+				// Removes old emotes first
+				expect(mockRxnRemove).toHaveBeenCalledTimes(1);
+				expect(mockRxnRemove).not.toHaveBeenCalledAfter(mockReact);
 
-        // Adds spacer
-        expect(mockReact).toHaveBeenCalledTimes(1 + buttons.length);
-        expect(mockReact).toHaveBeenNthCalledWith(1, REACTION_BTN_MUSIC);
+				// Adds spacer
+				expect(mockReact).toHaveBeenCalledTimes(1 + buttons.length);
+				expect(mockReact).toHaveBeenNthCalledWith(1, REACTION_BTN_MUSIC);
 
-        // Adds given buttons
-        buttons.forEach((button, index) => {
-          expect(mockReact).toHaveBeenNthCalledWith(index + 2, button.emoji);
-        });
-      }
-    );
-  });
+				// Adds given buttons
+				buttons.forEach((button, index) => {
+					expect(mockReact).toHaveBeenNthCalledWith(index + 2, button.emoji);
+				});
+			}
+		);
+	});
 });

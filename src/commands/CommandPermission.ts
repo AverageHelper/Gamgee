@@ -2,13 +2,13 @@ import type Discord from "discord.js";
 import { useGuildStorage } from "../useGuildStorage";
 
 export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
-  /** The `id` of the role or user */
-  id: Discord.Snowflake;
+	/** The `id` of the role or user */
+	id: Discord.Snowflake;
 
-  type: "ROLE" | "USER";
+	type: "ROLE" | "USER";
 
-  /** `true` to allow, `false` to disallow */
-  permission: boolean;
+	/** `true` to allow, `false` to disallow */
+	permission: boolean;
 }
 
 /**
@@ -23,11 +23,11 @@ export interface CommandPermission extends Discord.ApplicationCommandPermissionD
  * that a guild owner has to a command.
  */
 export function guildOwnerPermission(guild: Discord.Guild, permission: boolean): CommandPermission {
-  return {
-    permission,
-    type: "USER",
-    id: guild.ownerID
-  };
+	return {
+		permission,
+		type: "USER",
+		id: guild.ownerID
+	};
 }
 
 /**
@@ -42,11 +42,11 @@ export function guildOwnerPermission(guild: Discord.Guild, permission: boolean):
  * that members of a guild's admin roles have to a command.
  */
 export async function adminRolePermissions(
-  guild: Discord.Guild,
-  permission: boolean
+	guild: Discord.Guild,
+	permission: boolean
 ): Promise<Array<CommandPermission>> {
-  const knownAdminRoleIDs = await useGuildStorage(guild).getGuildAdminRoles();
-  return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
+	const knownAdminRoleIDs = await useGuildStorage(guild).getGuildAdminRoles();
+	return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 
 /**
@@ -61,11 +61,11 @@ export async function adminRolePermissions(
  * that members of a guild's queue-admin roles have to a command.
  */
 export async function queueAdminRolePermissions(
-  guild: Discord.Guild,
-  permission: boolean
+	guild: Discord.Guild,
+	permission: boolean
 ): Promise<Array<CommandPermission>> {
-  const knownRoleIDs = await useGuildStorage(guild).getQueueAdminRoles();
-  return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
+	const knownRoleIDs = await useGuildStorage(guild).getQueueAdminRoles();
+	return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 
 /**
@@ -80,37 +80,37 @@ export async function queueAdminRolePermissions(
  * that members of a guild role have to a command.
  */
 export function rolePermission(roleId: string, permission: boolean = true): CommandPermission {
-  return {
-    permission,
-    type: "ROLE",
-    id: roleId
-  };
+	return {
+		permission,
+		type: "ROLE",
+		id: roleId
+	};
 }
 
 export type PermissionAlias = "owner" | "admin" | "queue-admin";
 
 export async function resolvePermissions(
-  aliases: Array<PermissionAlias>,
-  guild: Discord.Guild
+	aliases: Array<PermissionAlias>,
+	guild: Discord.Guild
 ): Promise<Array<CommandPermission>> {
-  const result: Array<CommandPermission> = [];
+	const result: Array<CommandPermission> = [];
 
-  const uniqueAliases = new Set(aliases);
-  for (const permAlias of uniqueAliases) {
-    switch (permAlias) {
-      case "owner":
-        result.push(guildOwnerPermission(guild, true));
-        break;
+	const uniqueAliases = new Set(aliases);
+	for (const permAlias of uniqueAliases) {
+		switch (permAlias) {
+			case "owner":
+				result.push(guildOwnerPermission(guild, true));
+				break;
 
-      case "admin":
-        result.push(...(await adminRolePermissions(guild, true)));
-        break;
+			case "admin":
+				result.push(...(await adminRolePermissions(guild, true)));
+				break;
 
-      case "queue-admin":
-        result.push(...(await queueAdminRolePermissions(guild, true)));
-        break;
-    }
-  }
+			case "queue-admin":
+				result.push(...(await queueAdminRolePermissions(guild, true)));
+				break;
+		}
+	}
 
-  return result;
+	return result;
 }

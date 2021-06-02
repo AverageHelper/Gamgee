@@ -10,5 +10,5 @@ import { MILLISECONDS_IN_SECOND } from "../constants/time";
  * @returns A user-readable string describing the number of seconds.
  */
 export default function durationString(seconds: number): string {
-  return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
+	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
 }

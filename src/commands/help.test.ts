@@ -9,48 +9,48 @@ import help from "./help";
 const mockReplyPrivately = jest.fn();
 
 describe("Help command", () => {
-  let context: GuildedCommandContext;
+	let context: GuildedCommandContext;
 
-  beforeEach(() => {
-    context = ({
-      type: "message",
-      guild: {
-        id: "the-guild"
-      },
-      storage: null,
-      replyPrivately: mockReplyPrivately
-    } as unknown) as GuildedCommandContext;
+	beforeEach(() => {
+		context = ({
+			type: "message",
+			guild: {
+				id: "the-guild"
+			},
+			storage: null,
+			replyPrivately: mockReplyPrivately
+		} as unknown) as GuildedCommandContext;
 
-    mockAssertUserCanRunCommand.mockResolvedValue(true);
-  });
+		mockAssertUserCanRunCommand.mockResolvedValue(true);
+	});
 
-  test("describes all commands", async () => {
-    await help.execute(context);
-    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+	test("describes all commands", async () => {
+		await help.execute(context);
+		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
-    const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
-    const description = calls[0];
-    expect(description).toMatchSnapshot();
-  });
+		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
+		const description = calls[0];
+		expect(description).toMatchSnapshot();
+	});
 
-  test("describe pleb commands", async () => {
-    mockAssertUserCanRunCommand.mockImplementation((user, command: GuildedCommand) => {
-      if (
-        Array.isArray(command.permissions) &&
-        command.permissions.some(perm => ["owner", "admin", "queue-admin"].includes(perm))
-      ) {
-        return Promise.resolve(false);
-      }
-      return Promise.resolve(true);
-    });
+	test("describe pleb commands", async () => {
+		mockAssertUserCanRunCommand.mockImplementation((user, command: GuildedCommand) => {
+			if (
+				Array.isArray(command.permissions) &&
+				command.permissions.some(perm => ["owner", "admin", "queue-admin"].includes(perm))
+			) {
+				return Promise.resolve(false);
+			}
+			return Promise.resolve(true);
+		});
 
-    await help.execute(context);
-    expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-    expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+		await help.execute(context);
+		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
-    const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
-    const description = calls[0];
-    expect(description).toMatchSnapshot();
-  });
+		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
+		const description = calls[0];
+		expect(description).toMatchSnapshot();
+	});
 });

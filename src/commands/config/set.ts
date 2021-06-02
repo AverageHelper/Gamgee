@@ -6,51 +6,51 @@ import { resolveStringFromOption } from "../../helpers/optionResolvers";
 import { setConfigValue } from "../../actions/config/setConfigValue";
 
 const set: Subcommand = {
-  name: "set",
-  description: "Set the value of a configuration setting.",
-  options: [
-    {
-      name: "key",
-      description: "A config key",
-      type: "STRING",
-      required: true,
-      choices: allKeys.map(key => ({
-        name: key,
-        value: key
-      }))
-    },
-    {
-      name: "value",
-      description: "The new value to set for the config key.",
-      type: "STRING",
-      required: true
-    }
-  ],
-  type: "SUB_COMMAND",
-  requiresGuild: false,
-  async execute({ options, storage, reply }) {
-    const keyOption = options[0];
-    const valueOption = options[1];
-    if (!keyOption || !valueOption) {
-      return reply(listKeys());
-    }
-    const key: string = resolveStringFromOption(keyOption);
+	name: "set",
+	description: "Set the value of a configuration setting.",
+	options: [
+		{
+			name: "key",
+			description: "A config key",
+			type: "STRING",
+			required: true,
+			choices: allKeys.map(key => ({
+				name: key,
+				value: key
+			}))
+		},
+		{
+			name: "value",
+			description: "The new value to set for the config key.",
+			type: "STRING",
+			required: true
+		}
+	],
+	type: "SUB_COMMAND",
+	requiresGuild: false,
+	async execute({ options, storage, reply }) {
+		const keyOption = options[0];
+		const valueOption = options[1];
+		if (!keyOption || !valueOption) {
+			return reply(listKeys());
+		}
+		const key: string = resolveStringFromOption(keyOption);
 
-    if (!isConfigKey(key)) {
-      const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-      return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
-    }
+		if (!isConfigKey(key)) {
+			const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
+			return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
+		}
 
-    const value = resolveStringFromOption(valueOption);
-    if (value === undefined || value === "") {
-      return reply("Expected a value to set.");
-    }
-    if (!isConfigValue(value)) {
-      return reply("Invalid value type.");
-    }
-    await setConfigValue(storage, key, value);
-    return reply(`**${key}**: ${JSON.stringify(value)}`);
-  }
+		const value = resolveStringFromOption(valueOption);
+		if (value === undefined || value === "") {
+			return reply("Expected a value to set.");
+		}
+		if (!isConfigValue(value)) {
+			return reply("Invalid value type.");
+		}
+		await setConfigValue(storage, key, value);
+		return reply(`**${key}**: ${JSON.stringify(value)}`);
+	}
 };
 
 export default set;
