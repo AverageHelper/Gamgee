@@ -1,6 +1,6 @@
 import type { Logger } from "../logger";
 import { useLogger } from "../logger";
-import any = require("promise.any"); // FIXME: A new TypeScript version should fix this
+import any = require("promise.any"); // FIXME: A new TypeScript version should fix this import
 import richErrorMessage from "../helpers/richErrorMessage";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";

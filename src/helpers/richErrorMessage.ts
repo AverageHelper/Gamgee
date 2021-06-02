@@ -1,5 +1,6 @@
 import isError from "./isError";
-import AggregateError from "es-aggregate-error";
+// FIXME: This import makes no sense, based on the documentation
+import AggregateError from "es-aggregate-error/implementation";
 import StringBuilder from "./StringBuilder";
 
 export default function richErrorMessage(preamble: string, error: unknown): string {
