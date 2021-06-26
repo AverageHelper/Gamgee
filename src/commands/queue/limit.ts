@@ -1,3 +1,4 @@
+import type { CommandInteractionOption } from "discord.js";
 import type { Subcommand } from "../Command";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { useQueue } from "../../actions/queue/useQueue";
@@ -60,8 +61,8 @@ const limit: Subcommand = {
 		const queue = useQueue(queueChannel);
 		const config = await queue.getConfig();
 
-		const keyOption = options[0];
-		const valueOption = options[1];
+		const keyOption: CommandInteractionOption | undefined = options.first();
+		const valueOption: CommandInteractionOption | undefined = options.array()[1];
 
 		if (!keyOption) {
 			const { default: limits } = await import("../limits");

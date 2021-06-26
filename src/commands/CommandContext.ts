@@ -25,7 +25,12 @@ interface BaseCommandContext {
 	guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null;
+	channel:
+		| Discord.TextChannel
+		| Discord.DMChannel
+		| Discord.NewsChannel
+		| Discord.ThreadChannel
+		| null;
 
 	/** The user which invoked the command. */
 	user: Discord.User;
@@ -34,7 +39,7 @@ interface BaseCommandContext {
 	createdTimestamp: number;
 
 	/** The options that were passed into the command. */
-	options: Array<Discord.CommandInteractionOption>;
+	options: Discord.Collection<string, Discord.CommandInteractionOption>;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
@@ -77,7 +82,7 @@ interface MessageCommandContext extends BaseCommandContext {
 	message: Discord.Message;
 
 	/** The options that were passed into the command. */
-	options: Array<MessageCommandInteractionOption>;
+	options: Discord.Collection<string, MessageCommandInteractionOption>;
 }
 
 interface InteractionCommandContext extends BaseCommandContext {

@@ -70,11 +70,11 @@ export async function handleInteraction(
 			},
 			replyPrivately: async (content: string, viaDM: boolean = false) => {
 				if (viaDM) {
-					const prompt = ":paperclip: Check your DMs";
+					const content = ":paperclip: Check your DMs";
 					if (interaction.deferred) {
-						await interaction.editReply(prompt);
+						await interaction.editReply(content);
 					} else {
-						await interaction.reply(prompt, { ephemeral: true });
+						await interaction.reply({ content, ephemeral: true });
 					}
 				}
 				if (interaction.deferred && !viaDM) {
@@ -91,9 +91,10 @@ export async function handleInteraction(
 					await interaction.editReply(content);
 				} else {
 					if (!options || options.shouldMention === undefined || options.shouldMention) {
-						await interaction.reply(content, { ephemeral: options?.ephemeral });
+						await interaction.reply({ content, ephemeral: options?.ephemeral });
 					} else {
-						await interaction.reply(content, {
+						await interaction.reply({
+							content,
 							ephemeral: options?.ephemeral,
 							allowedMentions: { users: [] }
 						});
@@ -108,7 +109,7 @@ export async function handleInteraction(
 				if (options?.reply === false && interaction.channel && interaction.channel.isText()) {
 					await sendMessageInChannel(interaction.channel, content);
 				} else {
-					await interaction.followUp(content, options);
+					await interaction.followUp({ ...options, content });
 				}
 			},
 			deleteInvocation: () => Promise.resolve(undefined),

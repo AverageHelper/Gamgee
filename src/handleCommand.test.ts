@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import Discord from "discord.js";
 import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey";
 
 jest.mock("./commands");
@@ -61,18 +61,20 @@ describe("Command handler", () => {
 	describe("Options Parser", () => {
 		test("parses empty options from a root command", () => {
 			const options = optionsFromArgs([]); // e.g: /help
-			expect(options).toBeArrayOfSize(0);
+			expect(options).toBeInstanceOf(Discord.Collection);
+			expect(options.size).toBe(0);
 		});
 
 		test("parses one option", () => {
 			const url = "https://youtu.be/9Y8ZGLiqXB8";
 			const options = optionsFromArgs([url]); // e.g: /video <url>
-			expect(options).toBeArrayOfSize(1);
-			expect(options[0]).toStrictEqual({
+			expect(options).toBeInstanceOf(Discord.Collection);
+			expect(options.size).toBe(1);
+			expect(options.first()).toStrictEqual({
 				name: url,
 				type: "STRING",
 				value: url,
-				options: []
+				options: new Discord.Collection()
 			});
 		});
 
@@ -80,19 +82,23 @@ describe("Command handler", () => {
 			const subcommand = "get";
 			const key = "cooldown";
 			const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
-			expect(options).toBeArrayOfSize(1);
-			expect(options[0]).toStrictEqual({
+			expect(options).toBeInstanceOf(Discord.Collection);
+			expect(options.size).toBe(1);
+			expect(options.first()).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
-				options: expect.toBeArrayOfSize(1) as Array<unknown>
+				options: expect.any(Discord.Collection) as Discord.Collection<unknown, unknown>
 			});
-			expect(options[0]?.options).toStrictEqual([
+			expect(options.first()?.options).toBeDefined();
+			expect(options.first()?.options?.size).toBe(1);
+			expect(options.first()?.options?.keyArray()).toStrictEqual([key]);
+			expect(options.first()?.options?.array()).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
 					value: key,
-					options: []
+					options: new Discord.Collection()
 				}
 			]);
 		});
@@ -102,25 +108,29 @@ describe("Command handler", () => {
 			const key = "cooldown";
 			const value = "null";
 			const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
-			expect(options).toBeArrayOfSize(1);
-			expect(options[0]).toStrictEqual({
+			expect(options).toBeInstanceOf(Discord.Collection);
+			expect(options.size).toBe(1);
+			expect(options.first()).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
-				options: expect.toBeArrayOfSize(2) as Array<unknown>
+				options: expect.any(Discord.Collection) as Discord.Collection<unknown, unknown>
 			});
-			expect(options[0]?.options).toStrictEqual([
+			expect(options.first()?.options).toBeDefined();
+			expect(options.first()?.options?.size).toBe(2);
+			expect(options.first()?.options?.keyArray()).toStrictEqual([key, value]);
+			expect(options.first()?.options?.array()).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
 					value: key,
-					options: []
+					options: new Discord.Collection()
 				},
 				{
 					name: value,
 					type: "STRING",
 					value: value,
-					options: []
+					options: new Discord.Collection()
 				}
 			]);
 		});
@@ -179,7 +189,15 @@ describe("Command handler", () => {
 				expect.toContainEntries([
 					["client", mockClient],
 					["message", mockMessage],
-					["options", command.split(/ +/u).slice(1)],
+					[
+						"options",
+						new Discord.Collection(
+							command
+								.split(/ +/u)
+								.slice(1)
+								.map(s => [s, s])
+						)
+					],
 					["storage", null]
 				])
 			);

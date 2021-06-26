@@ -26,8 +26,8 @@ const logger = ({
 
 describe("Request Queue", () => {
 	const guildId = "the-guild";
-	const queueMessageId = "queue-message";
-	const entrySenderId = "some-user";
+	const queueMessageId = "queue-message" as Discord.Snowflake;
+	const entrySenderId = "some-user" as Discord.Snowflake;
 	const entryUrl = "the-entry-url";
 
 	let storage: QueueEntryManager;
@@ -116,7 +116,7 @@ describe("Request Queue", () => {
 	});
 
 	test("does nothing when a message has nothing to do with a queue entry", async () => {
-		message.id = "not-a-queue-message";
+		message.id = "not-a-queue-message" as Discord.Snowflake;
 		await expect(queue.deleteEntryFromMessage(message)).resolves.toBeNull();
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
@@ -137,11 +137,11 @@ describe("Request Queue", () => {
 		url: "song-url",
 		seconds: 43,
 		sentAt: new Date(),
-		senderId: "sender"
+		senderId: "sender" as Discord.Snowflake
 	};
 
 	test("stores queue entries", async () => {
-		await expect(queue.push(request)).resolves.toContainEntries([
+		await expect(queue.push(request)).resolves.toContainEntries<Record<string, unknown>>([
 			...Object.entries(request),
 			["channelId", queueChannel.id]
 		]);
@@ -166,7 +166,7 @@ describe("Request Queue", () => {
 		const error = new Error("You're gonna have a bad time.");
 		mockMessageReact.mockRejectedValueOnce(error);
 
-		await expect(queue.push(request)).resolves.toContainEntries([
+		await expect(queue.push(request)).resolves.toContainEntries<Record<string, unknown>>([
 			...Object.entries(request),
 			["channelId", queueChannel.id]
 		]);

@@ -1,6 +1,5 @@
 import type { Command } from "./Command";
 import type { SongRequest } from "../actions/queue/processSongRequest";
-import { isNonEmptyArray } from "../helpers/guards";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
 import { useGuildStorage } from "../useGuildStorage";
 import { useJobQueue } from "../actions/queue/jobQueue";
@@ -34,7 +33,8 @@ const sr: Command = {
 			return reject_public(context, "No queue is set up.");
 		}
 
-		if (!isNonEmptyArray(options)) {
+		const firstOption = options.first();
+		if (!firstOption) {
 			const howTo = (await import("./howto")).default;
 			return howTo.execute(context);
 		}
@@ -58,7 +58,7 @@ const sr: Command = {
 
 		await prepareForLongRunningTasks();
 
-		const songUrl: string = resolveStringFromOption(options[0]);
+		const songUrl: string = resolveStringFromOption(firstOption);
 		if (context.type === "interaction") {
 			await context.reply(songUrl);
 		}

@@ -10,17 +10,17 @@ const logger = useLogger();
  * function's resulting `Promise` will resolve to `false`.
  *
  * @param message The message to delete.
- * @param newContent The new content for the message.
+ * @param content The new content for the message.
  *
  * @returns a `Promise` that resolves to `true` if the message was edited successfully.
  */
 export async function editMessage(
 	message: Discord.Message | Discord.PartialMessage,
-	newContent: string | null,
+	content: string | null,
 	options: Discord.MessageEditOptions | Discord.MessageEmbed = {}
 ): Promise<boolean> {
 	try {
-		await message.edit(newContent, options);
+		await message.edit({ ...options, content });
 		return true;
 	} catch (error: unknown) {
 		logger.error(richErrorMessage("Failed to edit a message.", error));

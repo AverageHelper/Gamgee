@@ -3,7 +3,6 @@ import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { listKeys } from "../../constants/config/keys";
 import { isConfigKey, allKeys } from "../../constants/config";
 import { getConfigValue } from "../../actions/config/getConfigValue";
-import { isNonEmptyArray } from "../../helpers/guards";
 import { resolveStringFromOption } from "../../helpers/optionResolvers";
 
 const get: Subcommand = {
@@ -24,10 +23,11 @@ const get: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: false,
 	async execute({ options, storage, reply }) {
-		if (!isNonEmptyArray(options)) {
+		const firstOption = options.first();
+		if (!firstOption) {
 			return reply(listKeys());
 		}
-		const key: string = resolveStringFromOption(options[0]);
+		const key: string = resolveStringFromOption(firstOption);
 
 		if (isConfigKey(key)) {
 			const value = await getConfigValue(storage, key);

@@ -1,5 +1,7 @@
 import type { Command } from "../Command";
 import { invokeCommand } from "../../actions/invokeCommand";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
+import Discord from "discord.js";
 import StringBuilder from "../../helpers/StringBuilder";
 import setup from "./setup";
 import teardown from "./teardown";
@@ -10,8 +12,6 @@ import close from "./close";
 import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
-import { isNonEmptyArray } from "../../helpers/guards";
-import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [
 	setup,
@@ -32,7 +32,8 @@ const sr: Command = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		if (!isNonEmptyArray(context.options)) {
+		const firstOption = context.options.first();
+		if (!firstOption) {
 			const response = new StringBuilder("The possible subcommands are:");
 			Object.values(namedSubcommands).forEach(command => {
 				response.pushNewLine();
@@ -43,8 +44,8 @@ const sr: Command = {
 			return context.reply(response.result());
 		}
 
-		const arg: string = resolveSubcommandNameFromOption(context.options[0]);
-		const argOptions = context.options[0].options ?? [];
+		const arg: string = resolveSubcommandNameFromOption(firstOption);
+		const argOptions = firstOption.options ?? new Discord.Collection();
 		context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
 
 		context.logger.debug(

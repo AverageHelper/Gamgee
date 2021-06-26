@@ -15,6 +15,7 @@ const mockUseQueueStorage = useQueueStorage as jest.Mock;
 import type { QueueEntryManager } from "../../useQueueStorage";
 import type { GuildedCommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
+import Discord from "discord.js";
 import blacklist from "./blacklist";
 
 const mockBlacklistUser = jest.fn();
@@ -28,7 +29,7 @@ const logger = useTestLogger("error");
 describe("Manage the Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
 
-	const ownerID = "server-owner";
+	const ownerID = "server-owner" as Discord.Snowflake;
 	const badUserId = "bad-user";
 
 	let context: GuildedCommandContext;
@@ -42,12 +43,15 @@ describe("Manage the Queue Blacklist", () => {
 				name: "Test Guild"
 			},
 			user: { id: "test-user" },
-			options: [
-				{
-					name: "user",
-					value: `<@${badUserId}>`
-				}
-			],
+			options: new Discord.Collection([
+				[
+					"user",
+					{
+						name: "user",
+						value: `<@${badUserId}>`
+					}
+				]
+			]),
 			logger,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
@@ -72,7 +76,7 @@ describe("Manage the Queue Blacklist", () => {
 
 	describe("Listing Blacklisted Users", () => {
 		test("reads off the list of blacklisted users when no user is provided (empty space)", async () => {
-			context.options = [];
+			context.options = new Discord.Collection();
 			await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
@@ -84,7 +88,7 @@ describe("Manage the Queue Blacklist", () => {
 		});
 
 		test("reads off the list of blacklisted users when no user is provided (no further text)", async () => {
-			context.options = [];
+			context.options = new Discord.Collection();
 			await expect(blacklist.execute(context)).resolves.toBe(undefined);
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
