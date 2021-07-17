@@ -10,17 +10,16 @@ const logger = useLogger();
  * function's resulting `Promise` will resolve to `false`.
  *
  * @param message The message to delete.
- * @param content The new content for the message.
+ * @param options The parts of the message to edit.
  *
  * @returns a `Promise` that resolves to `true` if the message was edited successfully.
  */
 export async function editMessage(
 	message: Discord.Message | Discord.PartialMessage,
-	content: string | null,
-	options: Discord.MessageEditOptions | Discord.MessageEmbed = {}
+	options: string | Discord.MessageEditOptions | Discord.APIMessage
 ): Promise<boolean> {
 	try {
-		await message.edit({ ...options, content });
+		await message.edit(options);
 		return true;
 	} catch (error: unknown) {
 		logger.error(richErrorMessage("Failed to edit a message.", error));
@@ -55,11 +54,12 @@ export async function suppressEmbedsForMessage(
 
 		// We sent this. We can edit it.
 		if (suppress) {
-			await editMessage(message, escapeUriInString(message.content), {
+			await editMessage(message, {
+				content: escapeUriInString(message.content),
 				allowedMentions: { users: [] }
 			});
 		} else {
-			await editMessage(message, stopEscapingUriInString(message.content));
+			await editMessage(message, { content: stopEscapingUriInString(message.content) });
 		}
 	} catch (error: unknown) {
 		logger.error(richErrorMessage("Cannot suppress message embeds.", error));

@@ -3,8 +3,8 @@ import { requireEnv } from "../../src/helpers/environment";
 import { sendCommand } from "./sendMessage";
 import { waitForMessage } from "./messageDispatch";
 
-const UUT_ID = requireEnv("BOT_TEST_ID");
-const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
+const UUT_ID = requireEnv("BOT_TEST_ID") as Discord.Snowflake;
+const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID") as Discord.Snowflake;
 
 /**
  * Sends a command message in the provided channel, and waits for
@@ -22,7 +22,7 @@ const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID");
  */
 export async function commandResponseInSameChannel(
 	command: string,
-	channelId: string = TEST_CHANNEL_ID,
+	channelId: Discord.Snowflake = TEST_CHANNEL_ID,
 	expectToContain: string | undefined = undefined
 ): Promise<Discord.Message | null> {
 	const commandMsg = await sendCommand(command, channelId);

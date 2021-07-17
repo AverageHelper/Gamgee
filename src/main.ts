@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { getEnv, requireEnv } from "./helpers/environment";
 import { handleCommand } from "./handleCommand";
 import { handleInteraction } from "./handleInteraction";
+import { handleMessageComponent } from "./handleMessageComponent";
 import { handleReactionAdd } from "./handleReactionAdd";
 import {
 	prepareSlashCommandsThenExit,
@@ -41,9 +42,12 @@ async function onInteraction(
 	client: Discord.Client,
 	interaction: Discord.Interaction
 ): Promise<void> {
-	if (!interaction.isCommand()) return;
 	const storage = await useStorage(interaction.guild, logger);
-	await handleInteraction(client, interaction, storage, logger);
+	if (interaction.isCommand()) {
+		await handleInteraction(client, interaction, storage, logger);
+	} else if (interaction.isMessageComponent()) {
+		await handleMessageComponent(client, interaction, storage, logger);
+	}
 }
 
 async function onNewMessage(
