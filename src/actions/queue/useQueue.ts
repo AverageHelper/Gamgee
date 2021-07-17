@@ -1,26 +1,18 @@
 import type Discord from "discord.js";
-import type { Logger } from "../../logger";
-import type { MessageButton } from "../../DiscordInterface";
+import type { MessageButton } from "../../buttons";
 import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
+import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
+import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
+import { useQueueStorage } from "../../useQueueStorage";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
-import { DiscordInterface } from "../../DiscordInterface";
-import { useLogger } from "../../logger";
-import { useQueueStorage } from "../../useQueueStorage";
 import {
 	deleteMessage,
 	editMessage,
 	escapeUriInString,
 	stopEscapingUriInString
 } from "../messages";
-import {
-	REACTION_BTN_DONE,
-	REACTION_BTN_UNDO,
-	REACTION_BTN_DELETE
-} from "../../constants/reactions";
 
 /**
  * A proxy for queue management and feedback. These methods may modify the
@@ -29,18 +21,10 @@ import {
 export class QueueManager {
 	private readonly queueStorage: QueueEntryManager;
 	private readonly queueChannel: Discord.TextChannel;
-	private readonly ui: DiscordInterface;
-	private readonly logger: Logger;
 
-	constructor(
-		queueStorage: QueueEntryManager,
-		queueChannel: Discord.TextChannel,
-		logger: Logger = useLogger()
-	) {
+	constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
 		this.queueStorage = queueStorage;
 		this.queueChannel = queueChannel;
-		this.ui = new DiscordInterface(queueChannel.client);
-		this.logger = logger;
 	}
 
 	/** Retrieves the queue's configuration settings. */
@@ -92,9 +76,17 @@ export class QueueManager {
 		messageBuilder.pushBold(durationString(newEntry.seconds));
 		messageBuilder.push(` long: ${newEntry.url}`);
 
-		const queueMessage = await this.queueChannel.send(messageBuilder.result(), {
-			allowedMentions: { users: [] }
+		const newEntryButtons: NonEmptyArray<MessageButton> = [
+			DONE_BUTTON, //
+			DELETE_BUTTON
+		];
+
+		const queueMessage = await this.queueChannel.send({
+			content: messageBuilder.result(),
+			allowedMentions: { users: [] },
+			components: [actionRow(newEntryButtons)]
 		});
+
 		let entry: QueueEntry;
 		try {
 			entry = await this.queueStorage.create({
@@ -109,21 +101,6 @@ export class QueueManager {
 			throw error;
 		}
 
-		// Add the buttons
-		const newEntryButtons: NonEmptyArray<MessageButton> = [
-			{ emoji: REACTION_BTN_DONE }, //
-			{ emoji: REACTION_BTN_DELETE }
-		];
-
-		this.ui.makeInteractive(queueMessage, newEntryButtons, async error => {
-			this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
-			await Promise.allSettled([
-				this.queueStorage.removeEntryFromMessage(queueMessage.id),
-				deleteMessage(queueMessage)
-			]);
-			return false;
-		});
-
 		return entry;
 	}
 
@@ -137,16 +114,14 @@ export class QueueManager {
 		const message = await queueMessage.fetch();
 		await this.queueStorage.markEntryDone(false, queueMessage.id);
 
-		await editMessage(message, stopEscapingUriInString(removeStrikethrough(message.content)), {
-			allowedMentions: { users: [] }
-		});
-
 		const entryButtons: NonEmptyArray<MessageButton> = [
-			{ emoji: REACTION_BTN_DONE }, //
-			{ emoji: REACTION_BTN_DELETE }
+			DONE_BUTTON, //
+			DELETE_BUTTON
 		];
-		this.ui.makeInteractive(message, entryButtons, error => {
-			this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
+		await editMessage(message, {
+			content: stopEscapingUriInString(removeStrikethrough(message.content)),
+			allowedMentions: { users: [] },
+			components: [actionRow(entryButtons)]
 		});
 	}
 
@@ -155,13 +130,13 @@ export class QueueManager {
 		const message = await queueMessage.fetch();
 		await this.queueStorage.markEntryDone(true, queueMessage.id);
 
-		await editMessage(message, addStrikethrough(escapeUriInString(message.content)), {
-			allowedMentions: { users: [] }
-		});
-
-		const doneEntryButton: NonEmptyArray<MessageButton> = [{ emoji: REACTION_BTN_UNDO }];
-		this.ui.makeInteractive(message, doneEntryButton, error => {
-			this.logger.error(richErrorMessage("Failed to add reaction UI for a message.", error));
+		const doneEntryButton: NonEmptyArray<MessageButton> = [
+			RESTORE_BUTTON //
+		];
+		await editMessage(message, {
+			content: addStrikethrough(escapeUriInString(message.content)),
+			allowedMentions: { users: [] },
+			components: [actionRow(doneEntryButton)]
 		});
 	}
 
@@ -176,6 +151,7 @@ export class QueueManager {
 		const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
 		if (entry === null) return entry;
 
+		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
 		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
 		await deleteMessage(queueMessage);
 

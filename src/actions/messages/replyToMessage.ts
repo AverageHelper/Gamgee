@@ -99,7 +99,7 @@ async function sendEphemeralReply(
 	content: string
 ): Promise<boolean> {
 	try {
-		await source.reply(content, { ephemeral: true });
+		await source.reply({ content, ephemeral: true });
 		logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
 		return true;
 	} catch (error: unknown) {
@@ -143,7 +143,7 @@ export async function replyPrivately(
  * @param content The message to send.
  */
 export async function sendMessageInChannel(
-	channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+	channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | Discord.ThreadChannel,
 	content: string
 ): Promise<void> {
 	try {
@@ -172,7 +172,7 @@ export async function reply(
 		if (shouldMention) {
 			await message.reply(content);
 		} else {
-			await message.reply(content, { allowedMentions: { users: [] } });
+			await message.reply({ content, allowedMentions: { users: [] } });
 		}
 	} catch (error: unknown) {
 		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {

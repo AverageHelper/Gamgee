@@ -14,6 +14,7 @@ const mockUseQueueStorage = useQueueStorage as jest.Mock;
 import type { QueueEntryManager } from "../../useQueueStorage";
 import type { GuildedCommandContext } from "../Command";
 import { useTestLogger } from "../../../tests/testUtils/logger";
+import Discord from "discord.js";
 import whitelist from "./whitelist";
 
 const mockWhitelistUser = jest.fn();
@@ -35,12 +36,15 @@ describe("Removing from Queue Blacklist", () => {
 		context = ({
 			user: { id: "test-user" },
 			guild: { ownerID },
-			options: [
-				{
-					name: "user",
-					value: `<@${goodUserId}>`
-				}
-			],
+			options: new Discord.Collection([
+				[
+					"user",
+					{
+						name: "user",
+						value: `<@${goodUserId}>`
+					}
+				]
+			]),
 			logger,
 			reply: mockReply,
 			deleteInvocation: mockDeleteMessage
@@ -60,7 +64,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing without a valid mention (empty space)", async () => {
-		context.options = [];
+		context.options = new Discord.Collection();
 		await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
 		expect(mockReply).toHaveBeenCalledTimes(1);
@@ -70,7 +74,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing without a mention (no further text)", async () => {
-		context.options = [];
+		context.options = new Discord.Collection();
 		await expect(whitelist.execute(context)).resolves.toBe(undefined);
 
 		expect(mockReply).toHaveBeenCalledTimes(1);

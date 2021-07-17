@@ -5,6 +5,7 @@ import {
 	ROLE_CATEGORY_GUILD_ADMIN
 } from "./RoleCategories";
 import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
 import { useGuildStorage } from "../useGuildStorage";
 import { userHasOneOfRoles } from "./userHasOneOfRoles";
 
@@ -15,7 +16,7 @@ export async function userHasRoleCategoryInGuild(
 ): Promise<boolean> {
 	const isOwner = user.id === guild.ownerID;
 
-	let knownAdminRoleIDs: ReadonlyArray<string>;
+	let knownAdminRoleIDs: ReadonlyArray<Snowflake>;
 
 	switch (category) {
 		case ROLE_CATEGORY_OWNER:

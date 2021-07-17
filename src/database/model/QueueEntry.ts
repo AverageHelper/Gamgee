@@ -1,15 +1,16 @@
+import { Snowflake } from "discord.js";
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "queue-entries" })
 export class QueueEntry {
 	@Column()
-	channelId: string;
+	channelId: Snowflake;
 
 	@Column()
-	guildId: string;
+	guildId: Snowflake;
 
 	@Column({ unique: true })
-	queueMessageId: string;
+	queueMessageId: Snowflake;
 
 	@Column()
 	url: string;
@@ -21,24 +22,28 @@ export class QueueEntry {
 	sentAt: Date;
 
 	@Column()
-	senderId: string;
+	senderId: Snowflake;
 
 	@Column()
 	isDone: boolean;
 
-	constructor(channelId: string, guildId: string, entry: Omit<QueueEntry, "channelId" | "guildId">);
 	constructor(
-		channelId?: string,
-		guildId?: string,
+		channelId: Snowflake,
+		guildId: Snowflake,
+		entry: Omit<QueueEntry, "channelId" | "guildId">
+	);
+	constructor(
+		channelId?: Snowflake,
+		guildId?: Snowflake,
 		entry?: Omit<QueueEntry, "channelId" | "guildId">
 	) {
-		this.channelId = channelId ?? "";
-		this.guildId = guildId ?? "";
-		this.queueMessageId = entry?.queueMessageId ?? "";
+		this.channelId = channelId ?? "0";
+		this.guildId = guildId ?? "0";
+		this.queueMessageId = entry?.queueMessageId ?? "0";
 		this.url = entry?.url ?? "";
 		this.seconds = entry?.seconds ?? 0;
 		this.sentAt = entry?.sentAt ?? new Date();
-		this.senderId = entry?.senderId ?? "";
+		this.senderId = entry?.senderId ?? "0";
 		this.isDone = entry?.isDone ?? false;
 	}
 }

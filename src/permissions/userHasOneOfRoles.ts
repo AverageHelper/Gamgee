@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
 
 /**
  * Returns `true` of the given user has the named roles in the provided guild.
@@ -12,7 +13,7 @@ import type Discord from "discord.js";
  */
 export async function userHasRoleInGuild(
 	user: Discord.User,
-	roleId: string,
+	roleId: Snowflake,
 	guild: Discord.Guild
 ): Promise<boolean> {
 	const adminRole = await guild.roles.fetch(roleId);
@@ -32,7 +33,7 @@ export async function userHasRoleInGuild(
  */
 export async function userHasOneOfRoles(
 	user: Discord.User,
-	roleIds: ReadonlyArray<string>,
+	roleIds: ReadonlyArray<Snowflake>,
 	guild: Discord.Guild
 ): Promise<boolean> {
 	const adminRoles = await Promise.all(

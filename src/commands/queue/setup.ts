@@ -1,6 +1,5 @@
 import type { Subcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
-import { isNonEmptyArray } from "../../helpers/guards";
 import { resolveChannelFromOption } from "../../helpers/optionResolvers";
 
 const setup: Subcommand = {
@@ -20,11 +19,12 @@ const setup: Subcommand = {
 	async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
 		await deleteInvocation();
 
-		if (!isNonEmptyArray(options)) {
+		const firstOption = options.first();
+		if (!firstOption) {
 			return reply(`Please name a text channel to use for the queue!`);
 		}
 
-		const newQueueChannel = resolveChannelFromOption(options[0], guild);
+		const newQueueChannel = resolveChannelFromOption(firstOption, guild);
 		if (!newQueueChannel) {
 			return reply(
 				"That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",

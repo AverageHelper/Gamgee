@@ -1,5 +1,6 @@
-import { getEnv } from "./helpers/environment";
 import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
+import { getEnv } from "./helpers/environment";
 import { Guild, Role } from "./database/model";
 import { useRepository, useTransaction } from "./database/useDatabase";
 
@@ -15,7 +16,7 @@ class GuildEntryManager {
 	 * Retrives the list of Discord Role IDs whose members have permission to manage
 	 * the guild's queue limits, content, and open status.
 	 */
-	async getQueueAdminRoles(): Promise<Array<string>> {
+	async getQueueAdminRoles(): Promise<Array<Snowflake>> {
 		const storedAdminRoles = (
 			await useRepository(Role, repo =>
 				repo.find({
@@ -27,13 +28,13 @@ class GuildEntryManager {
 			)
 		).map(role => role.id);
 		return storedAdminRoles.concat([
-			getEnv("EVENTS_ROLE_ID") ?? "", //
-			getEnv("QUEUE_ADMIN_ROLE_ID") ?? "" //
-			// getEnv("BOT_ADMIN_ROLE_ID") ?? "" // TODO: GTX says you can uncomment this... but you need to test non-perms sometimes to..... hmm........
+			(getEnv("EVENTS_ROLE_ID") ?? "0") as Snowflake, //
+			(getEnv("QUEUE_ADMIN_ROLE_ID") ?? "0") as Snowflake //
+			// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") as Snowflake // TODO: GTX says you can uncomment this... but you need to test non-perms sometimes to..... hmm........
 		]);
 	}
 
-	async addQueueAdminRole(roleId: string): Promise<void> {
+	async addQueueAdminRole(roleId: Snowflake): Promise<void> {
 		if (!roleId) return;
 
 		const role = new Role(roleId, this.guild.id);
@@ -45,7 +46,7 @@ class GuildEntryManager {
 	 * Retrieves the list of Discord Role IDs whose members have
 	 * permission to manage the guild.
 	 */
-	async getGuildAdminRoles(): Promise<Array<string>> {
+	async getGuildAdminRoles(): Promise<Array<Snowflake>> {
 		return (
 			await useRepository(Role, repo =>
 				repo.find({
@@ -58,13 +59,13 @@ class GuildEntryManager {
 		)
 			.map(role => role.id)
 			.concat([
-				getEnv("QUEUE_CREATOR_ROLE_ID") ?? "" //
-				// getEnv("BOT_ADMIN_ROLE_ID") ?? ""
+				(getEnv("QUEUE_CREATOR_ROLE_ID") ?? "0") as Snowflake //
+				// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") as Snowflake
 			]);
 	}
 
 	async updateRole(
-		roleId: string,
+		roleId: Snowflake,
 		attrs: Partial<Pick<Role, "definesGuildAdmin" | "definesQueueAdmin">>
 	): Promise<void> {
 		if (!roleId) return;
@@ -87,13 +88,13 @@ class GuildEntryManager {
 		});
 	}
 
-	async removeRole(roleId: string): Promise<void> {
+	async removeRole(roleId: Snowflake): Promise<void> {
 		if (!roleId) return;
 		await useRepository(Role, repo => repo.delete({ id: roleId, guildId: this.guild.id }));
 	}
 
 	/** Retrieves the guild's queue channel ID, if it exists.. */
-	async getQueueChannelId(): Promise<string | null> {
+	async getQueueChannelId(): Promise<Snowflake | null> {
 		const guildInfo = await useRepository(Guild, repo =>
 			repo.findOne({
 				where: {
@@ -105,8 +106,8 @@ class GuildEntryManager {
 	}
 
 	/** Sets the guild's queue channel. */
-	async setQueueChannel(channel: Discord.TextChannel | string | null): Promise<void> {
-		let currentQueue: string | null;
+	async setQueueChannel(channel: Discord.TextChannel | Snowflake | null): Promise<void> {
+		let currentQueue: Snowflake | null;
 
 		if (channel === null || typeof channel === "string") {
 			currentQueue = channel;
@@ -152,7 +153,7 @@ class GuildEntryManager {
 				isOpen &&
 				(guildInfo?.currentQueue === undefined ||
 					guildInfo.currentQueue === null ||
-					guildInfo.currentQueue === "")
+					!guildInfo.currentQueue)
 			) {
 				throw new Error("Cannot open a queue without a queue to open.");
 			}

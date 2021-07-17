@@ -75,7 +75,7 @@ export default async function describeAllCommands(
 }
 
 function describeParameters(
-	command: { options?: Array<Discord.ApplicationCommandOption> },
+	command: { options?: Array<Discord.ApplicationCommandOptionData> },
 	cmdDesc: StringBuilder
 ): void {
 	command.options

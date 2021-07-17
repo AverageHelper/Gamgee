@@ -20,7 +20,7 @@ describe("Channel ID from mention string", () => {
 	});
 
 	test("returns the string between valid mention identifiers", () => {
-		expect(getChannelIdFromMention("<#>")).toBe("");
+		expect(getChannelIdFromMention("<#>")).toBeNull();
 		expect(getChannelIdFromMention("<#54321>")).toBe("54321");
 		expect(getChannelIdFromMention("<#percy>")).toBe("percy");
 	});

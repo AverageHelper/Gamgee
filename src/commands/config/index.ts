@@ -1,11 +1,10 @@
 import type { Command } from "../Command";
 import { invokeCommand } from "../../actions/invokeCommand";
-
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
+import Discord from "discord.js";
 import get from "./get";
 import set from "./set";
 import unset from "./unset";
-import { isNonEmptyArray } from "../../helpers/guards";
-import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 
 const namedSubcommands = [get, set, unset];
 
@@ -23,11 +22,12 @@ const config: Command = {
 	async execute(context) {
 		const { options, reply } = context;
 
-		if (!isNonEmptyArray(options)) {
+		const firstOption = options.first();
+		if (!firstOption) {
 			return reply(`Missing command structure. Expected ${subargsList}`);
 		}
-		const arg: string = resolveSubcommandNameFromOption(options[0]);
-		const argOptions = options[0].options ?? [];
+		const arg: string = resolveSubcommandNameFromOption(firstOption);
+		const argOptions = firstOption.options ?? new Discord.Collection();
 
 		context.logger.debug(
 			`Searching ${

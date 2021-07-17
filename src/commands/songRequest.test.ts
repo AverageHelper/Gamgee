@@ -28,10 +28,10 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
-import type Discord from "discord.js";
 import type { GuildedCommandContext } from "./Command";
-import songRequest from "./songRequest";
 import { useTestLogger } from "../../tests/testUtils/logger";
+import Discord from "discord.js";
+import songRequest from "./songRequest";
 
 const logger = useTestLogger("error");
 
@@ -129,7 +129,7 @@ describe("Song request via URL", () => {
 				guild: "any-guild",
 				channel: "any-channel",
 				user: "doesn't matter",
-				options: [],
+				options: new Discord.Collection(),
 				logger,
 				prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 				reply: mockReply,
@@ -169,12 +169,15 @@ describe("Song request via URL", () => {
 			guild: mockMessage1.guild,
 			channel: mockMessage1.channel,
 			user: mockMessage1.author,
-			options: [
-				{
-					name: "url",
-					value: urls[0]
-				}
-			],
+			options: new Discord.Collection([
+				[
+					"url",
+					{
+						name: "url",
+						value: urls[0]
+					}
+				]
+			]),
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply,
@@ -184,12 +187,15 @@ describe("Song request via URL", () => {
 		} as unknown) as GuildedCommandContext;
 		const context2 = ({
 			...context1,
-			options: [
-				{
-					name: "url",
-					value: urls[1]
-				}
-			],
+			options: new Discord.Collection([
+				[
+					"url",
+					{
+						name: "url",
+						value: urls[1]
+					}
+				]
+			]),
 			user: mockMessage2.author,
 			guild: mockMessage2.guild,
 			channel: mockMessage2.channel
@@ -224,13 +230,16 @@ describe("Song request via URL", () => {
 			mockMessages
 				.map(message => {
 					return ({
-						options: message.content
-							.split(" ")
-							.slice(1)
-							.map(url => ({
-								name: "url",
-								value: url
-							})),
+						options: new Discord.Collection(
+							message.content
+								.split(" ")
+								.slice(1)
+								.map(url => ({
+									name: "url",
+									value: url
+								}))
+								.map(c => [c.name, c])
+						),
 						guild: message.guild,
 						channel: message.channel,
 						user: message.author,

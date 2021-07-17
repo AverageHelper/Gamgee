@@ -1,3 +1,4 @@
+import type { Snowflake } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment";
 import { testerClient } from "./testerClient";
 import { useTestLogger } from "../testUtils/logger";
@@ -5,7 +6,7 @@ import logUser from "../../src/helpers/logUser";
 
 const logger = useTestLogger();
 
-const TEST_GUILD_ID = requireEnv("GUILD_ID");
+const TEST_GUILD_ID = requireEnv("GUILD_ID") as Snowflake;
 
 async function setAdminRole(
 	roleKey: "QUEUE_ADMIN_ROLE_ID" | "QUEUE_CREATOR_ROLE_ID",
@@ -18,7 +19,7 @@ async function setAdminRole(
 
 	const guild = await client.guilds.fetch(TEST_GUILD_ID);
 
-	const roleId = requireEnv(roleKey);
+	const roleId = requireEnv(roleKey) as Snowflake;
 	const queueAdminRole = await guild.roles.fetch(roleId);
 	if (!queueAdminRole) throw new Error(`No role found with ID ${roleId}`);
 

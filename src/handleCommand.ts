@@ -1,7 +1,7 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
-import type Discord from "discord.js";
+import Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
@@ -47,7 +47,7 @@ async function query(
 	if (commandOrMention === undefined || commandOrMention === "") return null;
 
 	const mentionedUserId = getUserIdFromMention(commandOrMention);
-	if (mentionedUserId !== null && mentionedUserId !== "") {
+	if (mentionedUserId !== null) {
 		// See if it's for us.
 		if (client.user && mentionedUserId === client.user.id) {
 			logger.debug("They're talking to me!");
@@ -71,8 +71,10 @@ async function query(
 	return { query, usedCommandPrefix: true };
 }
 
-export function optionsFromArgs(args: Array<string>): Array<MessageCommandInteractionOption> {
-	const options: Array<MessageCommandInteractionOption> = [];
+export function optionsFromArgs(
+	args: Array<string>
+): Discord.Collection<string, MessageCommandInteractionOption> {
+	const options = new Discord.Collection<string, MessageCommandInteractionOption>();
 
 	// one argument
 	const firstArg = args.shift();
@@ -81,9 +83,9 @@ export function optionsFromArgs(args: Array<string>): Array<MessageCommandIntera
 			name: firstArg,
 			type: "STRING",
 			value: firstArg,
-			options: []
+			options: new Discord.Collection()
 		};
-		options.push(subcommand);
+		options.set(subcommand.name, subcommand);
 		while (args.length > 0) {
 			// two arguments or more
 			const name = args.shift() as string;
@@ -91,10 +93,10 @@ export function optionsFromArgs(args: Array<string>): Array<MessageCommandIntera
 				name,
 				type: "STRING",
 				value: name,
-				options: []
+				options: new Discord.Collection()
 			};
 			subcommand.type = "SUB_COMMAND";
-			subcommand.options?.push(nextOption);
+			subcommand.options?.set(nextOption.name, nextOption);
 		}
 	}
 
