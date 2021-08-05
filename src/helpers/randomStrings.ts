@@ -1,6 +1,7 @@
 import {
 	celebratoryEmoji,
 	greetings,
+	hugs,
 	philosophy,
 	phrases,
 	questions,
@@ -45,6 +46,12 @@ export function randomAcceptance(): string {
 
 export function randomCelebration(): string {
 	return randomResponseFromArray("celebration", celebratoryEmoji);
+}
+
+/* Hugs */
+
+export function randomHug(): string {
+	return randomResponseFromArray("hugs", hugs);
 }
 
 const lastResponses = new Discord.Collection<string, string>();

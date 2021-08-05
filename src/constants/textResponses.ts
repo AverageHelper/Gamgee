@@ -91,7 +91,7 @@ export const phrases: ResponseRepository = [
 	"Bit of a tongue twister",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
-	"Did you ever hear the tragedy of Darth Tirek the Wise?",
+	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
 	"Do you know how painful my training was? The song *Never Gonna Give You Up* by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
 	"Do you want to know how I got into music? It’s actually a fun story!\nOne day I was… *zzzzzzz*",
 	"Don't count your chickens",
@@ -172,4 +172,9 @@ export const celebratoryEmoji: ResponseRepository = [
 	":cupcake:",
 	":grin:",
 	":smile:"
+];
+
+export const hugs: ResponseRepository = [
+	"*hugs*", //
+	"*glomps*"
 ];
