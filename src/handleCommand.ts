@@ -4,7 +4,7 @@ import type { Command, CommandContext, MessageCommandInteractionOption } from ".
 import Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
-import { randomGreeting, randomPhrase, randomQuestion } from "./helpers/randomStrings";
+import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import { invokeCommand } from "./actions/invokeCommand";
 import { allCommands as commands } from "./commands";
 import { deleteMessage, reply, replyPrivately, sendMessageInChannel } from "./actions/messages";
@@ -218,6 +218,10 @@ export async function handleCommand(
 		return invokeCommand(command, context);
 	}
 
+	const messageContainsWord = (str: string): boolean => q.map(s => s.toLowerCase()).includes(str);
+	const messageContainsOneOfWords = (strs: Array<string>): boolean =>
+		q.map(s => s.toLowerCase()).some(s => strs.includes(s));
+
 	if (!usedCommandPrefix) {
 		// This is likely a game. Play along!
 		void message.channel.startTyping();
@@ -225,8 +229,10 @@ export async function handleCommand(
 			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
 		);
 		await new Promise(resolve => setTimeout(resolve, 2000));
-		if (q.map(s => s.toLowerCase()).includes("hello")) {
+		if (messageContainsWord("hello")) {
 			await message.channel.send(randomGreeting());
+		} else if (messageContainsOneOfWords(["hug", "hug?", "hugs", "hugs?"])) {
+			await message.channel.send(randomHug());
 		} else {
 			await message.channel.send(randomPhrase());
 		}
