@@ -201,7 +201,7 @@ export async function handleCommand(
 				}
 			},
 			followUp: async options => {
-				if ("ephemeral" in options && options.ephemeral === true) {
+				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
 					await replyPrivately(message, options, true);
 				} else {
 					await sendMessageInChannel(message.channel, options);

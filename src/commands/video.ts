@@ -21,14 +21,14 @@ const video: Command = {
 		const { logger, options, reply } = context;
 		const firstOption = options.data[0];
 		if (!firstOption) {
-			return reply("You're gonna have to add a song link to that.");
+			return reply({ content: "You're gonna have to add a song link to that.", ephemeral: true });
 		}
 		const urlString: string = resolveStringFromOption(firstOption);
 
 		try {
 			const video = await getVideoDetails(urlString);
 			if (video === null) {
-				return reply("I couldn't get a song from that.");
+				return reply({ content: "I couldn't get a song from that.", ephemeral: true });
 			}
 
 			const response = new StringBuilder();

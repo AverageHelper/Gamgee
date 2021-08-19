@@ -22,22 +22,25 @@ const unset: Subcommand = {
 		}
 	],
 	type: "SUB_COMMAND",
-	requiresGuild: false,
+	requiresGuild: true,
 	async execute({ options, storage, reply }) {
 		const firstOption = options.data[0];
 		if (!firstOption) {
-			return reply(listKeys());
+			return reply({ content: listKeys(), ephemeral: true });
 		}
 		const key: string = resolveStringFromOption(firstOption);
 
 		if (isConfigKey(key)) {
 			await setConfigValue(storage, key, undefined);
 			const value = await getConfigValue(storage, key);
-			return reply(`**${key}** reset to ${JSON.stringify(value)}`);
+			return reply({ content: `**${key}** reset to ${JSON.stringify(value)}`, ephemeral: true });
 		}
 
 		const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-		return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
+		return reply({
+			content: `I'm not sure what ${that} is. Try one of ${listKeys()}`,
+			ephemeral: true
+		});
 	}
 };
 

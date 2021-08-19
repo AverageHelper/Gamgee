@@ -34,8 +34,6 @@ const blacklist: Subcommand = {
 			deleteInvocation
 		} = context;
 
-		await deleteInvocation();
-
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
@@ -90,6 +88,8 @@ const blacklist: Subcommand = {
 
 			return replyPrivately(replyBuilder.result());
 		}
+
+		await deleteInvocation();
 
 		const subject = await resolveUserFromOption(firstOption, guild);
 		if (!subject) {

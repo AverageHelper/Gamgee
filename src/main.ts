@@ -79,7 +79,8 @@ try {
 		});
 
 		client.on("messageCreate", async msg => {
-			if (!msg.content) return;
+			const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
+			if (!allowedMsgTypes.includes(msg.type)) return;
 			try {
 				const message = await msg.fetch();
 				const storage = await useStorage(message.guild, logger);

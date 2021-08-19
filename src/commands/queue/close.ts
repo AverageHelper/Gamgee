@@ -8,7 +8,7 @@ const close: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
-	async execute({ guild, channel, reply, deleteInvocation }) {
+	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
 		const guildStorage = useGuildStorage(guild);
 		const [isQueueOpen, queueChannel] = await Promise.all([
 			guildStorage.isQueueOpen(),
@@ -34,8 +34,11 @@ const close: Subcommand = {
 		if (!queueIsCurrent) {
 			promises.push(queueChannel.send("This queue is closed. :wave:"));
 		}
+		if (type === "interaction") {
+			promises.push(reply({ content: "Got it!", ephemeral: true }));
+		}
 		await Promise.all(promises);
-		return reply("The queue is now closed. :wave:");
+		return followUp({ content: "The queue is now closed. :wave:", reply: false });
 	}
 };
 

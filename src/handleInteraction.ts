@@ -106,7 +106,12 @@ export async function handleInteraction(
 				}
 			},
 			followUp: async options => {
-				if (options?.reply === false && interaction.channel && interaction.channel.isText()) {
+				if (
+					typeof options !== "string" &&
+					options.reply === false &&
+					interaction.channel &&
+					interaction.channel.isText()
+				) {
 					await sendMessageInChannel(interaction.channel, options);
 				} else {
 					await interaction.followUp(options);

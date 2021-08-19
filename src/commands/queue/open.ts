@@ -8,7 +8,7 @@ const open: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: true,
 	permissions: ["owner", "queue-admin"],
-	async execute({ guild, channel, reply, deleteInvocation }) {
+	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
 		const guildStorage = useGuildStorage(guild);
 		const [queueChannel] = await Promise.all([
 			getQueueChannel(guild), //
@@ -31,7 +31,10 @@ const open: Subcommand = {
 		const queueIsCurrent = channel?.id === queueChannel.id;
 		await queueChannel.send("This queue is now open! :smiley:");
 		if (!queueIsCurrent) {
-			return reply(`The queue is now open! :smiley:`);
+			if (type === "interaction") {
+				await reply({ content: "Got it!", ephemeral: true });
+			}
+			return followUp({ content: "The queue is now open! :smiley:", reply: false });
 		}
 	}
 };

@@ -60,10 +60,16 @@ interface BaseCommandContext {
 
 	/** Sends a message in the same channel to the user who invoked the command. Does not constitute a "reply." */
 	followUp: (
-		options: (Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean }
+		options:
+			| string
+			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean })
 	) => Promise<void>;
 
-	/** Deletes the command invocation if it was sent as a text message. */
+	/**
+	 * Deletes the command invocation if it was sent as a text message.
+	 *
+	 * Note: Slash command interactions are ephemeral until replied to. This method does nothing in the case of Discord Interactions.
+	 */
 	deleteInvocation: () => Promise<void>;
 
 	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */

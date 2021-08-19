@@ -27,29 +27,32 @@ const set: Subcommand = {
 		}
 	],
 	type: "SUB_COMMAND",
-	requiresGuild: false,
+	requiresGuild: true,
 	async execute({ options, storage, reply }) {
 		const keyOption = options.data[0];
 		const valueOption = options.data[1];
 		if (!keyOption || !valueOption) {
-			return reply(listKeys());
+			return reply({ content: listKeys(), ephemeral: true });
 		}
 		const key: string = resolveStringFromOption(keyOption);
 
 		if (!isConfigKey(key)) {
 			const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-			return reply(`I'm not sure what ${that} is. Try one of ${listKeys()}`);
+			return reply({
+				content: `I'm not sure what ${that} is. Try one of ${listKeys()}`,
+				ephemeral: true
+			});
 		}
 
 		const value = resolveStringFromOption(valueOption);
 		if (value === undefined || value === "") {
-			return reply("Expected a value to set.");
+			return reply({ content: "Expected a value to set.", ephemeral: true });
 		}
 		if (!isConfigValue(value)) {
-			return reply("Invalid value type.");
+			return reply({ content: "Invalid value type.", ephemeral: true });
 		}
 		await setConfigValue(storage, key, value);
-		return reply(`**${key}**: ${JSON.stringify(value)}`);
+		return reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
 	}
 };
 
