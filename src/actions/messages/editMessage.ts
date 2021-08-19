@@ -16,7 +16,7 @@ const logger = useLogger();
  */
 export async function editMessage(
 	message: Discord.Message | Discord.PartialMessage,
-	options: string | Discord.MessageEditOptions | Discord.APIMessage
+	options: string | Discord.MessageEditOptions | Discord.MessagePayload
 ): Promise<boolean> {
 	try {
 		await message.edit(options);

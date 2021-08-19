@@ -33,7 +33,7 @@ describe("Language Statistics from GitHub", () => {
 	});
 
 	test("asks GitHub about my language statistics", async () => {
-		await expect(languages.execute(context)).resolves.toBe(undefined);
+		await expect(languages.execute(context)).resolves.toBeUndefined();
 
 		const owner = "AverageHelper";
 		const repo = "Gamgee";

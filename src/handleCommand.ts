@@ -1,13 +1,13 @@
 import type { Storage } from "./configStorage";
 import type { Logger } from "./logger";
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
-import Discord from "discord.js";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import { invokeCommand } from "./actions/invokeCommand";
 import { allCommands as commands } from "./commands";
 import { deleteMessage, reply, replyPrivately, sendMessageInChannel } from "./actions/messages";
+import Discord from "discord.js";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
 import logUser from "./helpers/logUser";
 
@@ -72,9 +72,10 @@ async function query(
 }
 
 export function optionsFromArgs(
+	client: Discord.Client,
 	args: Array<string>
-): Discord.Collection<string, MessageCommandInteractionOption> {
-	const options = new Discord.Collection<string, MessageCommandInteractionOption>();
+): Discord.CommandInteractionOptionResolver {
+	const options: Array<MessageCommandInteractionOption> = [];
 
 	// one argument
 	const firstArg = args.shift();
@@ -83,9 +84,9 @@ export function optionsFromArgs(
 			name: firstArg,
 			type: "STRING",
 			value: firstArg,
-			options: new Discord.Collection()
+			options: []
 		};
-		options.set(subcommand.name, subcommand);
+		options.push(subcommand);
 		while (args.length > 0) {
 			// two arguments or more
 			const name = args.shift() as string;
@@ -93,14 +94,14 @@ export function optionsFromArgs(
 				name,
 				type: "STRING",
 				value: name,
-				options: new Discord.Collection()
+				options: []
 			};
 			subcommand.type = "SUB_COMMAND";
-			subcommand.options?.set(nextOption.name, nextOption);
+			subcommand.options?.push(nextOption);
 		}
 	}
 
-	return options;
+	return new Discord.CommandInteractionOptionResolver(client, options);
 }
 
 /**
@@ -157,7 +158,7 @@ export async function handleCommand(
 
 	const command: Command | undefined = commands.get(commandName);
 	if (command) {
-		const options = optionsFromArgs(q.slice(1));
+		const options = optionsFromArgs(client, q.slice(1));
 
 		logger.debug(
 			`Calling command handler '${command.name}' with options ${JSON.stringify(
@@ -180,39 +181,39 @@ export async function handleCommand(
 			logger,
 			prepareForLongRunningTasks: (ephemeral?: boolean) => {
 				if (ephemeral === undefined || !ephemeral) {
-					void message.channel.startTyping();
+					void message.channel.sendTyping();
 					logger.debug(
 						`Started typing in channel ${message.channel.id} due to Context.prepareForLongRunningTasks`
 					);
 				}
 			},
-			replyPrivately: async (content: string) => {
-				const didReply = await replyPrivately(message, content, true);
+			replyPrivately: async options => {
+				const didReply = await replyPrivately(message, options, true);
 				if (!didReply) {
 					logger.info(`User ${logUser(message.author)} has DMs turned off.`);
 				}
-				message.channel.stopTyping(true);
 			},
-			reply: async (content: string, options) => {
-				await reply(message, content, options?.shouldMention);
-				message.channel.stopTyping(true);
-			},
-			followUp: async (content: string, options = {}) => {
-				if (options.ephemeral === true) {
-					await replyPrivately(message, content, true);
+			reply: async options => {
+				if (typeof options === "string") {
+					await reply(message, options);
 				} else {
-					await sendMessageInChannel(message.channel, content);
+					await reply(message, options, options?.shouldMention);
 				}
-				message.channel.stopTyping(true);
+			},
+			followUp: async options => {
+				if ("ephemeral" in options && options.ephemeral === true) {
+					await replyPrivately(message, options, true);
+				} else {
+					await sendMessageInChannel(message.channel, options);
+				}
 			},
 			deleteInvocation: async () => {
 				await deleteMessage(message);
 			},
-			startTyping: (count?: number) => {
-				void message.channel.startTyping(count);
-				logger.debug(`Started typing in channel ${message.channel.id} due to Context.startTyping`);
-			},
-			stopTyping: () => message.channel.stopTyping(true)
+			sendTyping: () => {
+				void message.channel.sendTyping();
+				logger.debug(`Started typing in channel ${message.channel.id} due to Context.sendTyping`);
+			}
 		};
 
 		return invokeCommand(command, context);
@@ -224,7 +225,7 @@ export async function handleCommand(
 
 	if (!usedCommandPrefix) {
 		// This is likely a game. Play along!
-		void message.channel.startTyping();
+		void message.channel.sendTyping();
 		logger.debug(
 			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
 		);
@@ -236,6 +237,5 @@ export async function handleCommand(
 		} else {
 			await message.channel.send(randomPhrase());
 		}
-		message.channel.stopTyping(true);
 	}
 }

@@ -28,9 +28,9 @@ class GuildEntryManager {
 			)
 		).map(role => role.id);
 		return storedAdminRoles.concat([
-			(getEnv("EVENTS_ROLE_ID") ?? "0") as Snowflake, //
-			(getEnv("QUEUE_ADMIN_ROLE_ID") ?? "0") as Snowflake //
-			// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") as Snowflake // TODO: GTX says you can uncomment this... but you need to test non-perms sometimes to..... hmm........
+			getEnv("EVENTS_ROLE_ID") ?? "0" /* as Snowflake*/, //
+			getEnv("QUEUE_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/ //
+			// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") /* as Snowflake*/ // TODO: GTX says you can uncomment this... but you need to test non-perms sometimes to..... hmm........
 		]);
 	}
 
@@ -59,8 +59,8 @@ class GuildEntryManager {
 		)
 			.map(role => role.id)
 			.concat([
-				(getEnv("QUEUE_CREATOR_ROLE_ID") ?? "0") as Snowflake //
-				// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") as Snowflake
+				getEnv("QUEUE_CREATOR_ROLE_ID") ?? "0" /* as Snowflake*/ //
+				// (getEnv("BOT_ADMIN_ROLE_ID") ?? "0") /* as Snowflake*/
 			]);
 	}
 

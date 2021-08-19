@@ -29,8 +29,8 @@ const set: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: false,
 	async execute({ options, storage, reply }) {
-		const keyOption = options.first();
-		const valueOption = options.array()[1];
+		const keyOption = options.data[0];
+		const valueOption = options.data[1];
 		if (!keyOption || !valueOption) {
 			return reply(listKeys());
 		}

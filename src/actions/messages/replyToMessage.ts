@@ -45,7 +45,10 @@ export async function sendPrivately(user: Discord.User, content: string): Promis
  * @returns `true` if the DM was successful. `false` if there was an error.
  * This will be the case if the target user has DMs disabled.
  */
-async function sendDM(user: Discord.User, content: string): Promise<boolean> {
+async function sendDM(
+	user: Discord.User,
+	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+): Promise<boolean> {
 	try {
 		await user.send(content);
 		return true;
@@ -57,29 +60,47 @@ async function sendDM(user: Discord.User, content: string): Promise<boolean> {
 	}
 }
 
-function replyMessage(channel: { id: string } | null, content: string): string {
+function replyMessage(channel: { id: string } | null, content: string | null | undefined): string {
 	const msg = new StringBuilder();
 	if (channel) {
 		msg.push(`(Reply from <#${channel.id}>)`);
 		msg.pushNewLine();
 	}
-	msg.push(content);
+	msg.push(content ?? "");
 	return msg.result();
 }
 
-async function sendDMReply(source: Discord.Message, content: string): Promise<boolean> {
+async function sendDMReply(
+	source: Discord.Message,
+	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+): Promise<boolean> {
 	const user: Discord.User = source.author;
 	try {
 		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
 			// this is our known tester
 			logger.silly(`Good morning, Miss ${user.username}.`);
-			await reply(source, `(DM to <@!${user.id}>)\n${content}`);
+
+			if (typeof options === "string") {
+				await reply(source, {
+					content: `(DM to <@!${user.id}>)\n${options}`
+				});
+			} else {
+				await reply(source, {
+					...options,
+					content: `(DM to <@!${user.id}>)\n${options.content ?? ""}`
+				});
+			}
 			return true;
 		} else if (!user.bot) {
 			logger.silly("This is a human. Or their dog... I love dogs!");
+			const content = typeof options !== "string" ? options.content ?? null : options;
 			const response = replyMessage(source.channel, content);
-			await user.send(response);
-			logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
+			if (typeof options === "string") {
+				await user.send(response);
+			} else {
+				await user.send({ ...options, content: response });
+			}
+			logger.verbose(`Sent DM to User ${logUser(user)}: ${JSON.stringify(options)}`);
 			return true;
 		}
 		logger.error(
@@ -96,11 +117,17 @@ async function sendDMReply(source: Discord.Message, content: string): Promise<bo
 
 async function sendEphemeralReply(
 	source: Discord.CommandInteraction,
-	content: string
+	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
 ): Promise<boolean> {
 	try {
-		await source.reply({ content, ephemeral: true });
-		logger.verbose(`Sent ephemeral reply to User ${logUser(source.user)}: ${content}`);
+		if (typeof options === "string") {
+			await source.reply({ content: options, ephemeral: true });
+		} else {
+			await source.reply({ ...options, ephemeral: true });
+		}
+		logger.verbose(
+			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`
+		);
 		return true;
 	} catch (error: unknown) {
 		logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
@@ -116,7 +143,7 @@ async function sendEphemeralReply(
  * The current channel name is automatically prepended to the message content.
  *
  * @param message The message or interaction to which to reply.
- * @param content The content of the message to send.
+ * @param options The the message to send.
  * @param preferDMs If `source` is an interaction, then we'll reply via DMs anyway.
  *
  * @returns a `Promise` that resolves with `true` if the send succeeds, or
@@ -124,16 +151,22 @@ async function sendEphemeralReply(
  */
 export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
-	content: string,
+	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	preferDMs: boolean
 ): Promise<boolean> {
 	if ("author" in source) {
-		return sendDMReply(source, content);
+		return sendDMReply(source, options);
 	}
 	if (preferDMs) {
-		return sendDM(source.user, replyMessage(source.channel, content));
+		if (typeof options === "string") {
+			return sendDM(source.user, replyMessage(source.channel, options));
+		}
+		return sendDM(source.user, {
+			...options,
+			content: replyMessage(source.channel, options.content)
+		});
 	}
-	return sendEphemeralReply(source, content);
+	return sendEphemeralReply(source, options);
 }
 
 /**
@@ -143,13 +176,13 @@ export async function replyPrivately(
  * @param content The message to send.
  */
 export async function sendMessageInChannel(
-	channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | Discord.ThreadChannel,
-	content: string
+	channel: Discord.TextBasedChannels,
+	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
 ): Promise<void> {
 	try {
 		await channel.send(content);
 	} catch (error: unknown) {
-		logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
+		logger.error(richErrorMessage(`Failed to send message ${JSON.stringify(content)}.`, error));
 	}
 }
 
@@ -165,14 +198,18 @@ export async function sendMessageInChannel(
  */
 export async function reply(
 	message: Discord.Message,
-	content: string,
+	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	shouldMention: boolean = true
 ): Promise<void> {
 	try {
 		if (shouldMention) {
 			await message.reply(content);
 		} else {
-			await message.reply({ content, allowedMentions: { users: [] } });
+			if (typeof content === "string") {
+				await message.reply({ content, allowedMentions: { users: [] } });
+			} else {
+				await message.reply({ ...content, allowedMentions: { users: [] } });
+			}
 		}
 	} catch (error: unknown) {
 		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
@@ -181,6 +218,6 @@ export async function reply(
 			);
 			return sendMessageInChannel(message.channel, content);
 		}
-		logger.error(richErrorMessage(`Failed to send message '${content}'.`, error));
+		logger.error(richErrorMessage(`Failed to send message ${JSON.stringify(content)}.`, error));
 	}
 }

@@ -1,5 +1,4 @@
 import isError from "./isError";
-import AggregateError from "es-aggregate-error";
 import StringBuilder from "./StringBuilder";
 
 export default function richErrorMessage(preamble: string, error: unknown): string {

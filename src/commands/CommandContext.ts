@@ -6,11 +6,6 @@ export interface MessageCommandInteractionOption extends Discord.CommandInteract
 	value: string;
 }
 
-interface ReplyOptions {
-	shouldMention?: boolean;
-	ephemeral?: boolean;
-}
-
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
 	client: Discord.Client;
@@ -25,12 +20,7 @@ interface BaseCommandContext {
 	guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	channel:
-		| Discord.TextChannel
-		| Discord.DMChannel
-		| Discord.NewsChannel
-		| Discord.ThreadChannel
-		| null;
+	channel: Discord.TextBasedChannels | null;
 
 	/** The user which invoked the command. */
 	user: Discord.User;
@@ -39,7 +29,7 @@ interface BaseCommandContext {
 	createdTimestamp: number;
 
 	/** The options that were passed into the command. */
-	options: Discord.Collection<string, Discord.CommandInteractionOption>;
+	options: Discord.CommandInteractionOptionResolver;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
@@ -51,28 +41,33 @@ interface BaseCommandContext {
 	 * using `prepareForLongRunningTasks(true)`), this function will
 	 * edit that reply. The message will therefore be public.
 	 *
-	 * @param content The message to send.
+	 * @param options The message payload to send.
 	 * @param viaDM Whether Gamgee should reply in DMs.
 	 */
-	replyPrivately: (content: string, viaDM?: true) => Promise<void>;
+	replyPrivately: (
+		options: string | Discord.ReplyMessageOptions | Discord.InteractionReplyOptions,
+		viaDM?: true
+	) => Promise<void>;
 
 	/** Replies to the command invocation message, optionally pinging the command's sender. */
-	reply: (content: string, options?: ReplyOptions) => Promise<void>;
+	reply: (
+		options:
+			| string
+			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & {
+					shouldMention?: boolean;
+			  })
+	) => Promise<void>;
 
 	/** Sends a message in the same channel to the user who invoked the command. Does not constitute a "reply." */
 	followUp: (
-		content: string,
-		options?: Discord.InteractionReplyOptions & { reply?: boolean }
+		options: (Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean }
 	) => Promise<void>;
 
 	/** Deletes the command invocation if it was sent as a text message. */
 	deleteInvocation: () => Promise<void>;
 
-	/** Starts the typing indicator in the channel from which the command was invoked. */
-	startTyping: (count?: number) => void;
-
-	/** Stops the typing indicator in the channel from which the command was invoked. */
-	stopTyping: () => void;
+	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */
+	sendTyping: () => void;
 }
 
 interface MessageCommandContext extends BaseCommandContext {
@@ -82,7 +77,7 @@ interface MessageCommandContext extends BaseCommandContext {
 	message: Discord.Message;
 
 	/** The options that were passed into the command. */
-	options: Discord.Collection<string, MessageCommandInteractionOption>;
+	options: Discord.CommandInteractionOptionResolver;
 }
 
 interface InteractionCommandContext extends BaseCommandContext {

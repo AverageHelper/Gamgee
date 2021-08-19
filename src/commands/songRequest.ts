@@ -1,6 +1,7 @@
 import type { Command } from "./Command";
 import type { SongRequest } from "../actions/queue/processSongRequest";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
+import { URL } from "url";
 import { useGuildStorage } from "../useGuildStorage";
 import { useJobQueue } from "../actions/queue/jobQueue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
@@ -33,7 +34,7 @@ const sr: Command = {
 			return reject_public(context, "No queue is set up.");
 		}
 
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
 			const howTo = (await import("./howto")).default;
 			return howTo.execute(context);
@@ -58,11 +59,12 @@ const sr: Command = {
 
 		await prepareForLongRunningTasks();
 
-		const songUrl: string = resolveStringFromOption(firstOption);
+		const songUrlString: string = resolveStringFromOption(firstOption);
 		if (context.type === "interaction") {
-			await context.reply(songUrl);
+			await context.reply(songUrlString);
 		}
 
+		const songUrl = new URL(songUrlString);
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");
 		requestQueue.process(processRequest); // Same function instance, so a nonce call
 

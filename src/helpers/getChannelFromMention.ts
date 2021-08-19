@@ -14,7 +14,7 @@ const logger = useLogger();
 export default function getChannelFromMention(
 	guild: Discord.Guild | null,
 	mention: string
-): Discord.GuildChannel | undefined {
+): Discord.GuildChannel | Discord.ThreadChannel | undefined {
 	const channelId = getChannelIdFromMention(mention);
 	if (channelId === null) return undefined;
 

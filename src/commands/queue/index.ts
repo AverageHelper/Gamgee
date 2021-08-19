@@ -1,4 +1,4 @@
-import type { Command } from "../Command";
+import type { Command, Subcommand } from "../Command";
 import { invokeCommand } from "../../actions/invokeCommand";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
 import Discord from "discord.js";
@@ -13,7 +13,7 @@ import limit from "./limit";
 import stats from "./stats";
 import restart from "./restart";
 
-const namedSubcommands = [
+const namedSubcommands: NonEmptyArray<Subcommand> = [
 	setup,
 	teardown,
 	blacklist,
@@ -32,7 +32,7 @@ const sr: Command = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const firstOption = context.options.first();
+		const firstOption = context.options.data[0];
 		if (!firstOption) {
 			const response = new StringBuilder("The possible subcommands are:");
 			Object.values(namedSubcommands).forEach(command => {
@@ -45,7 +45,7 @@ const sr: Command = {
 		}
 
 		const arg: string = resolveSubcommandNameFromOption(firstOption);
-		const argOptions = firstOption.options ?? new Discord.Collection();
+		const argOptions = firstOption.options ?? [];
 		context.logger.debug(`[queue] Our arg is '${arg ?? "undefined"}'`);
 
 		context.logger.debug(
@@ -59,7 +59,7 @@ const sr: Command = {
 		);
 		for (const command of namedSubcommands) {
 			if (command.name === arg) {
-				context.options = argOptions;
+				context.options = new Discord.CommandInteractionOptionResolver(context.client, argOptions);
 				context.logger.debug(
 					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
 						context.options,

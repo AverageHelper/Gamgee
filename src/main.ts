@@ -36,46 +36,6 @@ const shouldStartNormally = !args["deploy-commands"] && !args["revoke-commands"]
 
 const logger = useLogger();
 
-// ** Handle Events **
-
-async function onInteraction(
-	client: Discord.Client,
-	interaction: Discord.Interaction
-): Promise<void> {
-	const storage = await useStorage(interaction.guild, logger);
-	if (interaction.isCommand()) {
-		await handleInteraction(client, interaction, storage, logger);
-	} else if (interaction.isMessageComponent()) {
-		await handleMessageComponent(client, interaction, storage, logger);
-	}
-}
-
-async function onNewMessage(
-	client: Discord.Client,
-	msg: Discord.Message | Discord.PartialMessage
-): Promise<void> {
-	try {
-		const message = await msg.fetch();
-		const storage = await useStorage(message.guild, logger);
-		await handleCommand(client, message, storage, logger);
-	} catch (error: unknown) {
-		const msgDescription = JSON.stringify(msg, undefined, 2);
-		logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
-	}
-}
-
-async function onMessageReactionAdd(
-	rxn: Discord.MessageReaction,
-	usr: Discord.User | Discord.PartialUser
-): Promise<void> {
-	try {
-		const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
-		await handleReactionAdd(reaction, user, logger);
-	} catch (error: unknown) {
-		logger.error(richErrorMessage("Failed to handle reaction add.", error));
-	}
-}
-
 // ** Setup Discord Client **
 
 try {
@@ -90,7 +50,10 @@ try {
 		partials: ["REACTION", "CHANNEL", "MESSAGE"]
 	});
 
-	client.on("ready", () => {
+	// ** Handle Events **
+
+	client.on("ready", async () => {
+		logger.debug(`Process version is ${process.version}`);
 		if (getEnv("NODE_ENV") === "test") {
 			logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
 		} else {
@@ -98,9 +61,9 @@ try {
 		}
 
 		if (args["deploy-commands"]) {
-			void prepareSlashCommandsThenExit(client);
+			await prepareSlashCommandsThenExit(client);
 		} else if (args["revoke-commands"]) {
-			void revokeSlashCommandsThenExit(client);
+			await revokeSlashCommandsThenExit(client);
 		}
 	});
 
@@ -115,16 +78,34 @@ try {
 			logger.error(richErrorMessage("Received client error.", error));
 		});
 
-		client.on("message", msg => {
-			void onNewMessage(client, msg);
+		client.on("messageCreate", async msg => {
+			if (!msg.content) return;
+			try {
+				const message = await msg.fetch();
+				const storage = await useStorage(message.guild, logger);
+				await handleCommand(client, message, storage, logger);
+			} catch (error: unknown) {
+				const msgDescription = JSON.stringify(msg, undefined, 2);
+				logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
+			}
 		});
 
-		client.on("interaction", interaction => {
-			void onInteraction(client, interaction);
+		client.on("interaction", async interaction => {
+			const storage = await useStorage(interaction.guild, logger);
+			if (interaction.isCommand()) {
+				await handleInteraction(client, interaction, storage, logger);
+			} else if (interaction.isMessageComponent()) {
+				await handleMessageComponent(client, interaction, storage, logger);
+			}
 		});
 
-		client.on("messageReactionAdd", (reaction, user) => {
-			void onMessageReactionAdd(reaction, user);
+		client.on("messageReactionAdd", async (rxn, usr) => {
+			try {
+				const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
+				await handleReactionAdd(reaction, user, logger);
+			} catch (error: unknown) {
+				logger.error(richErrorMessage("Failed to handle reaction add.", error));
+			}
 		});
 	}
 

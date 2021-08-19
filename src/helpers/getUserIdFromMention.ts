@@ -24,7 +24,7 @@ export default function getUserIdFromMention(mention: string): Snowflake | null 
 
 		if (id === "") return null;
 
-		return id as Snowflake;
+		return id /* as Snowflake*/;
 	}
 
 	return null;

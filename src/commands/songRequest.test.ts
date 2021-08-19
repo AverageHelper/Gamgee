@@ -29,6 +29,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type { GuildedCommandContext } from "./Command";
+import { URL } from "url";
 import { useTestLogger } from "../../tests/testUtils/logger";
 import Discord from "discord.js";
 import songRequest from "./songRequest";
@@ -36,17 +37,17 @@ import songRequest from "./songRequest";
 const logger = useTestLogger("error");
 
 describe("Song request via URL", () => {
-	const urls: [string, string, string, string, string, string, string, string, string, string] = [
-		"https://youtu.be/dQw4w9WgXcQ",
-		"https://youtu.be/9RAQsdTQIcs",
-		"https://youtu.be/tao1Ic8qVkM",
-		"https://youtu.be/sSukg-tAK1k",
-		"https://youtu.be/9eWHXhLu-uM",
-		"https://youtu.be/jeKH5HhmNQc",
-		"https://youtu.be/NUYvbT6vTPs",
-		"https://youtu.be/aekVhtK9yuQ",
-		"https://youtu.be/BwyY5LdpECA",
-		"https://youtu.be/7btMEX3kAPo"
+	const urls: [URL, URL, URL, URL, URL, URL, URL, URL, URL, URL] = [
+		new URL("https://youtu.be/dQw4w9WgXcQ"),
+		new URL("https://youtu.be/9RAQsdTQIcs"),
+		new URL("https://youtu.be/tao1Ic8qVkM"),
+		new URL("https://youtu.be/sSukg-tAK1k"),
+		new URL("https://youtu.be/9eWHXhLu-uM"),
+		new URL("https://youtu.be/jeKH5HhmNQc"),
+		new URL("https://youtu.be/NUYvbT6vTPs"),
+		new URL("https://youtu.be/aekVhtK9yuQ"),
+		new URL("https://youtu.be/BwyY5LdpECA"),
+		new URL("https://youtu.be/7btMEX3kAPo")
 	];
 	const botId = "this-user";
 
@@ -129,7 +130,7 @@ describe("Song request via URL", () => {
 				guild: "any-guild",
 				channel: "any-channel",
 				user: "doesn't matter",
-				options: new Discord.Collection(),
+				options: new Discord.CommandInteractionOptionResolver(mockClient, []),
 				logger,
 				prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 				reply: mockReply,
@@ -149,8 +150,8 @@ describe("Song request via URL", () => {
 	});
 
 	test("only a user's first submission gets in if a cooldown exists", async () => {
-		const mockMessage1 = mockMessage("another-user", `?sr ${urls[0]}`);
-		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1]}`);
+		const mockMessage1 = mockMessage("another-user", `?sr ${urls[0].toString()}`);
+		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1].toString()}`);
 
 		mockQueuePush.mockImplementationOnce(() => {
 			mockQueueGetLatestUserEntry.mockResolvedValueOnce({
@@ -169,14 +170,12 @@ describe("Song request via URL", () => {
 			guild: mockMessage1.guild,
 			channel: mockMessage1.channel,
 			user: mockMessage1.author,
-			options: new Discord.Collection([
-				[
-					"url",
-					{
-						name: "url",
-						value: urls[0]
-					}
-				]
+			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+				{
+					name: "url",
+					value: urls[0].toString(),
+					type: "STRING"
+				}
 			]),
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
@@ -187,14 +186,12 @@ describe("Song request via URL", () => {
 		} as unknown) as GuildedCommandContext;
 		const context2 = ({
 			...context1,
-			options: new Discord.Collection([
-				[
-					"url",
-					{
-						name: "url",
-						value: urls[1]
-					}
-				]
+			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+				{
+					name: "url",
+					value: urls[1].toString(),
+					type: "STRING"
+				}
 			]),
 			user: mockMessage2.author,
 			guild: mockMessage2.guild,
@@ -222,7 +219,7 @@ describe("Song request via URL", () => {
 		const mockMessages: Array<Discord.Message> = [];
 		urls.forEach((url, i) => {
 			const userId = `user-${i + 1}`;
-			const message = mockMessage(userId, `?sr ${url}`);
+			const message = mockMessage(userId, `?sr ${url.toString()}`);
 			mockMessages.push(message);
 		});
 
@@ -230,15 +227,16 @@ describe("Song request via URL", () => {
 			mockMessages
 				.map(message => {
 					return ({
-						options: new Discord.Collection(
+						options: new Discord.CommandInteractionOptionResolver(
+							mockClient,
 							message.content
 								.split(" ")
 								.slice(1)
 								.map(url => ({
 									name: "url",
-									value: url
+									value: url,
+									type: "STRING"
 								}))
-								.map(c => [c.name, c])
 						),
 						guild: message.guild,
 						channel: message.channel,

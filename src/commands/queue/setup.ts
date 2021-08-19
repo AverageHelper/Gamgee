@@ -19,21 +19,26 @@ const setup: Subcommand = {
 	async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
 		await deleteInvocation();
 
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
-			return reply(`Please name a text channel to use for the queue!`);
+			return reply({
+				content: `Please name a text channel to use for the queue!`,
+				ephemeral: true
+			});
 		}
 
 		const newQueueChannel = resolveChannelFromOption(firstOption, guild);
 		if (!newQueueChannel) {
-			return reply(
-				"That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
-				{ ephemeral: true }
-			);
+			return reply({
+				content:
+					"That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
+				ephemeral: true
+			});
 		}
 
 		if (!newQueueChannel.isText()) {
-			return reply("I can't queue in a voice channel. Please specify a text channel instead", {
+			return reply({
+				content: "I can't queue in a voice channel. Please specify a text channel instead",
 				ephemeral: true
 			});
 		}
@@ -46,7 +51,7 @@ const setup: Subcommand = {
 			guildStorage.setQueueChannel(newQueueChannel.id),
 			newQueueChannel.send("This is a queue now. :smiley:")
 		]);
-		return reply(`New queue set up in <#${newQueueChannel.id}>`, { ephemeral: true });
+		return reply({ content: `New queue set up in <#${newQueueChannel.id}>`, ephemeral: true });
 	}
 };
 

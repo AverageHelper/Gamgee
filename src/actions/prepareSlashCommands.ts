@@ -17,7 +17,7 @@ function pluralOf(value: number | Array<unknown>): "" | "s" {
 async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Resetting commands for guild ${guild.id}...`);
 	await guild.commands.set([]); // set guild commands
-	await guild.commands.setPermissions([]); // set guild commands
+	await guild.commands.permissions.set({ fullPermissions: [] }); // set guild commands
 	logger.debug(`Reset commands for guild ${guild.id}`);
 }
 
@@ -59,7 +59,7 @@ async function preparePrivilegedCommands(
 					const permissions = Array.isArray(cmd.permissions)
 						? await resolvePermissions(cmd.permissions, guild)
 						: await cmd.permissions(guild);
-					await appCommand.setPermissions(permissions);
+					await appCommand.permissions.set({ permissions });
 					logger.debug(
 						`Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`
 					);
@@ -111,7 +111,7 @@ async function prepareGuildedCommands(
 	guildCommands: Array<GuildedCommand>,
 	client: Discord.Client
 ): Promise<void> {
-	const guilds = client.guilds.cache.array();
+	const guilds = [...client.guilds.cache.values()];
 	logger.debug(`I am in ${guilds.length} guild${pluralOf(guilds)}.`);
 	logger.verbose(
 		`${guildCommands.length} command${pluralOf(guildCommands)} require a guild: ${JSON.stringify(
@@ -138,7 +138,7 @@ async function prepareGlobalCommands(
 }
 
 export async function prepareSlashCommandsThenExit(client: Discord.Client): Promise<void> {
-	const commands: Array<Command> = allCommands.array();
+	const commands: Array<Command> = [...allCommands.values()];
 	logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
 	const guildCommands: Array<GuildedCommand> = [];
@@ -169,7 +169,7 @@ export async function revokeSlashCommandsThenExit(client: Discord.Client): Promi
 	await client.application?.commands.set([]);
 	logger.info("Unregistered global commands");
 
-	const guilds = client.guilds.cache.array();
+	const guilds = [...client.guilds.cache.values()];
 	logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
 	for (const guild of guilds) {
 		await guild.commands.set([]);

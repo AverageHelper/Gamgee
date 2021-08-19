@@ -61,8 +61,8 @@ const limit: Subcommand = {
 		const queue = useQueue(queueChannel);
 		const config = await queue.getConfig();
 
-		const keyOption: CommandInteractionOption | undefined = options.first();
-		const valueOption: CommandInteractionOption | undefined = options.array()[1];
+		const keyOption: CommandInteractionOption | undefined = options.data[0];
+		const valueOption: CommandInteractionOption | undefined = options.data[1];
 
 		if (!keyOption) {
 			const { default: limits } = await import("../limits");

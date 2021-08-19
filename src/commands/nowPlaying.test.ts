@@ -47,7 +47,7 @@ describe("Now-Playing", () => {
 	test("informs the user when no queue is set up", async () => {
 		mockGetQueueChannel.mockResolvedValue(null);
 
-		await expect(nowPlaying.execute(context)).resolves.toBe(undefined);
+		await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 		expect(mockUseQueue).not.toHaveBeenCalled();
 
@@ -68,7 +68,7 @@ describe("Now-Playing", () => {
 		async ({ values }: { values: Array<QueueEntry> }) => {
 			mockGetAllEntries.mockResolvedValue(values);
 
-			await expect(nowPlaying.execute(context)).resolves.toBe(undefined);
+			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 			expect(mockUseQueue).toHaveBeenCalledTimes(1);
 
@@ -92,7 +92,7 @@ describe("Now-Playing", () => {
 		async ({ values }: { values: Array<QueueEntry> }) => {
 			mockGetAllEntries.mockResolvedValue(values);
 
-			await expect(nowPlaying.execute(context)).resolves.toBe(undefined);
+			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 			expect(mockUseQueue).toHaveBeenCalledTimes(1);
 

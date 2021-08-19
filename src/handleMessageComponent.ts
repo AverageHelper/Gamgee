@@ -37,7 +37,7 @@ export async function handleMessageComponent(
 	// Ignore self interactions
 	if (interaction.user.id === client.user?.id) return;
 
-	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customID}'`);
+	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customId}'`);
 
 	const queueChannel = await getQueueChannel(interaction.guild);
 	if (!queueChannel) {
@@ -66,7 +66,7 @@ export async function handleMessageComponent(
 		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
 	);
 
-	switch (interaction.customID) {
+	switch (interaction.customId) {
 		case DONE_BUTTON.id:
 			logger.debug("Marking done....");
 			await queue.markDone(message);

@@ -1,8 +1,9 @@
 import type Discord from "discord.js";
+import type { CommandContext } from "../../commands";
 import type { Logger } from "../../logger";
 import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
-import type { CommandContext } from "../../commands";
+import type { URL } from "url";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
@@ -54,11 +55,11 @@ async function acceptSongRequest({
 	const mention = `<@!${context.user.id}>`;
 	const acceptance = `${mention}, Submission Accepted!`;
 
-	await context.followUp(acceptance, { reply: false });
+	await context.followUp({ content: acceptance, reply: false });
 }
 
 export interface SongRequest {
-	songUrl: string;
+	songUrl: URL;
 	context: CommandContext;
 	queueChannel: Discord.TextChannel;
 	logger: Logger;

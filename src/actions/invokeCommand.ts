@@ -13,7 +13,7 @@ async function failPermissions(context: CommandContext): Promise<void> {
 }
 
 async function failNoGuild(context: CommandContext): Promise<void> {
-	return context.reply("Can't do that here.", { ephemeral: true });
+	return context.reply({ content: "Can't do that here.", ephemeral: true });
 }
 
 function neverFallthrough(val: never): never {
@@ -22,7 +22,7 @@ function neverFallthrough(val: never): never {
 
 export async function assertUserCanRunCommand(
 	user: Discord.User,
-	command: Command,
+	command: Invocable,
 	guild: Discord.Guild
 ): Promise<boolean> {
 	if (!command.permissions) {

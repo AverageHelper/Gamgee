@@ -1,9 +1,9 @@
 import type { Command } from "./Command";
+import { resolveStringFromOption } from "../helpers/optionResolvers";
 import getVideoDetails from "../actions/getVideoDetails";
 import durationString from "../helpers/durationString";
-import StringBuilder from "../helpers/StringBuilder";
 import richErrorMessage from "../helpers/richErrorMessage";
-import { resolveStringFromOption } from "../helpers/optionResolvers";
+import StringBuilder from "../helpers/StringBuilder";
 
 const video: Command = {
 	name: "video",
@@ -19,14 +19,14 @@ const video: Command = {
 	requiresGuild: false,
 	async execute(context) {
 		const { logger, options, reply } = context;
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
 			return reply("You're gonna have to add a song link to that.");
 		}
-		const url: string = resolveStringFromOption(firstOption);
+		const urlString: string = resolveStringFromOption(firstOption);
 
 		try {
-			const video = await getVideoDetails(url);
+			const video = await getVideoDetails(urlString);
 			if (video === null) {
 				return reply("I couldn't get a song from that.");
 			}
@@ -47,7 +47,7 @@ const video: Command = {
 
 			// Handle fetch errors
 		} catch (error: unknown) {
-			logger.error(richErrorMessage(`Failed to run query for URL: ${url}`, error));
+			logger.error(richErrorMessage(`Failed to run query for URL: ${urlString}`, error));
 			return reply("That video query gave me an error.");
 		}
 	}

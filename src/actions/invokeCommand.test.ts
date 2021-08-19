@@ -73,7 +73,7 @@ describe("Invoke Command", () => {
 			command.requiresGuild = true;
 			context.guild = ({
 				id: "the-guild",
-				ownerID: callerId
+				ownerId: callerId
 			} as unknown) as Discord.Guild;
 			command.permissions = mockPermissions;
 

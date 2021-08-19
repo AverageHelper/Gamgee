@@ -46,12 +46,9 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel | null = null;
+		let channel: Discord.TextBasedChannels | null = null;
 		if (interaction.channel?.isText() === true) {
-			channel = interaction.channel as
-				| Discord.TextChannel
-				| Discord.DMChannel
-				| Discord.NewsChannel;
+			channel = interaction.channel;
 		}
 
 		const context: CommandContext = {
@@ -66,9 +63,9 @@ export async function handleInteraction(
 			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
-				await interaction.defer({ ephemeral });
+				await interaction.deferReply({ ephemeral });
 			},
-			replyPrivately: async (content: string, viaDM: boolean = false) => {
+			replyPrivately: async (options, viaDM: boolean = false) => {
 				if (viaDM) {
 					const content = ":paperclip: Check your DMs";
 					if (interaction.deferred) {
@@ -78,50 +75,48 @@ export async function handleInteraction(
 					}
 				}
 				if (interaction.deferred && !viaDM) {
-					await interaction.followUp(content);
+					await interaction.followUp(options);
 				} else {
-					const didReply = await replyPrivately(interaction, content, viaDM);
+					const didReply = await replyPrivately(interaction, options, viaDM);
 					if (!didReply) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}
 				}
 			},
-			reply: async (content: string, options) => {
+			reply: async options => {
 				if (interaction.deferred) {
-					await interaction.editReply(content);
+					await interaction.editReply(options);
 				} else {
-					if (!options || options.shouldMention === undefined || options.shouldMention) {
-						await interaction.reply({ content, ephemeral: options?.ephemeral });
+					if (typeof options === "string") {
+						await interaction.reply(options);
+					} else if (options.shouldMention === undefined || options.shouldMention) {
+						await interaction.reply(options);
 					} else {
 						await interaction.reply({
-							content,
-							ephemeral: options?.ephemeral,
+							...options,
 							allowedMentions: { users: [] }
 						});
 					}
 				}
 
-				if (options?.ephemeral === true) {
-					logger.verbose(`Sent ephemeral reply to User ${logUser(interaction.user)}: ${content}`);
+				if (typeof options !== "string" && "ephemeral" in options && options?.ephemeral === true) {
+					logger.verbose(
+						`Sent ephemeral reply to User ${logUser(interaction.user)}: ${JSON.stringify(options)}`
+					);
 				}
 			},
-			followUp: async (content: string, options) => {
+			followUp: async options => {
 				if (options?.reply === false && interaction.channel && interaction.channel.isText()) {
-					await sendMessageInChannel(interaction.channel, content);
+					await sendMessageInChannel(interaction.channel, options);
 				} else {
-					await interaction.followUp({ ...options, content });
+					await interaction.followUp(options);
 				}
 			},
 			deleteInvocation: () => Promise.resolve(undefined),
-			startTyping: (count?: number) => {
-				void channel?.startTyping(count);
-				logger.debug(
-					`Started typing in channel ${
-						channel?.id ?? "nowhere"
-					} due to Context.prepareForLongRunningTasks`
-				);
-			},
-			stopTyping: () => void channel?.stopTyping(true)
+			sendTyping: () => {
+				channel?.sendTyping();
+				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);
+			}
 		};
 
 		return invokeCommand(command, context);

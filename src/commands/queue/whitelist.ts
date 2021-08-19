@@ -21,9 +21,10 @@ const whitelist: Subcommand = {
 	async execute({ user, guild, options, logger, reply, deleteInvocation }) {
 		await deleteInvocation();
 
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
-			return reply(":x: You'll need to tell me who to whitelist. Try again, and mention someone.", {
+			return reply({
+				content: ":x: You'll need to tell me who to whitelist. Try again, and mention someone.",
 				ephemeral: true
 			});
 		}
@@ -34,22 +35,23 @@ const whitelist: Subcommand = {
 		]);
 
 		if (!subject) {
-			return reply(":x: I don't know who that is.", { ephemeral: true });
+			return reply({ content: ":x: I don't know who that is.", ephemeral: true });
 		}
 
 		if (subject.id === user.id) {
-			return reply(":x: You can't whitelist yourself, silly!", { ephemeral: true });
+			return reply({ content: ":x: You can't whitelist yourself, silly!", ephemeral: true });
 		}
 
 		if (!queueChannel) {
-			return reply(":x: There's no queue set up yet.", { ephemeral: true });
+			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
 		const queue = useQueueStorage(queueChannel);
 		await queue.whitelistUser(subject.id);
 		logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
-		return reply(`:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`, {
+		return reply({
+			content: `:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`,
 			shouldMention: false,
 			ephemeral: true
 		});

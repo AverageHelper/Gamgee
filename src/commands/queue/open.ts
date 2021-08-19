@@ -16,11 +16,14 @@ const open: Subcommand = {
 		]);
 
 		if (!queueChannel) {
-			return reply("There's no queue to open. Have you set one up yet?", { ephemeral: true });
+			return reply({
+				content: "There's no queue to open. Have you set one up yet?",
+				ephemeral: true
+			});
 		}
 		const isAlreadyOpen = await guildStorage.isQueueOpen();
 		if (isAlreadyOpen) {
-			return reply("The queue's already open! :smiley:", { ephemeral: true });
+			return reply({ content: "The queue's already open! :smiley:", ephemeral: true });
 		}
 
 		await guildStorage.setQueueOpen(true);

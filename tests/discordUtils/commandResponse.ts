@@ -3,8 +3,8 @@ import { requireEnv } from "../../src/helpers/environment";
 import { sendCommand } from "./sendMessage";
 import { waitForMessage } from "./messageDispatch";
 
-const UUT_ID = requireEnv("BOT_TEST_ID") as Discord.Snowflake;
-const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID") as Discord.Snowflake;
+const UUT_ID: Discord.Snowflake = requireEnv("BOT_TEST_ID");
+const TEST_CHANNEL_ID: Discord.Snowflake = requireEnv("CHANNEL_ID");
 
 /**
  * Sends a command message in the provided channel, and waits for

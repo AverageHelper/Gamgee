@@ -176,5 +176,6 @@ export const celebratoryEmoji: ResponseRepository = [
 
 export const hugs: ResponseRepository = [
 	"*hugs*", //
-	"*glomps*"
+	"*glomps*",
+	"*snugs*"
 ];

@@ -24,7 +24,7 @@ const unset: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: false,
 	async execute({ options, storage, reply }) {
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
 			return reply(listKeys());
 		}
