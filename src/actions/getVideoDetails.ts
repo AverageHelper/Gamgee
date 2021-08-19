@@ -1,12 +1,13 @@
 import type { Logger } from "../logger";
+import { URL } from "url";
 import { useLogger } from "../logger";
-import any = require("promise.any"); // FIXME: A new TypeScript version should fix this import
+import isError from "../helpers/isError";
 import richErrorMessage from "../helpers/richErrorMessage";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";
 import ytdl from "ytdl-core";
 
-interface VideoDetails {
+export interface VideoDetails {
 	url: string;
 	title: string;
 	duration: {
@@ -20,20 +21,77 @@ interface VideoDetails {
 	fromUrl: boolean;
 }
 
+export class VideoError extends Error implements NodeJS.ErrnoException {
+	code = "500";
+
+	constructor(error: unknown) {
+		super("Unknown error");
+
+		if (isError(error)) {
+			this.message = error.message;
+			this.code = error.code ?? "500";
+			this.stack = error.stack;
+		} else {
+			this.message = JSON.stringify(error);
+		}
+		this.name = "VideoError";
+	}
+}
+
+// export class NotFoundError extends VideoError {
+// 	code = "404";
+
+// 	constructor(url: URL) {
+// 		super(`No video found at ${url.toString()}`);
+// 		this.name = "NotFoundError";
+// 	}
+// }
+
+export class UnavailableError extends VideoError {
+	code = "410";
+
+	constructor(url: URL) {
+		super(`The video at this URL is not available: ${url.toString()}`);
+		this.name = "UnavailableError";
+	}
+}
+
+export class InvalidYouTubeUrlError extends VideoError {
+	code = "422";
+
+	constructor(url: URL) {
+		super(`This URL isn't a valid YouTube video URL: ${url.toString()}`);
+		this.name = "InvalidYouTubeUrlError";
+	}
+}
+
 /**
  * Gets information about a YouTube video.
  *
  * @param url The track URL to check.
  *
- * @throws an error if YouTube metadata could not be found at the provided `url`.
+ * @throws `InvalidYouTubeUrlError` if the provided URL is not a YouTube URL.
+ * @throws `UnavailableError` if the video is unavailable in the United States.
  * @returns a `Promise` that resolves with the video details.
  */
-async function getYouTubeVideo(url: string): Promise<VideoDetails> {
-	if (!ytdl.validateURL(url)) throw new TypeError("Not a valid YouTube URL");
+export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
+	const urlString = url.toString();
+	if (!ytdl.validateURL(urlString)) throw new InvalidYouTubeUrlError(url);
 
-	const info = await ytdl.getBasicInfo(url);
+	let info: ytdl.videoInfo;
+	try {
+		info = await ytdl.getBasicInfo(urlString);
+	} catch (error: unknown) {
+		const err = new VideoError(error);
+		switch (err.message) {
+			case "Status code: 410":
+				throw new UnavailableError(url);
+			default:
+				throw err;
+		}
+	}
 	if (!info.videoDetails.availableCountries.includes("US")) {
-		throw new Error("That video is not available in the United States");
+		throw new UnavailableError(url);
 	}
 	return {
 		fromUrl: true,
@@ -52,9 +110,15 @@ async function getYouTubeVideo(url: string): Promise<VideoDetails> {
  * provided `url`.
  * @returns a `Promise` that resolves with the track details.
  */
-async function getSoundCloudTrack(url: string): Promise<VideoDetails> {
+export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
+	const urlString = url.toString();
 	const client = new SoundCloud.Client();
-	const song = await client.getSongInfo(url);
+	let song: SoundCloud.Song;
+	try {
+		song = await client.getSongInfo(urlString);
+	} catch (error: unknown) {
+		throw new VideoError(error);
+	}
 	return {
 		fromUrl: true,
 		url: song.url,
@@ -69,12 +133,18 @@ async function getSoundCloudTrack(url: string): Promise<VideoDetails> {
  * @param url The track URL to check.
  *
  * @throws an error if metadata couldn't be found on the webpage pointed to by the
- * provided `url`, or a `TypeError` if no song duration or title could be found in
+ * provided `url`, or a `VideoError` if no song duration or title could be found in
  * that metadata.
  * @returns a `Promise` that resolves with the track details.
  */
-async function getBandcampTrack(url: string): Promise<VideoDetails> {
-	const metadata = await urlMetadata(url, { timeout: 5000 });
+export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
+	const urlString = url.toString();
+	let metadata: urlMetadata.Result;
+	try {
+		metadata = await urlMetadata(urlString, { timeout: 5000 });
+	} catch (error: unknown) {
+		throw new VideoError(error);
+	}
 	const json = metadata.jsonld as
 		| { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
 		| undefined;
@@ -83,7 +153,7 @@ async function getBandcampTrack(url: string): Promise<VideoDetails> {
 
 	const seconds: number | null = durationProperty?.value ?? null;
 	const title: string | null = json?.name ?? null;
-	if (seconds === null || title === null) throw new TypeError("Duration and title not found");
+	if (seconds === null || title === null) throw new VideoError("Duration and title not found");
 
 	return {
 		fromUrl: true,
@@ -96,28 +166,29 @@ async function getBandcampTrack(url: string): Promise<VideoDetails> {
 /**
  * Retrieves details about a video.
  *
- * @param args A series of strings which describe a video. If the first string is a URL,
- * then that URL is treated like a YouTube or SoundCloud link, and video details are
- * retrieved directly. Otherwise, the entirety of the array is considered a search query.
+ * @param urlOrString The location of an online video. If the URL is a YouTube
+ * or SoundCloud link, video details are retrieved directly.
+ * @param logger A logger to use to report errors.
  *
- * @returns a details about the video, or `null` if no video could be found from the provided query.
+ * @returns a details about the video, or `null` if no video could be
+ * found from the provided query.
  */
 export default async function getVideoDetails(
-	urlString: string,
+	urlOrString: URL | string,
 	logger: Logger | null = useLogger()
 ): Promise<VideoDetails | null> {
-	// Try the first value as a video URL
-	const url = urlString.split(/ +/u)[0] ?? "";
-	if (url === "") return null;
-
 	try {
-		return await any([
+		const url: URL =
+			typeof urlOrString === "string" ? new URL(urlOrString.split(/ +/u)[0] ?? "") : urlOrString;
+		return await Promise.any([
 			getYouTubeVideo(url), //
 			getSoundCloudTrack(url),
 			getBandcampTrack(url)
 		]);
 	} catch (error: unknown) {
-		logger?.error(richErrorMessage(`Failed to fetch song using url '${url}'`, error));
+		logger?.error(
+			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error)
+		);
 		return null;
 	}
 }

@@ -23,6 +23,7 @@ add("languages");
 add("limits");
 add("now-playing");
 add("ping");
+add("test");
 add("quo");
 add("sr");
 add("t");
