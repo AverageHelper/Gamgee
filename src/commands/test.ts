@@ -21,16 +21,19 @@ const SERVICE_TESTS = [
 	{
 		name: "YouTube",
 		fn: getYouTubeVideo,
-		urlString: "https://www.youtube.com/watch?v=9Y8ZGLiqXB8"
+		// Nicolas Dominique - Pushing the Limits
+		urlString: "https://youtu.be/jTCWupoPKIk"
 	},
 	{
 		name: "SoundCloud",
 		fn: getSoundCloudTrack,
+		// nepo - No.999
 		urlString: "https://soundcloud.com/hwps/no999"
 	},
 	{
 		name: "Bandcamp",
 		fn: getBandcampTrack,
+		// WoodLore - Let The Magic Fill Your Soul
 		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"
 	}
 ];
@@ -64,29 +67,41 @@ function addResult(
 	);
 }
 
+let isTesting = false;
+
 const type: Command = {
 	name: "test",
 	description: "Make sure I still know how to talk to video services.",
 	requiresGuild: false,
-	async execute({ prepareForLongRunningTasks, followUp }) {
-		await prepareForLongRunningTasks(true);
-		const startTime = Date.now();
+	async execute({ prepareForLongRunningTasks, replyPrivately }) {
+		if (isTesting) {
+			await replyPrivately("Hold up...");
+			return;
+		}
+		isTesting = true;
+		try {
+			await prepareForLongRunningTasks(true);
+			const startTime = Date.now();
 
-		// Ask for video info from our various services
-		const results = await Promise.all(
-			SERVICE_TESTS.map(runTest) //
-		);
+			// Ask for video info from our various services
+			const results = await Promise.all(
+				SERVICE_TESTS.map(runTest) //
+			);
 
-		// Prepare response
-		const embed = new MessageEmbed();
-		results.forEach(result => addResult(result.test.name, startTime, result, embed));
+			// Prepare response
+			const embed = new MessageEmbed();
+			results.forEach(result => addResult(result.test.name, startTime, result, embed));
 
-		const anyFailures = results.some(result => result.error !== undefined);
-		const content = anyFailures
-			? ":sweat: Erm, something went wrong. Best look into this:"
-			: "I ran the numbers, and it looks like we're all good! :grin:";
+			const anyFailures = results.some(result => result.error !== undefined);
+			const content = anyFailures
+				? ":sweat: Erm, something went wrong. Best look into this:"
+				: "I ran the numbers, and it looks like we're all good! :grin:";
 
-		await followUp({ content, embeds: [embed], ephemeral: true });
+			await replyPrivately({ content, embeds: [embed], ephemeral: true });
+		} finally {
+			// eslint-disable-next-line require-atomic-updates
+			isTesting = false;
+		}
 	}
 };
 

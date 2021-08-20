@@ -162,6 +162,7 @@ export async function replyPrivately(
 			return sendDM(source.user, replyMessage(source.channel, options));
 		}
 		return sendDM(source.user, {
+			ephemeral: true,
 			...options,
 			content: replyMessage(source.channel, options.content)
 		});

@@ -25,6 +25,7 @@ const sr: Command = {
 			channel,
 			options,
 			logger,
+			reply,
 			prepareForLongRunningTasks,
 			deleteInvocation
 		} = context;
@@ -54,15 +55,12 @@ const sr: Command = {
 		const guildStorage = useGuildStorage(guild);
 		const isQueueOpen = await guildStorage.isQueueOpen();
 		if (!isQueueOpen) {
-			return reject_public(context, "The queue is not open.");
+			return reply({ content: ":hammer: The queue is not open.", ephemeral: true });
 		}
 
-		await prepareForLongRunningTasks();
+		await prepareForLongRunningTasks(true);
 
 		const songUrlString: string = resolveStringFromOption(firstOption);
-		if (context.type === "interaction") {
-			await context.reply(songUrlString);
-		}
 
 		const songUrl = new URL(songUrlString);
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");

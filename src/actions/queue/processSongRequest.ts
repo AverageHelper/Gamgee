@@ -15,7 +15,7 @@ import logUser from "../../helpers/logUser";
 export async function reject_private(context: CommandContext, reason: string): Promise<void> {
 	await Promise.all([
 		context.deleteInvocation(), //
-		context.replyPrivately(`:hammer: ${reason}`)
+		context.replyPrivately({ content: `:hammer: ${reason}`, ephemeral: true })
 	]);
 }
 
@@ -43,7 +43,7 @@ async function acceptSongRequest({
 	queue,
 	context,
 	entry,
-	// shouldSendUrl,
+	shouldSendUrl,
 	logger
 }: SongAcceptance): Promise<void> {
 	await queue.push(entry);
@@ -55,6 +55,13 @@ async function acceptSongRequest({
 	const mention = `<@!${context.user.id}>`;
 	const acceptance = `${mention}, Submission Accepted!`;
 
+	if (shouldSendUrl) {
+		await context.reply({ content: "Accepted!", ephemeral: true });
+		await context.followUp({
+			content: `<@!${entry.senderId}> requested ${entry.url}`,
+			reply: false
+		});
+	}
 	await context.followUp({ content: acceptance, reply: false });
 }
 

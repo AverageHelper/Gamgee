@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command";
+import { MessageEmbed } from "discord.js";
 import { useQueue } from "../../actions/queue/useQueue";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
-import StringBuilder from "../../helpers/StringBuilder";
 
 const stats: Subcommand = {
 	name: "stats",
@@ -32,40 +32,18 @@ const stats: Subcommand = {
 			)} played. (${durationString(playtimeRemaining)} remaining in queue)`
 		);
 
-		const responseBuilder = new StringBuilder();
-		responseBuilder.push(`Queue channel: <#${queueChannel.id}>`);
-		if (queueIsCurrent) {
-			responseBuilder.push(" (in here)");
-		}
-		responseBuilder.pushNewLine();
-
-		if (count) {
-			const singular = count === 1;
-			const are = singular ? "is" : "are";
-			const s = singular ? "" : "s";
-
-			responseBuilder.push(`There ${are} `);
-			responseBuilder.pushBold(`${count} song${s}`);
-			responseBuilder.push(" in the queue, with ");
-
-			if (playtimeRemaining === 0) {
-				responseBuilder.pushBold(`all ${durationString(playtimeTotal)}`);
-				responseBuilder.push(" played.");
-			} else if (playtimePlayed === 0) {
-				responseBuilder.pushBold(durationString(playtimeRemaining));
-				responseBuilder.push(" total playtime remaining.");
-			} else {
-				responseBuilder.pushBold(durationString(playtimeRemaining));
-				responseBuilder.push(" playtime remaining of ");
-				responseBuilder.pushBold(durationString(playtimeTotal));
-				responseBuilder.push(" total.");
-			}
+		const embed = new MessageEmbed().setTitle(`Statistics for #${queueChannel.name}`);
+		if (count === 0) {
+			embed.setDescription("Empty queue");
 		} else {
-			responseBuilder.push("Nothing has been added yet.");
+			embed.addField("Total Entries", `${count}`);
+			embed.addField("Total Playtime", durationString(playtimeTotal));
+			embed.addField("Played", `${durationString(playtimeTotal - playtimeRemaining)}`);
+			embed.addField("Remaining Playtime", durationString(playtimeRemaining));
 		}
-		const response = responseBuilder.result();
+
 		await Promise.all([
-			queueIsCurrent ? reply(response) : replyPrivately(response), //
+			queueIsCurrent ? reply({ embeds: [embed] }) : replyPrivately({ embeds: [embed] }),
 			deleteInvocation()
 		]);
 	}

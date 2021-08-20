@@ -7,6 +7,7 @@ import { allCommands } from "./commands";
 import { getEnv } from "./helpers/environment";
 import { replyPrivately, sendMessageInChannel } from "./actions/messages";
 import logUser from "./helpers/logUser";
+import richErrorMessage from "./helpers/richErrorMessage";
 
 /**
  * Performs actions from a Discord command interaction.
@@ -75,9 +76,22 @@ export async function handleInteraction(
 					}
 				}
 				if (interaction.deferred && !viaDM) {
-					await interaction.followUp(options);
+					if (typeof options === "string") {
+						await interaction.followUp({ ephemeral: true, content: options });
+					} else {
+						await interaction.followUp({ ephemeral: true, ...options });
+					}
 				} else {
-					const didReply = await replyPrivately(interaction, options, viaDM);
+					let didReply: boolean;
+					if (typeof options === "string") {
+						didReply = await replyPrivately(
+							interaction,
+							{ ephemeral: true, content: options },
+							viaDM
+						);
+					} else {
+						didReply = await replyPrivately(interaction, { ephemeral: true, ...options }, viaDM);
+					}
 					if (!didReply) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}
@@ -85,7 +99,12 @@ export async function handleInteraction(
 			},
 			reply: async options => {
 				if (interaction.deferred) {
-					await interaction.editReply(options);
+					try {
+						await interaction.editReply(options);
+					} catch (error: unknown) {
+						logger.error(richErrorMessage("Failed to edit reply to interaction.", error));
+						await interaction.followUp(options);
+					}
 				} else {
 					if (typeof options === "string") {
 						await interaction.reply(options);
