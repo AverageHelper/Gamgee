@@ -57,6 +57,15 @@ describe("Video details", () => {
 		}
 	);
 
+	test("returns infinite duration for a live stream", async () => {
+		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
+		const url = "https://www.youtube.com/watch?v=7Q35833sP5g";
+		const details = await getVideoDetails(url, null);
+		expect(details).toHaveProperty("url", url);
+		expect(details?.duration.seconds).toBeDefined();
+		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
+	});
+
 	// BandCamp
 
 	test("returns null for bandcamp album links", async () => {

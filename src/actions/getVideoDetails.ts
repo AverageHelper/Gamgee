@@ -93,11 +93,19 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 	if (!info.videoDetails.availableCountries.includes("US")) {
 		throw new UnavailableError(url);
 	}
+
+	let seconds: number;
+	if (info.videoDetails.isLiveContent) {
+		seconds = Number.POSITIVE_INFINITY;
+	} else {
+		seconds = Number.parseInt(info.videoDetails.lengthSeconds, 10);
+	}
+
 	return {
 		fromUrl: true,
 		url: info.videoDetails.video_url,
 		title: info.videoDetails.title,
-		duration: { seconds: Number.parseInt(info.videoDetails.lengthSeconds, 10) }
+		duration: { seconds }
 	};
 }
 
