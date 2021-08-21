@@ -22,17 +22,14 @@ const logger = useLogger();
  * `false` if there was an error.
  */
 export async function sendPrivately(user: Discord.User, content: string): Promise<void> {
-	try {
-		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-			logger.error(
-				`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
-			);
-		} else if (!user.bot) {
-			await user.send(content);
-			logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
-		}
-	} catch (error: unknown) {
-		logger.error(richErrorMessage("Failed to send direct message.", error));
+	if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
+		// this is our known tester
+		logger.error(
+			`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
+		);
+	} else if (!user.bot) {
+		await sendDM(user, content);
+		logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
 	}
 }
 
@@ -96,12 +93,9 @@ async function sendDMReply(
 			const content = typeof options !== "string" ? options.content ?? null : options;
 			const response = replyMessage(source.channel, content);
 			if (typeof options === "string") {
-				await user.send(response);
-			} else {
-				await user.send({ ...options, content: response });
+				return await sendDM(user, response);
 			}
-			logger.verbose(`Sent DM to User ${logUser(user)}: ${JSON.stringify(options)}`);
-			return true;
+			return await sendDM(user, { ...options, content: response });
 		}
 		logger.error(
 			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
@@ -154,20 +148,43 @@ export async function replyPrivately(
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	preferDMs: boolean
 ): Promise<boolean> {
+	let didDM = true;
+
+	// If this is a message (no ephemeral reply option)
 	if ("author" in source) {
-		return sendDMReply(source, options);
-	}
-	if (preferDMs) {
+		didDM = await sendDMReply(source, options);
+
+		// If this is an interaction, but we really wanna use DMs
+	} else if (preferDMs) {
 		if (typeof options === "string") {
-			return sendDM(source.user, replyMessage(source.channel, options));
+			didDM = await sendDM(source.user, replyMessage(source.channel, options));
+		} else {
+			didDM = await sendDM(source.user, {
+				ephemeral: true,
+				...options,
+				content: replyMessage(source.channel, options.content)
+			});
 		}
-		return sendDM(source.user, {
-			ephemeral: true,
-			...options,
-			content: replyMessage(source.channel, options.content)
-		});
+
+		// If this is an interaction, reply ephemerally
+	} else {
+		return sendEphemeralReply(source, options);
 	}
-	return sendEphemeralReply(source, options);
+
+	// If the DM was attempted and failed
+	if (!didDM) {
+		// Inform the user that we tried to DM them, but they have their DMs off
+		if ("author" in source) {
+			await source.channel?.send(
+				`<@!${source.author.id}> I tried to DM you just now, but it looks like your DMs are off. :slight_frown:`
+			);
+		} else {
+			return sendEphemeralReply(source, options);
+		}
+		return false;
+	}
+
+	return true;
 }
 
 /**
