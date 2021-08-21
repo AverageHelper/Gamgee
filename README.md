@@ -4,7 +4,9 @@
 >
 > - J. R. R. Tolkien
 
-A Discord bot to play around with APIs and things. As for the name, I thought it was neat. Samwise Gamgee is a name that deserves to be remembered.
+Gamgee is a helpful companion bot for music video suggestions. Ever wanted an easy way to manage a queue of crowd-requested songs? Ever had people who spam the queue, post too frequently, or post looooooooong songs? Gamgee handles all of that for you!
+
+This project started out as a simple Discord bot to play around with APIs and things. As for the name, I thought it was neat. I was on a LOTR kick at the time. Samwise Gamgee is a name that deserves to be remembered.
 
 ## Prerequisites
 
