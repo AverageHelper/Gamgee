@@ -1,30 +1,47 @@
 import type { CommandInteractionOption } from "discord.js";
 import type { Subcommand } from "../Command";
+import { resolveIntegerFromOption, resolveStringFromOption } from "../../helpers/optionResolvers";
 import { SAFE_PRINT_LENGTH } from "../../constants/output";
 import { useQueue } from "../../actions/queue/useQueue";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
 import durationString from "../../helpers/durationString";
+import getQueueChannel from "../../actions/queue/getQueueChannel";
 import StringBuilder from "../../helpers/StringBuilder";
-import { resolveIntegerFromOption, resolveStringFromOption } from "../../helpers/optionResolvers";
 
-export const ARG_ENTRY_DURATION = "entry-duration";
-export const ARG_SUB_COOLDOWN = "cooldown";
-export const ARG_SUB_MAX_SUBMISSIONS = "count";
+type LimitKey = "entry-duration" | "cooldown" | "count";
 
-type LimitKey =
-	| typeof ARG_ENTRY_DURATION
-	| typeof ARG_SUB_COOLDOWN
-	| typeof ARG_SUB_MAX_SUBMISSIONS;
+export interface QueueLimitArg {
+	name: string;
+	value: LimitKey;
+	description: string;
+}
 
-export const allLimits: Array<LimitKey> = [
-	ARG_ENTRY_DURATION,
-	ARG_SUB_COOLDOWN,
-	ARG_SUB_MAX_SUBMISSIONS
+export const allLimits: Array<QueueLimitArg> = [
+	{
+		name: "Song Length",
+		value: "entry-duration",
+		description: "The maximum duration of a song submission."
+	},
+	{
+		name: "Submission Cooldown",
+		value: "cooldown",
+		description:
+			"The minimum amount of time that each user must wait between their own submissions."
+	},
+	{
+		name: "Number of Submissions",
+		value: "count",
+		description: "The maximum number of submissions that each user may submit."
+	}
 ];
-const limitsList = allLimits.map(l => `\`${l}\``).join(", ");
+
+const limitsList = allLimits.map(l => `\`${l.value}\``).join(", ");
 
 function isLimitKey(value: unknown): value is LimitKey {
-	return Boolean(value) && typeof value === "string" && allLimits.includes(value as LimitKey);
+	return (
+		Boolean(value) &&
+		typeof value === "string" &&
+		allLimits.map(l => l.value).includes(value as LimitKey)
+	);
 }
 
 const limit: Subcommand = {
@@ -36,10 +53,7 @@ const limit: Subcommand = {
 			description: "The name of the limit.",
 			type: "STRING",
 			required: true,
-			choices: allLimits.map(key => ({
-				name: key,
-				value: key
-			}))
+			choices: allLimits
 		},
 		{
 			name: "value",
@@ -78,7 +92,7 @@ const limit: Subcommand = {
 
 		// Set limits on the queue
 		switch (key) {
-			case ARG_ENTRY_DURATION: {
+			case "entry-duration": {
 				// Limit each duration entry
 				if (!valueOption) {
 					// Read the current limit
@@ -107,7 +121,7 @@ const limit: Subcommand = {
 				return reply(responseBuilder.result());
 			}
 
-			case ARG_SUB_COOLDOWN: {
+			case "cooldown": {
 				// Limit submission cooldown
 				if (!valueOption) {
 					// Read the current limit
@@ -137,7 +151,7 @@ const limit: Subcommand = {
 				return reply(responseBuilder.result());
 			}
 
-			case ARG_SUB_MAX_SUBMISSIONS: {
+			case "count": {
 				// Limit submission count per user
 				if (!valueOption) {
 					// Read the current limit

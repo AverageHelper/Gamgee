@@ -179,6 +179,19 @@ export class QueueManager {
 		return this.queueStorage.fetchLatestFrom(userId);
 	}
 
+	/** Returns the average entry duration of the submissions of the user with the provided ID. */
+	async getAveragePlaytimeFrom(userId: string): Promise<number> {
+		const entries = await this.queueStorage.fetchAllFrom(userId);
+		let average = 0;
+
+		entries.forEach(entry => {
+			average += entry.seconds;
+		});
+		average /= entries.length;
+
+		return average;
+	}
+
 	/** Resets the queue. Deletes all cached data about the queue. */
 	async clear(): Promise<void> {
 		return this.queueStorage.clear();
