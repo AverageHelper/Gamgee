@@ -69,6 +69,17 @@ export class QueueManager {
 		return duration;
 	}
 
+	/** Retrieves the average playtime of the queue's entries. */
+	async playtimeAverage(): Promise<number> {
+		const queue = await this.queueStorage.fetchAll();
+		let average = 0;
+		queue.forEach(e => {
+			average += e.seconds;
+		});
+		average /= queue.length;
+		return average;
+	}
+
 	/** Adds an entry to the queue cache and sends the entry to the queue channel. */
 	async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
 		const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);

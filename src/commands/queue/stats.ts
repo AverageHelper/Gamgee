@@ -9,7 +9,6 @@ const stats: Subcommand = {
 	description: "Print statistics on the current queue.",
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
 		const queueChannel = await getQueueChannel(guild);
 
@@ -17,13 +16,14 @@ const stats: Subcommand = {
 			return reply(`No queue is set up. Would you like to start one?`);
 		}
 
-		// Get the current queue's status
+		// Get the current queue's statistics
 		const queueIsCurrent = channel?.id === queueChannel.id;
 		const queue = useQueue(queueChannel);
-		const [count, playtimeRemaining, playtimeTotal] = await Promise.all([
+		const [count, playtimeRemaining, playtimeTotal, playtimeAverage] = await Promise.all([
 			queue.count(),
 			queue.playtimeRemaining(),
-			queue.playtimeTotal()
+			queue.playtimeTotal(),
+			queue.playtimeAverage()
 		]);
 		const playtimePlayed = playtimeTotal - playtimeRemaining;
 		logger.info(
@@ -37,9 +37,10 @@ const stats: Subcommand = {
 			embed.setDescription("Empty queue");
 		} else {
 			embed.addField("Total Entries", `${count}`);
-			embed.addField("Total Playtime", durationString(playtimeTotal));
-			embed.addField("Played", `${durationString(playtimeTotal - playtimeRemaining)}`);
-			embed.addField("Remaining Playtime", durationString(playtimeRemaining));
+			embed.addField("Average Song Playtime", durationString(playtimeAverage, true));
+			embed.addField("Total Playtime", durationString(playtimeTotal, true));
+			embed.addField("Played", `${durationString(playtimeTotal - playtimeRemaining, true)}`, true);
+			embed.addField("Remaining Playtime", durationString(playtimeRemaining, true), true);
 		}
 
 		await Promise.all([
