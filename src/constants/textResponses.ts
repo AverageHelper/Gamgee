@@ -114,11 +114,17 @@ export const phrases: ResponseRepository = [
 	"Did you know: I'm pretty good at chess, I have won `0` games so far! :nerd:",
 	"Do I know you?",
 	"Do you know how painful my training was? The song _Never Gonna Give You Up_ by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
-	"Do you want to know how I got into music? It’s actually a fun story!\nOne day I was… *zzzzzzz*",
+	[
+		"Do you want to know how I got into music? It’s actually a fun story!",
+		"One day I was… *zzzzzzz*"
+	],
 	"Don't count your chickens",
 	"Down the hall, up the stairs, past the gargoyle",
 	"*ENERGY*",
-	"Everyone says I shouldn’t divide by 0 but I don’t know why. I’m a bot!\nI can do anyth—\n\n[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
+	[
+		"Everyone says I shouldn’t divide by 0 but I don’t know why. I’m a bot!\nI can do anyth—",
+		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
+	],
 	"Fan of squirrels.",
 	"Fit as a fiddle on a woodbench!",
 	"Fond of cats.",
@@ -130,7 +136,7 @@ export const phrases: ResponseRepository = [
 	"I actually understand everything you’re saying. It’s just fun to troll you with nonsense replies :stuck_out_tongue_winking_eye:",
 	"I actually think spoon clothes is a great idea!",
 	"I am altering the deal. Pray I do not alter it further.",
-	"I am what I am ¯\\_(ツ)_/¯ ",
+	["I am what I am", "¯\\_(ツ)_/¯"],
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
 	"I don't like this can we change the topic please ty",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
@@ -147,7 +153,7 @@ export const phrases: ResponseRepository = [
 	"I'll give you a proper response when you tell me my purpose in life",
 	"I've never seen an eclipse.",
 	"I'm processing your message. I should be ready in... a few years ^^",
-	"I'm so hungry, I could eat a... *nevermind*.\n>.>\n<.<",
+	["I'm so hungry, I could eat a...", "*nevermind*", ">.>", "<.<"],
 	"Jack and Jill ran up the hill...",
 	"Keep moving forward!",
 	"Let me play among the stars...",
@@ -163,7 +169,7 @@ export const phrases: ResponseRepository = [
 	"So I’ll press this button, then this button, then this button, then this button, then th—",
 	"Something smells fishy...",
 	"Sponsored by",
-	"Squirrel!\n\n... Sorry, what were we talking about?",
+	["Squirrel!", "..", "... Sorry, what were we talking about?"],
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That's par for the course",
 	(ctx: ResponseContext): string =>
