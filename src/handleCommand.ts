@@ -1,6 +1,7 @@
-import type { Storage } from "./configStorage";
-import type { Logger } from "./logger";
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
+import type { Logger } from "./logger";
+import type { Storage } from "./configStorage";
+import type { WrappedResponse } from "./helpers/randomStrings";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
@@ -146,9 +147,18 @@ export async function handleCommand(
 	if (!pq) return;
 	const { query: q, usedCommandPrefix } = pq;
 
+	const responseContext = {
+		me:
+			(client.user && (await message.guild?.members.fetch(client.user.id)))?.nickname ??
+			client.user?.username ??
+			"Me",
+		otherUser: message.author,
+		otherMember: (await message.guild?.members.fetch(message.author)) ?? null
+	};
+
 	if (q.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
-		await message.reply(randomQuestion());
+		await randomQuestion().unwrapWith(responseContext, r => message.reply(r));
 		return;
 	}
 
@@ -230,12 +240,17 @@ export async function handleCommand(
 			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
 		);
 		await new Promise(resolve => setTimeout(resolve, 2000));
+
+		let wrapped: WrappedResponse;
+
 		if (messageContainsWord("hello")) {
-			await message.channel.send(randomGreeting());
+			wrapped = randomGreeting();
 		} else if (messageContainsOneOfWords(["hug", "hug?", "hugs", "hugs?"])) {
-			await message.channel.send(randomHug());
+			wrapped = randomHug();
 		} else {
-			await message.channel.send(randomPhrase());
+			wrapped = randomPhrase();
 		}
+
+		await wrapped.unwrapWith(responseContext, r => message.channel.send(r));
 	}
 }

@@ -7,21 +7,26 @@ const ping: Command = {
 	description: "Ping my host server to check latency.",
 	requiresGuild: false,
 	async execute(context) {
-		const { client, logger } = context;
-		const apiLatency = Math.round(client.ws.ping);
+		const { client, user, logger } = context;
+		const random = randomPhrase().unwrapFirstWith({
+			me: client.user?.username ?? "Me",
+			otherUser: user,
+			otherMember: null
+		});
 
 		let testMessage: Discord.Message;
 		let responseTime: number;
 
 		if (context.type === "message") {
-			testMessage = await context.message.reply(randomPhrase());
+			testMessage = await context.message.reply(random);
 			responseTime = testMessage.createdTimestamp - context.message.createdTimestamp;
 		} else {
-			await context.interaction.reply(randomPhrase());
+			await context.interaction.reply(random);
 			testMessage = (await context.interaction.fetchReply()) as Discord.Message;
 			responseTime = testMessage.createdTimestamp - context.interaction.createdTimestamp;
 		}
 
+		const apiLatency = Math.round(client.ws.ping);
 		await testMessage.edit(
 			`Pong! Sent response in \`${responseTime}ms\`. API latency is \`${apiLatency}ms\``
 		);

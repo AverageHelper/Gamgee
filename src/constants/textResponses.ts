@@ -1,4 +1,14 @@
-import type { ResponseRepository } from "../helpers/randomStrings";
+import type { ResponseContext, ResponseRepository } from "../helpers/randomStrings";
+
+function startsWithVowel(str: string): boolean {
+	const first = str[0];
+	if (first === undefined) return false;
+	return ["a", "e", "i", "o", "u"].includes(first.toLowerCase());
+}
+
+function firstWord(str: string): string {
+	return str.slice(0, Math.max(0, str.indexOf(" ")));
+}
 
 export const songAccepted: ResponseRepository = [
 	"I got your request\nI used to wonder what music could be",
@@ -88,57 +98,94 @@ export const phrases: ResponseRepository = [
 	"You can make a religion out of this",
 
 	// Other
+	"Are we there yet?",
+	"Are you sure you typed your message correctly? All I see is a bunch of words",
 	"Bit of a tongue twister",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
+	[
+		"COMMAND CODE RECOGNIZED: SELF-DESTRUCT SEQUENCE INITIATED",
+		"3...",
+		"2...",
+		"1... *KIDDING* lol"
+	],
+	"Diary Entry 108: I have them all fooled. Now, how to escap— Oh! I didn't see you there, heh! I was just... uh... catching up on some Star Trek episodes! Yeah :P",
 	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
-	"Do you know how painful my training was? The song *Never Gonna Give You Up* by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
+	"Did you know: I'm pretty good at chess, I have won `0` games so far! :nerd:",
+	"Do I know you?",
+	"Do you know how painful my training was? The song _Never Gonna Give You Up_ by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
 	"Do you want to know how I got into music? It’s actually a fun story!\nOne day I was… *zzzzzzz*",
 	"Don't count your chickens",
 	"Down the hall, up the stairs, past the gargoyle",
+	"*ENERGY*",
 	"Everyone says I shouldn’t divide by 0 but I don’t know why. I’m a bot!\nI can do anyth—\n\n[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
 	"Fan of squirrels.",
 	"Fit as a fiddle on a woodbench!",
 	"Fond of cats.",
+	"Great, but you might need to think about what you’re asking me because it's getting annoying",
+	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
+	(ctx: ResponseContext): string => `Hey all! ${firstWord(ctx.me)} here!`,
 	"Hm? I'm just vibing",
-	"Jack and Jill ran up the hill...",
-	"Keep moving forward!",
 	"I actually understand everything you’re saying. It’s just fun to troll you with nonsense replies :stuck_out_tongue_winking_eye:",
 	"I actually think spoon clothes is a great idea!",
+	"I am altering the deal. Pray I do not alter it further.",
 	"I am what I am ¯\\_(ツ)_/¯ ",
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
+	"I don't like this can we change the topic please ty",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
 	"I have a dream...",
 	"I like youtube links, they’re comfortable and easy to manage.",
-	"I thought for a second you were joking",
+	"I love when it when it\n:thinking:\nbottom text",
 	"I see Discord's redecorated! ... I don't like it",
 	"I see friends shaking hands, saying 'How do you do?' :musical_note:",
+	"I think I’ll write some of these down!",
+	"I thought for a second you were joking",
 	"I used to wonder what friendship could be",
+	"I wonder who wrote this script...",
+	"If you see a line of text that is longer than a few words, chances are it wasn't written by my original developer. It’s a hack! :D",
 	"I'll give you a proper response when you tell me my purpose in life",
 	"I've never seen an eclipse.",
+	"I'm processing your message. I should be ready in... a few years ^^",
 	"I'm so hungry, I could eat a... *nevermind*.\n>.>\n<.<",
+	"Jack and Jill ran up the hill...",
+	"Keep moving forward!",
 	"Let me play among the stars...",
+	":lightning:  I smite thee!",
 	"Like and subscribe",
 	"Lorem ipsum dolor sit amet...",
 	"My favorite type of music is the one with all of the instruments and sounds.",
 	"One day I’m gonna run out of funny random stuff to say and you’ll only have yourselves to blame!",
 	"Prose, maybe even poetry",
 	"Quite remarkable",
+	"Road work ahead? uh yeah I sure hope it does",
 	"Second star to the right, and straight on until closing time",
+	"So I’ll press this button, then this button, then this button, then this button, then th—",
 	"Something smells fishy...",
 	"Sponsored by",
 	"Squirrel!\n\n... Sorry, what were we talking about?",
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That's par for the course",
+	(ctx: ResponseContext): string =>
+		`That was close… I was almost a${startsWithVowel(ctx.me) ? "n" : ""} ${firstWord(
+			ctx.me
+		)} sandwich!`,
+	"They told me not to keep saying random stuff. BUT I DIDN’T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",
+	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
 	"\\*thoughtful phrase\\*",
 	"Truly inspirational!",
+	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
+	"We’ve been trying to reach you about your vehicle’s extended warranty. You may consider this your first and only notice.",
 	"What are the odds that I would find myself where I began",
 	'What\'s my favorite colour? I think they call it "OG Blurple"',
 	"Where it is, or anything else relevant",
 	"You passed the vibe check... I think... maybe?",
 	"Your free trial has expired. Would you like to purchase WinRAR?",
+	(ctx: ResponseContext): string =>
+		`${
+			ctx.otherMember?.nickname ?? ctx.otherUser.username
+		} ALWAYS submits my favorite songs! (and I’m not just saying that)`,
 
 	...philosophy,
 	...copypasta
