@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import type { Command, GuildedCommandContext, Subcommand } from "../commands";
+import type { Command, CommandContext, Subcommand } from "../commands";
 import { getConfigCommandPrefix } from "./config/getConfigValue";
 import StringBuilder from "../helpers/StringBuilder";
 import { assertUserCanRunCommand } from "./invokeCommand";
@@ -21,7 +21,7 @@ const OPT = "?";
  * @returns a string describing all commands.
  */
 export default async function describeAllCommands(
-	context: GuildedCommandContext,
+	context: CommandContext,
 	commands: Discord.Collection<string, Command>
 ): Promise<string> {
 	const COMMAND_PREFIX =

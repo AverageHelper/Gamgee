@@ -23,8 +23,13 @@ function neverFallthrough(val: never): never {
 export async function assertUserCanRunCommand(
 	user: Discord.User,
 	command: Invocable,
-	guild: Discord.Guild
+	guild: Discord.Guild | null
 ): Promise<boolean> {
+	if (command.requiresGuild && !guild) {
+		logger.debug(`Command '${command.name}' reqires a guild, but we don't have one right now.`);
+		return false;
+	}
+
 	if (!command.permissions) {
 		// No permissions demanded
 		logger.debug(`Command '${command.name}' does not require specific user permissions.`);
@@ -32,9 +37,11 @@ export async function assertUserCanRunCommand(
 		return true;
 	}
 
-	const permissions: Array<CommandPermission> = Array.isArray(command.permissions)
-		? await resolvePermissions(command.permissions, guild)
-		: await command.permissions(guild);
+	const permissions: Array<CommandPermission> = guild
+		? Array.isArray(command.permissions)
+			? await resolvePermissions(command.permissions, guild)
+			: await command.permissions(guild)
+		: [];
 
 	logger.debug(
 		`Command '${command.name}' requires that callers satisfy 1 of ${permissions.length} cases:`
@@ -50,7 +57,8 @@ export async function assertUserCanRunCommand(
 		);
 		switch (permission.type) {
 			case "ROLE": {
-				const userHasRole = await userHasRoleInGuild(user, permission.id, guild);
+				const userHasRole =
+					guild !== null && (await userHasRoleInGuild(user, permission.id, guild));
 				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${permission.id}`);
 				if (permission.permission && userHasRole) {
 					logger.debug("\tProceeding...");
