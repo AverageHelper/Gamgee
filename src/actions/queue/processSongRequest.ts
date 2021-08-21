@@ -147,7 +147,9 @@ export default async function processSongRequest({
 			cooldown > timeSinceLatest
 		) {
 			const rejectionBuilder = new StringBuilder();
-			rejectionBuilder.push("You must wait ");
+			rejectionBuilder.push("You've already submitted a song within the last ");
+			rejectionBuilder.push(durationString(cooldown));
+			rejectionBuilder.push(". You must wait ");
 			rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
 			rejectionBuilder.push(" before submitting again.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
