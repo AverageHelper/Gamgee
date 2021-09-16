@@ -24,12 +24,14 @@ const sr: Command = {
 			guild,
 			channel,
 			options,
+			createdTimestamp,
 			logger,
 			reply,
 			prepareForLongRunningTasks,
 			deleteInvocation
 		} = context;
 
+		logger.debug(`Got song request message at ${createdTimestamp.toString()}`);
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			return reject_public(context, "No queue is set up.");

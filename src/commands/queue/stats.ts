@@ -39,8 +39,9 @@ const stats: Subcommand = {
 			embed.addField("Total Entries", `${count}`);
 			embed.addField("Average Song Playtime", durationString(playtimeAverage, true));
 			embed.addField("Total Playtime", durationString(playtimeTotal, true));
-			embed.addField("Played", `${durationString(playtimeTotal - playtimeRemaining, true)}`, true);
+			embed.addField("Played", `${durationString(playtimePlayed, true)}`, true);
 			embed.addField("Remaining Playtime", durationString(playtimeRemaining, true), true);
+			// TODO: Include the number of submitters who used up their count limit
 		}
 
 		await Promise.all([

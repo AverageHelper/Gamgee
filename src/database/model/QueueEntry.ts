@@ -46,4 +46,12 @@ export class QueueEntry {
 		this.senderId = entry?.senderId ?? "0";
 		this.isDone = entry?.isDone ?? false;
 	}
+
+	toString(): string {
+		return `timestamp: ${this.sentAt.toString()}; user: ${
+			this.senderId
+		}; guild/channel/message path: ${this.guildId}/${this.channelId}/${this.queueMessageId}; url: ${
+			this.url
+		}; duration: ${this.seconds}; isDone: ${this.isDone ? "true" : "false"}`;
+	}
 }

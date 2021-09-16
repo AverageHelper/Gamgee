@@ -167,6 +167,7 @@ export const phrases: ResponseRepository = [
 	"Road work ahead? uh yeah I sure hope it does",
 	"Second star to the right, and straight on until closing time",
 	"So I’ll press this button, then this button, then this button, then this button, then th—",
+	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||",
 	"Something smells fishy...",
 	"Sponsored by",
 	["Squirrel!", "..", "... Sorry, what were we talking about?"],
