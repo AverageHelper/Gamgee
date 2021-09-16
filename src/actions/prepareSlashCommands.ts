@@ -4,7 +4,8 @@ import { allCommands, resolvePermissions } from "../commands";
 import { useLogger } from "../logger";
 import richErrorMessage from "../helpers/richErrorMessage";
 
-const logger = useLogger();
+const testMode: boolean = false;
+const logger = useLogger("verbose");
 
 function pluralOf(value: number | Array<unknown>): "" | "s" {
 	const PLURAL = "s";
@@ -15,30 +16,30 @@ function pluralOf(value: number | Array<unknown>): "" | "s" {
 }
 
 async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
-	logger.debug(`Resetting commands for guild ${guild.id}...`);
-	await guild.commands.set([]); // set guild commands
-	await guild.commands.permissions.set({ fullPermissions: [] }); // set guild commands
-	logger.debug(`Reset commands for guild ${guild.id}`);
+	logger.debug(`Clearing commands for guild ${guild.id}...`);
+	if (!testMode) {
+		await guild.commands.set([]); // set guild commands
+		await guild.commands.permissions.set({ fullPermissions: [] }); // set guild commands
+	}
+	logger.debug(`Commands cleared for guild ${guild.id}`);
 }
 
 async function prepareUnprivilegedCommands(
 	unprivilegedCommands: Array<GuildedCommand>,
 	guild: Discord.Guild
 ): Promise<number> {
-	let successfulUnprivilegedPushes = 0;
-	logger.debug(
-		`Creating all ${unprivilegedCommands.length} unprivileged command${pluralOf(
-			unprivilegedCommands
-		)} at once...`
-	);
-
-	await guild.commands.set(unprivilegedCommands);
-	successfulUnprivilegedPushes += unprivilegedCommands.length;
-
 	logger.verbose(
-		`Created ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}`
+		`Creating ${unprivilegedCommands.length} command${pluralOf(unprivilegedCommands)}:`
 	);
-	return successfulUnprivilegedPushes;
+	unprivilegedCommands.forEach(command => {
+		logger.verbose(`\t'/${command.name}'  (requires guild, no privilege requirements)`);
+	});
+
+	if (!testMode) {
+		await guild.commands.set(unprivilegedCommands);
+	}
+
+	return unprivilegedCommands.length;
 }
 
 async function preparePrivilegedCommands(
@@ -46,23 +47,36 @@ async function preparePrivilegedCommands(
 	guild: Discord.Guild
 ): Promise<number> {
 	let successfulPrivilegedPushes = 0;
-	logger.debug(
-		`Creating ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
-	);
+	logger.verbose(`Creating ${privilegedCommands.length} command${pluralOf(privilegedCommands)}...`);
 	await Promise.allSettled(
 		privilegedCommands.map(async cmd => {
 			try {
-				const appCommand: Discord.ApplicationCommand = await guild.commands.create(cmd);
-				logger.debug(`Created command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`);
+				let appCommand: Discord.ApplicationCommand | undefined;
+				const permissions = cmd.permissions
+					? Array.isArray(cmd.permissions)
+						? cmd.permissions.join(", ")
+						: "custom permissions"
+					: "no privilege requirements";
+				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
+				if (!testMode) {
+					appCommand = await guild.commands.create(cmd);
+					logger.debug(`Created command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`);
+				} else {
+					logger.debug(`Created command '/${cmd.name}' in guild ${guild.id}`);
+				}
 
 				if (cmd.permissions) {
 					const permissions = Array.isArray(cmd.permissions)
 						? await resolvePermissions(cmd.permissions, guild)
 						: await cmd.permissions(guild);
-					await appCommand.permissions.set({ permissions });
-					logger.debug(
-						`Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`
-					);
+					if (appCommand) {
+						await appCommand.permissions.set({ permissions });
+						logger.debug(
+							`Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`
+						);
+					} else {
+						logger.debug(`Set permissions for command '/${cmd.name}' in guild ${guild.id}`);
+					}
 				}
 
 				successfulPrivilegedPushes += 1;
@@ -74,9 +88,6 @@ async function preparePrivilegedCommands(
 				throw error;
 			}
 		})
-	);
-	logger.verbose(
-		`Created ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
 	);
 	return successfulPrivilegedPushes;
 }
@@ -166,13 +177,17 @@ export async function prepareSlashCommandsThenExit(client: Discord.Client): Prom
 
 export async function revokeSlashCommandsThenExit(client: Discord.Client): Promise<void> {
 	logger.info("Unregistering global commands...");
-	await client.application?.commands.set([]);
+	if (!testMode) {
+		await client.application?.commands.set([]);
+	}
 	logger.info("Unregistered global commands");
 
 	const guilds = [...client.guilds.cache.values()];
 	logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
 	for (const guild of guilds) {
-		await guild.commands.set([]);
+		if (!testMode) {
+			await guild.commands.set([]);
+		}
 		logger.info(`Unregistered commands in guild ${guild.id}`);
 	}
 

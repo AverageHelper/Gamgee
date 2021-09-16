@@ -53,7 +53,7 @@ try {
 	// ** Handle Events **
 
 	client.on("ready", async () => {
-		logger.debug(`Process version is ${process.version}`);
+		logger.debug(`Node ${process.version}`);
 		if (getEnv("NODE_ENV") === "test") {
 			logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
 		} else {
