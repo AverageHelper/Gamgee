@@ -249,7 +249,7 @@ Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that v
 
 ## Contributing
 
-We welcome contributions of all sorts! Bear in mind that `main` updates _all the time_ while we're early on. Until things quiet down and big reorganizations aren't likely, I recommend small making changes at a time.
+We welcome contributions of all sorts!
 
 1.  Fork it!
 2.  Create your feature branch: `git checkout -b my-new-feature`
