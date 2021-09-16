@@ -8,7 +8,6 @@ import { useQueue } from "../actions/queue/useQueue";
 const mockUseQueue = useQueue as jest.Mock;
 
 import type { GuildedCommandContext } from "./CommandContext";
-import durationString from "../helpers/durationString";
 import limits from "./limits";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
@@ -74,21 +73,8 @@ describe("Get Queue Limits", () => {
 			expect(mockUseQueue).toHaveBeenCalledWith({ id: "queue-channel" });
 			expect(mockReply).toHaveBeenCalledTimes(1);
 
-			const entryDurationDesc =
-				entryDurationSeconds !== null ? durationString(entryDurationSeconds) : "infinite";
-			expect(mockReply).toHaveBeenCalledWith(
-				expect.stringContaining(`\`entry-duration\` - **${entryDurationDesc}**`)
-			);
-
-			const cooldownDesc = cooldownSeconds !== null ? durationString(cooldownSeconds) : "none";
-			expect(mockReply).toHaveBeenCalledWith(
-				expect.stringContaining(`\`cooldown\` - **${cooldownDesc}**`)
-			);
-
-			const countDesc = submissionMaxQuantity ?? "infinite";
-			expect(mockReply).toHaveBeenCalledWith(
-				expect.stringContaining(`\`count\` - **${countDesc}**`)
-			);
+			const replyArgs = mockReply.mock.calls[0] as Array<unknown>;
+			expect(replyArgs[0]).toMatchSnapshot();
 		}
 	);
 });

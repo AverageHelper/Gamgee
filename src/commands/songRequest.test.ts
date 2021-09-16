@@ -130,6 +130,7 @@ describe("Song request via URL", () => {
 				guild: "any-guild",
 				channel: "any-channel",
 				user: "doesn't matter",
+				createdTimestamp: new Date(),
 				options: new Discord.CommandInteractionOptionResolver(mockClient, []),
 				logger,
 				prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
@@ -170,6 +171,7 @@ describe("Song request via URL", () => {
 			guild: mockMessage1.guild,
 			channel: mockMessage1.channel,
 			user: mockMessage1.author,
+			createdTimestamp: new Date(),
 			options: new Discord.CommandInteractionOptionResolver(mockClient, [
 				{
 					name: "url",
@@ -212,7 +214,10 @@ describe("Song request via URL", () => {
 		// The submission should have been rejected with a cooldown warning via DMs
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait"));
+		expect(mockReplyPrivately).toHaveBeenCalledWith({
+			content: expect.stringContaining("must wait") as string,
+			ephemeral: true
+		});
 	});
 
 	test("submissions enter the queue in order", async () => {
@@ -241,6 +246,7 @@ describe("Song request via URL", () => {
 						guild: message.guild,
 						channel: message.channel,
 						user: message.author,
+						createdTimestamp: new Date(),
 						logger,
 						prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 						reply: mockReply,

@@ -44,6 +44,7 @@ describe("Command handler", () => {
 							} else if (userId === botId) {
 								return resolve(mockClient);
 							}
+							return resolve(mockSenderMember);
 						})
 				)
 			}

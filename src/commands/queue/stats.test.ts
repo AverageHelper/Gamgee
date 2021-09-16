@@ -20,6 +20,7 @@ const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
 const mockCount = jest.fn();
 const mockPlaytimeRemaining = jest.fn();
 const mockPlaytimeTotal = jest.fn();
+const mockPlaytimeAverage = jest.fn();
 
 describe("Queue Statistics", () => {
 	let context: GuildedCommandContext;
@@ -37,6 +38,7 @@ describe("Queue Statistics", () => {
 		mockCount.mockResolvedValue(0);
 		mockPlaytimeRemaining.mockResolvedValue(0);
 		mockPlaytimeTotal.mockResolvedValue(0);
+		mockPlaytimeAverage.mockResolvedValue(0);
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
@@ -44,7 +46,8 @@ describe("Queue Statistics", () => {
 		mockUseQueue.mockReturnValue({
 			count: mockCount,
 			playtimeRemaining: mockPlaytimeRemaining,
-			playtimeTotal: mockPlaytimeTotal
+			playtimeTotal: mockPlaytimeTotal,
+			playtimeAverage: mockPlaytimeAverage
 		});
 	});
 

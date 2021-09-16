@@ -147,14 +147,17 @@ export async function handleCommand(
 	if (!pq) return;
 	const { query: q, usedCommandPrefix } = pq;
 
-	const responseContext = {
-		me:
-			(client.user && (await message.guild?.members.fetch(client.user.id)))?.nickname ??
-			client.user?.username ??
-			"Me",
-		otherUser: message.author,
-		otherMember: (await message.guild?.members.fetch(message.author)) ?? null
-	};
+	let me: string;
+	const otherUser = message.author;
+	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
+
+	if (client.user) {
+		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
+	} else {
+		me = "Me";
+	}
+
+	const responseContext = { me, otherUser, otherMember };
 
 	if (q.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
