@@ -11,8 +11,9 @@ import type { GuildedCommandContext } from "../CommandContext";
 import open from "./open";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
+const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 const mockChannelSend = jest.fn().mockResolvedValue(undefined);
+const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
 
 const mockIsQueueOpen = jest.fn();
 const mockSetQueueOpen = jest.fn();
@@ -25,7 +26,8 @@ describe("Open the Queue", () => {
 			guild: "the-guild",
 			channel: undefined,
 			reply: mockReply,
-			deleteInvocation: mockDeleteInvocation
+			deleteInvocation: mockDeleteInvocation,
+			followUp: mockFollowUp
 		} as unknown) as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
@@ -65,6 +67,11 @@ describe("Open the Queue", () => {
 		expect(mockChannelSend).toHaveBeenCalledTimes(1);
 
 		expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("now open"));
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("now open"));
+		expect(mockFollowUp).toHaveBeenCalledWith(
+			expect.objectContaining({
+				content: expect.stringContaining("now open") as string,
+				reply: false
+			})
+		);
 	});
 });

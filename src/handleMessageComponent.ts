@@ -37,7 +37,7 @@ export async function handleMessageComponent(
 	// Ignore self interactions
 	if (interaction.user.id === client.user?.id) return;
 
-	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customID}'`);
+	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customId}'`);
 
 	const queueChannel = await getQueueChannel(interaction.guild);
 	if (!queueChannel) {
@@ -49,7 +49,6 @@ export async function handleMessageComponent(
 		return;
 	}
 
-	// FIXME: interaction.message should work
 	const message = await queueChannel.messages.fetch(interaction.message.id);
 	const queue = useQueue(queueChannel);
 	const entry = await queue.getEntryFromMessage(interaction.message.id);
@@ -66,17 +65,19 @@ export async function handleMessageComponent(
 		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
 	);
 
-	switch (interaction.customID) {
+	switch (interaction.customId) {
 		case DONE_BUTTON.id:
 			logger.debug("Marking done....");
 			await queue.markDone(message);
 			logger.debug("Marked an entry done.");
+			await interaction.deferUpdate();
 			break;
 
 		case RESTORE_BUTTON.id:
 			logger.debug("Marking undone....");
 			await queue.markNotDone(message);
 			logger.debug("Marked an entry undone");
+			await interaction.deferUpdate();
 			break;
 
 		case DELETE_BUTTON.id: {
@@ -114,6 +115,4 @@ export async function handleMessageComponent(
 		default:
 			break;
 	}
-
-	await interaction.deferUpdate();
 }

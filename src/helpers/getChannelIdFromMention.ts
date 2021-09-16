@@ -19,7 +19,7 @@ export default function getChannelIdFromMention(mention: string): Snowflake | nu
 
 		if (id === "") return null;
 
-		return id as Snowflake;
+		return id /* as Snowflake*/;
 	}
 
 	return null;

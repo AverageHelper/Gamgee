@@ -11,7 +11,11 @@ type PermissionGenerator = (
 	guild: Discord.Guild
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-interface BaseCommand extends Discord.ApplicationCommandData {}
+interface BaseCommand {
+	name: string;
+	description: string;
+	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
+}
 
 export interface GlobalCommand extends BaseCommand {
 	/** Whether the command requires a guild present to execute. */
@@ -50,9 +54,8 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = GlobalCommand | GuildedCommand;
 
-interface BaseSubcommand extends Omit<Discord.ApplicationCommandOptionData, "options"> {
+interface BaseSubcommand extends Discord.ApplicationCommandSubCommandData {
 	type: "SUB_COMMAND";
-	options?: Array<Discord.ApplicationCommandOptionData>;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {

@@ -24,7 +24,7 @@ const client = new Discord.Client({
  */
 export const messageWaiters = new Discord.Collection<number, (msg: Discord.Message) => boolean>();
 
-client.on("message", useDispatchLoop(messageWaiters));
+client.on("messageCreate", useDispatchLoop(messageWaiters));
 
 /**
  * A collection of functions that expect a message be deleted within a

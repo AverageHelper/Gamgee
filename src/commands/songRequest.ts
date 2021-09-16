@@ -1,6 +1,7 @@
 import type { Command } from "./Command";
 import type { SongRequest } from "../actions/queue/processSongRequest";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
+import { URL } from "url";
 import { useGuildStorage } from "../useGuildStorage";
 import { useJobQueue } from "../actions/queue/jobQueue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
@@ -23,17 +24,20 @@ const sr: Command = {
 			guild,
 			channel,
 			options,
+			createdTimestamp,
 			logger,
+			reply,
 			prepareForLongRunningTasks,
 			deleteInvocation
 		} = context;
 
+		logger.debug(`Got song request message at ${createdTimestamp.toString()}`);
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			return reject_public(context, "No queue is set up.");
 		}
 
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
 			const howTo = (await import("./howto")).default;
 			return howTo.execute(context);
@@ -53,16 +57,14 @@ const sr: Command = {
 		const guildStorage = useGuildStorage(guild);
 		const isQueueOpen = await guildStorage.isQueueOpen();
 		if (!isQueueOpen) {
-			return reject_public(context, "The queue is not open.");
+			return reply({ content: ":hammer: The queue is not open.", ephemeral: true });
 		}
 
-		await prepareForLongRunningTasks();
+		await prepareForLongRunningTasks(true);
 
-		const songUrl: string = resolveStringFromOption(firstOption);
-		if (context.type === "interaction") {
-			await context.reply(songUrl);
-		}
+		const songUrlString: string = resolveStringFromOption(firstOption);
 
+		const songUrl = new URL(songUrlString);
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");
 		requestQueue.process(processRequest); // Same function instance, so a nonce call
 

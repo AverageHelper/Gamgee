@@ -45,7 +45,10 @@ const nowPlaying: Command = {
 
 		const queue = useQueue(queueChannel);
 		const allEntries = await queue.getAllEntries();
-		const firstNotDone = allEntries.find(entry => !entry.isDone);
+
+		logger.debug(`First entry: ${allEntries[0]?.toString() ?? "not here"}.`);
+		const firstNotDone = allEntries.find(entry => !entry.isDone); // FIXME: This isn't always correct.
+		logger.debug(`First not-done entry: ${firstNotDone?.toString() ?? "not here"}.`);
 
 		if (!firstNotDone) {
 			logger.debug(`The song queue is currently empty.`);

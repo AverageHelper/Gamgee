@@ -17,6 +17,7 @@ import { useTestLogger } from "../../../tests/testUtils/logger";
 import Discord from "discord.js";
 import whitelist from "./whitelist";
 
+const mockClient = ({} as unknown) as Discord.Client;
 const mockWhitelistUser = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
@@ -26,7 +27,7 @@ const logger = useTestLogger("error");
 describe("Removing from Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
 
-	const ownerID = "server-owner";
+	const ownerId = "server-owner";
 	const goodUserId = "good-user";
 
 	let context: GuildedCommandContext;
@@ -35,15 +36,13 @@ describe("Removing from Queue Blacklist", () => {
 	beforeEach(() => {
 		context = ({
 			user: { id: "test-user" },
-			guild: { ownerID },
-			options: new Discord.Collection([
-				[
-					"user",
-					{
-						name: "user",
-						value: `<@${goodUserId}>`
-					}
-				]
+			guild: { ownerId },
+			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+				{
+					name: "user",
+					value: `<@${goodUserId}>`,
+					type: "STRING"
+				}
 			]),
 			logger,
 			reply: mockReply,
@@ -64,52 +63,55 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing without a valid mention (empty space)", async () => {
-		context.options = new Discord.Collection();
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockReply).toHaveBeenCalledTimes(1);
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"), {
+		expect(mockReply).toHaveBeenCalledWith({
+			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true
 		});
 	});
 
 	test("does nothing without a mention (no further text)", async () => {
-		context.options = new Discord.Collection();
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockReply).toHaveBeenCalledTimes(1);
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("mention someone"), {
+		expect(mockReply).toHaveBeenCalledWith({
+			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true
 		});
 	});
 
 	test("does nothing for the calling user", async () => {
 		mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockWhitelistUser).not.toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledTimes(1);
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("whitelist yourself"), {
+		expect(mockReply).toHaveBeenCalledWith({
+			content: expect.stringContaining("whitelist yourself") as string,
 			ephemeral: true
 		});
 	});
 
 	test("does nothing for a user not known to the guild", async () => {
 		mockGetUserFromMention.mockResolvedValue(undefined);
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockWhitelistUser).not.toHaveBeenCalled();
 	});
 
 	test("does nothing when there's no queue", async () => {
 		mockGetQueueChannel.mockResolvedValueOnce(null);
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockWhitelistUser).not.toHaveBeenCalled();
 	});
 
 	test("calls whitelistUser for queue", async () => {
-		await expect(whitelist.execute(context)).resolves.toBe(undefined);
+		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		// whitelist effect
 		expect(mockWhitelistUser).toHaveBeenCalledTimes(1);
@@ -117,7 +119,8 @@ describe("Removing from Queue Blacklist", () => {
 
 		// response
 		expect(mockReply).toHaveBeenCalledTimes(1);
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(goodUserId), {
+		expect(mockReply).toHaveBeenCalledWith({
+			content: expect.stringContaining(goodUserId) as string,
 			shouldMention: false,
 			ephemeral: true
 		});

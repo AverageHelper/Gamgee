@@ -1,8 +1,9 @@
 import type Discord from "discord.js";
+import type { CommandContext } from "../../commands";
 import type { Logger } from "../../logger";
 import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
-import type { CommandContext } from "../../commands";
+import type { URL } from "url";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
@@ -14,7 +15,7 @@ import logUser from "../../helpers/logUser";
 export async function reject_private(context: CommandContext, reason: string): Promise<void> {
 	await Promise.all([
 		context.deleteInvocation(), //
-		context.replyPrivately(`:hammer: ${reason}`)
+		context.replyPrivately({ content: `:hammer: ${reason}`, ephemeral: true })
 	]);
 }
 
@@ -42,7 +43,7 @@ async function acceptSongRequest({
 	queue,
 	context,
 	entry,
-	// shouldSendUrl,
+	shouldSendUrl,
 	logger
 }: SongAcceptance): Promise<void> {
 	await queue.push(entry);
@@ -54,11 +55,18 @@ async function acceptSongRequest({
 	const mention = `<@!${context.user.id}>`;
 	const acceptance = `${mention}, Submission Accepted!`;
 
-	await context.followUp(acceptance, { reply: false });
+	if (shouldSendUrl) {
+		await context.reply({ content: "Accepted!", ephemeral: true });
+		await context.followUp({
+			content: `<@!${entry.senderId}> requested ${entry.url}`,
+			reply: false
+		});
+	}
+	await context.followUp({ content: acceptance, reply: false });
 }
 
 export interface SongRequest {
-	songUrl: string;
+	songUrl: URL;
 	context: CommandContext;
 	queueChannel: Discord.TextChannel;
 	logger: Logger;
@@ -139,7 +147,9 @@ export default async function processSongRequest({
 			cooldown > timeSinceLatest
 		) {
 			const rejectionBuilder = new StringBuilder();
-			rejectionBuilder.push("You must wait ");
+			rejectionBuilder.push("You've already submitted a song within the last ");
+			rejectionBuilder.push(durationString(cooldown));
+			rejectionBuilder.push(". You must wait ");
 			rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
 			rejectionBuilder.push(" before submitting again.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);

@@ -15,8 +15,7 @@ describe("Command handler", () => {
 
 	const mockReply = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
-	const mockChannelStartTyping = jest.fn().mockResolvedValue(undefined);
-	const mockChannelStopTyping = jest.fn().mockResolvedValue(undefined);
+	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
 
 	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;
 	const mockSenderMember: Discord.GuildMember = ({
@@ -33,8 +32,7 @@ describe("Command handler", () => {
 		reply: mockReply,
 		channel: {
 			send: mockChannelSend,
-			startTyping: mockChannelStartTyping,
-			stopTyping: mockChannelStopTyping
+			sendTyping: mockChannelSendTyping
 		},
 		guild: {
 			members: {
@@ -46,6 +44,7 @@ describe("Command handler", () => {
 							} else if (userId === botId) {
 								return resolve(mockClient);
 							}
+							return resolve(mockSenderMember);
 						})
 				)
 			}
@@ -60,45 +59,43 @@ describe("Command handler", () => {
 
 	describe("Options Parser", () => {
 		test("parses empty options from a root command", () => {
-			const options = optionsFromArgs([]); // e.g: /help
-			expect(options).toBeInstanceOf(Discord.Collection);
-			expect(options.size).toBe(0);
+			const options = optionsFromArgs(mockClient, []); // e.g: /help
+			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
+			expect(options.data.length).toBe(0);
 		});
 
 		test("parses one option", () => {
 			const url = "https://youtu.be/9Y8ZGLiqXB8";
-			const options = optionsFromArgs([url]); // e.g: /video <url>
-			expect(options).toBeInstanceOf(Discord.Collection);
-			expect(options.size).toBe(1);
-			expect(options.first()).toStrictEqual({
+			const options = optionsFromArgs(mockClient, [url]); // e.g: /video <url>
+			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
+			expect(options.data.length).toBe(1);
+			expect(options.data[0]).toStrictEqual({
 				name: url,
 				type: "STRING",
 				value: url,
-				options: new Discord.Collection()
+				options: []
 			});
 		});
 
 		test("parses two options as a parameter to a subcomand", () => {
 			const subcommand = "get";
 			const key = "cooldown";
-			const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
-			expect(options).toBeInstanceOf(Discord.Collection);
-			expect(options.size).toBe(1);
-			expect(options.first()).toStrictEqual({
+			const options = optionsFromArgs(mockClient, [subcommand, key]); // e.g: /config get <key>
+			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
+			expect(options.data.length).toBe(1);
+			expect(options.data[0]).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
-				options: expect.any(Discord.Collection) as Discord.Collection<unknown, unknown>
+				options: expect.toBeArrayOfSize(1) as Array<unknown>
 			});
-			expect(options.first()?.options).toBeDefined();
-			expect(options.first()?.options?.size).toBe(1);
-			expect(options.first()?.options?.keyArray()).toStrictEqual([key]);
-			expect(options.first()?.options?.array()).toStrictEqual([
+			expect(options.data[0]?.options).toBeDefined();
+			expect(options.data[0]?.options).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
 					value: key,
-					options: new Discord.Collection()
+					options: []
 				}
 			]);
 		});
@@ -107,30 +104,28 @@ describe("Command handler", () => {
 			const subcommand = "set";
 			const key = "cooldown";
 			const value = "null";
-			const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
-			expect(options).toBeInstanceOf(Discord.Collection);
-			expect(options.size).toBe(1);
-			expect(options.first()).toStrictEqual({
+			const options = optionsFromArgs(mockClient, [subcommand, key, value]); // e.g: /config set <key> <value>
+			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
+			expect(options.data.length).toBe(1);
+			expect(options.data[0]).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
-				options: expect.any(Discord.Collection) as Discord.Collection<unknown, unknown>
+				options: expect.toBeArrayOfSize(2) as Array<unknown>
 			});
-			expect(options.first()?.options).toBeDefined();
-			expect(options.first()?.options?.size).toBe(2);
-			expect(options.first()?.options?.keyArray()).toStrictEqual([key, value]);
-			expect(options.first()?.options?.array()).toStrictEqual([
+			expect(options.data[0]?.options).toBeDefined();
+			expect(options.data[0]?.options).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
 					value: key,
-					options: new Discord.Collection()
+					options: expect.toBeArrayOfSize(0) as Array<unknown>
 				},
 				{
 					name: value,
 					type: "STRING",
 					value: value,
-					options: new Discord.Collection()
+					options: expect.toBeArrayOfSize(0) as Array<unknown>
 				}
 			]);
 		});
@@ -147,7 +142,7 @@ describe("Command handler", () => {
 			${"Some words"}
 			${prefix}
 			${`${prefix}?`}
-			${`${prefix}test`}
+			${`${prefix}tesst`}
 			${`${prefix}blah`}
 			${`\`${prefix}help\``}
 			${`${prefix}helpp`}
@@ -175,6 +170,7 @@ describe("Command handler", () => {
 			${"quo"}
 			${"sr"}
 			${"t"}
+			${"test"}
 			${"version"}
 			${"video"}
 		`("calls the $command command", async ({ command }: { command: string }) => {
@@ -191,11 +187,12 @@ describe("Command handler", () => {
 					["message", mockMessage],
 					[
 						"options",
-						new Discord.Collection(
+						new Discord.CommandInteractionOptionResolver(
+							mockClient,
 							command
 								.split(/ +/u)
 								.slice(1)
-								.map(s => [s, s])
+								.map(s => ({ name: s, type: "STRING" }))
 						)
 					],
 					["storage", null]
@@ -215,6 +212,7 @@ describe("Command handler", () => {
 			${"quo"}
 			${"sr"}
 			${"t"}
+			${"test"}
 			${"version"}
 			${"video"}
 		`(

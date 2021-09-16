@@ -17,7 +17,7 @@ describe("Video details", () => {
 	});
 
 	test.each`
-		desc                                      | params                                                                                                                 | result                                           | duration
+		desc                                      | url                                                                                                                    | result                                           | duration
 		${"is already good"}                      | ${"https://youtube.com/watch?v=9RAQsdTQIcs"}                                                                           | ${"https://www.youtube.com/watch?v=9RAQsdTQIcs"} | ${174}
 		${"is for mobile"}                        | ${"https://m.youtube.com/watch?v=9Y8ZGLiqXB8"}                                                                         | ${testVid1}                                      | ${346}
 		${"is shortened"}                         | ${"https://youtu.be/9Y8ZGLiqXB8"}                                                                                      | ${testVid1}                                      | ${346}
@@ -32,8 +32,8 @@ describe("Video details", () => {
 		${"has extra info w/ unicode title"}      | ${"https://www.youtube.com/watch?v=GgwUenaQqlM&ab_channel=TOHOanimation%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB"} | ${"https://www.youtube.com/watch?v=GgwUenaQqlM"} | ${267}
 	`(
 		"returns info for a YouTube link that $desc, $duration seconds long",
-		async ({ params, result, duration }: { params: string; result: string; duration: number }) => {
-			const details = await getVideoDetails(params, null);
+		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
+			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", result);
 			expect(details?.duration.seconds).toBeDefined();
 			expect(details?.duration.seconds).toBe(duration);
@@ -44,18 +44,27 @@ describe("Video details", () => {
 	const testVid2 = "https://soundcloud.com/hwps/no999";
 
 	test.each`
-		desc                | params                          | result      | duration
+		desc                | url                             | result      | duration
 		${"is valid"}       | ${testVid2}                     | ${testVid2} | ${95}
 		${"has extra info"} | ${`${testVid2} Text and stuff`} | ${testVid2} | ${95}
 	`(
 		"returns info for a SoundCloud link that $desc, $duration seconds long",
-		async ({ params, result, duration }: { params: string; result: string; duration: number }) => {
-			const details = await getVideoDetails(params, null);
+		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
+			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", result);
 			expect(details?.duration.seconds).toBeDefined();
 			expect(details?.duration.seconds).toBe(duration);
 		}
 	);
+
+	test("returns infinite duration for a live stream", async () => {
+		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
+		const url = "https://www.youtube.com/watch?v=7Q35833sP5g";
+		const details = await getVideoDetails(url, null);
+		expect(details).toHaveProperty("url", url);
+		expect(details?.duration.seconds).toBeDefined();
+		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
+	});
 
 	// BandCamp
 

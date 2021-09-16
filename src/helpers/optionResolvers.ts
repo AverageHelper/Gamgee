@@ -18,16 +18,16 @@ export async function resolveUserFromOption(
 export function resolveChannelFromOption(
 	option: Discord.CommandInteractionOption,
 	guild: Discord.Guild
-): Discord.GuildChannel | null {
+): Discord.GuildChannel | Discord.ThreadChannel | null {
 	if (option.type === "CHANNEL") {
 		const channel = (option.channel as Discord.Channel | undefined) ?? null;
 		if (!channel) return null;
 
 		// Guild channels aren't DMs or group DMs. Their type is also known.
 		switch (channel.type) {
-			case "dm":
-			case "group":
-			case "unknown":
+			case "DM":
+			case "GROUP_DM":
+			case "UNKNOWN":
 				return null;
 
 			default:

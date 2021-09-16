@@ -3,7 +3,7 @@ import { requireEnv } from "../../src/helpers/environment";
 import { testerClient } from "./testerClient";
 
 const COMMAND_PREFIX = requireEnv("BOT_PREFIX");
-const TEST_CHANNEL_ID = requireEnv("CHANNEL_ID") as Discord.Snowflake;
+const TEST_CHANNEL_ID: Discord.Snowflake = requireEnv("CHANNEL_ID");
 
 /**
  * Instructs the tester bot to send a message in the provided channel.

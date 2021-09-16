@@ -18,7 +18,7 @@ const logger = useLogger();
 export async function deleteMessage(
 	message: Discord.Message | Discord.PartialMessage
 ): Promise<boolean> {
-	if (message.channel.type === "dm") {
+	if (message.channel.type === "DM") {
 		logger.debug("Can't delete others' messages in a DM channel.");
 		return false;
 	}

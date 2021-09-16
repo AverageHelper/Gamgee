@@ -6,7 +6,7 @@ import logUser from "../../src/helpers/logUser";
 
 const logger = useTestLogger();
 
-const TEST_GUILD_ID = requireEnv("GUILD_ID") as Snowflake;
+const TEST_GUILD_ID: Snowflake = requireEnv("GUILD_ID");
 
 async function setAdminRole(
 	roleKey: "QUEUE_ADMIN_ROLE_ID" | "QUEUE_CREATOR_ROLE_ID",
@@ -19,7 +19,7 @@ async function setAdminRole(
 
 	const guild = await client.guilds.fetch(TEST_GUILD_ID);
 
-	const roleId = requireEnv(roleKey) as Snowflake;
+	const roleId: Snowflake = requireEnv(roleKey);
 	const queueAdminRole = await guild.roles.fetch(roleId);
 	if (!queueAdminRole) throw new Error(`No role found with ID ${roleId}`);
 

@@ -14,7 +14,7 @@ export async function userHasRoleCategoryInGuild(
 	category: RoleCategory,
 	guild: Discord.Guild
 ): Promise<boolean> {
-	const isOwner = user.id === guild.ownerID;
+	const isOwner = user.id === guild.ownerId;
 
 	let knownAdminRoleIDs: ReadonlyArray<Snowflake>;
 

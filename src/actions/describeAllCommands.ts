@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import type { Command, GuildedCommandContext } from "../commands";
+import type { Command, CommandContext, Subcommand } from "../commands";
 import { getConfigCommandPrefix } from "./config/getConfigValue";
 import StringBuilder from "../helpers/StringBuilder";
 import { assertUserCanRunCommand } from "./invokeCommand";
@@ -21,7 +21,7 @@ const OPT = "?";
  * @returns a string describing all commands.
  */
 export default async function describeAllCommands(
-	context: GuildedCommandContext,
+	context: CommandContext,
 	commands: Discord.Collection<string, Command>
 ): Promise<string> {
 	const COMMAND_PREFIX =
@@ -29,7 +29,8 @@ export default async function describeAllCommands(
 
 	// Describe all commands
 	const bodyBuilder = new StringBuilder();
-	for (const command of commands.array()) {
+	const allCommands = [...commands.values()];
+	for (const command of allCommands) {
 		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
 		if (!canRun) continue;
 
@@ -39,7 +40,7 @@ export default async function describeAllCommands(
 		cmdDesc.push(CODE);
 		cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
 
-		describeParameters(command, cmdDesc);
+		describeParameters(command.options ?? [], cmdDesc);
 
 		cmdDesc.push(CODE);
 
@@ -58,7 +59,7 @@ export default async function describeAllCommands(
 				subDesc.push(CODE);
 				subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
 
-				describeParameters(sub, subDesc);
+				describeParameters(sub.options ?? [], subDesc);
 
 				subDesc.push(CODE);
 
@@ -75,12 +76,19 @@ export default async function describeAllCommands(
 }
 
 function describeParameters(
-	command: { options?: Array<Discord.ApplicationCommandOptionData> },
+	options: Array<
+		| Discord.ApplicationCommandOption
+		| Discord.ApplicationCommandChoicesData
+		| Discord.ApplicationCommandNonOptionsData
+		| Subcommand
+	>,
 	cmdDesc: StringBuilder
 ): void {
-	command.options
+	options
 		?.filter(optn => optn.type !== "SUB_COMMAND")
-		?.forEach(option => {
+		?.forEach(o => {
+			const option = o as Discord.ApplicationCommandChoicesData;
+
 			// Describe the parameter
 			const subDesc = new StringBuilder();
 			subDesc.push(" ");

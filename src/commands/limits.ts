@@ -1,21 +1,16 @@
 import type { Command } from "./Command";
+import { allLimits } from "./queue/limit";
+import { MessageEmbed } from "discord.js";
+import { MILLISECONDS_IN_SECOND } from "../constants/time";
 import { useQueue } from "../actions/queue/useQueue";
-import getQueueChannel from "../actions/queue/getQueueChannel";
-import StringBuilder from "../helpers/StringBuilder";
 import durationString from "../helpers/durationString";
+import getQueueChannel from "../actions/queue/getQueueChannel";
 
 const limits: Command = {
 	name: "limits",
 	description: "Display the song queue's submission limits.",
 	requiresGuild: true,
-	async execute({ guild, reply }) {
-		const {
-			allLimits,
-			ARG_ENTRY_DURATION,
-			ARG_SUB_COOLDOWN,
-			ARG_SUB_MAX_SUBMISSIONS
-		} = await import("./queue/limit");
-
+	async execute({ type, user, guild, reply, followUp }) {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			return reply("No queue is set up.");
@@ -25,39 +20,96 @@ const limits: Command = {
 		const config = await queue.getConfig();
 
 		// Read out the existing limits
-		const responseBuilder = new StringBuilder("Queue Limits:");
+		const embed = new MessageEmbed().setTitle("Queue Limits");
 
 		allLimits.forEach(key => {
-			responseBuilder.pushNewLine();
-			responseBuilder.pushCode(key);
-			responseBuilder.push(" - ");
-
-			switch (key) {
-				case ARG_SUB_COOLDOWN:
+			let value: string;
+			switch (key.value) {
+				case "cooldown":
 					if (config.cooldownSeconds !== null && config.cooldownSeconds > 0) {
-						responseBuilder.pushBold(durationString(config.cooldownSeconds));
+						value = durationString(config.cooldownSeconds);
 					} else {
-						responseBuilder.pushBold("none");
+						value = "none";
 					}
 					break;
-				case ARG_ENTRY_DURATION:
+				case "entry-duration":
 					if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-						responseBuilder.pushBold(durationString(config.entryDurationSeconds));
+						value = durationString(config.entryDurationSeconds);
 					} else {
-						responseBuilder.pushBold("infinite");
+						value = "infinite";
 					}
 					break;
-				case ARG_SUB_MAX_SUBMISSIONS:
+				case "count":
 					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-						responseBuilder.pushBold(config.submissionMaxQuantity.toString());
+						value = config.submissionMaxQuantity.toString();
 					} else {
-						responseBuilder.pushBold("infinite");
+						value = "infinite";
 					}
 					break;
 			}
+
+			embed.addField(`${key.name}:\t${value}`, key.description);
 		});
 
-		return reply(responseBuilder.result());
+		await reply({ embeds: [embed], ephemeral: true });
+
+		if (type !== "interaction") return;
+
+		// If the user is blacklisted, they have no limit usage :P
+		if (config.blacklistedUsers?.some(u => u.id === user.id)) return;
+
+		// If the queue is open, display the user's limit usage
+		const usageEmbed = new MessageEmbed().setTitle("Personal Statistics");
+		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
+			queue.getLatestEntryFrom(user.id),
+			queue.countFrom(user.id /* since: Date */),
+			queue.getAveragePlaytimeFrom(user.id)
+		]);
+
+		allLimits.forEach(key => {
+			let name = key.name;
+			let value: string | undefined;
+
+			switch (key.value) {
+				case "cooldown": {
+					const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
+					const timeSinceLatest =
+						latestTimestamp !== null
+							? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND
+							: null;
+					const timeToWait =
+						config.cooldownSeconds !== null &&
+						config.cooldownSeconds > 0 &&
+						timeSinceLatest !== null
+							? Math.max(0, config.cooldownSeconds - timeSinceLatest)
+							: 0;
+					if (timeToWait > 0) {
+						name = "Remaining Wait Time";
+						value = `${durationString(timeToWait)}`;
+					}
+					break;
+				}
+				case "count":
+					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
+						name = "Total Submissions";
+						value = `${userSubmissionCount} of ${config.submissionMaxQuantity}`;
+					}
+					break;
+				case "entry-duration":
+					// Put in the average
+					if (avgDuration > 0) {
+						name = "Average Song Length";
+						value = durationString(avgDuration);
+					}
+					break;
+			}
+
+			if (value !== undefined) {
+				usageEmbed.addField(name, value);
+			}
+		});
+
+		await followUp({ embeds: [usageEmbed], ephemeral: true });
 	}
 };
 

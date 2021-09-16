@@ -27,7 +27,7 @@ export function guildOwnerPermission(guild: Discord.Guild, permission: boolean):
 	return {
 		permission,
 		type: "USER",
-		id: guild.ownerID
+		id: guild.ownerId
 	};
 }
 

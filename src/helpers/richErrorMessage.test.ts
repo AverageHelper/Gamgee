@@ -1,5 +1,4 @@
 import richErrorMessage from "./richErrorMessage";
-import AggregateError = require("es-aggregate-error");
 
 describe("Rich error messages", () => {
 	test("contains relevant information about the error", () => {
@@ -15,7 +14,7 @@ describe("Rich error messages", () => {
 		const error1 = new TypeError("A really specific problem occurred.");
 		const error2 = new RangeError("Another really specific problem occurred.");
 		const error3 = new Error("A third really specific problem occurred.");
-		const error = new AggregateError([error1, error2, error3]);
+		const error = new AggregateError([error1, error2, error3], "Things went poorly");
 		const richMessage = richErrorMessage("Couldn't do a thing.", error);
 
 		expect(richMessage).toContain(error.name);

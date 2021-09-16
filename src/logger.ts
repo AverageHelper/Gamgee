@@ -7,6 +7,7 @@ export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error"
 
 const loggers = new Discord.Collection<LogLevel, Logger>();
 
+// TODO: Get logger display level from environment vars. Default to "verbose"
 const nodeEnv = getEnv("NODE_ENV");
 const defaultLevel: LogLevel =
 	nodeEnv === "production" ? "info" : nodeEnv === "test" ? "error" : "debug";

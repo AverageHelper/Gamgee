@@ -34,16 +34,14 @@ const blacklist: Subcommand = {
 			deleteInvocation
 		} = context;
 
-		await deleteInvocation();
-
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
-			return reply(":x: There's no queue set up yet.", { ephemeral: true });
+			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
 		const queue = useQueueStorage(queueChannel);
 
-		const firstOption = options.first();
+		const firstOption = options.data[0];
 		if (!firstOption) {
 			if (context.type === "message") {
 				logger.debug("Private-ness for message commands is restricted to DMs.");
@@ -91,23 +89,29 @@ const blacklist: Subcommand = {
 			return replyPrivately(replyBuilder.result());
 		}
 
+		await deleteInvocation();
+
 		const subject = await resolveUserFromOption(firstOption, guild);
 		if (!subject) {
-			return reply(":x: I don't know who that is.", { ephemeral: true });
+			return reply({ content: ":x: I don't know who that is.", ephemeral: true });
 		}
 
 		if (subject.id === user.id) {
-			return reply(":x: You can't blacklist yourself, silly!", { ephemeral: true });
+			return reply({ content: ":x: You can't blacklist yourself, silly!", ephemeral: true });
 		}
 
-		if (subject.id === guild.ownerID) {
-			return reply(":x: I can't blacklist the owner. That would be rude!", { ephemeral: true });
+		if (subject.id === guild.ownerId) {
+			return reply({
+				content: ":x: I can't blacklist the owner. That would be rude!",
+				ephemeral: true
+			});
 		}
 
 		await queue.blacklistUser(subject.id);
 		logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
-		return reply(`:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`, {
+		return reply({
+			content: `:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`,
 			shouldMention: false,
 			ephemeral: true
 		});

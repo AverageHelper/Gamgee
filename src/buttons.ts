@@ -4,7 +4,7 @@ import type { URL } from "url";
 export interface MessageButton {
 	id: string;
 	label: string;
-	style: Discord.MessageButtonStyleResolvable;
+	style: "PRIMARY" | "SECONDARY" | "SUCCESS" | "DANGER";
 	emoji?: Discord.EmojiIdentifierResolvable;
 	url?: URL;
 }
@@ -30,13 +30,13 @@ export const RESTORE_BUTTON: MessageButton = {
 export function actionRow(buttons: NonEmptyArray<MessageButton>): Discord.MessageActionRowOptions {
 	return {
 		type: "ACTION_ROW",
-		components: buttons.map<Discord.MessageButtonOptions>(btn => ({
+		components: buttons.map<Discord.InteractionButtonOptions>(btn => ({
 			type: "BUTTON",
 			style: btn.style,
 			label: btn.label,
 			emoji: btn.emoji,
-			url: btn.url?.toString(),
-			customID: btn.id
+			url: btn.url?.toString() ?? "",
+			customId: btn.id
 		}))
 	};
 }
