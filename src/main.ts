@@ -110,6 +110,10 @@ try {
 		});
 	}
 
+	client.on("error", error => {
+		logger.error(richErrorMessage("Something bad has happened and we got this error:", error));
+	});
+
 	// Log in
 	void client.login(requireEnv("DISCORD_TOKEN"));
 
