@@ -74,10 +74,6 @@ try {
 		logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 		// Handle client events
-		client.on("error", error => {
-			logger.error(richErrorMessage("Received client error.", error));
-		});
-
 		client.on("messageCreate", async msg => {
 			const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
 			if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user?.id) return;
@@ -91,7 +87,7 @@ try {
 			}
 		});
 
-		client.on("interaction", async interaction => {
+		client.on("interactionCreate", async interaction => {
 			const storage = await useStorage(interaction.guild, logger);
 			if (interaction.isCommand()) {
 				await handleInteraction(client, interaction, storage, logger);
@@ -111,7 +107,7 @@ try {
 	}
 
 	client.on("error", error => {
-		logger.error(richErrorMessage("Something bad has happened and we got this error:", error));
+		logger.error(richErrorMessage("Received client error.", error));
 	});
 
 	// Log in

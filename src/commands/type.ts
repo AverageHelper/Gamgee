@@ -14,7 +14,7 @@ const type: Command = {
 		if (type === "interaction") {
 			// We're going to stop typing in a bit. We `await` here, not `return`.
 			await reply({
-				content: "So I started typing here, but I don't think I'll finish my message.",
+				content: "So, I started typing here... but I don't think I'll finish my message :P",
 				ephemeral: true
 			});
 		}

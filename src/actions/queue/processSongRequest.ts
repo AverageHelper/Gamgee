@@ -5,6 +5,7 @@ import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { URL } from "url";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
+import { SHRUGGIE } from "../../constants/textResponses";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
@@ -162,7 +163,7 @@ export default async function processSongRequest({
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
 			return reject_public(
 				context,
-				"I can't find that song. ¯\\_(ツ)_/¯\nTry a YouTube, SoundCloud, or Bandcamp link."
+				`I can't find that song. ${SHRUGGIE}\nTry a YouTube, SoundCloud, or Bandcamp link.`
 			);
 		}
 

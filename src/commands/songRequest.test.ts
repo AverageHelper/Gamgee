@@ -12,11 +12,12 @@ const mockGuildStorage = guildStorage.useGuildStorage as jest.Mock;
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
+import { randomInt } from "../helpers/randomInt";
 import getVideoDetails from "../actions/getVideoDetails";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
 	// Enough uncertainty that *something* should go out of order if it's going to
-	const ms = Math.floor(Math.random() * 50);
+	const ms = randomInt(50);
 	await new Promise(resolve => setTimeout(resolve, ms));
 	return {
 		url,
