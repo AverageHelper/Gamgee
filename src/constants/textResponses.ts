@@ -25,11 +25,11 @@ export const SHRUGGIE = "¯\\_(ツ)_/¯";
  * followed by a greeting word.
  */
 export const greetings: ResponseRepository = [
+	"Good afternoon.",
 	"Hello there :wave:",
 	"Hi",
-	"Good afternoon.",
-	":grin:",
 	":blush:",
+	":grin:",
 	"*Yawns* Good morn— what time is it??"
 ];
 
@@ -37,10 +37,10 @@ export const greetings: ResponseRepository = [
  * These get mixed into the pool of `phrases` below.
  */
 export const philosophy: ResponseRepository = [
-	"What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?",
-	"The way the light shimmers off everything, like, like it all suddenly woke up the moment you saw it. And you realize maybe the water and the mountains and the forest and the... yes, the rainbow and the stars and the sky are all looking back at you thinking the same thing? That we are a part of the everything. That maybe there's just one thing and we are all it.",
+	"Be wise. What can I say more?",
 	"Has anyone really been far even as decided to use even go want to do look more like?",
-	"Be wise. What can I say more?"
+	"The way the light shimmers off everything, like, like it all suddenly woke up the moment you saw it. And you realize maybe the water and the mountains and the forest and the... yes, the rainbow and the stars and the sky are all looking back at you thinking the same thing? That we are a part of the everything. That maybe there's just one thing and we are all it.",
+	"What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?"
 ];
 
 /**
