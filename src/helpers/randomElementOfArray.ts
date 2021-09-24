@@ -1,3 +1,5 @@
+import { randomInt } from "./randomInt";
+
 /**
  * Returns a random element from an array.
  *
@@ -15,5 +17,5 @@ export default function randomElementOfArray<T>(array: NonEmptyArray<T>): T;
 export default function randomElementOfArray<T>(array: Array<T>): T | undefined;
 
 export default function randomElementOfArray<T>(array: Array<T>): T | undefined {
-	return array[Math.floor(Math.random() * array.length)];
+	return array[randomInt(array.length)];
 }

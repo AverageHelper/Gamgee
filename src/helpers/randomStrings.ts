@@ -4,23 +4,26 @@ import {
 	hugs,
 	philosophy,
 	phrases,
-	questions,
-	songAccepted
+	questions
 } from "../constants/textResponses";
 import Discord from "discord.js";
 import randomElementOfArray from "./randomElementOfArray";
 
 export interface ResponseContext {
+	/** The bot's display name. */
 	me: string;
+
+	/** The user who initiated this conversation, e.g. by pinging the bot. */
 	otherUser: Discord.User;
+
+	/** The guild member, if any, representing the user who initiated this conversation. */
 	otherMember: Discord.GuildMember | null;
 }
 
-export type Response =
-	| string
-	| NonEmptyArray<string>
-	| (() => string)
-	| ((context: ResponseContext) => string);
+export type SingleResponse = string | ((context: ResponseContext) => string);
+export type MultipleResponse = [SingleResponse, SingleResponse, ...Array<SingleResponse>];
+
+export type Response = SingleResponse | MultipleResponse;
 
 export type ResponseRepository = [Response, ...NonEmptyArray<Response>];
 
@@ -36,7 +39,11 @@ export class WrappedResponse {
 		if (typeof this.#response === "string") {
 			return this.#response;
 		} else if (Array.isArray(this.#response)) {
-			return this.#response[0];
+			const response = this.#response[0];
+			if (typeof response === "string") {
+				return response;
+			}
+			return response(context);
 		}
 		return this.#response(context);
 	}
@@ -58,7 +65,11 @@ export class WrappedResponse {
 		} else if (Array.isArray(this.#response)) {
 			// It's an array
 			for (const response of this.#response) {
-				await handler(response);
+				if (typeof response === "string") {
+					await handler(response);
+				} else {
+					await handler(response(context));
+				}
 				if (this.#response.length > 1) {
 					// If more than one, wait a second between each
 					await new Promise(resolve => setTimeout(resolve, pauseTime));
@@ -94,12 +105,6 @@ export function randomPhilosophy(): WrappedResponse {
 
 export function randomQuestion(): WrappedResponse {
 	return new WrappedResponse(randomResponseFromArray("questions", questions));
-}
-
-/* Song Acceptance */
-
-export function randomAcceptance(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("songAccepted", songAccepted));
 }
 
 /* Celebration */
