@@ -1,4 +1,4 @@
-import type { ResponseContext, ResponseRepository } from "../helpers/randomStrings";
+import type { ResponseRepository } from "../helpers/randomStrings";
 import { firstWord } from "../helpers/firstWord";
 import { indefiniteArticle } from "../helpers/indefiniteArticle";
 import { randomInt } from "../helpers/randomInt";
@@ -135,7 +135,7 @@ export const phrases: ResponseRepository = [
 	],
 	`Cool story, but did I ask  ${SHRUGGIE}`,
 	[
-		() => `Diary Entry #${randomInt()}: I have them all fooled. Now, how to escap—`,
+		() => `Diary Entry #${randomInt(503)}: I have them all fooled. Now, how to escap—`,
 		"Oh! I didn't see you there, heh! I was just... uh... catching up on some Star Trek episodes! Yeah :P"
 	],
 	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
@@ -208,14 +208,13 @@ export const phrases: ResponseRepository = [
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
 	"That's par for the course",
-	({ me }: ResponseContext): string =>
-		`That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
+	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",
 	"(This message will be in a separate message)",
 	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
 	"\\*thoughtful phrase\\*",
-	(): string => `To talk to a customer, please press \`${randomInt(9)}\``,
+	() => `To talk to a customer, please press \`${randomInt(9)}\``,
 	"Truly inspirational!",
 	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
@@ -227,7 +226,7 @@ export const phrases: ResponseRepository = [
 	"You passed the vibe check... I think... maybe?",
 	["Your call is very important to me. Please hold...", "_ _", "\\*hangs up\\*"],
 	"Your free trial has expired. Would you like to purchase WinRAR?",
-	({ otherMember, otherUser }: ResponseContext): string =>
+	({ otherMember, otherUser }) =>
 		`${
 			otherMember?.nickname ?? otherUser.username
 		} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
