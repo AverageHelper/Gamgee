@@ -266,7 +266,11 @@ We welcome contributions of all sorts!
 
 ## Authors
 
-- **James Robinson** - _Initial work_ - [AverageHelper](https://github.com/AverageHelper)
+- **James Robinson** ([AverageHelper](https://github.com/AverageHelper)) - _Initial work_
+
+### Thanks to contributions from
+
+- **[ajnrules](https://github.com/ajnrules)** - _Some fun easter egg responses_
 
 ## License
 
