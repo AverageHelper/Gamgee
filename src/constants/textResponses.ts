@@ -57,6 +57,7 @@ export const copypasta = [
 export const phrases: ResponseRepository = [
 	// asdfmovie
 	"Hey, get out of my sandwich",
+	"I like trains",
 
 	// LOTR
 	"A wizard is never late!",
@@ -86,6 +87,7 @@ export const phrases: ResponseRepository = [
 	"... I've a nagging fear someone else is pulling at the strings!",
 	"It's about time...",
 	"Oatmeal!? Are you crazy?",
+	"Piece by piece, snip by snip. Croup, dock, haunch, shoulders, hip. Thread by thread, primmed and pressed. Yard by yard, never stressed. And that's the art of the dress",
 	["Pony pony pony pony", "pony"],
 	"That message needs to be about... 20% cooler.",
 	"Trying to rebuild a house of glass...",
@@ -100,6 +102,7 @@ export const phrases: ResponseRepository = [
 	"I yam disgustipated",
 	"I'm strong to the finich, 'cause I eats me spinach!",
 	"Shiver me timbers!",
+	"Who's the most remarkable extraordinary fellow?",
 
 	// Star Trek: TNG
 	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
@@ -195,6 +198,7 @@ export const phrases: ResponseRepository = [
 	"Quite remarkable",
 	['"Road work ahead?"', "Uh, yeah I sure hope it does..."],
 	"Second star to the right, and straight on until closing time",
+	"So anyways, I started blasting",
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
 	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||",
 	"Something smells fishy...",
