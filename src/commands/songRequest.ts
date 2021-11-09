@@ -48,7 +48,6 @@ const sr: Command = {
 				deleteInvocation(),
 				reject_private({
 					context,
-					preemptiveEmbed: null,
 					reason: "Requesting songs in the queue channel has not been implemented yet."
 				})
 			]);

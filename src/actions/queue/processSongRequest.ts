@@ -16,11 +16,11 @@ import logUser from "../../helpers/logUser";
 
 export async function reject_private(params: {
 	context: CommandContext;
-	preemptiveEmbed: Discord.Message | null;
+	preemptiveEmbed?: Discord.Message | boolean;
 	reason: string;
 }): Promise<void> {
-	const { context, preemptiveEmbed, reason } = params;
-	if (preemptiveEmbed) {
+	const { context, preemptiveEmbed = false, reason } = params;
+	if (preemptiveEmbed !== false && preemptiveEmbed !== true) {
 		await deleteMessage(preemptiveEmbed);
 	}
 	await Promise.all([
@@ -86,7 +86,7 @@ export default async function processSongRequest({
 }: SongRequest): Promise<void> {
 	const senderId = context.user.id;
 	const sentAt = new Date(context.createdTimestamp);
-	let preemptiveEmbed: Discord.Message | null = null;
+	let preemptiveEmbed: Discord.Message | boolean = false;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 	const queue = useQueue(queueChannel);

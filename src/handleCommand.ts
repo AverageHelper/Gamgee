@@ -6,7 +6,7 @@ import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
 import { invokeCommand } from "./actions/invokeCommand";
-import { allCommands as commands } from "./commands";
+import { resolveAlias, allCommands as commands } from "./commands";
 import { deleteMessage, reply, replyPrivately, sendMessageInChannel } from "./actions/messages";
 import Discord from "discord.js";
 import getUserIdFromMention from "./helpers/getUserIdFromMention";
@@ -169,7 +169,8 @@ export async function handleCommand(
 	const commandName = q[0]?.toLowerCase() ?? "";
 	if (!commandName) return;
 
-	const command: Command | undefined = commands.get(commandName);
+	const dealiasedCommandName = resolveAlias(commandName);
+	const command: Command | undefined = commands.get(dealiasedCommandName);
 	if (command) {
 		const options = optionsFromArgs(client, q.slice(1));
 
@@ -217,7 +218,7 @@ export async function handleCommand(
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
 					return await replyPrivately(message, options, true);
 				}
-				return await sendMessageInChannel(message.channel, options);
+				return (await sendMessageInChannel(message.channel, options)) ?? false;
 			},
 			deleteInvocation: async () => {
 				await deleteMessage(message);

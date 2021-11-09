@@ -31,6 +31,7 @@ function randomCurrent(): string {
 
 const nowPlaying: Command = {
 	name: "now-playing",
+	aliases: ["nowplaying"],
 	description: "Reveal the current song in the queue (or my best guess).",
 	requiresGuild: true,
 	async execute({ guild, logger, replyPrivately, deleteInvocation }) {
