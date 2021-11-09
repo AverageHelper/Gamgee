@@ -1,8 +1,8 @@
-import type { Subcommand } from "../Command";
+import type { GuildedSubcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 
-const open: Subcommand = {
+const open: GuildedSubcommand = {
 	name: "open",
 	description: "Start accepting song requests to the queue.",
 	type: "SUB_COMMAND",
@@ -34,7 +34,7 @@ const open: Subcommand = {
 			if (type === "interaction") {
 				await reply({ content: "Got it!", ephemeral: true });
 			}
-			return followUp({ content: "The queue is now open! :smiley:", reply: false });
+			await followUp({ content: "The queue is now open! :smiley:", reply: false });
 		}
 	}
 };

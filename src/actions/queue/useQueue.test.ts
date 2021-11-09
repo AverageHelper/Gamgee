@@ -14,7 +14,7 @@ const mockMessageRemoveReaction = jest.fn();
 import type Discord from "discord.js";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
 import { flushPromises } from "../../../tests/testUtils/flushPromises";
-import { forgetJobQueue } from "./jobQueue";
+import { forgetJobQueue } from "@averagehelper/job-queue";
 import { QueueManager } from "./useQueue";
 
 describe("Request Queue", () => {

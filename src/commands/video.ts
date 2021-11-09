@@ -33,7 +33,7 @@ const video: Command = {
 
 			const response = new StringBuilder();
 
-			if (!video.fromUrl || context.type === "interaction") {
+			if (context.type === "interaction") {
 				// We haven't had this link embedded yet
 				response.push(video.url);
 				response.pushNewLine();

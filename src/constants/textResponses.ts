@@ -221,6 +221,7 @@ export const phrases: ResponseRepository = [
 	"What are the odds that I would find myself where I began",
 	'What\'s my favorite colour? I think they call it "OG Blurple"',
 	"Where it is, or anything else relevant",
+	"Why do they call it oven when you of in the cold food of out hot eat the food?",
 	"Wow, that's a lot of words. Too bad I'm not reading them",
 	["yggrfygiryigrehirehjirgejhigeuijgejirhg", "Whoops! Sorry, I dropped my keyboard :sweat_smile:"],
 	"You passed the vibe check... I think... maybe?",

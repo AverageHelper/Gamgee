@@ -15,6 +15,7 @@ const howto: GuildedCommand = {
 		const helpBuilder = new StringBuilder();
 
 		helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`);
+		// TODO: Clarify that YouTube, Bandcamp, or SoundCloud track links will work
 		helpBuilder.pushNewLine();
 		helpBuilder.push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``);
 		helpBuilder.pushNewLine();
@@ -24,7 +25,7 @@ const howto: GuildedCommand = {
 		helpBuilder.pushNewLine();
 		helpBuilder.pushNewLine();
 
-		helpBuilder.push("To see the current song, type ");
+		helpBuilder.push("To get a link to the current song, type ");
 		helpBuilder.pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`);
 		if (type === "message") {
 			helpBuilder.push(" and check your DMs");

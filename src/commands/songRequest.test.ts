@@ -24,8 +24,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 		title: "video-title",
 		duration: {
 			seconds: 500
-		},
-		fromUrl: true
+		}
 	};
 });
 

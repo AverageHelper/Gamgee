@@ -83,10 +83,8 @@ const limits: Command = {
 						timeSinceLatest !== null
 							? Math.max(0, config.cooldownSeconds - timeSinceLatest)
 							: 0;
-					if (timeToWait > 0) {
-						name = "Remaining Wait Time";
-						value = `${durationString(timeToWait)}`;
-					}
+					name = "Remaining Wait Time";
+					value = `${durationString(timeToWait)}`;
 					break;
 				}
 				case "count":
