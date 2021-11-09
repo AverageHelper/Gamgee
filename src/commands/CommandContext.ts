@@ -58,12 +58,17 @@ interface BaseCommandContext {
 			  })
 	) => Promise<void>;
 
-	/** Sends a message in the same channel to the user who invoked the command. Does not constitute a "reply." */
+	/**
+	 * Sends a message in the same channel to the user who invoked the command.
+	 * Does not constitute a "reply" in Discord's canonical sense.
+	 *
+	 * @returns A reference to the message that the bot sent, or `null` if we failed to send a message.
+	 */
 	followUp: (
 		options:
 			| string
 			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean })
-	) => Promise<void>;
+	) => Promise<Discord.Message | null>;
 
 	/**
 	 * Deletes the command invocation if it was sent as a text message.
@@ -104,5 +109,5 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
 export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
-	return Boolean(tbd.guild);
+	return tbd.guild !== null;
 }

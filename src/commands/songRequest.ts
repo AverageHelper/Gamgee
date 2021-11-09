@@ -3,7 +3,7 @@ import type { SongRequest } from "../actions/queue/processSongRequest";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
 import { URL } from "url";
 import { useGuildStorage } from "../useGuildStorage";
-import { useJobQueue } from "../actions/queue/jobQueue";
+import { useJobQueue } from "@averagehelper/job-queue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import processRequest, { reject_private, reject_public } from "../actions/queue/processSongRequest";
 
@@ -46,10 +46,11 @@ const sr: Command = {
 		if (channel?.id === queueChannel.id) {
 			await Promise.all([
 				deleteInvocation(),
-				reject_private(
+				reject_private({
 					context,
-					"Requesting songs in the queue channel has not been implemented yet."
-				)
+					preemptiveEmbed: null,
+					reason: "Requesting songs in the queue channel has not been implemented yet."
+				})
 			]);
 			return;
 		}

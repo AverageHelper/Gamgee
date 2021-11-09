@@ -13,12 +13,6 @@ export interface VideoDetails {
 	duration: {
 		seconds: number;
 	};
-
-	/**
-	 * `true` if these details were obtained directly from a video URL.
-	 * `false` if these details are the result of a search operation
-	 * from a set of terms. */
-	fromUrl: boolean;
 }
 
 export class VideoError extends Error implements NodeJS.ErrnoException {
@@ -102,7 +96,6 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 	}
 
 	return {
-		fromUrl: true,
 		url: info.videoDetails.video_url,
 		title: info.videoDetails.title,
 		duration: { seconds }
@@ -128,7 +121,6 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 		throw new VideoError(error);
 	}
 	return {
-		fromUrl: true,
 		url: song.url,
 		title: song.title,
 		duration: { seconds: Math.floor(song.duration / 1000) }
@@ -164,7 +156,6 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	if (seconds === null || title === null) throw new VideoError("Duration and title not found");
 
 	return {
-		fromUrl: true,
 		url: metadata.url,
 		title: metadata.title,
 		duration: { seconds: Math.floor(seconds) }

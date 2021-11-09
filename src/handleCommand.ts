@@ -201,8 +201,8 @@ export async function handleCommand(
 				}
 			},
 			replyPrivately: async options => {
-				const didReply = await replyPrivately(message, options, true);
-				if (!didReply) {
+				const reply = await replyPrivately(message, options, true);
+				if (reply === null) {
 					logger.info(`User ${logUser(message.author)} has DMs turned off.`);
 				}
 			},
@@ -215,10 +215,9 @@ export async function handleCommand(
 			},
 			followUp: async options => {
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
-					await replyPrivately(message, options, true);
-				} else {
-					await sendMessageInChannel(message.channel, options);
+					return await replyPrivately(message, options, true);
 				}
+				return await sendMessageInChannel(message.channel, options);
 			},
 			deleteInvocation: async () => {
 				await deleteMessage(message);

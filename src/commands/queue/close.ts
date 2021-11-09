@@ -1,8 +1,8 @@
-import type { Subcommand } from "../Command";
+import type { GuildedSubcommand } from "../Command";
 import { useGuildStorage } from "../../useGuildStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 
-const close: Subcommand = {
+const close: GuildedSubcommand = {
 	name: "close",
 	description: "Stop accepting song requests to the queue.",
 	type: "SUB_COMMAND",
@@ -38,7 +38,7 @@ const close: Subcommand = {
 			promises.push(reply({ content: "Got it!", ephemeral: true }));
 		}
 		await Promise.all(promises);
-		return followUp({ content: "The queue is now closed. :wave:", reply: false });
+		await followUp({ content: "The queue is now closed. :wave:", reply: false });
 	}
 };
 

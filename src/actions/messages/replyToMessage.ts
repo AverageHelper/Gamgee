@@ -21,16 +21,21 @@ const logger = useLogger();
  * @returns a `Promise` that resolves with `true` if the send succeeds, or
  * `false` if there was an error.
  */
-export async function sendPrivately(user: Discord.User, content: string): Promise<void> {
+export async function sendPrivately(
+	user: Discord.User,
+	content: string
+): Promise<Discord.Message | null> {
 	if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
 		// this is our known tester
 		logger.error(
 			`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
 		);
+		return null;
 	} else if (!user.bot) {
-		await sendDM(user, content);
 		logger.verbose(`Sent DM to User ${logUser(user)}: ${content}`);
+		return await sendDM(user, content);
 	}
+	return null;
 }
 
 /**
@@ -45,15 +50,14 @@ export async function sendPrivately(user: Discord.User, content: string): Promis
 async function sendDM(
 	user: Discord.User,
 	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
-): Promise<boolean> {
+): Promise<Discord.Message | null> {
 	try {
-		await user.send(content);
-		return true;
+		return await user.send(content);
 	} catch (error: unknown) {
 		logger.error(
 			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
 		);
-		return false;
+		return null;
 	}
 }
 
@@ -70,7 +74,7 @@ function replyMessage(channel: { id: string } | null, content: string | null | u
 async function sendDMReply(
 	source: Discord.Message,
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
-): Promise<boolean> {
+): Promise<Discord.Message | null> {
 	const user: Discord.User = source.author;
 	try {
 		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
@@ -78,16 +82,14 @@ async function sendDMReply(
 			logger.silly(`Good morning, Miss ${user.username}.`);
 
 			if (typeof options === "string") {
-				await reply(source, {
+				return await reply(source, {
 					content: `(DM to <@!${user.id}>)\n${options}`
 				});
-			} else {
-				await reply(source, {
-					...options,
-					content: `(DM to <@!${user.id}>)\n${options.content ?? ""}`
-				});
 			}
-			return true;
+			return await reply(source, {
+				...options,
+				content: `(DM to <@!${user.id}>)\n${options.content ?? ""}`
+			});
 		} else if (!user.bot) {
 			logger.silly("This is a human. Or their dog... I love dogs!");
 			const content = typeof options !== "string" ? options.content ?? null : options;
@@ -100,32 +102,35 @@ async function sendDMReply(
 		logger.error(
 			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
 		);
-		return false;
+		return null;
 	} catch (error: unknown) {
 		logger.error(
 			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
 		);
-		return false;
+		return null;
 	}
 }
 
 async function sendEphemeralReply(
 	source: Discord.CommandInteraction,
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
-): Promise<boolean> {
+): Promise<Discord.Message | null> {
 	try {
+		let message: Discord.Message;
 		if (typeof options === "string") {
 			await source.reply({ content: options, ephemeral: true });
+			message = (await source.fetchReply()) as Discord.Message;
 		} else {
 			await source.reply({ ...options, ephemeral: true });
+			message = (await source.fetchReply()) as Discord.Message;
 		}
 		logger.verbose(
 			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`
 		);
-		return true;
+		return message;
 	} catch (error: unknown) {
 		logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
-		return false;
+		return null;
 	}
 }
 
@@ -147,19 +152,19 @@ export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	preferDMs: boolean
-): Promise<boolean> {
-	let didDM = true;
+): Promise<Discord.Message | null> {
+	let message: Discord.Message | null;
 
 	// If this is a message (no ephemeral reply option)
 	if ("author" in source) {
-		didDM = await sendDMReply(source, options);
+		message = await sendDMReply(source, options);
 
 		// If this is an interaction, but we really wanna use DMs
 	} else if (preferDMs) {
 		if (typeof options === "string") {
-			didDM = await sendDM(source.user, replyMessage(source.channel, options));
+			message = await sendDM(source.user, replyMessage(source.channel, options));
 		} else {
-			didDM = await sendDM(source.user, {
+			message = await sendDM(source.user, {
 				ephemeral: true,
 				...options,
 				content: replyMessage(source.channel, options.content)
@@ -168,23 +173,23 @@ export async function replyPrivately(
 
 		// If this is an interaction, reply ephemerally
 	} else {
-		return sendEphemeralReply(source, options);
+		return await sendEphemeralReply(source, options);
 	}
 
 	// If the DM was attempted and failed
-	if (!didDM) {
+	if (message === null) {
 		// Inform the user that we tried to DM them, but they have their DMs off
 		if ("author" in source) {
 			await source.channel?.send(
 				`<@!${source.author.id}> I tried to DM you just now, but it looks like your DMs are off. :slight_frown:`
 			);
 		} else {
-			return sendEphemeralReply(source, options);
+			return await sendEphemeralReply(source, options);
 		}
-		return false;
+		return null;
 	}
 
-	return true;
+	return message;
 }
 
 /**
@@ -196,11 +201,12 @@ export async function replyPrivately(
 export async function sendMessageInChannel(
 	channel: Discord.TextBasedChannels,
 	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
-): Promise<void> {
+): Promise<Discord.Message | null> {
 	try {
-		await channel.send(content);
+		return await channel.send(content);
 	} catch (error: unknown) {
 		logger.error(richErrorMessage(`Failed to send message ${JSON.stringify(content)}.`, error));
+		return null;
 	}
 }
 
@@ -218,24 +224,23 @@ export async function reply(
 	message: Discord.Message,
 	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	shouldMention: boolean = true
-): Promise<void> {
+): Promise<Discord.Message | null> {
 	try {
 		if (shouldMention) {
-			await message.reply(content);
-		} else {
-			if (typeof content === "string") {
-				await message.reply({ content, allowedMentions: { users: [] } });
-			} else {
-				await message.reply({ ...content, allowedMentions: { users: [] } });
-			}
+			return await message.reply(content);
 		}
+		if (typeof content === "string") {
+			return await message.reply({ content, allowedMentions: { users: [] } });
+		}
+		return await message.reply({ ...content, allowedMentions: { users: [] } });
 	} catch (error: unknown) {
 		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
 			logger.debug(
 				`The message ${message.id} must have been deleted. Sending reply in same channel.`
 			);
-			return sendMessageInChannel(message.channel, content);
+			return await sendMessageInChannel(message.channel, content);
 		}
 		logger.error(richErrorMessage(`Failed to send message ${JSON.stringify(content)}.`, error));
+		return null;
 	}
 }

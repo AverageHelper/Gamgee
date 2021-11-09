@@ -6,6 +6,7 @@ import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { URL } from "url";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { SHRUGGIE } from "../../constants/textResponses";
+import { deleteMessage } from "../../actions/messages";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
@@ -13,7 +14,15 @@ import StringBuilder from "../../helpers/StringBuilder";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
 
-export async function reject_private(context: CommandContext, reason: string): Promise<void> {
+export async function reject_private(params: {
+	context: CommandContext;
+	preemptiveEmbed: Discord.Message | null;
+	reason: string;
+}): Promise<void> {
+	const { context, preemptiveEmbed, reason } = params;
+	if (preemptiveEmbed) {
+		await deleteMessage(preemptiveEmbed);
+	}
 	await Promise.all([
 		context.deleteInvocation(), //
 		context.replyPrivately({ content: `:hammer: ${reason}`, ephemeral: true })
@@ -31,7 +40,6 @@ interface SongAcceptance {
 	queue: QueueManager;
 	context: CommandContext;
 	entry: UnsentQueueEntry;
-	shouldSendUrl: boolean;
 	logger: Logger;
 }
 
@@ -40,13 +48,7 @@ interface SongAcceptance {
  *
  * @param param0 The feedback context.
  */
-async function acceptSongRequest({
-	queue,
-	context,
-	entry,
-	shouldSendUrl,
-	logger
-}: SongAcceptance): Promise<void> {
+async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptance): Promise<void> {
 	await queue.push(entry);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
@@ -56,12 +58,9 @@ async function acceptSongRequest({
 	const mention = `<@!${context.user.id}>`;
 	const acceptance = `${mention}, Submission Accepted!`;
 
-	if (shouldSendUrl) {
+	if (context.type === "interaction") {
+		// Resolve the pending interaction message
 		await context.reply({ content: "Accepted!", ephemeral: true });
-		await context.followUp({
-			content: `<@!${entry.senderId}> requested ${entry.url}`,
-			reply: false
-		});
 	}
 	await context.followUp({ content: acceptance, reply: false });
 }
@@ -87,11 +86,22 @@ export default async function processSongRequest({
 }: SongRequest): Promise<void> {
 	const senderId = context.user.id;
 	const sentAt = new Date(context.createdTimestamp);
+	let preemptiveEmbed: Discord.Message | null = null;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 	const queue = useQueue(queueChannel);
 
 	try {
+		if (context.type === "interaction") {
+			// The link hasn't been embedded yet, so embed it
+			// This means we'll need to remember this message to delete it if the submission gets rejected
+			// This should match the behavior of context.deleteInvocation() on `?sr`
+			preemptiveEmbed = await context.followUp({
+				content: `<@!${senderId}> requested ${songUrl.toString()}`,
+				reply: false
+			});
+		}
+
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
 			queue.getConfig(),
 			queue.getLatestEntryFrom(senderId),
@@ -106,7 +116,11 @@ export default async function processSongRequest({
 				)} is one of them.`
 			);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(context, "You're not allowed to submit songs. My apologies.");
+			return reject_private({
+				context,
+				preemptiveEmbed,
+				reason: "You're not allowed to submit songs. My apologies."
+			});
 		}
 
 		// ** If the user has used all their submissions, reject!
@@ -122,7 +136,7 @@ export default async function processSongRequest({
 			rejectionBuilder.pushBold(`${maxSubs}`);
 			rejectionBuilder.push(" of your allotted submissions.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(context, rejectionBuilder.result());
+			return reject_private({ context, preemptiveEmbed, reason: rejectionBuilder.result() });
 		}
 
 		// ** If the user is still under cooldown, reject!
@@ -154,7 +168,7 @@ export default async function processSongRequest({
 			rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
 			rejectionBuilder.push(" before submitting again.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(context, rejectionBuilder.result());
+			return reject_private({ context, preemptiveEmbed, reason: rejectionBuilder.result() });
 		}
 
 		const song = await songInfoPromise; // we need this info now
@@ -185,12 +199,10 @@ export default async function processSongRequest({
 			return reject_public(context, rejectionBuilder.result());
 		}
 
-		// Whether We haven't had this link embedded yet
-		const shouldSendUrl = !song.fromUrl || context.type === "interaction";
 		const entry = { url, seconds, sentAt, senderId };
 
 		// ** Full send!
-		return await acceptSongRequest({ queue, context, entry, shouldSendUrl, logger });
+		return await acceptSongRequest({ queue, context, entry, logger });
 
 		// Handle fetch errors
 	} catch (error: unknown) {
