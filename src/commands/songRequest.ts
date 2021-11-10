@@ -81,16 +81,10 @@ const sr: Command = {
 			// The link hasn't been embedded yet, so embed it
 			// This means we'll need to remember this message to delete it if the submission gets rejected
 			// This should match the behavior of context.deleteInvocation() on `?sr`
-			// await reply({ content: "Got it!" });
-			// try {
-			// 	await context.interaction.deleteReply();
-			// } catch (error: unknown) {
-			// 	logger.error(error);
-			// }
 			await prepareForLongRunningTasks(true);
 
 			publicPreemptiveResponse = await sendMessageInChannel(channel, {
-				content: `${MENTION_SENDER} requested ${songUrl.toString()}`,
+				content: `${MENTION_SENDER}\n?sr ${songUrl.toString()}`,
 				allowedMentions: { users: [], repliedUser: false }
 			});
 		}

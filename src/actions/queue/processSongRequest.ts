@@ -4,7 +4,7 @@ import type { Logger } from "../../logger";
 import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { URL } from "url";
-import { editMessage, escapeUriInString } from "../../actions/messages";
+import { deleteMessage } from "../../actions/messages";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { SHRUGGIE } from "../../constants/textResponses";
 import { useLogger } from "../../logger";
@@ -23,13 +23,9 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 
 	if (context.type === "interaction") {
 		if (request.publicPreemptiveResponse) {
-			const escapedRequestUrl = escapeUriInString(request.songUrl.toString());
-			await editMessage(request.publicPreemptiveResponse, {
-				content: `<@!${context.user.id}> requested ${escapedRequestUrl}`,
-				allowedMentions: { users: [], repliedUser: false }
-			});
+			// delete the mock invocation
+			await deleteMessage(request.publicPreemptiveResponse);
 		}
-		// await context.followUp({ content, reply: true, ephemeral: true });
 		try {
 			await context.interaction.editReply({
 				content,
