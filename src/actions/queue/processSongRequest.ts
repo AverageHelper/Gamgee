@@ -4,35 +4,56 @@ import type { Logger } from "../../logger";
 import type { QueueManager } from "./useQueue";
 import type { UnsentQueueEntry } from "../../useQueueStorage";
 import type { URL } from "url";
+import { editMessage, escapeUriInString } from "../../actions/messages";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { SHRUGGIE } from "../../constants/textResponses";
-import { deleteMessage } from "../../actions/messages";
+import { useLogger } from "../../logger";
 import { useQueue } from "./useQueue";
 import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
-import StringBuilder from "../../helpers/StringBuilder";
-import richErrorMessage from "../../helpers/richErrorMessage";
 import logUser from "../../helpers/logUser";
+import richErrorMessage from "../../helpers/richErrorMessage";
+import StringBuilder from "../../helpers/StringBuilder";
 
-export async function reject_private(params: {
-	context: CommandContext;
-	preemptiveEmbed?: Discord.Message | boolean;
-	reason: string;
-}): Promise<void> {
-	const { context, preemptiveEmbed = false, reason } = params;
-	if (preemptiveEmbed !== false && preemptiveEmbed !== true) {
-		await deleteMessage(preemptiveEmbed);
+const logger = useLogger();
+
+async function reject_private(request: SongRequest, reason: string): Promise<void> {
+	const context = request.context;
+	const content = `:hammer: <@!${context.user.id}> ${reason}`;
+
+	if (context.type === "interaction") {
+		if (request.publicPreemptiveResponse) {
+			const escapedRequestUrl = escapeUriInString(request.songUrl.toString());
+			await editMessage(request.publicPreemptiveResponse, {
+				content: `<@!${context.user.id}> requested ${escapedRequestUrl}`,
+				allowedMentions: { users: [], repliedUser: false }
+			});
+		}
+		// await context.followUp({ content, reply: true, ephemeral: true });
+		try {
+			await context.interaction.editReply({
+				content,
+				allowedMentions: { users: [context.user.id], repliedUser: true }
+			});
+		} catch (error: unknown) {
+			logger.error(error);
+		}
+	} else {
+		await context.deleteInvocation();
+		await context.replyPrivately(content);
 	}
-	await Promise.all([
-		context.deleteInvocation(), //
-		context.replyPrivately({ content: `:hammer: ${reason}`, ephemeral: true })
-	]);
 }
 
 export async function reject_public(context: CommandContext, reason: string): Promise<void> {
-	await context.reply(`:hammer: ${reason}`);
+	await context.followUp({ content: `:hammer: <@!${context.user.id}> ${reason}`, reply: false });
 	if (context.type === "message") {
 		await context.message.suppressEmbeds(true);
+	} else {
+		try {
+			await context.interaction.editReply("Done.");
+		} catch (error: unknown) {
+			logger.error(error);
+		}
 	}
 }
 
@@ -55,20 +76,22 @@ async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptan
 		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
 	);
 
-	const mention = `<@!${context.user.id}>`;
-	const acceptance = `${mention}, Submission Accepted!`;
-
+	const MENTION_SENDER = `<@!${context.user.id}>`;
+	await context.followUp({ content: `${MENTION_SENDER}, Submission Accepted!`, reply: false });
 	if (context.type === "interaction") {
-		// Resolve the pending interaction message
-		await context.reply({ content: "Accepted!", ephemeral: true });
+		try {
+			await context.interaction.editReply("Done.");
+		} catch (error: unknown) {
+			logger.error(error);
+		}
 	}
-	await context.followUp({ content: acceptance, reply: false });
 }
 
 export interface SongRequest {
 	songUrl: URL;
 	context: CommandContext;
 	queueChannel: Discord.TextChannel;
+	publicPreemptiveResponse: Discord.Message | null;
 	logger: Logger;
 }
 
@@ -78,30 +101,15 @@ export interface SongRequest {
  *
  * @param param0 The song request context.
  */
-export default async function processSongRequest({
-	songUrl,
-	context,
-	queueChannel,
-	logger
-}: SongRequest): Promise<void> {
+export default async function processSongRequest(request: SongRequest): Promise<void> {
+	const { songUrl, context, queueChannel, logger } = request;
 	const senderId = context.user.id;
 	const sentAt = new Date(context.createdTimestamp);
-	let preemptiveEmbed: Discord.Message | boolean = false;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 	const queue = useQueue(queueChannel);
 
 	try {
-		if (context.type === "interaction") {
-			// The link hasn't been embedded yet, so embed it
-			// This means we'll need to remember this message to delete it if the submission gets rejected
-			// This should match the behavior of context.deleteInvocation() on `?sr`
-			preemptiveEmbed = await context.followUp({
-				content: `<@!${senderId}> requested ${songUrl.toString()}`,
-				reply: false
-			});
-		}
-
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
 			queue.getConfig(),
 			queue.getLatestEntryFrom(senderId),
@@ -116,11 +124,7 @@ export default async function processSongRequest({
 				)} is one of them.`
 			);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private({
-				context,
-				preemptiveEmbed,
-				reason: "You're not allowed to submit songs. My apologies."
-			});
+			return reject_private(request, "You're not allowed to submit songs. My apologies.");
 		}
 
 		// ** If the user has used all their submissions, reject!
@@ -136,7 +140,7 @@ export default async function processSongRequest({
 			rejectionBuilder.pushBold(`${maxSubs}`);
 			rejectionBuilder.push(" of your allotted submissions.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private({ context, preemptiveEmbed, reason: rejectionBuilder.result() });
+			return reject_private(request, rejectionBuilder.result());
 		}
 
 		// ** If the user is still under cooldown, reject!
@@ -168,7 +172,7 @@ export default async function processSongRequest({
 			rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
 			rejectionBuilder.push(" before submitting again.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private({ context, preemptiveEmbed, reason: rejectionBuilder.result() });
+			return reject_private(request, rejectionBuilder.result());
 		}
 
 		const song = await songInfoPromise; // we need this info now
