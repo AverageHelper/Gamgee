@@ -214,10 +214,7 @@ describe("Song request via URL", () => {
 		// The submission should have been rejected with a cooldown warning via DMs
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
-		expect(mockReplyPrivately).toHaveBeenCalledWith({
-			content: expect.stringContaining("must wait") as string,
-			ephemeral: true
-		});
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait") as string);
 	});
 
 	test("submissions enter the queue in order", async () => {

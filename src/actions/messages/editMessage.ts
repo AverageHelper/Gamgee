@@ -92,6 +92,12 @@ export function stopEscapingUriInString(content: string): string {
 	return freed;
 }
 
+/**
+ * Adds embed-blocking markers around URI substrings in a provided string.
+ *
+ * @param content The content to escape
+ * @returns The content, with URI substrings marked.
+ */
 export function escapeUriInString(content: string): string {
 	const uris = positionsOfUriInText(content);
 	if (!uris) return content;

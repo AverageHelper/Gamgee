@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, Subcommand } from "../commands";
+import { assertUserCanRunCommand } from "./invokeCommand";
 import { getConfigCommandPrefix } from "./config/getConfigValue";
 import StringBuilder from "../helpers/StringBuilder";
-import { assertUserCanRunCommand } from "./invokeCommand";
 
 const DASH = " - ";
 const SEP = " | ";
@@ -43,6 +43,17 @@ export default async function describeAllCommands(
 		describeParameters(command.options ?? [], cmdDesc);
 
 		cmdDesc.push(CODE);
+
+		if (context.type === "message") {
+			// Slash-commands have autocomplete, so aliases aren't as useful. We'll ignore them in the /help buzz
+			const aliases = (command.aliases ?? []).filter(alias => alias !== command.name);
+			if (aliases.length > 0) {
+				aliases.forEach(alias => {
+					cmdDesc.push(" OR ");
+					cmdDesc.pushCode(`${COMMAND_PREFIX}${alias}`);
+				});
+			}
+		}
 
 		cmdDesc.push(DASH);
 		cmdDesc.push(command.description);

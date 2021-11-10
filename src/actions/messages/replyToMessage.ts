@@ -114,23 +114,21 @@ async function sendDMReply(
 async function sendEphemeralReply(
 	source: Discord.CommandInteraction,
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
-): Promise<Discord.Message | null> {
+): Promise<boolean> {
+	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
-		let message: Discord.Message;
 		if (typeof options === "string") {
 			await source.reply({ content: options, ephemeral: true });
-			message = (await source.fetchReply()) as Discord.Message;
 		} else {
 			await source.reply({ ...options, ephemeral: true });
-			message = (await source.fetchReply()) as Discord.Message;
 		}
 		logger.verbose(
 			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`
 		);
-		return message;
+		return true;
 	} catch (error: unknown) {
 		logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
-		return null;
+		return false;
 	}
 }
 
@@ -145,14 +143,14 @@ async function sendEphemeralReply(
  * @param options The the message to send.
  * @param preferDMs If `source` is an interaction, then we'll reply via DMs anyway.
  *
- * @returns a `Promise` that resolves with `true` if the send succeeds, or
- * `false` if there was an error.
+ * @returns a `Promise` that resolves with a reference to the message sent,
+ * or a boolean value indicating whether an ephemeral reply succeeded or failed.
  */
 export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
 	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
 	preferDMs: boolean
-): Promise<Discord.Message | null> {
+): Promise<Discord.Message | boolean> {
 	let message: Discord.Message | null;
 
 	// If this is a message (no ephemeral reply option)
@@ -186,7 +184,7 @@ export async function replyPrivately(
 		} else {
 			return await sendEphemeralReply(source, options);
 		}
-		return null;
+		return false;
 	}
 
 	return message;

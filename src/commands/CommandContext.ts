@@ -62,13 +62,14 @@ interface BaseCommandContext {
 	 * Sends a message in the same channel to the user who invoked the command.
 	 * Does not constitute a "reply" in Discord's canonical sense.
 	 *
-	 * @returns A reference to the message that the bot sent, or `null` if we failed to send a message.
+	 * @returns a `Promise` that resolves with a reference to the message sent,
+	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
 	 */
 	followUp: (
 		options:
 			| string
 			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean })
-	) => Promise<Discord.Message | null>;
+	) => Promise<Discord.Message | boolean>;
 
 	/**
 	 * Deletes the command invocation if it was sent as a text message.

@@ -226,5 +226,14 @@ describe("Command handler", () => {
 				expect.assertions(mockCommandDefinitions.size);
 			}
 		);
+
+		test("Command alias `nowplaying` calls command `now-playing`", async () => {
+			mockMessage.content = `${prefix}nowplaying`;
+			await handleCommand(mockClient, mockMessage, null, logger);
+
+			const mockNowPlaying = mockCommandDefinitions.get("now-playing");
+			expect(mockNowPlaying).toBeDefined();
+			expect(mockNowPlaying?.execute).toHaveBeenCalledTimes(1);
+		});
 	});
 });

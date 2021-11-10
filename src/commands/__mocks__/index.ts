@@ -7,6 +7,10 @@ interface MockCommand {
 
 export { invokeCommand } from "../../actions/invokeCommand";
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/consistent-type-imports
+const { resolveAlias } = jest.requireActual("../index") as typeof import("../index");
+export { resolveAlias };
+
 export const allCommands = new Discord.Collection<string, MockCommand>();
 
 function add(commandName: string): void {

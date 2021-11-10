@@ -13,6 +13,7 @@ type PermissionGenerator = (
 
 interface BaseCommand {
 	name: string;
+	aliases?: Array<string>;
 	description: string;
 	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
 }

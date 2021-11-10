@@ -82,13 +82,13 @@ export async function handleInteraction(
 						await interaction.followUp({ ephemeral: true, ...options });
 					}
 				} else {
-					let reply: Discord.Message | null;
+					let reply: Discord.Message | boolean;
 					if (typeof options === "string") {
 						reply = await replyPrivately(interaction, { ephemeral: true, content: options }, viaDM);
 					} else {
 						reply = await replyPrivately(interaction, { ephemeral: true, ...options }, viaDM);
 					}
-					if (reply === null) {
+					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}
 				}
@@ -127,7 +127,7 @@ export async function handleInteraction(
 					interaction.channel &&
 					interaction.channel.isText()
 				) {
-					return await sendMessageInChannel(interaction.channel, options);
+					return (await sendMessageInChannel(interaction.channel, options)) ?? false;
 				}
 				return (await interaction.followUp(options)) as Discord.Message;
 			},
