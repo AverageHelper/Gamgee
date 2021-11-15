@@ -182,7 +182,6 @@ export class QueueEntryManager {
 				order: { sentAt: "DESC" }
 			})
 		);
-		// const entry = await this.db.QueueEntries.findOne({});
 		return entry ?? null;
 	}
 

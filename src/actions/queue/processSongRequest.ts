@@ -9,11 +9,19 @@ import { MILLISECONDS_IN_SECOND } from "../../constants/time";
 import { SHRUGGIE } from "../../constants/textResponses";
 import { useLogger } from "../../logger";
 import { useQueue } from "./useQueue";
-import getVideoDetails from "../getVideoDetails";
 import durationString from "../../helpers/durationString";
+import getVideoDetails from "../getVideoDetails";
 import logUser from "../../helpers/logUser";
 import richErrorMessage from "../../helpers/richErrorMessage";
 import StringBuilder from "../../helpers/StringBuilder";
+
+export interface SongRequest {
+	songUrl: URL;
+	context: CommandContext;
+	queueChannel: Discord.TextChannel;
+	publicPreemptiveResponse: Discord.Message | null;
+	logger: Logger;
+}
 
 const logger = useLogger();
 
@@ -40,10 +48,11 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 	}
 }
 
-export async function reject_public(context: CommandContext, reason: string): Promise<void> {
+async function reject_public(context: CommandContext, reason: string): Promise<void> {
 	await context.followUp({ content: `:hammer: <@!${context.user.id}> ${reason}`, reply: false });
 	if (context.type === "message") {
-		await context.message.suppressEmbeds(true);
+		// Can't suppress other users' embeds, but we *can* delete the message
+		await deleteMessage(context.message);
 	} else {
 		try {
 			await context.interaction.editReply("Done.");
@@ -83,19 +92,11 @@ async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptan
 	}
 }
 
-export interface SongRequest {
-	songUrl: URL;
-	context: CommandContext;
-	queueChannel: Discord.TextChannel;
-	publicPreemptiveResponse: Discord.Message | null;
-	logger: Logger;
-}
-
 /**
  * Processes a song request, either accepting or rejecting the request, and possibly
  * adding the song to the queue.
  *
- * @param param0 The song request context.
+ * @param request The song request context.
  */
 export default async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;

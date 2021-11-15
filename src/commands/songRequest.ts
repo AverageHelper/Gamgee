@@ -1,15 +1,15 @@
 import type Discord from "discord.js";
-import type { Command } from "./Command";
+import type { GuildedCommand } from "./Command";
 import type { SongRequest } from "../actions/queue/processSongRequest";
 import { resolveStringFromOption } from "../helpers/optionResolvers";
 import { URL } from "url";
 import { useGuildStorage } from "../useGuildStorage";
 import { useJobQueue } from "@averagehelper/job-queue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
-import processRequest, { reject_public } from "../actions/queue/processSongRequest";
+import processRequest from "../actions/queue/processSongRequest";
 import { sendMessageInChannel } from "../actions/messages";
 
-const sr: Command = {
+const sr: GuildedCommand = {
 	name: "sr",
 	description: "Submit a song to the queue.",
 	options: [
@@ -40,7 +40,11 @@ const sr: Command = {
 		logger.debug(`Got song request message at ${createdTimestamp.toString()}`);
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
-			return reject_public(context, "No queue is set up.");
+			await context.followUp({
+				content: `:hammer: <@!${user.id}> No queue is set up.`,
+				reply: false
+			});
+			return;
 		}
 
 		const firstOption = options.data[0];

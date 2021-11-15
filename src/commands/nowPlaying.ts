@@ -1,8 +1,10 @@
 import type Discord from "discord.js";
 import type { Command } from "./Command";
+import type { QueueEntry } from "../database/model";
 import { useQueue } from "../actions/queue/useQueue";
 import getQueueChannel from "../actions/queue/getQueueChannel";
 import randomElementOfArray from "../helpers/randomElementOfArray";
+import FastPriorityQueue from "fastpriorityqueue";
 import StringBuilder from "../helpers/StringBuilder";
 
 const uncertainties = ["There’s a good chance", "I’m like 85% sure", "Very likely,", "I think"];
@@ -47,8 +49,18 @@ const nowPlaying: Command = {
 		const queue = useQueue(queueChannel);
 		const allEntries = await queue.getAllEntries();
 
+		const pQueue = new FastPriorityQueue<QueueEntry>((a, b) => {
+			// finds oldest entry in queue
+			return a.sentAt.getTime() < b.sentAt.getTime();
+		});
+
+		allEntries
+			.filter(e => !e.isDone) // only not-done entries
+			.slice(0, 4) // only first four
+			.forEach(e => pQueue.add(e)); // insert into queue
+
 		logger.debug(`First entry: ${allEntries[0]?.toString() ?? "not here"}.`);
-		const firstNotDone = allEntries.find(entry => !entry.isDone); // FIXME: This isn't always correct.
+		const firstNotDone = pQueue.peek();
 		logger.debug(`First not-done entry: ${firstNotDone?.toString() ?? "not here"}.`);
 
 		if (!firstNotDone) {
