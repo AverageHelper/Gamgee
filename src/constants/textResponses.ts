@@ -151,6 +151,7 @@ export const phrases: ResponseRepository = [
 	"*ENERGY*",
 	[
 		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
+		"_ _",
 		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
 	],
 	"Fan of squirrels.",
