@@ -126,6 +126,7 @@ describe("Request Queue", () => {
 		expect(mockCreateEntry).toHaveBeenCalledWith({
 			...request,
 			isDone: false,
+			sentAt: expect.toBeValidDate() as Date,
 			queueMessageId: "new-message"
 		});
 
