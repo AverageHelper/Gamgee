@@ -15,12 +15,11 @@ const howto: GuildedCommand = {
 		const helpBuilder = new StringBuilder();
 
 		helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`);
-		// TODO: Clarify that YouTube, Bandcamp, or SoundCloud track links will work
 		helpBuilder.pushNewLine();
 		helpBuilder.push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``);
 		helpBuilder.pushNewLine();
 		helpBuilder.push(
-			"I will respond with a text verification indicating your song has joined the queue!"
+			"Any YouTube, SoundCloud, Bandcamp, or Odysee track link will do. I will respond with a text verification indicating your song has joined the queue!"
 		);
 		helpBuilder.pushNewLine();
 		helpBuilder.pushNewLine();

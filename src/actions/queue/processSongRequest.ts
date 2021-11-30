@@ -177,7 +177,7 @@ export default async function processSongRequest(request: SongRequest): Promise<
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
 			return reject_public(
 				context,
-				`I can't find that song. ${SHRUGGIE}\nTry a YouTube, SoundCloud, or Bandcamp link.`
+				`I can't find that song. ${SHRUGGIE}\nTry a YouTube, SoundCloud, Bandcamp, or Odysee link.`
 			);
 		}
 

@@ -4,7 +4,7 @@
 >
 > - J. R. R. Tolkien
 
-Gamgee is a helpful companion bot for music video suggestions. Ever wanted an easy way to manage a queue of crowd-requested songs? Ever had people who spam the queue, post too frequently, or post looooooooong songs? Gamgee handles all of that for you!
+Gamgee is a helpful companion bot for managing music video suggestion queues. Ever wanted an easy way to manage a queue of crowd-requested songs? Ever had people who spam the queue, post too frequently, or post looooooooong songs? Gamgee handles all of that for you! Any YouTube, SoundCloud, or Bandcamp track link will do.
 
 This project started out as a simple Discord bot to play around with APIs and things. As for the name, I thought it was neat. I was on a LOTR kick at the time. Samwise Gamgee is a name that deserves to be remembered.
 
@@ -233,7 +233,7 @@ Submits a song to the queue. Users must provide a valid YouTube, SoundCloud, or 
 
 ### `test`
 
-Runs test queries against YouTube, SoundCloud, and Bandcamp, and responds with useful statistics. This is handy for making sure that Gamgee still knows how to talk to external services whose API may change without notice.
+Runs test queries against each of our supported providers, and responds with useful statistics. This is handy for making sure that Gamgee still knows how to talk to external services whose API may change without notice.
 
 ### `t`
 
@@ -245,7 +245,7 @@ Display's the current version of Gamgee Core. (see [package.json](https://github
 
 ### `video <url>`
 
-Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that video's title and duration. Handy for testing specific cases. Anyone may use this command at any time.
+Given a track link, Gamgee responds with that video's title and duration. Handy for testing specific cases. Anyone may use this command at any time.
 
 ## Contributing
 

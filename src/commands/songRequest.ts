@@ -15,7 +15,7 @@ const sr: Command = {
 	options: [
 		{
 			name: "url",
-			description: "A YouTube, SoundCloud, or Bandcamp link",
+			description: "A YouTube, SoundCloud, Bandcamp, or Odysee link",
 			type: "STRING",
 			required: true
 		}

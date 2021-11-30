@@ -80,7 +80,20 @@ describe("Video details", () => {
 		${"https://forestrainmedia.com/track/bad-wolf"}                                 | ${277}
 		${"https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"} | ${170}
 	`(
-		"returns info Bandcamp track $url, $duration seconds long",
+		"returns info for Bandcamp track $url, $duration seconds long",
+		async ({ url, duration }: { url: string; duration: number }) => {
+			const details = await getVideoDetails(url, null);
+			expect(details).toHaveProperty("url", url);
+			expect(details?.duration.seconds).toBeDefined();
+			expect(details?.duration.seconds).toBe(duration);
+		}
+	);
+
+	test.each`
+		url                                                                        | duration
+		${"https://odysee.com/@Jyc_Row:1/jyc-row-woodlore-flamethrone-legacy-2:c"} | ${346}
+	`(
+		"returns info for an Odysee video $url, $duration seconds long",
 		async ({ url, duration }: { url: string; duration: number }) => {
 			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", url);

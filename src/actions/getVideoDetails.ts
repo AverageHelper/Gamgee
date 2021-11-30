@@ -32,14 +32,14 @@ export class VideoError extends Error implements NodeJS.ErrnoException {
 	}
 }
 
-// export class NotFoundError extends VideoError {
-// 	code = "404";
+export class NotFoundError extends VideoError {
+	code = "404";
 
-// 	constructor(url: URL) {
-// 		super(`No video found at ${url.toString()}`);
-// 		this.name = "NotFoundError";
-// 	}
-// }
+	constructor(url: URL) {
+		super(`No video found at ${url.toString()}`);
+		this.name = "NotFoundError";
+	}
+}
 
 export class UnavailableError extends VideoError {
 	code = "410";
@@ -66,6 +66,7 @@ export class InvalidYouTubeUrlError extends VideoError {
  *
  * @throws `InvalidYouTubeUrlError` if the provided URL is not a YouTube URL.
  * @throws `UnavailableError` if the video is unavailable in the United States.
+ * @throws `NotFoundError` if the video could not be found.
  * @returns a `Promise` that resolves with the video details.
  */
 export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
@@ -80,6 +81,8 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 		switch (err.message) {
 			case "Status code: 410":
 				throw new UnavailableError(url);
+			case "Status code: 404":
+				throw new NotFoundError(url);
 			default:
 				throw err;
 		}
@@ -100,6 +103,42 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 		title: info.videoDetails.title,
 		duration: { seconds }
 	};
+}
+
+/**
+ * Gets information about an Odysee video.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws `NotFoundError` if the video could not be found.
+ * @returns a `Promise` that resolves with the video details.
+ */
+export async function getOdyseeVideo(url: URL): Promise<VideoDetails> {
+	try {
+		// FIXME: This doesn't really work; ytdl-core checks the domain that it's a YouTube one
+		const info = await ytdl.getBasicInfo(url.toString());
+
+		let seconds: number;
+		if (info.videoDetails.isLiveContent) {
+			seconds = Number.POSITIVE_INFINITY;
+		} else {
+			seconds = Number.parseInt(info.videoDetails.lengthSeconds, 10);
+		}
+
+		return {
+			url: info.videoDetails.video_url,
+			title: info.videoDetails.title,
+			duration: { seconds }
+		};
+	} catch (error: unknown) {
+		const err = new VideoError(error);
+		switch (err.message) {
+			case "Status code: 404":
+				throw new NotFoundError(url);
+			default:
+				throw err;
+		}
+	}
 }
 
 /**
@@ -180,7 +219,8 @@ export default async function getVideoDetails(
 		const url: URL =
 			typeof urlOrString === "string" ? new URL(urlOrString.split(/ +/u)[0] ?? "") : urlOrString;
 		return await Promise.any([
-			getYouTubeVideo(url), //
+			getYouTubeVideo(url),
+			getOdyseeVideo(url),
 			getSoundCloudTrack(url),
 			getBandcampTrack(url)
 		]);

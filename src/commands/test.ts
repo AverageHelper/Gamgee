@@ -1,7 +1,12 @@
 import type { Command } from "./Command";
-import { getYouTubeVideo, getSoundCloudTrack, getBandcampTrack } from "../actions/getVideoDetails";
 import { MessageEmbed } from "discord.js";
 import { URL } from "url";
+import {
+	getYouTubeVideo,
+	getOdyseeVideo,
+	getSoundCloudTrack,
+	getBandcampTrack
+} from "../actions/getVideoDetails";
 
 type FetchTestFunction = typeof getYouTubeVideo;
 
@@ -35,6 +40,12 @@ const SERVICE_TESTS = [
 		fn: getBandcampTrack,
 		// WoodLore - Let The Magic Fill Your Soul
 		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"
+	},
+	{
+		name: "Odysee",
+		fn: getOdyseeVideo,
+		// Jyc Row & WoodLore - Flamethrone Legacy (feat. Black Gryph0n & Michelle Creber) [2018 cover]
+		urlString: "https://odysee.com/@Jyc_Row:1/jyc-row-woodlore-flamethrone-legacy-2:c"
 	}
 ];
 
