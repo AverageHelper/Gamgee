@@ -13,6 +13,7 @@ interface FetchTest {
 
 interface FetchResult {
 	test: FetchTest;
+	startTime: number;
 	endTime?: number;
 	error?: NodeJS.ErrnoException;
 }
@@ -42,7 +43,8 @@ const SUCCESS = ":white_check_mark:";
 const FAILURE = ":x:";
 
 async function runTest(test: FetchTest): Promise<FetchResult> {
-	const result: FetchResult = { test };
+	const startTime = Date.now();
+	const result: FetchResult = { test, startTime };
 	try {
 		await test.fn(new URL(test.urlString));
 	} catch (error: unknown) {
@@ -54,13 +56,9 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	return result;
 }
 
-function addResult(
-	name: string,
-	startTime: number,
-	result: FetchResult,
-	embed: MessageEmbed
-): void {
-	const runTime = (result.endTime ?? 0) - startTime;
+function addResult(result: FetchResult, embed: MessageEmbed): void {
+	const name = result.test.name;
+	const runTime = (result.endTime ?? 0) - result.startTime;
 	embed.addField(
 		`${result.error ? FAILURE : SUCCESS} ${name} (${runTime}ms)`,
 		result.error?.message ?? "Success!"
@@ -81,7 +79,6 @@ const type: Command = {
 		isTesting = true;
 		try {
 			await prepareForLongRunningTasks(true);
-			const startTime = Date.now();
 
 			// Ask for video info from our various services
 			const results = await Promise.all(
@@ -90,7 +87,7 @@ const type: Command = {
 
 			// Prepare response
 			const embed = new MessageEmbed();
-			results.forEach(result => addResult(result.test.name, startTime, result, embed));
+			results.forEach(result => addResult(result, embed));
 
 			const anyFailures = results.some(result => result.error !== undefined);
 			const content = anyFailures
