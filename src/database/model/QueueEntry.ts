@@ -22,9 +22,6 @@ export class QueueEntry {
 	sentAt: Date;
 
 	@Column()
-	receivedAt: Date;
-
-	@Column()
 	senderId: Snowflake;
 
 	@Column()
@@ -46,13 +43,12 @@ export class QueueEntry {
 		this.url = entry?.url ?? "";
 		this.seconds = entry?.seconds ?? 0;
 		this.sentAt = entry?.sentAt ?? new Date();
-		this.receivedAt = entry?.receivedAt ?? this.sentAt;
 		this.senderId = entry?.senderId ?? "0";
 		this.isDone = entry?.isDone ?? false;
 	}
 
 	toString(): string {
-		return `timestamp: ${(this.receivedAt ?? this.sentAt).toString()}; user: ${
+		return `timestamp: ${this.sentAt.toString()}; user: ${
 			this.senderId
 		}; guild/channel/message path: ${this.guildId}/${this.channelId}/${this.queueMessageId}; url: ${
 			this.url

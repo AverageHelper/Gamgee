@@ -101,7 +101,6 @@ async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptan
 export default async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;
 	const senderId = context.user.id;
-	const sentAt = new Date(context.createdTimestamp);
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 	const queue = useQueue(queueChannel);
@@ -200,7 +199,7 @@ export default async function processSongRequest(request: SongRequest): Promise<
 			return reject_public(context, rejectionBuilder.result());
 		}
 
-		const entry = { url, seconds, sentAt, senderId };
+		const entry = { url, seconds, senderId };
 
 		// ** Full send!
 		return await acceptSongRequest({ queue, context, entry, logger });

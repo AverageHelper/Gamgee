@@ -111,7 +111,6 @@ describe("Request Queue", () => {
 	const request: UnsentQueueEntry = {
 		url: "song-url",
 		seconds: 43,
-		sentAt: new Date(),
 		senderId: "sender" as Discord.Snowflake
 	};
 
