@@ -1,6 +1,6 @@
 {
 	"name": "gamgee",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "A Discord bot for managing a song request queue.",
 	"private": true,
 	"scripts": {
@@ -11,7 +11,8 @@
 		"migrate": "./node_modules/.bin/typeorm migration:run",
 		"lint": "eslint . --ext .ts",
 		"lint:fix": "eslint . --ext .ts --fix",
-		"build": "npm run export-version && tsc -p tsconfig.prod.json",
+		"prebuild": "npm run export-version && npm run lint",
+		"build": "tsc -p tsconfig.prod.json",
 		"build:clean": "rm -rf dist && npm run build",
 		"export-version": "genversion ./src/version.ts -es",
 		"test": "npm run test:src && npm run test:e2e",

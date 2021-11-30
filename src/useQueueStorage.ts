@@ -15,7 +15,7 @@ const logger = useLogger();
 export type { QueueEntry };
 export type UnsentQueueEntry = Omit<
 	QueueEntry,
-	"queueMessageId" | "isDone" | "channelId" | "guildId"
+	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt"
 >;
 
 export class QueueEntryManager {
@@ -182,7 +182,6 @@ export class QueueEntryManager {
 				order: { sentAt: "DESC" }
 			})
 		);
-		// const entry = await this.db.QueueEntries.findOne({});
 		return entry ?? null;
 	}
 

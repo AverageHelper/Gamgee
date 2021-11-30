@@ -9,6 +9,7 @@ import { sendPrivately } from "./actions/messages";
 import { useGuildStorage } from "./useGuildStorage";
 import logUser from "./helpers/logUser";
 import getQueueChannel from "./actions/queue/getQueueChannel";
+import richErrorMessage from "./helpers/richErrorMessage";
 import StringBuilder from "./helpers/StringBuilder";
 
 /**
@@ -54,10 +55,14 @@ export async function handleMessageComponent(
 	const entry = await queue.getEntryFromMessage(interaction.message.id);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
-		await interaction.reply({
-			content: "I don't recognize that entry. Sorry  :slight_frown:",
-			ephemeral: true
-		});
+		try {
+			await interaction.reply({
+				content: "I don't recognize that entry. Sorry  :slight_frown:",
+				ephemeral: true
+			});
+		} catch (error: unknown) {
+			logger.error(richErrorMessage(`Failed to reply to interaction`, error));
+		}
 		return;
 	}
 
@@ -70,14 +75,22 @@ export async function handleMessageComponent(
 			logger.debug("Marking done....");
 			await queue.markDone(message);
 			logger.debug("Marked an entry done.");
-			await interaction.deferUpdate();
+			try {
+				await interaction.deferUpdate();
+			} catch (error: unknown) {
+				logger.error(richErrorMessage(`Failed to defer update`, error));
+			}
 			break;
 
 		case RESTORE_BUTTON.id:
 			logger.debug("Marking undone....");
 			await queue.markNotDone(message);
 			logger.debug("Marked an entry undone");
-			await interaction.deferUpdate();
+			try {
+				await interaction.deferUpdate();
+			} catch (error: unknown) {
+				logger.error(richErrorMessage(`Failed to defer update`, error));
+			}
 			break;
 
 		case DELETE_BUTTON.id: {

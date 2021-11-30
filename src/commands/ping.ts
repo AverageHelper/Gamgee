@@ -17,6 +17,7 @@ const ping: Command = {
 		let testMessage: Discord.Message;
 		let responseTime: number;
 
+		// FIXME: Ping seems to report slower for messages vs interactions
 		if (context.type === "message") {
 			testMessage = await context.message.reply(random);
 			responseTime = testMessage.createdTimestamp - context.message.createdTimestamp;

@@ -102,6 +102,7 @@ export class QueueManager {
 		try {
 			entry = await this.queueStorage.create({
 				...newEntry,
+				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
 				isDone: false
 			});

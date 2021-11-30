@@ -111,7 +111,6 @@ describe("Request Queue", () => {
 	const request: UnsentQueueEntry = {
 		url: "song-url",
 		seconds: 43,
-		sentAt: new Date(),
 		senderId: "sender" as Discord.Snowflake
 	};
 
@@ -127,6 +126,7 @@ describe("Request Queue", () => {
 		expect(mockCreateEntry).toHaveBeenCalledWith({
 			...request,
 			isDone: false,
+			sentAt: expect.toBeValidDate() as Date,
 			queueMessageId: "new-message"
 		});
 

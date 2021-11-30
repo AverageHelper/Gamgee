@@ -1,7 +1,7 @@
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
 import type { Logger } from "./logger";
 import type { Storage } from "./configStorage";
-import type { WrappedResponse } from "./helpers/randomStrings";
+import type { ResponseContext, WrappedResponse } from "./helpers/randomStrings";
 import { getEnv } from "./helpers/environment";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
 import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
@@ -105,6 +105,23 @@ export function optionsFromArgs(
 	return new Discord.CommandInteractionOptionResolver(client, options);
 }
 
+async function responseContext(
+	message: Discord.Message,
+	client: Discord.Client
+): Promise<ResponseContext> {
+	let me: string;
+	const otherUser = message.author;
+	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
+
+	if (client.user) {
+		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
+	} else {
+		me = "Me";
+	}
+
+	return { me, otherUser, otherMember };
+}
+
 /**
  * Performs actions from a Discord message. The command is ignored if the
  * message is from a bot or the message does not begin with the guild's
@@ -147,21 +164,10 @@ export async function handleCommand(
 	if (!pq) return;
 	const { query: q, usedCommandPrefix } = pq;
 
-	let me: string;
-	const otherUser = message.author;
-	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
-
-	if (client.user) {
-		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
-	} else {
-		me = "Me";
-	}
-
-	const responseContext = { me, otherUser, otherMember };
-
 	if (q.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
-		await randomQuestion().unwrapWith(responseContext, r => message.reply(r));
+		const ctx = await responseContext(message, client);
+		await randomQuestion().unwrapWith(ctx, r => message.reply(r));
 		return;
 	}
 
@@ -248,12 +254,15 @@ export async function handleCommand(
 
 		if (messageContainsWord("hello")) {
 			wrapped = randomGreeting();
-		} else if (messageContainsOneOfWords(["hug", "hug?", "hugs", "hugs?"])) {
+		} else if (
+			messageContainsOneOfWords(["hug", "hug?", "hugs", "hugs?", "*hugs", "hugs*", "*hugs*"])
+		) {
 			wrapped = randomHug();
 		} else {
 			wrapped = randomPhrase();
 		}
 
-		await wrapped.unwrapWith(responseContext, r => message.channel.send(r));
+		const ctx = await responseContext(message, client);
+		await wrapped.unwrapWith(ctx, r => message.channel.send(r));
 	}
 }

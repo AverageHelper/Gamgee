@@ -48,7 +48,7 @@ const nowPlaying: Command = {
 		const allEntries = await queue.getAllEntries();
 
 		logger.debug(`First entry: ${allEntries[0]?.toString() ?? "not here"}.`);
-		const firstNotDone = allEntries.find(entry => !entry.isDone); // FIXME: This isn't always correct.
+		const firstNotDone = allEntries.find(entry => !entry.isDone);
 		logger.debug(`First not-done entry: ${firstNotDone?.toString() ?? "not here"}.`);
 
 		if (!firstNotDone) {

@@ -31,7 +31,7 @@ export async function useDatabaseConnection<T = undefined>(
 		busyErrorRetry: 100,
 		entities: Object.values(entities),
 		migrations: Object.values(migrations),
-		synchronize: true
+		synchronize: true // assumes migration was run before we get here
 	});
 
 	const result = await cb(connection);
