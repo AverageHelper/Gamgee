@@ -1,6 +1,6 @@
 {
 	"name": "gamgee",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "A Discord bot for managing a song request queue.",
 	"private": true,
 	"scripts": {
@@ -11,6 +11,7 @@
 		"migrate": "./node_modules/.bin/typeorm migration:run",
 		"lint": "eslint . --ext .ts",
 		"lint:fix": "eslint . --ext .ts --fix",
+		"prebuild": "npm run lint",
 		"build": "npm run export-version && tsc -p tsconfig.prod.json",
 		"build:clean": "rm -rf dist && npm run build",
 		"export-version": "genversion ./src/version.ts -es",
@@ -39,7 +40,6 @@
 		"@averagehelper/job-queue": "^0.9.5",
 		"discord.js": "^13.1.0",
 		"dotenv": "^8.2.0",
-		"fastpriorityqueue": "^0.7.1",
 		"github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
 		"humanize-duration": "^3.25.1",
 		"node-persist": "^3.1.0",

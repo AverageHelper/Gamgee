@@ -15,7 +15,7 @@ const logger = useLogger();
 export type { QueueEntry };
 export type UnsentQueueEntry = Omit<
 	QueueEntry,
-	"queueMessageId" | "isDone" | "channelId" | "guildId"
+	"queueMessageId" | "isDone" | "channelId" | "guildId" | "receivedAt"
 >;
 
 export class QueueEntryManager {
@@ -139,7 +139,7 @@ export class QueueEntryManager {
 					channelId: this.queueChannel.id,
 					guildId: this.queueChannel.guild.id
 				},
-				order: { sentAt: "ASC" }
+				order: { receivedAt: "ASC" }
 			})
 		);
 	}
@@ -165,7 +165,7 @@ export class QueueEntryManager {
 					guildId: this.queueChannel.guild.id,
 					senderId
 				},
-				order: { sentAt: "ASC" }
+				order: { receivedAt: "ASC" }
 			})
 		);
 	}
@@ -179,7 +179,7 @@ export class QueueEntryManager {
 					guildId: this.queueChannel.guild.id,
 					senderId
 				},
-				order: { sentAt: "DESC" }
+				order: { receivedAt: "DESC" }
 			})
 		);
 		return entry ?? null;

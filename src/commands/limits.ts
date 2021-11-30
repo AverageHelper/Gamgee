@@ -72,6 +72,7 @@ const limits: Command = {
 
 			switch (key.value) {
 				case "cooldown": {
+					// `sentAt` here, to be more lenient than `receivedAt` (which may be closer to now)
 					const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
 					const timeSinceLatest =
 						latestTimestamp !== null

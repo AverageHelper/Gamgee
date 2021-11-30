@@ -30,7 +30,7 @@ export const greetings: ResponseRepository = [
 	"Hi",
 	":blush:",
 	":grin:",
-	"*Yawns* Good morn— what time is it??"
+	"*Yawns* Good morn— **what time is it??**"
 ];
 
 /**
@@ -105,8 +105,15 @@ export const phrases: ResponseRepository = [
 	"Who's the most remarkable extraordinary fellow?",
 
 	// Star Trek: TNG
+	"Darmok on the ocean",
+	"Darmok and Jalad on the ocean",
 	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
+	"Rai and Jiri at Lungha. Rai of Lowani. Lowani under two moons. Jiri of Umbaya. Umbaya of crossed roads. At Lungha. Lungha, her sky gray.",
+	"Shaka, when the walls fell",
+	"Tanagra, on the ocean. Darmok at Tanagra.",
 	"Tea, Earl Grey, hot",
+	"Temba, his arms wide",
+	"The river Temarc. In winter.",
 	"You know, back when I was in the academy, we would follow every toast with a song!",
 
 	// Wurtz
@@ -161,6 +168,7 @@ export const phrases: ResponseRepository = [
 	"Great, but you might need to think about what you're asking me because it's getting annoying",
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
+	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
 	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
@@ -169,10 +177,13 @@ export const phrases: ResponseRepository = [
 	"I am altering the deal. Pray I do not alter it further.",
 	["I am what I am", SHRUGGIE],
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
+	"I can't even right now.",
 	"I don't like this can we change the topic please ty",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
+	"I just wasted three seconds of your life.",
+	["I", "just wasted", "ten seconds", "of your life"],
 	"I like youtube links, they're comfortable and easy to manage.",
 	"I love when it when it\n:thinking:\nbottom text",
 	"I see Discord's redecorated! ... I don't like it",
@@ -194,6 +205,7 @@ export const phrases: ResponseRepository = [
 	"Like and subscribe",
 	"Lorem ipsum dolor sit amet...",
 	"My favorite type of music is the one with all of the instruments and sounds.",
+	["Odds aren't good.", "I prefer evens"],
 	"One day I'm gonna run out of funny random stuff to say and you'll only have yourselves to blame!",
 	"Prose, maybe even poetry",
 	"Quite remarkable",
@@ -205,6 +217,7 @@ export const phrases: ResponseRepository = [
 	"Something smells fishy...",
 	"Sponsored by",
 	"spoon",
+	"Sprechen Sie Deutsch?",
 	["Squirrel!", "_ _", "... Sorry, what were we talking about?"],
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",

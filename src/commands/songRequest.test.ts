@@ -160,6 +160,7 @@ describe("Song request via URL", () => {
 				url: urls[0],
 				seconds: 500,
 				sentAt: new Date(),
+				receivedAt: new Date(),
 				senderId: mockMessage1.author.id,
 				isDone: false
 			});
