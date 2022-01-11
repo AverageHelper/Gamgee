@@ -5,7 +5,7 @@ import getQueueChannel from "../actions/queue/getQueueChannel";
 import randomElementOfArray from "../helpers/randomElementOfArray";
 import StringBuilder from "../helpers/StringBuilder";
 
-const uncertainties = ["There’s a good chance", "I’m like 85% sure", "Very likely,", "I think"];
+const uncertainties = ["There's a good chance", "I'm like 85% sure", "Very likely,", "I think"];
 let lastUncertainty: string | null = null;
 
 function randomUncertainty(): string {
@@ -17,7 +17,7 @@ function randomUncertainty(): string {
 	return random;
 }
 
-const current = ["it’s", "they’re playing", "you’re hearing", "this is"];
+const current = ["it's", "they're playing", "you're hearing", "this is"];
 let lastCurrent: string | null = null;
 
 function randomCurrent(): string {
@@ -46,10 +46,7 @@ const nowPlaying: Command = {
 
 		const queue = useQueue(queueChannel);
 		const allEntries = await queue.getAllEntries();
-
-		logger.debug(`First entry: ${allEntries[0]?.toString() ?? "not here"}.`);
 		const firstNotDone = allEntries.find(entry => !entry.isDone);
-		logger.debug(`First not-done entry: ${firstNotDone?.toString() ?? "not here"}.`);
 
 		if (!firstNotDone) {
 			logger.debug(`The song queue is currently empty.`);
