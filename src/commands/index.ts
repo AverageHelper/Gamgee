@@ -13,7 +13,7 @@ import ping from "./ping";
 import queue from "./queue";
 import songRequest from "./songRequest";
 import test from "./test";
-import type from "./type";
+import typeHere from "./type";
 import version from "./version";
 import video from "./video";
 
@@ -41,6 +41,7 @@ function add(command: Command): void {
 			`Failed to add command ${command.name} when a command with that name was already added`
 		);
 	}
+	// TODO: Check that command aliases are as unique as command names
 	allCommands.set(command.name, command);
 }
 
@@ -54,6 +55,6 @@ add(ping);
 add(queue);
 add(songRequest);
 add(test);
-add(type);
+add(typeHere);
 add(version);
 add(video);

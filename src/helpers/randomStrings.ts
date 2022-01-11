@@ -6,8 +6,11 @@ import {
 	phrases,
 	questions
 } from "../constants/textResponses";
+import { useLogger } from "../logger";
 import Discord from "discord.js";
 import randomElementOfArray from "./randomElementOfArray";
+
+const logger = useLogger();
 
 export interface ResponseContext {
 	/** The bot's display name. */
@@ -131,6 +134,7 @@ const lastResponses = new Discord.Collection<string, Response>();
  * @returns A response from the array.
  */
 function randomResponseFromArray(key: string, array: ResponseRepository): Response {
+	logger.debug(`Getting random string from array '${key}' (length ${array.length})`);
 	let result: Response = randomElementOfArray(array);
 	const lastResult = lastResponses.get(key);
 	while (result === lastResult) {

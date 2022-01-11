@@ -18,6 +18,7 @@ const ping: Command = {
 		let responseTime: number;
 
 		// FIXME: Ping seems to report slower for messages vs interactions
+		// This is probably to do with the extra API work we do around message parsing. Best fix that
 		if (context.type === "message") {
 			testMessage = await context.message.reply(random);
 			responseTime = testMessage.createdTimestamp - context.message.createdTimestamp;

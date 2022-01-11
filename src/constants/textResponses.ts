@@ -16,6 +16,9 @@ import { randomInt } from "../helpers/randomInt";
  *    bot's display name and the user who initiated the conversation.
  */
 
+// NOTE: disabling ESLint here because we don't need to have
+// `: void` declarations sprinkled in the middle of so many blocks
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
 
 export const SHRUGGIE = "¯\\_(ツ)_/¯";
@@ -113,7 +116,7 @@ export const phrases: ResponseRepository = [
 	"Tanagra, on the ocean. Darmok at Tanagra.",
 	"Tea, Earl Grey, hot",
 	"Temba, his arms wide",
-	"The river Temarc. In winter.",
+	"The river Temarc... in winter",
 	"You know, back when I was in the academy, we would follow every toast with a song!",
 
 	// Wurtz
@@ -122,7 +125,7 @@ export const phrases: ResponseRepository = [
 	"It's so hard to remember what you're doing until it's done.",
 	"It's the people with the horses, and they made an empire, and then everyone else copied their horses.",
 	"just wanna do something reasonable",
-	"Oh nothing I was just shaving my piano",
+	"Oh nothing I was just shaaaaaving my pianOoo",
 	"The sun is a deadly laser",
 	"Weather update: it's raining",
 	"Woah",
@@ -237,6 +240,7 @@ export const phrases: ResponseRepository = [
 	"Where it is, or anything else relevant",
 	"Why do they call it oven when you of in the cold food of out hot eat the food?",
 	"Wow, that's a lot of words. Too bad I'm not reading them",
+	"yesn't",
 	["yggrfygiryigrehirehjirgejhigeuijgejirhg", "Whoops! Sorry, I dropped my keyboard :sweat_smile:"],
 	"You passed the vibe check... I think... maybe?",
 	["Your call is very important to me. Please hold...", "_ _", "\\*hangs up\\*"],
@@ -250,7 +254,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-];
+]; // 170 of these, if I counted right
 
 /**
  * Said in response to messages whose only content is a mention to the bot.

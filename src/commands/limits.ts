@@ -66,46 +66,41 @@ const limits: Command = {
 			queue.getAveragePlaytimeFrom(user.id)
 		]);
 
-		allLimits.forEach(key => {
-			let name = key.name;
-			let value: string | undefined;
+		// Average song length
+		if (avgDuration > 0) {
+			const name = "Average Song Length";
+			const value = durationString(avgDuration);
+			usageEmbed.addField(name, value);
+		}
 
-			switch (key.value) {
-				case "cooldown": {
-					const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
-					const timeSinceLatest =
-						latestTimestamp !== null
-							? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND
-							: null;
-					const timeToWait =
-						config.cooldownSeconds !== null &&
-						config.cooldownSeconds > 0 &&
-						timeSinceLatest !== null
-							? Math.max(0, config.cooldownSeconds - timeSinceLatest)
-							: 0;
-					name = "Remaining Wait Time";
-					value = `${durationString(timeToWait)}`;
-					break;
-				}
-				case "count":
-					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-						name = "Total Submissions";
-						value = `${userSubmissionCount} of ${config.submissionMaxQuantity}`;
-					}
-					break;
-				case "entry-duration":
-					// Put in the average
-					if (avgDuration > 0) {
-						name = "Average Song Length";
-						value = durationString(avgDuration);
-					}
-					break;
-			}
+		// Total submissions
+		if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
+			const name = "Total Submissions";
+			const value = `${userSubmissionCount} of ${config.submissionMaxQuantity}`;
+			usageEmbed.addField(name, value);
+		}
 
-			if (value !== undefined) {
-				usageEmbed.addField(name, value);
-			}
-		});
+		// Remaining wait time (if applicable)
+		const userCanSubmitAgainLater =
+			config.submissionMaxQuantity !== null &&
+			config.submissionMaxQuantity > 0 &&
+			userSubmissionCount < config.submissionMaxQuantity;
+		if (userCanSubmitAgainLater) {
+			const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
+			const timeSinceLatest =
+				latestTimestamp !== null //
+					? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND
+					: null;
+			const timeToWait =
+				config.cooldownSeconds !== null && //
+				config.cooldownSeconds > 0 &&
+				timeSinceLatest !== null
+					? Math.max(0, config.cooldownSeconds - timeSinceLatest)
+					: 0;
+			const name = "Remaining Wait Time";
+			const value = `${durationString(timeToWait)}`;
+			usageEmbed.addField(name, value);
+		}
 
 		await followUp({ embeds: [usageEmbed], ephemeral: true });
 	}
