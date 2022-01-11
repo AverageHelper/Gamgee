@@ -162,7 +162,7 @@ export const phrases: ResponseRepository = [
 	[
 		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
 		"_ _",
-		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼O​O NΘ stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e n​ot rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
+		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
 	],
 	"Fan of squirrels.",
 	"Fit as a fiddle on a woodbench!",
@@ -245,10 +245,8 @@ export const phrases: ResponseRepository = [
 	"You passed the vibe check... I think... maybe?",
 	["Your call is very important to me. Please hold...", "_ _", "\\*hangs up\\*"],
 	"Your free trial has expired. Would you like to purchase WinRAR?",
-	({ otherMember, otherUser }) =>
-		`${
-			otherMember?.nickname ?? otherUser.username
-		} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
+	({ otherMember: m, otherUser: u }) =>
+		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
 	"`01011001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101 00101110`", // You lost the game.
 	"`01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110`", // I just wasted your time.
 
