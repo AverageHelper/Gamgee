@@ -1,6 +1,6 @@
+import type { GitHubMetadata } from "../helpers/githubMetadata";
 import type { GlobalCommand } from "./Command";
-import type { GitHubMetadata } from "github-metadata";
-import gitHubMetadata from "github-metadata";
+import { gitHubMetadata } from "../helpers/githubMetadata";
 import richErrorMessage from "../helpers/richErrorMessage";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
@@ -12,7 +12,6 @@ const languages: GlobalCommand = {
 	async execute({ logger, prepareForLongRunningTasks, reply }) {
 		const owner = "AverageHelper";
 		const repo = "Gamgee";
-		const exclude: Array<string> = [];
 
 		if (cachedMetadata === "waiting") {
 			return reply("working on it...");
@@ -24,7 +23,7 @@ const languages: GlobalCommand = {
 				await prepareForLongRunningTasks();
 
 				// eslint-disable-next-line require-atomic-updates
-				cachedMetadata = await gitHubMetadata({ owner, repo, exclude });
+				cachedMetadata = await gitHubMetadata({ owner, repo });
 			} catch (error: unknown) {
 				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
 				return reply("Erm... I'm not sure :sweat_smile:");
@@ -32,6 +31,7 @@ const languages: GlobalCommand = {
 		}
 
 		const languages = cachedMetadata.languages;
+		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 		if (languages === undefined) {
 			return reply("I'm really not sure. Ask my boss that.");
 		}
@@ -51,10 +51,10 @@ const languages: GlobalCommand = {
 
 		const stats = Object.entries(languages).map(([languageName, languageUse]) => {
 			const use = (languageUse ?? 0) / totalUse;
-			return `${(use * 100).toFixed(1)}% ${languageName}`;
+			return `${languageName} (${(use * 100).toFixed(1)}%)`;
 		});
 
-		logger.debug(`Gamgee is made of ${totalLanguages} languages:\n${stats.join("\n")}`);
+		logger.debug(`Gamgee is made of ${totalLanguages} languages: ${stats.join(", ")}`);
 
 		const last = stats.splice(-1)[0] ?? "a secret language only I know the meaning of";
 		if (totalLanguages > 2) {

@@ -1,7 +1,5 @@
-jest.mock("github-metadata");
-
-import gitHubMetadata from "github-metadata";
-const mockGithubMetadata = gitHubMetadata as jest.Mock;
+const mockGithubMetadata = jest.fn();
+jest.mock("../helpers/githubMetadata", () => ({ gitHubMetadata: mockGithubMetadata }));
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
@@ -38,11 +36,7 @@ describe("Language Statistics from GitHub", () => {
 		const owner = "AverageHelper";
 		const repo = "Gamgee";
 		expect(mockGithubMetadata).toHaveBeenCalledTimes(1);
-		expect(mockGithubMetadata).toHaveBeenCalledWith({
-			owner,
-			repo,
-			exclude: expect.not.arrayContaining(["languages"]) as Array<string>
-		});
+		expect(mockGithubMetadata).toHaveBeenCalledWith({ owner, repo });
 
 		expect(mockReply).toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledWith(expect.toContainValue("4"));

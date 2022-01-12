@@ -63,7 +63,7 @@ $ cd Gamgee
 
 ### Get a Token
 
-You'll need a Discord bot account's token. See [this awesome tutorial on how to get one](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
+You'll need a token for a Discord bot account. See [this awesome tutorial on how to get one](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
 Create a file called `.env` in the root of this project folder. Paste your token into that file:
 
