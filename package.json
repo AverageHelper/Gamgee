@@ -23,6 +23,9 @@
 		"_test:e2e": "jest --selectProjects e2e --detectOpenHandles"
 	},
 	"main": "./dist/main.js",
+	"engines": {
+		"node": ">=16.6"
+	},
 	"files": [
 		"dist/"
 	],
@@ -40,8 +43,8 @@
 		"@averagehelper/job-queue": "^0.9.5",
 		"discord.js": "^13.1.0",
 		"dotenv": "^8.2.0",
-		"github-metadata": "git+https://github.com/AverageHelper/github-metadata.git#updates",
 		"humanize-duration": "^3.25.1",
+		"node-fetch": "^2.6.6",
 		"node-persist": "^3.1.0",
 		"reflect-metadata": "^0.1.13",
 		"soundcloud-scraper": "^4.0.3",
@@ -56,8 +59,9 @@
 	},
 	"devDependencies": {
 		"@types/humanize-duration": "^3.18.1",
-		"@types/jest": "^27.0.1",
+		"@types/jest": "^27.4.0",
 		"@types/node": "^16.6.2",
+		"@types/node-fetch": "^2.5.12",
 		"@types/node-persist": "^3.1.1",
 		"@types/source-map-support": "^0.5.3",
 		"@types/uuid": "^8.3.0",
@@ -68,18 +72,18 @@
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-config-strictest": "^0.3.1",
-		"eslint-plugin-jest": "^24.4.0",
+		"eslint-plugin-jest": "^25.3.4",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-prettier": "^3.4.0",
 		"eslint-plugin-promise": "^5.1.0",
 		"eslint-plugin-unicorn": "^35.0.0",
 		"genversion": "^2.3.1",
-		"jest": "^27.0.6",
-		"jest-environment-node": "^27.0.6",
-		"jest-extended": "^0.11.5",
+		"jest": "^27.4.7",
+		"jest-environment-node": "^27.4.6",
+		"jest-extended": "^1.2.0",
 		"nodemon": "^2.0.7",
 		"prettier": "^2.2.1",
-		"ts-jest": "^27.0.5",
+		"ts-jest": "^27.1.2",
 		"typescript": "^4.3.5"
 	}
 }
