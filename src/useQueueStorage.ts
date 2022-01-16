@@ -15,7 +15,7 @@ const logger = useLogger();
 export type { QueueEntry };
 export type UnsentQueueEntry = Omit<
 	QueueEntry,
-	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt"
+	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "likeCount"
 >;
 
 export class QueueEntryManager {
@@ -209,6 +209,20 @@ export class QueueEntryManager {
 					queueMessageId
 				},
 				{ isDone }
+			)
+		);
+	}
+
+	async setLikeCount(likeCount: number, queueMessageId: Snowflake): Promise<void> {
+		logger.debug(`Incrementing like count for ${queueMessageId}`);
+		await useRepository(QueueEntry, repo =>
+			repo.update(
+				{
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				},
+				{ likeCount }
 			)
 		);
 	}

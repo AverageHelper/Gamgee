@@ -123,7 +123,8 @@ export class QueueManager {
 				...newEntry,
 				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
-				isDone: false
+				isDone: false,
+				likeCount: 0
 			});
 
 			// If the database write fails...
