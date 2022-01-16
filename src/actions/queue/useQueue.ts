@@ -11,6 +11,8 @@ import {
 	deleteMessage,
 	editMessage,
 	escapeUriInString,
+	fetchLikeCountFromString,
+	replaceLikeCountInString,
 	stopEscapingUriInString
 } from "../messages";
 
@@ -85,7 +87,8 @@ export class QueueManager {
 		const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
 		messageBuilder.push(" requested a song that's ");
 		messageBuilder.pushBold(durationString(newEntry.seconds));
-		messageBuilder.push(` long: ${newEntry.url}`);
+		messageBuilder.push(` long: ${newEntry.url}\n`);
+		messageBuilder.push(`It has 0 likes.`);
 
 		const newEntryButtons: NonEmptyArray<MessageButton> = [
 			DONE_BUTTON, //
@@ -153,6 +156,20 @@ export class QueueManager {
 		});
 	}
 
+	/** Add a like to the message */
+	async addLike(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
+		const message = await queueMessage.fetch();
+
+		const currentLikeCount = fetchLikeCountFromString(message.content);
+		const newLikeCount = currentLikeCount + 1;
+
+		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);
+
+		await editMessage(message, {
+			content: replaceLikeCountInString(newLikeCount, message.content)
+		});
+	}
+
 	/**
 	 * If the message represents a queue entry, that entry is removed and the message deleted.
 	 *
@@ -165,7 +182,6 @@ export class QueueManager {
 		if (entry === null) return entry;
 
 		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
-		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
 		await deleteMessage(queueMessage);
 
 		return entry;
