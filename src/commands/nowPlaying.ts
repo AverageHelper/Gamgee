@@ -55,6 +55,8 @@ const nowPlaying: Command = {
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
 
+		await queue.addLike(await queueChannel.messages.fetch(firstNotDone.queueMessageId));
+
 		const response = new StringBuilder();
 
 		response.push(randomUncertainty());

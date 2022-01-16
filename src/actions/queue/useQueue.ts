@@ -112,7 +112,8 @@ export class QueueManager {
 		const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
 		messageBuilder.push(" requested a song that's ");
 		messageBuilder.pushBold(durationString(newEntry.seconds));
-		messageBuilder.push(` long: ${newEntry.url}`);
+		messageBuilder.push(` long: ${newEntry.url}\n`);
+		messageBuilder.push(`It has 0 likes.`);
 
 		const messageOptions = queueMessageFromEntry({ ...newEntry, isDone: false });
 		const queueMessage = await this.queueChannel.send(messageOptions);
@@ -159,6 +160,20 @@ export class QueueManager {
 
 		const editOptions = queueMessageFromEntry(entry);
 		await editMessage(queueMessage, editOptions);
+	}
+
+	/** Add a like to the message */
+	async addLike(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
+		const message = await queueMessage.fetch();
+
+		const currentLikeCount = fetchLikeCountFromString(message.content);
+		const newLikeCount = currentLikeCount + 1;
+
+		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);
+
+		await editMessage(message, {
+			content: replaceLikeCountInString(newLikeCount, message.content)
+		});
 	}
 
 	/**
