@@ -3,16 +3,43 @@ import type { MessageButton } from "../../buttons";
 import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
-import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
+import { addStrikethrough } from "./strikethroughText";
+import { deleteMessage, editMessage, escapeUriInString } from "../messages";
 import { useQueueStorage } from "../../useQueueStorage";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
-import {
-	deleteMessage,
-	editMessage,
-	escapeUriInString,
-	stopEscapingUriInString
-} from "../messages";
+
+function queueMessageFromEntry(
+	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url">
+): Discord.MessageOptions {
+	const contentBuilder = new StringBuilder();
+	contentBuilder.push(`<@!${entry.senderId}>`);
+	contentBuilder.push(" requested a song that's ");
+	contentBuilder.pushBold(durationString(entry.seconds));
+	contentBuilder.push(" long: ");
+
+	// Suppress embeds if the entry is marked "Done"
+	if (entry.isDone) {
+		contentBuilder.push(escapeUriInString(entry.url));
+	} else {
+		contentBuilder.push(entry.url);
+	}
+
+	// Strike the message through if the entry is marked "Done"
+	const result = contentBuilder.result();
+	const content = entry.isDone ? addStrikethrough(result) : result;
+
+	// Only show the restore button if the entry is marked "Done"
+	const entryButtons: NonEmptyArray<MessageButton> = entry.isDone
+		? [RESTORE_BUTTON]
+		: [DONE_BUTTON, DELETE_BUTTON];
+
+	return {
+		content,
+		allowedMentions: { users: [] },
+		components: [actionRow(entryButtons)]
+	};
+}
 
 /**
  * A proxy for queue management and feedback. These methods may modify the
@@ -87,16 +114,8 @@ export class QueueManager {
 		messageBuilder.pushBold(durationString(newEntry.seconds));
 		messageBuilder.push(` long: ${newEntry.url}`);
 
-		const newEntryButtons: NonEmptyArray<MessageButton> = [
-			DONE_BUTTON, //
-			DELETE_BUTTON
-		];
-
-		const queueMessage = await this.queueChannel.send({
-			content: messageBuilder.result(),
-			allowedMentions: { users: [] },
-			components: [actionRow(newEntryButtons)]
-		});
+		const messageOptions = queueMessageFromEntry({ ...newEntry, isDone: false });
+		const queueMessage = await this.queueChannel.send(messageOptions);
 
 		let entry: QueueEntry;
 		try {
@@ -123,33 +142,22 @@ export class QueueManager {
 
 	/** If the message represents a "done" entry, that entry is unmarked. */
 	async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		const message = await queueMessage.fetch();
 		await this.queueStorage.markEntryDone(false, queueMessage.id);
+		const entry = await this.getEntryFromMessage(queueMessage.id);
+		if (!entry) return;
 
-		const entryButtons: NonEmptyArray<MessageButton> = [
-			DONE_BUTTON, //
-			DELETE_BUTTON
-		];
-		await editMessage(message, {
-			content: stopEscapingUriInString(removeStrikethrough(message.content)),
-			allowedMentions: { users: [] },
-			components: [actionRow(entryButtons)]
-		});
+		const editOptions = queueMessageFromEntry(entry);
+		await editMessage(queueMessage, editOptions);
 	}
 
 	/** If the message represents a "not done" entry, that entry is marked "done". */
 	async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		const message = await queueMessage.fetch();
 		await this.queueStorage.markEntryDone(true, queueMessage.id);
+		const entry = await this.getEntryFromMessage(queueMessage.id);
+		if (!entry) return;
 
-		const doneEntryButton: NonEmptyArray<MessageButton> = [
-			RESTORE_BUTTON //
-		];
-		await editMessage(message, {
-			content: addStrikethrough(escapeUriInString(message.content)),
-			allowedMentions: { users: [] },
-			components: [actionRow(doneEntryButton)]
-		});
+		const editOptions = queueMessageFromEntry(entry);
+		await editMessage(queueMessage, editOptions);
 	}
 
 	/**

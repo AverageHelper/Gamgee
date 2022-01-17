@@ -62,6 +62,9 @@ export const phrases: ResponseRepository = [
 	"Hey, get out of my sandwich",
 	"I like trains",
 
+	// German
+	"Zu wenig Ponys", // "Too few ponies"  // TODO: Check the accuracy of this
+
 	// LOTR
 	"A wizard is never late!",
 	"Books ought to have good endings.",
@@ -209,6 +212,7 @@ export const phrases: ResponseRepository = [
 	"Lorem ipsum dolor sit amet...",
 	"My favorite type of music is the one with all of the instruments and sounds.",
 	["Odds aren't good.", "I prefer evens"],
+	"Oh hai there!",
 	"One day I'm gonna run out of funny random stuff to say and you'll only have yourselves to blame!",
 	"Prose, maybe even poetry",
 	"Quite remarkable",
@@ -252,7 +256,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 170 of these, if I counted right
+]; // 172 of these, if I counted right
 
 /**
  * Said in response to messages whose only content is a mention to the bot.
