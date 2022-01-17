@@ -182,6 +182,8 @@ export class QueueManager {
 		if (entry === null) return entry;
 
 		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
+		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+
 		await deleteMessage(queueMessage);
 
 		return entry;
