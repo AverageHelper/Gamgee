@@ -11,7 +11,6 @@ import {
 	deleteMessage,
 	editMessage,
 	escapeUriInString,
-	fetchLikeCountFromString,
 	replaceLikeCountInString,
 	stopEscapingUriInString
 } from "../messages";
@@ -160,7 +159,7 @@ export class QueueManager {
 	async addLike(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		const message = await queueMessage.fetch();
 
-		const currentLikeCount = fetchLikeCountFromString(message.content);
+		const currentLikeCount = await this.queueStorage.getLikeCount(message.id);
 		const newLikeCount = currentLikeCount + 1;
 
 		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);
