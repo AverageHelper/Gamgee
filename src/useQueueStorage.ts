@@ -213,6 +213,23 @@ export class QueueEntryManager {
 		);
 	}
 
+	async getLikeCount(queueMessageId: Snowflake): Promise<number> {
+		logger.debug(this.queueChannel.id);
+		logger.debug(this.queueChannel.guild.id);
+		logger.debug(queueMessageId);
+		const entry = await useRepository(QueueEntry, repo =>
+			repo.findOne({
+				where: {
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				}
+			})
+		);
+		logger.debug(entry);
+		return entry?.likeCount ?? Number.NaN;
+	}
+
 	async setLikeCount(likeCount: number, queueMessageId: Snowflake): Promise<void> {
 		logger.debug(`Incrementing like count for ${queueMessageId}`);
 		await useRepository(QueueEntry, repo =>

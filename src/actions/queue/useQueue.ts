@@ -4,7 +4,7 @@ import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
 import { addStrikethrough } from "./strikethroughText";
-import { deleteMessage, editMessage, escapeUriInString } from "../messages";
+import { deleteMessage, editMessage, escapeUriInString, replaceLikeCountInString } from "../messages";
 import { useQueueStorage } from "../../useQueueStorage";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
@@ -166,7 +166,7 @@ export class QueueManager {
 	async addLike(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		const message = await queueMessage.fetch();
 
-		const currentLikeCount = fetchLikeCountFromString(message.content);
+		const currentLikeCount = await this.queueStorage.getLikeCount(message.id);
 		const newLikeCount = currentLikeCount + 1;
 
 		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);

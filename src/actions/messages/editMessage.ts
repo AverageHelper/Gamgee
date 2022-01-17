@@ -147,24 +147,6 @@ export function positionsOfUriInText(str: string): NonEmptyArray<Range> | null {
 	return results;
 }
 
-export function fetchLikeCountFromString(content: string): number {
-	logger.debug(`Fetching like count from string "${content}"`);
-
-	const likeCountPosition = findLikeCountInString(content);
-	if (!likeCountPosition) {
-		logger.debug("Couldn't find like count, returning NaN");
-		return Number.NaN;
-	}
-
-	const likeCount = Number.parseInt(
-		content.slice(likeCountPosition.start, likeCountPosition.end),
-		10
-	);
-
-	logger.debug(`Current like count is ${likeCount}`);
-	return likeCount;
-}
-
 export function replaceLikeCountInString(likeCount: number, content: string): string {
 	logger.debug(`Replacing like count in string "${content}" with ${likeCount}`);
 
