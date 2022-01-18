@@ -4,13 +4,13 @@ import type { QueueConfig } from "../../database/model/QueueConfig";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
 import { addStrikethrough } from "./strikethroughText";
-import { deleteMessage, editMessage, escapeUriInString, replaceLikeCountInString } from "../messages";
+import { deleteMessage, editMessage, escapeUriInString } from "../messages";
 import { useQueueStorage } from "../../useQueueStorage";
 import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 
 function queueMessageFromEntry(
-	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url">
+	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "likeCount">
 ): Discord.MessageOptions {
 	const contentBuilder = new StringBuilder();
 	contentBuilder.push(`<@!${entry.senderId}>`);
@@ -24,6 +24,8 @@ function queueMessageFromEntry(
 	} else {
 		contentBuilder.push(entry.url);
 	}
+
+	contentBuilder.push(`\nIt has ${entry.likeCount} like${entry.likeCount === 1 ? "" : "s"}.`);
 
 	// Strike the message through if the entry is marked "Done"
 	const result = contentBuilder.result();
@@ -171,9 +173,10 @@ export class QueueManager {
 
 		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);
 
-		await editMessage(message, {
-			content: replaceLikeCountInString(newLikeCount, message.content)
-		});
+		const entry = await this.getEntryFromMessage(queueMessage.id);
+		if (!entry) return;
+
+		await editMessage(message, queueMessageFromEntry(entry));
 	}
 
 	/**

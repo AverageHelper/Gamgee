@@ -146,39 +146,3 @@ export function positionsOfUriInText(str: string): NonEmptyArray<Range> | null {
 
 	return results;
 }
-
-export function replaceLikeCountInString(likeCount: number, content: string): string {
-	logger.debug(`Replacing like count in string "${content}" with ${likeCount}`);
-
-	const likeCountPosition = findLikeCountInString(content);
-	if (!likeCountPosition) {
-		logger.debug("Couldn't find like count, returning original string");
-		return content;
-	}
-
-	const currentLikeCount = Number.parseInt(
-		content.slice(likeCountPosition.start, likeCountPosition.end),
-		10
-	);
-
-	logger.debug(`Current like count is ${currentLikeCount}`);
-
-	const newContent = `${content.slice(0, likeCountPosition.start)}${likeCount}${content.slice(
-		likeCountPosition.end
-	)}`;
-
-	logger.debug(`New string is "${newContent}"`);
-	return newContent;
-}
-
-function findLikeCountInString(content: string): Range | null {
-	const likeCount = /has (\d+)/gu;
-
-	const match = likeCount.exec(content);
-	if (!match) return null;
-
-	return {
-		start: match.index + 4,
-		end: match.index + 4 + (match[1]?.length ?? 0)
-	};
-}
