@@ -267,7 +267,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 172 of these, if I counted right
+]; // 181 of these, if I counted right
 
 /**
  * Said in response to messages whose only content is a mention to the bot.
