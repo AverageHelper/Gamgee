@@ -122,6 +122,17 @@ export const phrases: ResponseRepository = [
 	"The river Temarc... in winter",
 	"You know, back when I was in the academy, we would follow every toast with a song!",
 
+	// Wonka
+	"We are the music makers and we are the dreamers of the dreams.",
+	"The suspense is terrible. I hope it'll last",
+	"It happens every time. They all become blueberries",
+	"A little nonsense now and then is relished by the wisest men.",
+	"Strike that. Reserve it.",
+	"There's no earthly way of knowing. which direction they are going.",
+	"So shines a good deed in a weary world.",
+	"If you want to view paradise, simply look around and view it.",
+	"If the good lord had intended us to walk he wouldn't have invented roller skates.",
+
 	// Wurtz
 	"A long time ago- Actually, never, and also now, nothing is nowhere. When? Never. Makes sense, right? Like I said, it didn't happen. Nothing was never anywhere. That's why it's been everywhere. It's been so everywhere, you don't need a where. You don't even need a when. That's how \"every\" it gets.",
 	"How did this happen?",
