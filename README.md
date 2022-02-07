@@ -101,11 +101,13 @@ Install the necessary dependencies:
 $ npm install
 ```
 
-Since Gamgee is just a Node program, any Node process manager will do.
+Since Gamgee is just a Node script, any Node process manager will do.
 
 ```sh
-$ node .  # or
-$ npm start  # or
+$ node .
+# or
+$ npm start
+# or
 $ pm2 start .
 ```
 
@@ -264,13 +266,11 @@ We welcome contributions of all sorts!
 - [Discord.js](https://discord.js.org/)
 - Love
 
-## Authors
+## Authors & Contributors
 
-- **James Robinson** ([AverageHelper](https://github.com/AverageHelper)) - _Initial work_
-
-### Thanks to contributions from
-
-- **[ajnrules](https://github.com/ajnrules)** - _Some fun easter egg responses_
+- [**AverageHelper**](https://github.com/AverageHelper) - _Creator_
+- [**ajnrules**](https://github.com/ajnrules) - _Contributor_
+- [**bendai94**](https://github.com/bendai94) - _Contributor_
 
 ## License
 
