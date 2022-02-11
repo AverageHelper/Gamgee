@@ -19,3 +19,4 @@ coverage
 src/version.ts
 tmp
 temp
+.vs
