@@ -1,4 +1,5 @@
 import type { Logger } from "../logger";
+import { isString } from "../helpers/guards";
 import { URL } from "url";
 import { useLogger } from "../logger";
 import isError from "../helpers/isError";
@@ -145,20 +146,35 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	} catch (error: unknown) {
 		throw new VideoError(error);
 	}
+
+	type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 	const json = metadata.jsonld as
-		| { name?: string; additionalProperty?: Array<{ name: string; value: number }> }
+		| { name?: string; duration: `${string}H${Digit}${Digit}M${Digit}${Digit}S` }
+		| undefined;
+	if (!json) throw new VideoError("Duration and title not found");
+
+	const durationPropertiesMatch = json.duration.matchAll(/H([0-9]+)M([0-9]+)S/gu);
+	const durationProperties = Array.from(durationPropertiesMatch)[0] as
+		| [string, string, string, ...Array<string>] // at least 3 strings
 		| undefined;
 
-	const durationProperty = json?.additionalProperty?.find(prop => prop.name === "duration_secs");
+	// Sanity checks (I have a college education and I don't understand regex)
+	if (!durationProperties || durationProperties.length < 3 || !durationProperties.every(isString))
+		throw new VideoError("Duration not found");
 
-	const seconds: number | null = durationProperty?.value ?? null;
-	const title: string | null = json?.name ?? null;
-	if (seconds === null || title === null) throw new VideoError("Duration and title not found");
+	const minutes = Number.parseInt(durationProperties[1], 10);
+	const seconds = Number.parseInt(durationProperties[2], 10);
+	if (Number.isNaN(minutes) || Number.isNaN(seconds)) throw new VideoError("Duration not found");
+
+	const totalSeconds = minutes * 60 + seconds;
+
+	const title: string | null = json.name ?? null;
+	if (title === null || !title) throw new VideoError("Title not found");
 
 	return {
 		url: metadata.url,
 		title: metadata.title,
-		duration: { seconds: Math.floor(seconds) }
+		duration: { seconds: Math.floor(totalSeconds) }
 	};
 }
 
