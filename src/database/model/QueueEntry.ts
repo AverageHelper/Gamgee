@@ -27,8 +27,8 @@ export class QueueEntry {
 	@Column()
 	isDone: boolean;
 
-	@Column()
-	likeCount: number;
+	@Column("simple-array")
+	haveCalledNowPlaying: Array<Snowflake>;
 
 	constructor(
 		channelId: Snowflake,
@@ -48,7 +48,7 @@ export class QueueEntry {
 		this.sentAt = entry?.sentAt ?? new Date();
 		this.senderId = entry?.senderId ?? "0";
 		this.isDone = entry?.isDone ?? false;
-		this.likeCount = entry?.likeCount ?? 0;
+		this.haveCalledNowPlaying = entry?.haveCalledNowPlaying ?? [];
 	}
 
 	toString(): string {
@@ -57,7 +57,7 @@ export class QueueEntry {
 		}; guild/channel/message path: ${this.guildId}/${this.channelId}/${this.queueMessageId}; url: ${
 			this.url
 		}; duration: ${this.seconds}; isDone: ${this.isDone ? "true" : "false"}; got ${
-			this.likeCount
+			this.haveCalledNowPlaying.length
 		} likes;`;
 	}
 }

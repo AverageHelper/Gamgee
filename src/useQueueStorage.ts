@@ -15,7 +15,7 @@ const logger = useLogger();
 export type { QueueEntry };
 export type UnsentQueueEntry = Omit<
 	QueueEntry,
-	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "likeCount"
+	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
 
 export class QueueEntryManager {
@@ -227,11 +227,33 @@ export class QueueEntryManager {
 			})
 		);
 		logger.debug(entry);
-		return entry?.likeCount ?? Number.NaN;
+		return entry?.haveCalledNowPlaying.length ?? Number.NaN;
 	}
 
-	async setLikeCount(likeCount: number, queueMessageId: Snowflake): Promise<void> {
-		logger.debug(`Incrementing like count for ${queueMessageId}`);
+	async addToHaveCalledNowPlaying(userId: Snowflake, queueMessageId: Snowflake): Promise<void> {
+		logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
+		const entry = await useRepository(QueueEntry, repo =>
+			repo.findOne({
+				where: {
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				}
+			})
+		);
+		if (!entry) {
+			logger.debug(`Could not find ${queueMessageId} in the queue message database!`);
+			return;
+		}
+		if (userId === entry.senderId) {
+			logger.debug(`User calling is this request's sender, skipping`);
+			return;
+		}
+		if (entry?.haveCalledNowPlaying.includes(userId)) {
+			logger.debug(`User in haveCalledNowPlaying already, skipping...`);
+			return;
+		}
+		entry.haveCalledNowPlaying.push(userId);
 		await useRepository(QueueEntry, repo =>
 			repo.update(
 				{
@@ -239,9 +261,10 @@ export class QueueEntryManager {
 					guildId: this.queueChannel.guild.id,
 					queueMessageId
 				},
-				{ likeCount }
+				{ haveCalledNowPlaying: entry.haveCalledNowPlaying }
 			)
 		);
+		logger.debug("User added to haveCalledNowPlaying");
 	}
 
 	/** Delete all entries for this queue channel. */

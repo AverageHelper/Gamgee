@@ -10,7 +10,7 @@ import durationString from "../../helpers/durationString";
 import StringBuilder from "../../helpers/StringBuilder";
 
 function queueMessageFromEntry(
-	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "likeCount">
+	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
 ): Discord.MessageOptions {
 	const contentBuilder = new StringBuilder();
 	contentBuilder.push(`<@!${entry.senderId}>`);
@@ -25,7 +25,8 @@ function queueMessageFromEntry(
 		contentBuilder.push(entry.url);
 	}
 
-	contentBuilder.push(`\nIt has ${entry.likeCount} like${entry.likeCount === 1 ? "" : "s"}.`);
+	const likeCount = entry.haveCalledNowPlaying.length;
+	contentBuilder.push(`\nIt has ${likeCount} like${likeCount === 1 ? "" : "s"}.`);
 
 	// Strike the message through if the entry is marked "Done"
 	const result = contentBuilder.result();
@@ -117,7 +118,11 @@ export class QueueManager {
 		messageBuilder.push(` long: ${newEntry.url}\n`);
 		messageBuilder.push(`It has 0 likes.`);
 
-		const messageOptions = queueMessageFromEntry({ ...newEntry, isDone: false });
+		const messageOptions = queueMessageFromEntry({
+			...newEntry,
+			isDone: false,
+			haveCalledNowPlaying: []
+		});
 		const queueMessage = await this.queueChannel.send(messageOptions);
 
 		let entry: QueueEntry;
@@ -127,7 +132,7 @@ export class QueueManager {
 				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
 				isDone: false,
-				likeCount: 0
+				haveCalledNowPlaying: []
 			});
 
 			// If the database write fails...
@@ -164,14 +169,14 @@ export class QueueManager {
 		await editMessage(queueMessage, editOptions);
 	}
 
-	/** Add a like to the message */
-	async addLike(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
+	/** Add the given user to the haveCalledNowPlaying field of the queue entry if they aren't already on it. */
+	async addUserToHaveCalledNowPlaying(
+		user: Discord.Snowflake,
+		queueMessage: Discord.Message | Discord.PartialMessage
+	): Promise<void> {
 		const message = await queueMessage.fetch();
 
-		const currentLikeCount = await this.queueStorage.getLikeCount(message.id);
-		const newLikeCount = currentLikeCount + 1;
-
-		await this.queueStorage.setLikeCount(newLikeCount, queueMessage.id);
+		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
 
 		const entry = await this.getEntryFromMessage(queueMessage.id);
 		if (!entry) return;
