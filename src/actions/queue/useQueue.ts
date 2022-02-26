@@ -112,12 +112,6 @@ export class QueueManager {
 
 	/** Adds an entry to the queue cache and sends the entry to the queue channel. */
 	async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
-		const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
-		messageBuilder.push(" requested a song that's ");
-		messageBuilder.pushBold(durationString(newEntry.seconds));
-		messageBuilder.push(` long: ${newEntry.url}\n`);
-		messageBuilder.push(`It has 0 likes.`);
-
 		const messageOptions = queueMessageFromEntry({
 			...newEntry,
 			isDone: false,
