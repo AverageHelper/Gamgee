@@ -271,6 +271,7 @@ We welcome contributions of all sorts!
 - [**AverageHelper**](https://github.com/AverageHelper) - _Creator_
 - [**ajnrules**](https://github.com/ajnrules) - _Contributor_
 - [**bendai94**](https://github.com/bendai94) - _Contributor_
+- [**karcsesz**](https://github.com/karcsesz) - _Contributor_
 
 ## License
 
