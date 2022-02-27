@@ -13,6 +13,7 @@ const mockGetAllEntries = jest.fn().mockResolvedValue(undefined);
 const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
+const mockAddUserToHaveCalledNowPlaying = jest.fn().mockResolvedValue(undefined);
 
 import nowPlaying from "./nowPlaying";
 import { useTestLogger } from "../../tests/testUtils/logger";
@@ -29,13 +30,15 @@ describe("Now-Playing", () => {
 		context = ({
 			guild: "the guild",
 			logger,
+			user: { id: "the user" },
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteMessage
 		} as unknown) as GuildedCommandContext;
 
 		mockUseQueue.mockReturnValue({
-			getAllEntries: mockGetAllEntries
+			getAllEntries: mockGetAllEntries,
+			addUserToHaveCalledNowPlaying: mockAddUserToHaveCalledNowPlaying
 		});
 		mockGetAllEntries.mockResolvedValue([]);
 		mockReplyWithMention.mockResolvedValue(undefined);
@@ -91,11 +94,20 @@ describe("Now-Playing", () => {
 		"provides the URL of the most recent not-done song",
 		async ({ values }: { values: Array<QueueEntry> }) => {
 			mockGetAllEntries.mockResolvedValue(values);
+			mockGetQueueChannel.mockResolvedValue({
+				messages: {
+					fetch: jest.fn().mockResolvedValue({
+						id: "queue message id",
+						edit: jest.fn().mockResolvedValue(undefined)
+					})
+				}
+			});
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 			expect(mockUseQueue).toHaveBeenCalledTimes(1);
 
+			expect(mockAddUserToHaveCalledNowPlaying).toHaveBeenCalledTimes(1);
 			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
 			expect(mockReplyPrivately).toHaveBeenCalledTimes(1);

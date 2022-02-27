@@ -127,7 +127,8 @@ describe("Request Queue", () => {
 			...request,
 			isDone: false,
 			sentAt: expect.toBeValidDate() as Date,
-			queueMessageId: "new-message"
+			queueMessageId: "new-message",
+			haveCalledNowPlaying: [] as Array<Discord.Snowflake>
 		});
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
