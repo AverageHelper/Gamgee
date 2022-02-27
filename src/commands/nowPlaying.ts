@@ -34,7 +34,7 @@ const nowPlaying: Command = {
 	aliases: ["nowplaying"],
 	description: "Reveal the current song in the queue (or my best guess).",
 	requiresGuild: true,
-	async execute({ guild, logger, replyPrivately, deleteInvocation }) {
+	async execute({ guild, user, logger, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
 		const queueChannel: Discord.TextChannel | null = await getQueueChannel(guild);
@@ -54,6 +54,11 @@ const nowPlaying: Command = {
 		}
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
+
+		await queue.addUserToHaveCalledNowPlaying(
+			user.id,
+			await queueChannel.messages.fetch(firstNotDone.queueMessageId)
+		);
 
 		const response = new StringBuilder();
 
