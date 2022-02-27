@@ -15,7 +15,7 @@ const logger = useLogger();
 export type { QueueEntry };
 export type UnsentQueueEntry = Omit<
 	QueueEntry,
-	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt"
+	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
 
 export class QueueEntryManager {
@@ -211,6 +211,60 @@ export class QueueEntryManager {
 				{ isDone }
 			)
 		);
+	}
+
+	async getLikeCount(queueMessageId: Snowflake): Promise<number> {
+		logger.debug(this.queueChannel.id);
+		logger.debug(this.queueChannel.guild.id);
+		logger.debug(queueMessageId);
+		const entry = await useRepository(QueueEntry, repo =>
+			repo.findOne({
+				where: {
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				}
+			})
+		);
+		logger.debug(entry);
+		return entry?.haveCalledNowPlaying.length ?? Number.NaN;
+	}
+
+	async addToHaveCalledNowPlaying(userId: Snowflake, queueMessageId: Snowflake): Promise<void> {
+		logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
+		const entry = await useRepository(QueueEntry, repo =>
+			repo.findOne({
+				where: {
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				}
+			})
+		);
+		if (!entry) {
+			logger.debug(`Could not find ${queueMessageId} in the queue message database!`);
+			return;
+		}
+		if (userId === entry.senderId) {
+			logger.debug(`User calling is this request's sender, skipping`);
+			return;
+		}
+		if (entry?.haveCalledNowPlaying.includes(userId)) {
+			logger.debug(`User in haveCalledNowPlaying already, skipping...`);
+			return;
+		}
+		entry.haveCalledNowPlaying.push(userId);
+		await useRepository(QueueEntry, repo =>
+			repo.update(
+				{
+					channelId: this.queueChannel.id,
+					guildId: this.queueChannel.guild.id,
+					queueMessageId
+				},
+				{ haveCalledNowPlaying: entry.haveCalledNowPlaying }
+			)
+		);
+		logger.debug("User added to haveCalledNowPlaying");
 	}
 
 	/** Delete all entries for this queue channel. */
