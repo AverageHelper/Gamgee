@@ -1,6 +1,12 @@
-import type { GuildedCommand } from "./Command";
-import { getConfigCommandPrefix } from "../actions/config/getConfigValue";
-import StringBuilder from "../helpers/StringBuilder";
+import type { GuildedCommand } from "./Command.js";
+import { getConfigCommandPrefix } from "../actions/config/getConfigValue.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushCode,
+	pushNewLine
+} from "../helpers/composeStrings.js";
 
 const howto: GuildedCommand = {
 	name: "howto",
@@ -12,27 +18,25 @@ const howto: GuildedCommand = {
 
 		// Print the standard help
 		const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
-		const helpBuilder = new StringBuilder();
+		const msg = createPartialString();
 
-		helpBuilder.push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`);
+		push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`, msg);
 		// TODO: Clarify that YouTube, Bandcamp, or SoundCloud track links will work
-		helpBuilder.pushNewLine();
-		helpBuilder.push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``);
-		helpBuilder.pushNewLine();
-		helpBuilder.push(
-			"I will respond with a text verification indicating your song has joined the queue!"
-		);
-		helpBuilder.pushNewLine();
-		helpBuilder.pushNewLine();
+		pushNewLine(msg);
+		push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``, msg);
+		pushNewLine(msg);
+		push("I will respond with a text verification indicating your song has joined the queue!", msg);
+		pushNewLine(msg);
+		pushNewLine(msg);
 
-		helpBuilder.push("To get a link to the current song, type ");
-		helpBuilder.pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`);
+		push("To get a link to the current song, type ", msg);
+		pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`, msg);
 		if (type === "message") {
-			helpBuilder.push(" and check your DMs");
+			push(" and check your DMs", msg);
 		}
-		helpBuilder.push(".");
+		push(".", msg);
 
-		return reply(helpBuilder.result());
+		return reply(composed(msg));
 	}
 };
 

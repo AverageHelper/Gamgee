@@ -1,11 +1,14 @@
 import type { CommandInteractionOption } from "discord.js";
-import type { Subcommand } from "../Command";
-import { resolveIntegerFromOption, resolveStringFromOption } from "../../helpers/optionResolvers";
-import { SAFE_PRINT_LENGTH } from "../../constants/output";
-import { useQueue } from "../../actions/queue/useQueue";
-import durationString from "../../helpers/durationString";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
-import StringBuilder from "../../helpers/StringBuilder";
+import type { Subcommand } from "../Command.js";
+import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { useQueue } from "../../actions/queue/useQueue.js";
+import durationString from "../../helpers/durationString.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import {
+	resolveIntegerFromOption,
+	resolveStringFromOption
+} from "../../helpers/optionResolvers.js";
 
 type LimitKey = "entry-duration" | "cooldown" | "count";
 
@@ -45,7 +48,7 @@ function isLimitKey(value: unknown): value is LimitKey {
 }
 
 const limit: Subcommand = {
-	name: "limit",
+	name: "limit", // TODO: Alias this to "limits"
 	description: "Set a limit value on the queue. (Time in seconds, where applicable)",
 	options: [
 		{
@@ -111,14 +114,14 @@ const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await queue.updateConfig({ entryDurationSeconds: value });
 
-				const responseBuilder = new StringBuilder("Entry duration limit ");
+				const response = createPartialString("Entry duration limit ");
 				if (value === null || value <= 0) {
-					responseBuilder.pushBold("removed");
+					pushBold("removed", response);
 				} else {
-					responseBuilder.push("set to ");
-					responseBuilder.pushBold(durationString(value));
+					push("set to ", response);
+					pushBold(durationString(value), response);
 				}
-				return reply(responseBuilder.result());
+				return reply(composed(response));
 			}
 
 			case "cooldown": {
@@ -141,14 +144,14 @@ const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await queue.updateConfig({ cooldownSeconds: value });
 
-				const responseBuilder = new StringBuilder("Submission cooldown ");
+				const response = createPartialString("Submission cooldown ");
 				if (value === null || value <= 0) {
-					responseBuilder.pushBold("removed");
+					pushBold("removed", response);
 				} else {
-					responseBuilder.push("set to ");
-					responseBuilder.pushBold(durationString(value));
+					push("set to ", response);
+					pushBold(durationString(value), response);
 				}
-				return reply(responseBuilder.result());
+				return reply(composed(response));
 			}
 
 			case "count": {
@@ -171,14 +174,14 @@ const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await queue.updateConfig({ submissionMaxQuantity: value });
 
-				const responseBuilder = new StringBuilder("Submission count limit per user ");
+				const response = createPartialString("Submission count limit per user ");
 				if (value === null || value <= 0) {
-					responseBuilder.pushBold("removed");
+					pushBold("removed", response);
 				} else {
-					responseBuilder.push("set to ");
-					responseBuilder.pushBold(`${value}`);
+					push("set to ", response);
+					pushBold(`${value}`, response);
 				}
-				return reply(responseBuilder.result());
+				return reply(composed(response));
 			}
 		}
 	}

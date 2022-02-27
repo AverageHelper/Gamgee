@@ -1,32 +1,32 @@
 import type Discord from "discord.js";
-import type { MessageButton } from "../../buttons";
-import type { QueueConfig } from "../../database/model/QueueConfig";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
-import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
-import { addStrikethrough } from "./strikethroughText";
-import { deleteMessage, editMessage, escapeUriInString } from "../messages";
-import { useQueueStorage } from "../../useQueueStorage";
-import durationString from "../../helpers/durationString";
-import StringBuilder from "../../helpers/StringBuilder";
+import type { MessageButton } from "../../buttons.js";
+import type { QueueConfig } from "../../database/model/QueueConfig.js";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
+import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
+import { addStrikethrough } from "./strikethroughText.js";
+import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
+import { useQueueStorage } from "../../useQueueStorage.js";
+import durationString from "../../helpers/durationString.js";
+import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 
 function queueMessageFromEntry(
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url">
 ): Discord.MessageOptions {
-	const contentBuilder = new StringBuilder();
-	contentBuilder.push(`<@!${entry.senderId}>`);
-	contentBuilder.push(" requested a song that's ");
-	contentBuilder.pushBold(durationString(entry.seconds));
-	contentBuilder.push(" long: ");
+	const partialContent = createPartialString();
+	push(`<@!${entry.senderId}>`, partialContent);
+	push(" requested a song that's ", partialContent);
+	pushBold(durationString(entry.seconds), partialContent);
+	push(" long: ", partialContent);
 
 	// Suppress embeds if the entry is marked "Done"
 	if (entry.isDone) {
-		contentBuilder.push(escapeUriInString(entry.url));
+		push(escapeUriInString(entry.url), partialContent);
 	} else {
-		contentBuilder.push(entry.url);
+		push(entry.url, partialContent);
 	}
 
 	// Strike the message through if the entry is marked "Done"
-	const result = contentBuilder.result();
+	const result = composed(partialContent);
 	const content = entry.isDone ? addStrikethrough(result) : result;
 
 	// Only show the restore button if the entry is marked "Done"
@@ -109,11 +109,6 @@ export class QueueManager {
 
 	/** Adds an entry to the queue cache and sends the entry to the queue channel. */
 	async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
-		const messageBuilder = new StringBuilder(`<@!${newEntry.senderId}>`);
-		messageBuilder.push(" requested a song that's ");
-		messageBuilder.pushBold(durationString(newEntry.seconds));
-		messageBuilder.push(` long: ${newEntry.url}`);
-
 		const messageOptions = queueMessageFromEntry({ ...newEntry, isDone: false });
 		const queueMessage = await this.queueChannel.send(messageOptions);
 

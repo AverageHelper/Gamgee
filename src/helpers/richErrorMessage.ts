@@ -1,45 +1,45 @@
-import isError from "./isError";
-import StringBuilder from "./StringBuilder";
+import isError from "./isError.js";
+import { composed, createPartialString, push, pushNewLine } from "./composeStrings.js";
 
 export default function richErrorMessage(preamble: string, error: unknown): string {
-	const messageBuilder = new StringBuilder(preamble);
-	messageBuilder.pushNewLine();
+	const messageBuilder = createPartialString(preamble);
+	pushNewLine(messageBuilder);
 
 	if (isError(error)) {
 		if (error instanceof AggregateError) {
 			// Describe sub-errors
-			messageBuilder.push(`${error.name}: ${error.message}`);
+			push(`${error.name}: ${error.message}`, messageBuilder);
 			error.errors.forEach((err: unknown, index) => {
-				messageBuilder.pushNewLine();
-				messageBuilder.push(`${index + 1}: `);
+				pushNewLine(messageBuilder);
+				push(`${index + 1}: `, messageBuilder);
 				if (isError(err)) {
 					// Describe the error and its code
 					if (err.code !== undefined) {
-						messageBuilder.push(` (${err.code})`);
+						push(` (${err.code})`, messageBuilder);
 					}
 					if (err.stack !== undefined) {
-						messageBuilder.push(err.stack);
+						push(err.stack, messageBuilder);
 					}
 				} else {
 					// Describe the value thrown
-					messageBuilder.push(`${typeof err}: `);
-					messageBuilder.push(JSON.stringify(err, undefined, 2));
+					push(`${typeof err}: `, messageBuilder);
+					push(JSON.stringify(err, undefined, 2), messageBuilder);
 				}
 			});
 		} else {
 			// Describe the error and its code
 			if (error.code !== undefined) {
-				messageBuilder.push(` (${error.code})`);
+				push(` (${error.code})`, messageBuilder);
 			}
 			if (error.stack !== undefined) {
-				messageBuilder.push(error.stack);
+				push(error.stack, messageBuilder);
 			}
 		}
 	} else {
 		// Describe the value thrown
-		messageBuilder.push(`Error ${typeof error}: `);
-		messageBuilder.push(JSON.stringify(error, undefined, 2));
+		push(`Error ${typeof error}: `, messageBuilder);
+		push(JSON.stringify(error, undefined, 2), messageBuilder);
 	}
 
-	return messageBuilder.result();
+	return composed(messageBuilder);
 }

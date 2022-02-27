@@ -1,17 +1,23 @@
-import type { Command, Subcommand } from "../Command";
-import { invokeCommand } from "../../actions/invokeCommand";
-import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
+import type { Command, Subcommand } from "../Command.js";
+import { invokeCommand } from "../../actions/invokeCommand.js";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import Discord from "discord.js";
-import StringBuilder from "../../helpers/StringBuilder";
-import setup from "./setup";
-import teardown from "./teardown";
-import blacklist from "./blacklist";
-import whitelist from "./whitelist";
-import open from "./open";
-import close from "./close";
-import limit from "./limit";
-import stats from "./stats";
-import restart from "./restart";
+import setup from "./setup.js";
+import teardown from "./teardown.js";
+import blacklist from "./blacklist.js";
+import whitelist from "./whitelist.js";
+import open from "./open.js";
+import close from "./close.js";
+import limit from "./limit.js";
+import stats from "./stats.js";
+import restart from "./restart.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushCode,
+	pushNewLine
+} from "../../helpers/composeStrings.js";
 
 const namedSubcommands: NonEmptyArray<Subcommand> = [
 	setup,
@@ -34,14 +40,14 @@ const sr: Command = {
 	async execute(context) {
 		const firstOption = context.options.data[0];
 		if (!firstOption) {
-			const response = new StringBuilder("The possible subcommands are:");
+			const response = createPartialString("The possible subcommands are:");
 			Object.values(namedSubcommands).forEach(command => {
-				response.pushNewLine();
-				response.push(" - ");
-				response.pushCode(command.name);
+				pushNewLine(response);
+				push(" - ", response);
+				pushCode(command.name, response);
 			});
 
-			return context.reply(response.result());
+			return context.reply(composed(response));
 		}
 
 		const arg: string = resolveSubcommandNameFromOption(firstOption);
@@ -71,13 +77,13 @@ const sr: Command = {
 			}
 		}
 
-		const response = new StringBuilder("The possible subcommands are:");
+		const response = createPartialString("The possible subcommands are:");
 		Object.values(namedSubcommands).forEach(command => {
-			response.pushNewLine();
-			response.push(" - ");
-			response.pushCode(command.name);
+			pushNewLine(response);
+			push(" - ", response);
+			pushCode(command.name, response);
 		});
-		return context.reply(response.result());
+		return context.reply(composed(response));
 	}
 };
 

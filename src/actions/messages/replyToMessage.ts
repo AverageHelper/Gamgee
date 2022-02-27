@@ -1,10 +1,10 @@
 import type Discord from "discord.js";
+import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
 import { DiscordAPIError } from "discord.js";
-import { getEnv } from "../../helpers/environment";
-import { useLogger } from "../../logger";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import logUser from "../../helpers/logUser";
-import StringBuilder from "../../helpers/StringBuilder";
+import { getEnv } from "../../helpers/environment.js";
+import { useLogger } from "../../logger.js";
+import logUser from "../../helpers/logUser.js";
+import richErrorMessage from "../../helpers/richErrorMessage.js";
 
 const logger = useLogger();
 
@@ -62,13 +62,13 @@ async function sendDM(
 }
 
 function replyMessage(channel: { id: string } | null, content: string | null | undefined): string {
-	const msg = new StringBuilder();
+	const msg = createPartialString();
 	if (channel) {
-		msg.push(`(Reply from <#${channel.id}>)`);
-		msg.pushNewLine();
+		push(`(Reply from <#${channel.id}>)`, msg);
+		pushNewLine(msg);
 	}
-	msg.push(content ?? "");
-	return msg.result();
+	push(content ?? "", msg);
+	return composed(msg);
 }
 
 async function sendDMReply(
