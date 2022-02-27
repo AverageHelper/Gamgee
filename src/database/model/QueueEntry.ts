@@ -27,7 +27,7 @@ export class QueueEntry {
 	@Column()
 	isDone: boolean;
 
-	@Column("simple-array")
+	@Column({ type: "simple-array", nullable: true })
 	haveCalledNowPlaying: Array<Snowflake>;
 
 	constructor(
