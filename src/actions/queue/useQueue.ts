@@ -168,14 +168,12 @@ export class QueueManager {
 		user: Discord.Snowflake,
 		queueMessage: Discord.Message | Discord.PartialMessage
 	): Promise<void> {
-		const message = await queueMessage.fetch();
-
 		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
 
 		const entry = await this.getEntryFromMessage(queueMessage.id);
 		if (!entry) return;
 
-		await editMessage(message, queueMessageFromEntry(entry));
+		await editMessage(queueMessage, queueMessageFromEntry(entry));
 	}
 
 	/**
