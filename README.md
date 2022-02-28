@@ -251,14 +251,9 @@ Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that v
 
 ## Contributing
 
-We welcome contributions of all sorts!
+This project is entirely open source. Do with it what you will. If you're willing to help me improve this project, consider [filing an issue](https://github.com/AverageHelper/Gamgee/issues/new/choose).
 
-1.  Fork it!
-2.  Create your feature branch: `git checkout -b my-new-feature`
-3.  Add your changes: `git add .`
-4.  Commit your changes: `git commit -am 'Add some feature'`
-5.  Push to the branch: `git push origin my-new-feature`
-6.  Submit a pull request :sunglasses:
+See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
 
 ## Built With
 
