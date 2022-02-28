@@ -10,7 +10,7 @@ import durationString from "../../helpers/durationString.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 
 function queueMessageFromEntry(
-	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url">
+	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
 ): Discord.MessageOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
@@ -24,6 +24,9 @@ function queueMessageFromEntry(
 	} else {
 		push(entry.url, partialContent);
 	}
+
+	const likeCount = entry.haveCalledNowPlaying.length;
+	push(`\nIt has ${likeCount} like${likeCount === 1 ? "" : "s"}.`, partialContent);
 
 	// Strike the message through if the entry is marked "Done"
 	const result = composed(partialContent);
@@ -109,7 +112,11 @@ export class QueueManager {
 
 	/** Adds an entry to the queue cache and sends the entry to the queue channel. */
 	async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
-		const messageOptions = queueMessageFromEntry({ ...newEntry, isDone: false });
+		const messageOptions = queueMessageFromEntry({
+			...newEntry,
+			isDone: false,
+			haveCalledNowPlaying: []
+		});
 		const queueMessage = await this.queueChannel.send(messageOptions);
 
 		let entry: QueueEntry;
@@ -118,7 +125,8 @@ export class QueueManager {
 				...newEntry,
 				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
-				isDone: false
+				isDone: false,
+				haveCalledNowPlaying: []
 			});
 
 			// If the database write fails...
@@ -153,6 +161,19 @@ export class QueueManager {
 
 		const editOptions = queueMessageFromEntry(entry);
 		await editMessage(queueMessage, editOptions);
+	}
+
+	/** Add the given user to the haveCalledNowPlaying field of the queue entry if they aren't already on it. */
+	async addUserToHaveCalledNowPlaying(
+		user: Discord.Snowflake,
+		queueMessage: Discord.Message | Discord.PartialMessage
+	): Promise<void> {
+		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
+
+		const entry = await this.getEntryFromMessage(queueMessage.id);
+		if (!entry) return;
+
+		await editMessage(queueMessage, queueMessageFromEntry(entry));
 	}
 
 	/**
