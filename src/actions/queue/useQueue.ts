@@ -25,8 +25,16 @@ function queueMessageFromEntry(
 		push(entry.url, partialContent);
 	}
 
+	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
-	push(`\nIt has ${likeCount} like${likeCount === 1 ? "" : "s"}.`, partialContent);
+	const likeMessage = `\n${likeCount} ${
+		likeCount === 1 ? "person" : "people"
+	} asked for this link.`;
+	if (likeCount === 0) {
+		push(likeMessage, partialContent);
+	} else {
+		pushBold(likeMessage, partialContent);
+	}
 
 	// Strike the message through if the entry is marked "Done"
 	const result = composed(partialContent);
