@@ -1,12 +1,11 @@
 import type Discord from "discord.js";
 import type { MessageButton } from "../../buttons.js";
-import type { QueueConfig } from "../../database/model/QueueConfig.js";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
+import { useQueueStorage } from "../../useQueueStorage.js";
 import durationString from "../../helpers/durationString.js";
 
 function queueMessageFromEntry(
@@ -63,20 +62,6 @@ export class QueueManager {
 	constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
 		this.queueStorage = queueStorage;
 		this.queueChannel = queueChannel;
-	}
-
-	/**
-	 * Retrieves the queue's configuration settings.
-	 *
-	 * @deprecated Import `getQueueConfig` instead.
-	 */
-	async getConfig(): Promise<QueueConfig> {
-		return getQueueConfig(this.queueChannel);
-	}
-
-	/** Updates the provided properties of a queue's configuration settings. */
-	async updateConfig(config: Partial<QueueConfig>): Promise<void> {
-		return this.queueStorage.updateConfig(config);
 	}
 
 	/** Retrieves the number of entries in the queue */

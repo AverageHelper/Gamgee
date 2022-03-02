@@ -1,11 +1,10 @@
 import type { CommandInteractionOption } from "discord.js";
 import type { Subcommand } from "../Command.js";
+import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
-import { useQueue } from "../../actions/queue/useQueue.js";
+import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
 import durationString from "../../helpers/durationString.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
-import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
-import { getQueueConfig } from "../../useQueueStorage.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
@@ -76,7 +75,6 @@ const limit: Subcommand = {
 			return reply("No queue is set up.");
 		}
 
-		const queue = useQueue(queueChannel);
 		const config = await getQueueConfig(queueChannel);
 
 		const keyOption: CommandInteractionOption | undefined = options.data[0];
@@ -113,7 +111,7 @@ const limit: Subcommand = {
 					return reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await queue.updateConfig({ entryDurationSeconds: value });
+				await updateQueueConfig({ entryDurationSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration limit ");
 				if (value === null || value <= 0) {
@@ -143,7 +141,7 @@ const limit: Subcommand = {
 					return reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await queue.updateConfig({ cooldownSeconds: value });
+				await updateQueueConfig({ cooldownSeconds: value }, queueChannel);
 
 				const response = createPartialString("Submission cooldown ");
 				if (value === null || value <= 0) {
@@ -173,7 +171,7 @@ const limit: Subcommand = {
 					return reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await queue.updateConfig({ submissionMaxQuantity: value });
+				await updateQueueConfig({ submissionMaxQuantity: value }, queueChannel);
 
 				const response = createPartialString("Submission count limit per user ");
 				if (value === null || value <= 0) {

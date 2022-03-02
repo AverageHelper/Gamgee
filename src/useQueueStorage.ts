@@ -18,6 +18,8 @@ export type UnsentQueueEntry = Omit<
 	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
 
+// ** Queue Config **
+
 /**
  * Retrieves the queue's configuration settings.
  *
@@ -45,60 +47,60 @@ export async function getQueueConfig(
 	});
 }
 
+/** Updates the provided properties of a queue's configuration settings. */
+export async function updateQueueConfig(
+	config: Partial<QueueConfig>,
+	queueChannel: Discord.TextChannel
+): Promise<void> {
+	await useTransaction(async transaction => {
+		const oldConfig = await getQueueConfig(queueChannel, transaction);
+
+		let entryDurationSeconds: number | null;
+		if (config.entryDurationSeconds === undefined) {
+			entryDurationSeconds = oldConfig.entryDurationSeconds;
+		} else {
+			entryDurationSeconds = config.entryDurationSeconds;
+		}
+
+		let cooldownSeconds: number | null;
+		if (config.cooldownSeconds === undefined) {
+			cooldownSeconds = oldConfig.cooldownSeconds;
+		} else {
+			cooldownSeconds = config.cooldownSeconds;
+		}
+
+		let submissionMaxQuantity: number | null;
+		if (config.submissionMaxQuantity === undefined) {
+			submissionMaxQuantity = oldConfig.submissionMaxQuantity;
+		} else {
+			submissionMaxQuantity = config.submissionMaxQuantity;
+		}
+
+		let blacklistedUsers: Array<User>;
+		if (config.blacklistedUsers === undefined) {
+			blacklistedUsers = oldConfig.blacklistedUsers;
+		} else {
+			blacklistedUsers = config.blacklistedUsers;
+		}
+
+		const newConfig = new QueueConfig(queueChannel.id, {
+			entryDurationSeconds,
+			cooldownSeconds,
+			submissionMaxQuantity,
+			blacklistedUsers
+		});
+		await transaction.save(newConfig);
+	});
+}
+
+// ** Everything Else **
+
 export class QueueEntryManager {
 	/** The channel for this queue. */
 	private readonly queueChannel: Discord.TextChannel;
 
 	constructor(queueChannel: Discord.TextChannel) {
 		this.queueChannel = queueChannel;
-	}
-
-	/** Retrieves the queue's configuration settings. */
-	async getConfig(): Promise<QueueConfig> {
-		return getQueueConfig(this.queueChannel);
-	}
-
-	/** Updates the provided properties of a queue's configuration settings. */
-	async updateConfig(config: Partial<QueueConfig>): Promise<void> {
-		await useTransaction(async transaction => {
-			const oldConfig = await getQueueConfig(this.queueChannel, transaction);
-
-			let entryDurationSeconds: number | null;
-			if (config.entryDurationSeconds === undefined) {
-				entryDurationSeconds = oldConfig.entryDurationSeconds;
-			} else {
-				entryDurationSeconds = config.entryDurationSeconds;
-			}
-
-			let cooldownSeconds: number | null;
-			if (config.cooldownSeconds === undefined) {
-				cooldownSeconds = oldConfig.cooldownSeconds;
-			} else {
-				cooldownSeconds = config.cooldownSeconds;
-			}
-
-			let submissionMaxQuantity: number | null;
-			if (config.submissionMaxQuantity === undefined) {
-				submissionMaxQuantity = oldConfig.submissionMaxQuantity;
-			} else {
-				submissionMaxQuantity = config.submissionMaxQuantity;
-			}
-
-			let blacklistedUsers: Array<User>;
-			if (config.blacklistedUsers === undefined) {
-				blacklistedUsers = oldConfig.blacklistedUsers;
-			} else {
-				blacklistedUsers = config.blacklistedUsers;
-			}
-
-			const newConfig = new QueueConfig(this.queueChannel.id, {
-				entryDurationSeconds,
-				cooldownSeconds,
-				submissionMaxQuantity,
-				blacklistedUsers
-			});
-			await transaction.save(newConfig);
-		});
 	}
 
 	/** Adds the queue entry to the database. */
