@@ -1,8 +1,12 @@
 jest.mock("../../actions/queue/getQueueChannel");
+jest.mock("../../useQueueStorage");
 jest.mock("../../actions/queue/useQueue");
 
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
+
+import { countAllEntries } from "../../useQueueStorage";
+const mockCount = countAllEntries as jest.Mock;
 
 import { useQueue } from "../../actions/queue/useQueue";
 const mockUseQueue = useQueue as jest.Mock;
@@ -17,7 +21,6 @@ const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
 
-const mockCount = jest.fn();
 const mockPlaytimeRemaining = jest.fn();
 const mockPlaytimeTotal = jest.fn();
 const mockPlaytimeAverage = jest.fn();
@@ -44,7 +47,6 @@ describe("Queue Statistics", () => {
 			id: "queue-channel"
 		});
 		mockUseQueue.mockReturnValue({
-			count: mockCount,
 			playtimeRemaining: mockPlaytimeRemaining,
 			playtimeTotal: mockPlaytimeTotal,
 			playtimeAverage: mockPlaytimeAverage

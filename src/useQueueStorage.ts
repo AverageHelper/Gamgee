@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import type { EntityManager, Repository } from "typeorm";
+import type { EntityManager } from "typeorm";
 import type { Snowflake } from "discord.js";
 import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model/index.js";
 import { useRepository, useTransaction } from "./database/useDatabase.js";
@@ -169,6 +169,67 @@ export async function removeEntryFromMessage(
 	);
 }
 
+/**
+ * Fetches an entry with the given message ID.
+ *
+ * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
+ * @param queueChannel The channel that identifies the request queue.
+ *
+ * @returns the matching queue entry, or `null` if no such entry exists
+ */
+export async function fetchEntryFromMessage(
+	queueMessageId: string,
+	queueChannel: Discord.TextChannel
+): Promise<QueueEntry | null> {
+	return useRepository(QueueEntry, async repo => {
+		const doc = await repo.findOne({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id,
+				queueMessageId
+			}
+		});
+		return doc ?? null;
+	});
+}
+
+/**
+ * Fetches all entries in the queue, in order of appearance.
+ *
+ * @param queueChannel The channel that identifies the request queue.
+ * @returns the queue's entries, in the order in which they were added.
+ */
+export async function fetchAllEntries(
+	queueChannel: Discord.TextChannel
+): Promise<Array<QueueEntry>> {
+	return useRepository(QueueEntry, repo =>
+		repo.find({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id
+			},
+			order: { sentAt: "ASC" }
+		})
+	);
+}
+
+/**
+ * Fetches the number of entries in the queue.
+ *
+ * @param queueChannel The channel that identifies the request queue.
+ * @returns the number of entries in the queue.
+ */
+export async function countAllEntries(queueChannel: Discord.TextChannel): Promise<number> {
+	return useRepository(QueueEntry, repo =>
+		repo.count({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id
+			}
+		})
+	);
+}
+
 // ** Everything Else **
 
 export class QueueEntryManager {
@@ -177,36 +238,6 @@ export class QueueEntryManager {
 
 	constructor(queueChannel: Discord.TextChannel) {
 		this.queueChannel = queueChannel;
-	}
-
-	/** Fetches an entry with the given message ID. */
-	async fetchEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
-		return useRepository(QueueEntry, repo => this._getEntryWithMsgId(queueMessageId, repo));
-	}
-
-	/** Fetches all entries in queue order. */
-	async fetchAll(): Promise<Array<QueueEntry>> {
-		return useRepository(QueueEntry, repo =>
-			repo.find({
-				where: {
-					channelId: this.queueChannel.id,
-					guildId: this.queueChannel.guild.id
-				},
-				order: { sentAt: "ASC" }
-			})
-		);
-	}
-
-	/** Fetches the number of entries in the queue. */
-	async countAll(): Promise<number> {
-		return useRepository(QueueEntry, repo =>
-			repo.count({
-				where: {
-					channelId: this.queueChannel.id,
-					guildId: this.queueChannel.guild.id
-				}
-			})
-		);
 	}
 
 	/** Fetches all entries by the given user in order of submission. */
@@ -366,20 +397,6 @@ export class QueueEntryManager {
 			// TODO: Make sure this actually saves. (We used to call `save` on the repo iteself)
 			await transaction.save(queue);
 		});
-	}
-
-	private async _getEntryWithMsgId(
-		queueMessageId: string,
-		repo: Repository<QueueEntry>
-	): Promise<QueueEntry | null> {
-		const doc = await repo.findOne({
-			where: {
-				channelId: this.queueChannel.id,
-				guildId: this.queueChannel.guild.id,
-				queueMessageId
-			}
-		});
-		return doc ?? null;
 	}
 }
 

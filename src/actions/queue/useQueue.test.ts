@@ -1,15 +1,19 @@
 jest.mock("../messages");
 jest.mock("../../useQueueStorage");
 
-import { createEntry, getQueueConfig, removeEntryFromMessage } from "../../useQueueStorage";
+import {
+	createEntry,
+	fetchEntryFromMessage,
+	getQueueConfig,
+	removeEntryFromMessage
+} from "../../useQueueStorage";
 const mockCreateEntry = createEntry as jest.Mock;
+const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
 
 import { deleteMessage } from "../messages";
 const mockDeleteMessage = deleteMessage as jest.Mock;
-
-const mockFetchEntryFromMessage = jest.fn();
 
 const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
@@ -26,7 +30,6 @@ describe("Request Queue", () => {
 	const entrySenderId = "some-user" as Discord.Snowflake;
 	const entryUrl = "the-entry-url";
 
-	let storage: QueueEntryManager;
 	let queue: QueueManager;
 	let queueChannel: Discord.TextChannel;
 	let message: Discord.Message;
@@ -38,10 +41,7 @@ describe("Request Queue", () => {
 			send: mockChannelSend
 		} as unknown) as Discord.TextChannel;
 
-		storage = ({
-			fetchEntryFromMessage: mockFetchEntryFromMessage
-		} as unknown) as QueueEntryManager;
-
+		const storage = ({} as unknown) as QueueEntryManager;
 		queue = new QueueManager(storage, queueChannel);
 
 		message = ({

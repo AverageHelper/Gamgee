@@ -1,6 +1,10 @@
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/queue/getQueueChannel");
+jest.mock("../useQueueStorage");
 jest.mock("../permissions");
+
+import { fetchAllEntries } from "../useQueueStorage";
+const mockGetAllEntries = fetchAllEntries as jest.Mock;
 
 import { useQueue } from "../actions/queue/useQueue";
 const mockUseQueue = useQueue as jest.Mock;
@@ -8,8 +12,9 @@ const mockUseQueue = useQueue as jest.Mock;
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
+mockGetAllEntries.mockResolvedValue(undefined);
+
 const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockGetAllEntries = jest.fn().mockResolvedValue(undefined);
 const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
@@ -37,7 +42,6 @@ describe("Now-Playing", () => {
 		} as unknown) as GuildedCommandContext;
 
 		mockUseQueue.mockReturnValue({
-			getAllEntries: mockGetAllEntries,
 			addUserToHaveCalledNowPlaying: mockAddUserToHaveCalledNowPlaying
 		});
 		mockGetAllEntries.mockResolvedValue([]);

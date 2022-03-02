@@ -4,9 +4,15 @@ import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQ
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
-import { createEntry, removeEntryFromMessage, useQueueStorage } from "../../useQueueStorage.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
 import durationString from "../../helpers/durationString.js";
+import {
+	createEntry,
+	fetchAllEntries,
+	fetchEntryFromMessage,
+	removeEntryFromMessage,
+	useQueueStorage
+} from "../../useQueueStorage.js";
 
 function queueMessageFromEntry(
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
@@ -64,11 +70,6 @@ export class QueueManager {
 		this.queueChannel = queueChannel;
 	}
 
-	/** Retrieves the number of entries in the queue */
-	async count(): Promise<number> {
-		return this.queueStorage.countAll();
-	}
-
 	/** Retrieves the number of entries in the queue submitted by the given user. */
 	async countFrom(userId: string): Promise<number> {
 		return this.queueStorage.countAllFrom(userId);
@@ -76,7 +77,7 @@ export class QueueManager {
 
 	/** Retrieves the playtime of the queue's unfinished entries. */
 	async playtimeRemaining(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
+		const queue = await fetchAllEntries(this.queueChannel);
 		let duration = 0;
 		queue
 			.filter(e => !e.isDone)
@@ -88,7 +89,7 @@ export class QueueManager {
 
 	/** Retrieves the total playtime of the queue's entries. */
 	async playtimeTotal(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
+		const queue = await fetchAllEntries(this.queueChannel);
 		let duration = 0;
 		queue.forEach(e => {
 			duration += e.seconds;
@@ -98,7 +99,7 @@ export class QueueManager {
 
 	/** Retrieves the average playtime of the queue's entries. */
 	async playtimeAverage(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
+		const queue = await fetchAllEntries(this.queueChannel);
 		let average = 0;
 		queue.forEach(e => {
 			average += e.seconds;
@@ -138,15 +139,10 @@ export class QueueManager {
 		return entry;
 	}
 
-	/** Fetches an entry with the given message ID. */
-	async getEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
-		return this.queueStorage.fetchEntryFromMessage(queueMessageId);
-	}
-
 	/** If the message represents a "done" entry, that entry is unmarked. */
 	async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		await this.queueStorage.markEntryDone(false, queueMessage.id);
-		const entry = await this.getEntryFromMessage(queueMessage.id);
+		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
 
 		const editOptions = queueMessageFromEntry(entry);
@@ -156,7 +152,7 @@ export class QueueManager {
 	/** If the message represents a "not done" entry, that entry is marked "done". */
 	async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
 		await this.queueStorage.markEntryDone(true, queueMessage.id);
-		const entry = await this.getEntryFromMessage(queueMessage.id);
+		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
 
 		const editOptions = queueMessageFromEntry(entry);
@@ -170,7 +166,7 @@ export class QueueManager {
 	): Promise<void> {
 		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
 
-		const entry = await this.getEntryFromMessage(queueMessage.id);
+		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
 
 		await editMessage(queueMessage, queueMessageFromEntry(entry));
@@ -184,7 +180,7 @@ export class QueueManager {
 	async deleteEntryFromMessage(
 		queueMessage: Discord.Message | Discord.PartialMessage
 	): Promise<QueueEntry | null> {
-		const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
+		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (entry === null) return entry;
 
 		// TODO: Check the docs that both Message and PartialMessage would return an ID
@@ -192,11 +188,6 @@ export class QueueManager {
 		await deleteMessage(queueMessage);
 
 		return entry;
-	}
-
-	/** Returns all entries in the queue. */
-	async getAllEntries(): Promise<Array<QueueEntry>> {
-		return this.queueStorage.fetchAll();
 	}
 
 	/** Returns the latest entry from the user with the provided ID. */

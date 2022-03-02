@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
+import { fetchAllEntries } from "../useQueueStorage.js";
 import { useQueue } from "../actions/queue/useQueue.js";
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
 import randomElementOfArray from "../helpers/randomElementOfArray.js";
@@ -45,7 +46,7 @@ const nowPlaying: Command = {
 		}
 
 		const queue = useQueue(queueChannel);
-		const allEntries = await queue.getAllEntries();
+		const allEntries = await fetchAllEntries(queueChannel);
 		const firstNotDone = allEntries.find(entry => !entry.isDone);
 
 		if (!firstNotDone) {

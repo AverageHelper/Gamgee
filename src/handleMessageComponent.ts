@@ -3,11 +3,12 @@ import type { Logger } from "./logger.js";
 import type { Storage } from "./configStorage.js";
 import { createPartialString, composed, push } from "./helpers/composeStrings.js";
 import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
-import { useQueue } from "./actions/queue/useQueue.js";
+import { fetchEntryFromMessage } from "./useQueueStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
 import { sendPrivately } from "./actions/messages/index.js";
 import { useGuildStorage } from "./useGuildStorage.js";
+import { useQueue } from "./actions/queue/useQueue.js";
 import getQueueChannel from "./actions/queue/getQueueChannel.js";
 import logUser from "./helpers/logUser.js";
 import richErrorMessage from "./helpers/richErrorMessage.js";
@@ -53,7 +54,7 @@ export async function handleMessageComponent(
 
 	const message = await queueChannel.messages.fetch(interaction.message.id);
 	const queue = useQueue(queueChannel);
-	const entry = await queue.getEntryFromMessage(interaction.message.id);
+	const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
 		try {
