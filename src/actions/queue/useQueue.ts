@@ -58,6 +58,8 @@ function queueMessageFromEntry(
 	};
 }
 
+// TODO: Rewrite this functionally
+
 /**
  * A proxy for queue management and feedback. These methods may modify the
  * queue and manage messages in the queue channel.

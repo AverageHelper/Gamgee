@@ -1,7 +1,7 @@
 export class PartialString {
-	readonly _storage: Array<string> = [];
+	readonly storage: Array<string>;
 	constructor(storage: Array<string>) {
-		this._storage = storage;
+		this.storage = storage;
 	}
 }
 
@@ -16,7 +16,7 @@ export function createPartialString(initialValue?: string): PartialString {
  */
 export function push(str: string, partial: PartialString): void {
 	if (!str) return; // ignore empty strings
-	partial._storage.push(str);
+	partial.storage.push(str);
 }
 
 /**
@@ -66,5 +66,5 @@ export function pushSpace(partial: PartialString): void {
  * @returns The composed string.
  */
 export function composed(partial: PartialString): string {
-	return partial._storage.join("");
+	return partial.storage.join("");
 }

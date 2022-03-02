@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import type { Command } from "./Command";
-import { randomPhrase } from "../helpers/randomStrings";
+import type { Command } from "./Command.js";
+import { randomPhrase, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
 const ping: Command = {
 	name: "ping",
@@ -8,11 +8,14 @@ const ping: Command = {
 	requiresGuild: false,
 	async execute(context) {
 		const { client, user, logger } = context;
-		const random = randomPhrase().unwrapFirstWith({
-			me: client.user?.username ?? "Me",
-			otherUser: user,
-			otherMember: null
-		});
+		const random = unwrappingFirstWith(
+			{
+				me: client.user?.username ?? "Me",
+				otherUser: user,
+				otherMember: null
+			},
+			randomPhrase()
+		);
 
 		let testMessage: Discord.Message;
 		let responseTime: number;

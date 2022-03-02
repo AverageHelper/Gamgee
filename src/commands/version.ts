@@ -1,17 +1,20 @@
 import type { Command } from "./Command.js";
 import { version as gamgeeVersion } from "../version.js";
-import { randomCelebration } from "../helpers/randomStrings.js";
+import { randomCelebration, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
 const version: Command = {
 	name: "version",
 	description: "Display the bot's current codebase version.",
 	requiresGuild: false,
 	async execute({ reply, user, type }) {
-		const celebration = randomCelebration().unwrapFirstWith({
-			me: "Me",
-			otherUser: user,
-			otherMember: null
-		});
+		const celebration = unwrappingFirstWith(
+			{
+				me: "Me",
+				otherUser: user,
+				otherMember: null
+			},
+			randomCelebration()
+		);
 
 		if (type === "interaction") {
 			// Discord lets bots link stuff in Markdown syntax, but it'll also embed by default. Use `<brackets>` to prevent the embed.

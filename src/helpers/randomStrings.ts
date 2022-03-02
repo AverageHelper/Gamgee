@@ -1,3 +1,6 @@
+import { useLogger } from "../logger.js";
+import Discord from "discord.js";
+import randomElementOfArray from "./randomElementOfArray.js";
 import {
 	celebratoryEmoji,
 	greetings,
@@ -5,10 +8,7 @@ import {
 	philosophy,
 	phrases,
 	questions
-} from "../constants/textResponses";
-import { useLogger } from "../logger";
-import Discord from "discord.js";
-import randomElementOfArray from "./randomElementOfArray";
+} from "../constants/textResponses.js";
 
 const logger = useLogger();
 
@@ -30,96 +30,90 @@ export type Response = SingleResponse | MultipleResponse;
 
 export type ResponseRepository = [Response, ...NonEmptyArray<Response>];
 
-export class WrappedResponse {
-	#response: Response;
-
-	constructor(response: Response) {
-		this.#response = response;
+/** Gets the response as a string. */
+export function unwrappingFirstWith(context: ResponseContext, response: Response): string {
+	if (typeof response === "string") {
+		return response;
+	} else if (Array.isArray(response)) {
+		return response
+			.map(partial => {
+				if (typeof partial === "string") return partial;
+				return partial(context);
+			})
+			.join("\n");
 	}
+	return response(context);
+}
 
-	/** Gets the first wrapped response. */
-	unwrapFirstWith(context: ResponseContext): string {
-		if (typeof this.#response === "string") {
-			return this.#response;
-		} else if (Array.isArray(this.#response)) {
-			const response = this.#response[0];
-			if (typeof response === "string") {
-				return response;
+/**
+ * For each partial response, awaits a handler function.
+ * There's a delay between calls (1000 ms by default).
+ */
+export async function unwrappingWith(
+	context: ResponseContext,
+	response: Response,
+	handler: (response: string) => unknown | Promise<unknown>,
+	pauseTime: number = 1000
+): Promise<void> {
+	if (typeof response === "string") {
+		// It's just a string
+		await handler(response);
+
+		return;
+	} else if (Array.isArray(response)) {
+		// It's an array
+		for (const resp of response) {
+			if (typeof resp === "string") {
+				await handler(resp);
+			} else {
+				await handler(resp(context));
 			}
-			return response(context);
-		}
-		return this.#response(context);
-	}
-
-	/**
-	 * For each wrapped response, awaits a handler function.
-	 * There's a delay between calls (1000 ms by default).
-	 */
-	async unwrapWith(
-		context: ResponseContext,
-		handler: (response: string) => unknown | Promise<unknown>,
-		pauseTime: number = 1000
-	): Promise<void> {
-		if (typeof this.#response === "string") {
-			// It's just a string
-			await handler(this.#response);
-
-			return;
-		} else if (Array.isArray(this.#response)) {
-			// It's an array
-			for (const response of this.#response) {
-				if (typeof response === "string") {
-					await handler(response);
-				} else {
-					await handler(response(context));
-				}
-				if (this.#response.length > 1) {
-					// If more than one, wait a second between each
-					await new Promise(resolve => setTimeout(resolve, pauseTime));
-				}
+			if (response.length > 1) {
+				// If more than one, wait a second between each
+				await new Promise(resolve => setTimeout(resolve, pauseTime));
 			}
-
-			return;
 		}
-		// It's a function
-		await handler(this.#response(context));
+
+		return;
 	}
+	// It's a function
+	await handler(response(context));
 }
 
 /* Greetings */
 
-export function randomGreeting(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("greetings", greetings));
+export function randomGreeting(): Response {
+	return randomResponseFromArray("greetings", greetings);
 }
 
 /* Phrases */
 
-export function randomPhrase(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("phrases", phrases));
+export function randomPhrase(): Response {
+	return randomResponseFromArray("phrases", phrases);
 }
 
 /* Philosophy */
 
-export function randomPhilosophy(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("philosophy", philosophy));
+export function randomPhilosophy(): Response {
+	return randomResponseFromArray("philosophy", philosophy);
 }
 
 /* Questions */
 
-export function randomQuestion(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("questions", questions));
+export function randomQuestion(): Response {
+	return randomResponseFromArray("questions", questions);
 }
 
 /* Celebration */
 
-export function randomCelebration(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("celebration", celebratoryEmoji));
+export function randomCelebration(): Response {
+	return randomResponseFromArray("celebration", celebratoryEmoji);
 }
 
 /* Hugs */
 
-export function randomHug(): WrappedResponse {
-	return new WrappedResponse(randomResponseFromArray("hugs", hugs));
+export function randomHug(): Response {
+	return randomResponseFromArray("hugs", hugs);
 }
 
 const lastResponses = new Discord.Collection<string, Response>();

@@ -1,16 +1,27 @@
-import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands";
-import type { Logger } from "./logger";
-import type { Storage } from "./configStorage";
-import type { ResponseContext, WrappedResponse } from "./helpers/randomStrings";
-import { getEnv } from "./helpers/environment";
-import { getConfigCommandPrefix } from "./actions/config/getConfigValue";
-import { randomGreeting, randomHug, randomPhrase, randomQuestion } from "./helpers/randomStrings";
-import { invokeCommand } from "./actions/invokeCommand";
-import { resolveAlias, allCommands as commands } from "./commands";
-import { deleteMessage, reply, replyPrivately, sendMessageInChannel } from "./actions/messages";
+import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
+import type { Logger } from "./logger.js";
+import type { Storage } from "./configStorage.js";
+import type { Response, ResponseContext } from "./helpers/randomStrings.js";
+import { getEnv } from "./helpers/environment.js";
+import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
+import { invokeCommand } from "./actions/invokeCommand.js";
+import { resolveAlias, allCommands as commands } from "./commands/index.js";
 import Discord from "discord.js";
-import getUserIdFromMention from "./helpers/getUserIdFromMention";
-import logUser from "./helpers/logUser";
+import getUserIdFromMention from "./helpers/getUserIdFromMention.js";
+import logUser from "./helpers/logUser.js";
+import {
+	deleteMessage,
+	reply,
+	replyPrivately,
+	sendMessageInChannel
+} from "./actions/messages/index.js";
+import {
+	randomGreeting,
+	randomHug,
+	randomPhrase,
+	randomQuestion,
+	unwrappingWith
+} from "./helpers/randomStrings";
 
 interface QueryMessage {
 	/** The command and its arguments. */
@@ -167,8 +178,7 @@ export async function handleCommand(
 	if (q.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
 		const ctx = await responseContext(message, client);
-		await randomQuestion().unwrapWith(ctx, r => message.reply(r));
-		return;
+		return await unwrappingWith(ctx, randomQuestion(), r => message.reply(r));
 	}
 
 	// Get the command
@@ -250,7 +260,7 @@ export async function handleCommand(
 		);
 		await new Promise(resolve => setTimeout(resolve, 2000));
 
-		let wrapped: WrappedResponse;
+		let wrapped: Response;
 
 		if (messageContainsWord("hello")) {
 			wrapped = randomGreeting();
@@ -263,6 +273,6 @@ export async function handleCommand(
 		}
 
 		const ctx = await responseContext(message, client);
-		await wrapped.unwrapWith(ctx, r => message.channel.send(r));
+		await unwrappingWith(ctx, wrapped, r => message.channel.send(r));
 	}
 }

@@ -1,9 +1,9 @@
-import type { Logger } from "../logger";
-import { isString } from "../helpers/guards";
+import type { Logger } from "../logger.js";
+import { isString } from "../helpers/guards.js";
 import { URL } from "url";
-import { useLogger } from "../logger";
-import isError from "../helpers/isError";
-import richErrorMessage from "../helpers/richErrorMessage";
+import { useLogger } from "../logger.js";
+import isError from "../helpers/isError.js";
+import richErrorMessage from "../helpers/richErrorMessage.js";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "url-metadata";
 import ytdl from "ytdl-core";
@@ -33,14 +33,14 @@ export class VideoError extends Error implements NodeJS.ErrnoException {
 	}
 }
 
-// export class NotFoundError extends VideoError {
-// 	code = "404";
+export class NotFoundError extends VideoError {
+	code = "404";
 
-// 	constructor(url: URL) {
-// 		super(`No video found at ${url.toString()}`);
-// 		this.name = "NotFoundError";
-// 	}
-// }
+	constructor(url: URL) {
+		super(`No video found at ${url.toString()}`);
+		this.name = "NotFoundError";
+	}
+}
 
 export class UnavailableError extends VideoError {
 	code = "410";
@@ -81,6 +81,8 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 		switch (err.message) {
 			case "Status code: 410":
 				throw new UnavailableError(url);
+			case "Status code: 404":
+				throw new NotFoundError(url);
 			default:
 				throw err;
 		}
