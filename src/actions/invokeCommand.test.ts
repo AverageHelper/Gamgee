@@ -5,8 +5,9 @@ import type Discord from "discord.js";
 import type { CommandContext, GlobalCommand, GuildedCommand } from "../commands";
 import { invokeCommand } from "./invokeCommand";
 
-import { useGuildStorage } from "../useGuildStorage";
-const mockUseGuildStorage = useGuildStorage as jest.Mock;
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage";
+const mockGetQueueAdminRoles = getQueueAdminRoles as jest.Mock;
+const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
 
 import { userHasRoleInGuild } from "../permissions";
 const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock;
@@ -14,9 +15,6 @@ const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock;
 const mockExecute = jest.fn().mockResolvedValue(undefined);
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
-
-const mockGetGuildAdminRoles = jest.fn();
-const mockGetQueueAdminRoles = jest.fn();
 
 describe("Invoke Command", () => {
 	const callerId = "the-user";
@@ -42,10 +40,6 @@ describe("Invoke Command", () => {
 			replyPrivately: mockReplyPrivately
 		} as unknown) as CommandContext;
 
-		mockUseGuildStorage.mockReturnValue({
-			getGuildAdminRoles: mockGetGuildAdminRoles,
-			getQueueAdminRoles: mockGetQueueAdminRoles
-		});
 		mockUserHasRoleInGuild.mockResolvedValue(false);
 
 		mockGetGuildAdminRoles.mockResolvedValue([adminRoleId]);

@@ -4,7 +4,7 @@ import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "url";
-import { useGuildStorage } from "../useGuildStorage.js";
+import { isQueueOpen } from "../useGuildStorage.js";
 import { useJobQueue } from "@averagehelper/job-queue";
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
 import processRequest from "../actions/queue/processSongRequest.js";
@@ -61,9 +61,8 @@ const sr: GuildedCommand = {
 			return;
 		}
 
-		const guildStorage = useGuildStorage(guild);
-		const isQueueOpen = await guildStorage.isQueueOpen();
-		if (!isQueueOpen) {
+		const isQueueNotOpen = !(await isQueueOpen(guild));
+		if (isQueueNotOpen) {
 			return reply({
 				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
 				ephemeral: true

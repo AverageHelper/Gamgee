@@ -7,7 +7,7 @@ import { fetchEntryFromMessage } from "./useQueueStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
 import { sendPrivately } from "./actions/messages/index.js";
-import { useGuildStorage } from "./useGuildStorage.js";
+import { isQueueOpen } from "./useGuildStorage.js";
 import { useQueue } from "./actions/queue/useQueue.js";
 import getQueueChannel from "./actions/queue/getQueueChannel.js";
 import logUser from "./helpers/logUser.js";
@@ -110,7 +110,6 @@ export async function handleMessageComponent(
 				logger.debug(`Queue message ${message.id} has no guild.`);
 				return;
 			}
-			const guildStorage = useGuildStorage(guild);
 			const user = await getUserWithId(guild, userId);
 
 			logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
@@ -120,7 +119,7 @@ export async function handleMessageComponent(
 
 			await sendPrivately(user, composed(rejection));
 
-			if (await guildStorage.isQueueOpen()) {
+			if (await isQueueOpen(guild)) {
 				await new Promise(resolve => setTimeout(resolve, 2000));
 				await sendPrivately(user, "You can resubmit another song if you'd like to. :slight_smile:");
 			}

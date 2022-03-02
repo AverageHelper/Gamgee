@@ -1,5 +1,5 @@
 import type { GuildedSubcommand } from "../Command";
-import { useGuildStorage } from "../../useGuildStorage";
+import { isQueueOpen, setQueueOpen } from "../../useGuildStorage";
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 
 const close: GuildedSubcommand = {
@@ -9,9 +9,8 @@ const close: GuildedSubcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
-		const guildStorage = useGuildStorage(guild);
-		const [isQueueOpen, queueChannel] = await Promise.all([
-			guildStorage.isQueueOpen(),
+		const [isQueueAlreadyOpen, queueChannel] = await Promise.all([
+			isQueueOpen(guild),
 			getQueueChannel(guild),
 			deleteInvocation()
 		]);
@@ -22,7 +21,7 @@ const close: GuildedSubcommand = {
 				ephemeral: true
 			});
 		}
-		if (!isQueueOpen) {
+		if (!isQueueAlreadyOpen) {
 			return reply({
 				content: "The queue is already closed, silly! :stuck_out_tongue:",
 				ephemeral: true
@@ -30,7 +29,7 @@ const close: GuildedSubcommand = {
 		}
 
 		const queueIsCurrent = channel?.id === queueChannel.id;
-		const promises: Array<Promise<unknown>> = [guildStorage.setQueueOpen(false)];
+		const promises: Array<Promise<unknown>> = [setQueueOpen(false, guild)];
 		if (!queueIsCurrent) {
 			promises.push(queueChannel.send("This queue is closed. :wave:"));
 		}

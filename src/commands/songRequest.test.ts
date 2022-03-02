@@ -12,8 +12,8 @@ const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 import * as queueActions from "../actions/queue/useQueue";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
 
-import * as guildStorage from "../useGuildStorage";
-const mockGuildStorage = guildStorage.useGuildStorage as jest.Mock;
+import { isQueueOpen } from "../useGuildStorage";
+const mockIsQueueOpen = isQueueOpen as jest.Mock;
 
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -69,9 +69,7 @@ describe("Song request via URL", () => {
 
 	const mockQueuePush = jest.fn();
 
-	mockGuildStorage.mockReturnValue({
-		isQueueOpen: jest.fn().mockResolvedValue(true)
-	});
+	mockIsQueueOpen.mockResolvedValue(true);
 
 	mockGetQueueChannel.mockResolvedValue({
 		id: "queue-channel-123",

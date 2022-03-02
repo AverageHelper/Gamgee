@@ -1,5 +1,5 @@
 import type { Subcommand } from "../Command";
-import { useGuildStorage } from "../../useGuildStorage";
+import { setQueueChannel } from "../../useGuildStorage";
 import { resolveChannelFromOption } from "../../helpers/optionResolvers";
 
 const setup: Subcommand = {
@@ -45,10 +45,9 @@ const setup: Subcommand = {
 
 		await prepareForLongRunningTasks(true);
 
-		const guildStorage = useGuildStorage(guild);
 		logger.info(`Setting up channel '${newQueueChannel.name}' for queuage.`);
 		await Promise.all([
-			guildStorage.setQueueChannel(newQueueChannel.id),
+			setQueueChannel(newQueueChannel.id, guild),
 			newQueueChannel.send("This is a queue now. :smiley:")
 		]);
 		return reply({ content: `New queue set up in <#${newQueueChannel.id}>`, ephemeral: true });
