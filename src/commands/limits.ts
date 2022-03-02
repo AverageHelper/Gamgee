@@ -1,10 +1,11 @@
-import type { Command } from "./Command";
-import { allLimits } from "./queue/limit";
+import type { Command } from "./Command.js";
+import { allLimits } from "./queue/limit.js";
+import { getQueueConfig } from "../useQueueStorage.js";
 import { MessageEmbed } from "discord.js";
-import { MILLISECONDS_IN_SECOND } from "../constants/time";
-import { useQueue } from "../actions/queue/useQueue";
-import durationString from "../helpers/durationString";
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
+import { useQueue } from "../actions/queue/useQueue.js";
+import durationString from "../helpers/durationString.js";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 
 const limits: Command = {
 	name: "limits",
@@ -17,7 +18,7 @@ const limits: Command = {
 		}
 
 		const queue = useQueue(queueChannel);
-		const config = await queue.getConfig();
+		const config = await getQueueConfig(queueChannel);
 
 		// Read out the existing limits
 		const embed = new MessageEmbed().setTitle("Queue Limits");

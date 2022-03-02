@@ -1,14 +1,14 @@
 import type Discord from "discord.js";
-import type { Repository } from "typeorm";
+import type { EntityManager, Repository } from "typeorm";
 import type { Snowflake } from "discord.js";
-import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model";
-import { useRepository, useTransaction } from "./database/useDatabase";
-import { useLogger } from "./logger";
+import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model/index.js";
+import { useRepository, useTransaction } from "./database/useDatabase.js";
+import { useLogger } from "./logger.js";
 import {
 	DEFAULT_ENTRY_DURATION,
 	DEFAULT_SUBMISSION_COOLDOWN,
 	DEFAULT_SUBMISSION_MAX_QUANTITY
-} from "./constants/queues";
+} from "./constants/queues.js";
 
 const logger = useLogger();
 
@@ -17,6 +17,33 @@ export type UnsentQueueEntry = Omit<
 	QueueEntry,
 	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
+
+/**
+ * Retrieves the queue's configuration settings.
+ *
+ * @param queueChannel The channel that identifies the queue.
+ * @param transaction A database transaction. If not provided, a new one will be created to get the data.
+ *
+ * @returns the current {@link QueueConfig}, or a default one if none has been set yet.
+ */
+export async function getQueueConfig(
+	queueChannel: Discord.TextChannel,
+	transaction?: EntityManager
+): Promise<QueueConfig> {
+	const repo = transaction?.getRepository(QueueConfig) ?? QueueConfig;
+	const channelId = queueChannel.id;
+	const defaultConfig = (): QueueConfig =>
+		new QueueConfig(channelId, {
+			entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+			cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
+			submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+			blacklistedUsers: []
+		});
+
+	return useRepository(repo, async repo => {
+		return (await repo.findOne({ where: { channelId } })) ?? defaultConfig();
+	});
+}
 
 export class QueueEntryManager {
 	/** The channel for this queue. */
@@ -28,14 +55,13 @@ export class QueueEntryManager {
 
 	/** Retrieves the queue's configuration settings. */
 	async getConfig(): Promise<QueueConfig> {
-		return useRepository(QueueConfig, repo => this._getConfig(repo));
+		return getQueueConfig(this.queueChannel);
 	}
 
 	/** Updates the provided properties of a queue's configuration settings. */
 	async updateConfig(config: Partial<QueueConfig>): Promise<void> {
 		await useTransaction(async transaction => {
-			const queueConfigs = transaction.getRepository(QueueConfig);
-			const oldConfig = await this._getConfig(queueConfigs);
+			const oldConfig = await getQueueConfig(this.queueChannel, transaction);
 
 			let entryDurationSeconds: number | null;
 			if (config.entryDurationSeconds === undefined) {
@@ -279,17 +305,17 @@ export class QueueEntryManager {
 
 	/** Adds the user to the queue's blacklist. That user will not be able to submit song requests. */
 	async blacklistUser(userId: string): Promise<void> {
-		const config = await this.getConfig();
+		// FIXME: Do we need to hit the database twice here?
+		const config = await getQueueConfig(this.queueChannel);
 
 		// The user is already blacklisted
 		if (config.blacklistedUsers.some(user => user.id === userId)) return;
 
 		// Add the user to the blacklist
 		await useTransaction(async transaction => {
-			const queues = transaction.getRepository(QueueConfig);
 			const users = transaction.getRepository(User);
 
-			const queue = await this._getConfig(queues);
+			const queue = await getQueueConfig(this.queueChannel, transaction);
 			let newUser = await users.findOne(userId);
 
 			if (!newUser) {
@@ -307,11 +333,11 @@ export class QueueEntryManager {
 	/** Removes the user from the queue's blacklist. */
 	async whitelistUser(userId: string): Promise<void> {
 		await useTransaction(async transaction => {
-			const queues = transaction.getRepository(QueueConfig);
-			const queue = await this._getConfig(queues);
+			const queue = await getQueueConfig(this.queueChannel, transaction);
 
 			queue.blacklistedUsers = queue.blacklistedUsers.filter(user => user.id !== userId);
-			await queues.save(queue);
+			// TODO: Make sure this actually saves. (We used to call `save` on the repo iteself)
+			await transaction.save(queue);
 		});
 	}
 
@@ -327,22 +353,6 @@ export class QueueEntryManager {
 			}
 		});
 		return doc ?? null;
-	}
-
-	private async _getConfig(repo: Repository<QueueConfig>): Promise<QueueConfig> {
-		return (
-			(await repo.findOne({
-				where: {
-					channelId: this.queueChannel.id
-				}
-			})) ??
-			new QueueConfig(this.queueChannel.id, {
-				entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-				cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-				submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
-				blacklistedUsers: []
-			})
-		);
 	}
 }
 

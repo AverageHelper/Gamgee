@@ -1,7 +1,11 @@
 jest.mock("../useGuildStorage");
+jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/getVideoDetails");
+
+import { getQueueConfig } from "../useQueueStorage";
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
 
 import * as queueActions from "../actions/queue/useQueue";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
@@ -72,13 +76,14 @@ describe("Song request via URL", () => {
 		name: "queue"
 	});
 
+	mockGetQueueConfig.mockResolvedValue({
+		entryDurationSeconds: null,
+		cooldownSeconds: 600,
+		submissionMaxQuantity: null,
+		blacklistedUsers: []
+	});
+
 	mockUseQueue.mockReturnValue({
-		getConfig: jest.fn().mockResolvedValue({
-			entryDurationSeconds: null,
-			cooldownSeconds: 600,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
-		}),
 		push: mockQueuePush,
 		getLatestEntryFrom: mockQueueGetLatestUserEntry,
 		countFrom: mockQueueUserEntryCount

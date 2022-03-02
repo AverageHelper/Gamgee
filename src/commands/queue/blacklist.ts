@@ -1,7 +1,7 @@
 import type { Subcommand } from "../Command.js";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
+import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
-import { useQueueStorage } from "../../useQueueStorage.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 import logUser from "../../helpers/logUser.js";
 import parentCommand from "../songRequest.js";
@@ -55,7 +55,7 @@ const blacklist: Subcommand = {
 				await reply(":paperclip: Check the list in your DMs");
 			}
 
-			const queueConfig = await queue.getConfig();
+			const queueConfig = await getQueueConfig(queueChannel);
 			const blacklistedUsers = queueConfig.blacklistedUsers.map(user => user.id);
 
 			const prefix = await getConfigCommandPrefix(storage);

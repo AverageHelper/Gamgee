@@ -6,6 +6,7 @@ import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage } from "../../actions/messages/index.js";
+import { getQueueConfig } from "../../useQueueStorage.js";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
@@ -107,7 +108,7 @@ export default async function processSongRequest(request: SongRequest): Promise<
 
 	try {
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
-			queue.getConfig(),
+			getQueueConfig(queueChannel),
 			queue.getLatestEntryFrom(senderId),
 			queue.countFrom(senderId /* since: Date */)
 		]);

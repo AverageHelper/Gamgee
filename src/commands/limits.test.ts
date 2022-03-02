@@ -1,5 +1,9 @@
+jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
+
+import { getQueueConfig } from "../useQueueStorage";
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
 
 import getQueueChannel from "../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -11,8 +15,6 @@ import type { GuildedCommandContext } from "./CommandContext";
 import limits from "./limits";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
-
-const mockGetConfig = jest.fn();
 
 describe("Get Queue Limits", () => {
 	let context: GuildedCommandContext;
@@ -26,10 +28,7 @@ describe("Get Queue Limits", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockUseQueue.mockReturnValue({
-			getConfig: mockGetConfig
-		});
-		mockGetConfig.mockResolvedValue({
+		mockGetQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
 			entryDurationSeconds: null,
 			submissionMaxQuantity: null
@@ -63,7 +62,7 @@ describe("Get Queue Limits", () => {
 			entryDurationSeconds: number | null;
 			submissionMaxQuantity: number | null;
 		}) => {
-			mockGetConfig.mockResolvedValue({
+			mockGetQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationSeconds,
 				submissionMaxQuantity

@@ -5,6 +5,7 @@ import { useQueue } from "../../actions/queue/useQueue.js";
 import durationString from "../../helpers/durationString.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { getQueueConfig } from "../../useQueueStorage.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
@@ -76,7 +77,7 @@ const limit: Subcommand = {
 		}
 
 		const queue = useQueue(queueChannel);
-		const config = await queue.getConfig();
+		const config = await getQueueConfig(queueChannel);
 
 		const keyOption: CommandInteractionOption | undefined = options.data[0];
 		const valueOption: CommandInteractionOption | undefined = options.data[1];

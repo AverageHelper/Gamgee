@@ -9,7 +9,8 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import getQueueChannel from "../../actions/queue/getQueueChannel";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { useQueueStorage } from "../../useQueueStorage";
+import { getQueueConfig, useQueueStorage } from "../../useQueueStorage";
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockUseQueueStorage = useQueueStorage as jest.Mock;
 
 import type { QueueEntryManager } from "../../useQueueStorage";
@@ -19,7 +20,6 @@ import Discord from "discord.js";
 import blacklist from "./blacklist";
 
 const mockBlacklistUser = jest.fn();
-const mockGetConfig = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
@@ -58,13 +58,12 @@ describe("Manage the Queue Blacklist", () => {
 		} as unknown) as GuildedCommandContext;
 
 		queue = ({
-			blacklistUser: mockBlacklistUser,
-			getConfig: mockGetConfig
+			blacklistUser: mockBlacklistUser
 		} as unknown) as QueueEntryManager;
 
 		mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
 		mockGetUserFromMention.mockResolvedValue({ id: badUserId });
-		mockGetConfig.mockResolvedValue({ blacklistedUsers: [] });
+		mockGetQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
 
 		mockUseQueueStorage.mockReturnValue(queue);
 		mockBlacklistUser.mockResolvedValue(undefined);

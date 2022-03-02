@@ -43,11 +43,14 @@ export async function useDatabaseConnection<T = undefined>(
 }
 
 export async function useRepository<Entity, T = undefined>(
-	target: EntityTarget<Entity>,
+	targetOrRepository: EntityTarget<Entity> | Repository<Entity>,
 	cb: (repository: Repository<Entity>) => T | Promise<T>
 ): Promise<T> {
 	return useDatabaseConnection(connection => {
-		return cb(connection.getRepository(target));
+		if (typeof targetOrRepository !== "string" && "manager" in targetOrRepository) {
+			return cb(targetOrRepository);
+		}
+		return cb(connection.getRepository(targetOrRepository));
 	});
 }
 

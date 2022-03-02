@@ -4,10 +4,10 @@ import type { QueueConfig } from "../../database/model/QueueConfig.js";
 import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
-import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import { useQueueStorage } from "../../useQueueStorage.js";
-import durationString from "../../helpers/durationString.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
+import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
+import durationString from "../../helpers/durationString.js";
 
 function queueMessageFromEntry(
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
@@ -65,9 +65,13 @@ export class QueueManager {
 		this.queueChannel = queueChannel;
 	}
 
-	/** Retrieves the queue's configuration settings. */
+	/**
+	 * Retrieves the queue's configuration settings.
+	 *
+	 * @deprecated Import `getQueueConfig` instead.
+	 */
 	async getConfig(): Promise<QueueConfig> {
-		return this.queueStorage.getConfig();
+		return getQueueConfig(this.queueChannel);
 	}
 
 	/** Updates the provided properties of a queue's configuration settings. */
