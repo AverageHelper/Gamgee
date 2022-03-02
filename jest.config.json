@@ -11,8 +11,13 @@
 			"testRegex": ["src/.*\\.test\\.(t|j)s$"],
 			"globals": {
 				"ts-jest": {
-					"tsconfig": "./tsconfig.test.json"
+					"tsconfig": "./tsconfig.test.json",
+					"useESM": true
 				}
+			},
+			"extensionsToTreatAsEsm": [".ts"],
+			"moduleNameMapper": {
+				"^(\\.{1,2}/.*)\\.js$": "$1"
 			},
 			"collectCoverage": true,
 			"collectCoverageFrom": ["src/**/*!(.d)!(.test).ts"],
