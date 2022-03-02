@@ -1,6 +1,6 @@
 import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
-import { getQueueConfig } from "../useQueueStorage.js";
+import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 import { MessageEmbed } from "discord.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import { useQueue } from "../actions/queue/useQueue.js";
@@ -62,8 +62,8 @@ const limits: Command = {
 		// If the queue is open, display the user's limit usage
 		const usageEmbed = new MessageEmbed().setTitle("Personal Statistics");
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
-			queue.getLatestEntryFrom(user.id),
-			queue.countFrom(user.id /* since: Date */),
+			fetchLatestEntryFrom(user.id, queueChannel),
+			countAllEntriesFrom(user.id /* since: Date */, queueChannel),
 			queue.getAveragePlaytimeFrom(user.id)
 		]);
 

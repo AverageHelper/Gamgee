@@ -98,7 +98,7 @@ export async function updateQueueConfig(
 	});
 }
 
-// ** Song Entries **
+// ** Write Song Entries **
 
 /**
  * Adds the queue entry to the database.
@@ -169,6 +169,8 @@ export async function removeEntryFromMessage(
 	);
 }
 
+// ** Read Song Entries **
+
 /**
  * Fetches an entry with the given message ID.
  *
@@ -230,7 +232,79 @@ export async function countAllEntries(queueChannel: Discord.TextChannel): Promis
 	);
 }
 
+/**
+ * Fetches all entries by the given user.
+ *
+ * @param senderId The ID of the user who submitted entries.
+ * @param queueChannel The channel that identifies the request queue.
+ * @returns the user's entries, in the order in which they were added.
+ */
+export async function fetchAllEntriesFrom(
+	senderId: string,
+	queueChannel: Discord.TextChannel
+): Promise<Array<QueueEntry>> {
+	return useRepository(QueueEntry, repo =>
+		repo.find({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id,
+				senderId
+			},
+			order: { sentAt: "ASC" }
+		})
+	);
+}
+
+/**
+ * Fetches the lastest entry by the given user.
+ *
+ * @param senderId The ID of the user who submitted entries.
+ * @param queueChannel The channel that identifies the request queue.
+ * @returns the user's latest entry, or `null` if the user has no associated entries.
+ */
+export async function fetchLatestEntryFrom(
+	senderId: string,
+	queueChannel: Discord.TextChannel
+): Promise<QueueEntry | null> {
+	const entry = await useRepository(QueueEntry, repo =>
+		repo.findOne({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id,
+				senderId
+			},
+			order: { sentAt: "DESC" }
+		})
+	);
+	return entry ?? null;
+}
+
+/**
+ * Fetches the number of entries from the given user in the queue.
+ *
+ * @param senderId The ID of the user who submitted entries.
+ * @param queueChannel The channel that identifies the request queue.
+ *
+ * @returns the number of entries in the queue associated with the user.
+ */
+export async function countAllEntriesFrom(
+	senderId: string,
+	queueChannel: Discord.TextChannel
+): Promise<number> {
+	return useRepository(QueueEntry, repo =>
+		repo.count({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id,
+				senderId
+			}
+		})
+	);
+}
+
 // ** Everything Else **
+
+// TODO: Rewrite this functionally
 
 export class QueueEntryManager {
 	/** The channel for this queue. */
@@ -238,48 +312,6 @@ export class QueueEntryManager {
 
 	constructor(queueChannel: Discord.TextChannel) {
 		this.queueChannel = queueChannel;
-	}
-
-	/** Fetches all entries by the given user in order of submission. */
-	async fetchAllFrom(senderId: string): Promise<Array<QueueEntry>> {
-		return useRepository(QueueEntry, repo =>
-			repo.find({
-				where: {
-					channelId: this.queueChannel.id,
-					guildId: this.queueChannel.guild.id,
-					senderId
-				},
-				order: { sentAt: "ASC" }
-			})
-		);
-	}
-
-	/** Fetches the lastest entry by the given user. */
-	async fetchLatestFrom(senderId: string): Promise<QueueEntry | null> {
-		const entry = await useRepository(QueueEntry, repo =>
-			repo.findOne({
-				where: {
-					channelId: this.queueChannel.id,
-					guildId: this.queueChannel.guild.id,
-					senderId
-				},
-				order: { sentAt: "DESC" }
-			})
-		);
-		return entry ?? null;
-	}
-
-	/** Fetches the number of entries from the given user in the queue. */
-	async countAllFrom(senderId: string): Promise<number> {
-		return useRepository(QueueEntry, repo =>
-			repo.count({
-				where: {
-					channelId: this.queueChannel.id,
-					guildId: this.queueChannel.guild.id,
-					senderId
-				}
-			})
-		);
 	}
 
 	/** Sets the entry's "done" value. */

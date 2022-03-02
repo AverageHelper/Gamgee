@@ -4,8 +4,10 @@ jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/getVideoDetails");
 
-import { getQueueConfig } from "../useQueueStorage";
+import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage";
+const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
 import * as queueActions from "../actions/queue/useQueue";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
@@ -62,8 +64,8 @@ describe("Song request via URL", () => {
 	const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 	const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 
-	const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
-	const mockQueueUserEntryCount = jest.fn().mockResolvedValue(0);
+	mockQueueGetLatestUserEntry.mockResolvedValue(null);
+	mockQueueUserEntryCount.mockResolvedValue(0);
 
 	const mockQueuePush = jest.fn();
 
@@ -84,9 +86,7 @@ describe("Song request via URL", () => {
 	});
 
 	mockUseQueue.mockReturnValue({
-		push: mockQueuePush,
-		getLatestEntryFrom: mockQueueGetLatestUserEntry,
-		countFrom: mockQueueUserEntryCount
+		push: mockQueuePush
 	});
 
 	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;

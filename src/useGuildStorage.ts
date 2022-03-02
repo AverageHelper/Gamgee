@@ -4,6 +4,8 @@ import { getEnv } from "./helpers/environment";
 import { Guild, Role } from "./database/model";
 import { useRepository, useTransaction } from "./database/useDatabase";
 
+// TODO: Rewrite this functionally
+
 class GuildEntryManager {
 	/** The guild. */
 	public readonly guild: Discord.Guild;

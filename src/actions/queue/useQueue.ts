@@ -9,6 +9,7 @@ import durationString from "../../helpers/durationString.js";
 import {
 	createEntry,
 	fetchAllEntries,
+	fetchAllEntriesFrom,
 	fetchEntryFromMessage,
 	removeEntryFromMessage,
 	useQueueStorage
@@ -68,11 +69,6 @@ export class QueueManager {
 	constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
 		this.queueStorage = queueStorage;
 		this.queueChannel = queueChannel;
-	}
-
-	/** Retrieves the number of entries in the queue submitted by the given user. */
-	async countFrom(userId: string): Promise<number> {
-		return this.queueStorage.countAllFrom(userId);
 	}
 
 	/** Retrieves the playtime of the queue's unfinished entries. */
@@ -190,14 +186,9 @@ export class QueueManager {
 		return entry;
 	}
 
-	/** Returns the latest entry from the user with the provided ID. */
-	async getLatestEntryFrom(userId: string): Promise<QueueEntry | null> {
-		return this.queueStorage.fetchLatestFrom(userId);
-	}
-
 	/** Returns the average entry duration of the submissions of the user with the provided ID. */
 	async getAveragePlaytimeFrom(userId: string): Promise<number> {
-		const entries = await this.queueStorage.fetchAllFrom(userId);
+		const entries = await fetchAllEntriesFrom(userId, this.queueChannel);
 		let average = 0;
 
 		entries.forEach(entry => {
