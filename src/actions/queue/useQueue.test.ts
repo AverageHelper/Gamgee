@@ -1,15 +1,15 @@
 jest.mock("../messages");
 jest.mock("../../useQueueStorage");
 
-import { getQueueConfig } from "../../useQueueStorage";
+import { createEntry, getQueueConfig, removeEntryFromMessage } from "../../useQueueStorage";
+const mockCreateEntry = createEntry as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
 
 import { deleteMessage } from "../messages";
 const mockDeleteMessage = deleteMessage as jest.Mock;
 
 const mockFetchEntryFromMessage = jest.fn();
-const mockRemoveEntryFromMessage = jest.fn();
-const mockCreateEntry = jest.fn();
 
 const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
@@ -39,9 +39,7 @@ describe("Request Queue", () => {
 		} as unknown) as Discord.TextChannel;
 
 		storage = ({
-			fetchEntryFromMessage: mockFetchEntryFromMessage,
-			removeEntryFromMessage: mockRemoveEntryFromMessage,
-			create: mockCreateEntry
+			fetchEntryFromMessage: mockFetchEntryFromMessage
 		} as unknown) as QueueEntryManager;
 
 		queue = new QueueManager(storage, queueChannel);
@@ -105,7 +103,7 @@ describe("Request Queue", () => {
 		await expect(queue.deleteEntryFromMessage(message)).resolves.toBe(entry);
 
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledTimes(1);
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
+		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -125,13 +123,16 @@ describe("Request Queue", () => {
 		await flushPromises();
 
 		expect(mockCreateEntry).toHaveBeenCalledTimes(1);
-		expect(mockCreateEntry).toHaveBeenCalledWith({
-			...request,
-			isDone: false,
-			sentAt: expect.toBeValidDate() as Date,
-			queueMessageId: "new-message",
-			haveCalledNowPlaying: [] as Array<Discord.Snowflake>
-		});
+		expect(mockCreateEntry).toHaveBeenCalledWith(
+			{
+				...request,
+				isDone: false,
+				sentAt: expect.toBeValidDate() as Date,
+				queueMessageId: "new-message",
+				haveCalledNowPlaying: [] as Array<Discord.Snowflake>
+			},
+			queueChannel
+		);
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
 	});

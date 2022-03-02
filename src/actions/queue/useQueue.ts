@@ -4,8 +4,8 @@ import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQ
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { createEntry, removeEntryFromMessage, useQueueStorage } from "../../useQueueStorage.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import { useQueueStorage } from "../../useQueueStorage.js";
 import durationString from "../../helpers/durationString.js";
 
 function queueMessageFromEntry(
@@ -118,13 +118,16 @@ export class QueueManager {
 
 		let entry: QueueEntry;
 		try {
-			entry = await this.queueStorage.create({
-				...newEntry,
-				sentAt: new Date(),
-				queueMessageId: queueMessage.id,
-				isDone: false,
-				haveCalledNowPlaying: []
-			});
+			entry = await createEntry(
+				{
+					...newEntry,
+					sentAt: new Date(),
+					queueMessageId: queueMessage.id,
+					isDone: false,
+					haveCalledNowPlaying: []
+				},
+				this.queueChannel
+			);
 
 			// If the database write fails...
 		} catch (error: unknown) {
@@ -184,8 +187,8 @@ export class QueueManager {
 		const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
 		if (entry === null) return entry;
 
-		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
-		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+		// TODO: Check the docs that both Message and PartialMessage would return an ID
+		await removeEntryFromMessage(queueMessage.id, this.queueChannel);
 		await deleteMessage(queueMessage);
 
 		return entry;

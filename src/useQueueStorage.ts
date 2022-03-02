@@ -23,7 +23,7 @@ export type UnsentQueueEntry = Omit<
 /**
  * Retrieves the queue's configuration settings.
  *
- * @param queueChannel The channel that identifies the queue.
+ * @param queueChannel The channel that identifies the request queue.
  * @param transaction A database transaction. If not provided, a new one will be created to get the data.
  *
  * @returns the current {@link QueueConfig}, or a default one if none has been set yet.
@@ -47,7 +47,12 @@ export async function getQueueConfig(
 	});
 }
 
-/** Updates the provided properties of a queue's configuration settings. */
+/**
+ * Updates the provided properties of a queue's configuration settings.
+ *
+ * @param config Properties of the queue config to overwrite the current data.
+ * @param queueChannel The channel that identifies the request queue.
+ */
 export async function updateQueueConfig(
 	config: Partial<QueueConfig>,
 	queueChannel: Discord.TextChannel
@@ -93,6 +98,77 @@ export async function updateQueueConfig(
 	});
 }
 
+// ** Song Entries **
+
+/**
+ * Adds the queue entry to the database.
+ *
+ * @param entry Properties of the new request entity.
+ * @param queueChannel The channel that identifies the request queue.
+ *
+ * @returns the new queue entry
+ */
+export async function createEntry(
+	entry: Omit<QueueEntry, "channelId" | "guildId">,
+	queueChannel: Discord.TextChannel
+): Promise<QueueEntry> {
+	return useTransaction(async transaction => {
+		const guilds = transaction.getRepository(Guild);
+		const queueConfigs = transaction.getRepository(QueueConfig);
+
+		// Make sure the guild and channels are in there
+		const guild =
+			(await guilds.findOne({
+				where: {
+					id: queueChannel.guild.id
+				}
+			})) ?? new Guild(queueChannel.guild.id, false, queueChannel.id);
+		await transaction.save(guild);
+
+		const channel = new Channel(queueChannel.id, queueChannel.guild.id);
+		await transaction.save(channel);
+
+		// Make sure we have at least the default config
+		const config =
+			(await queueConfigs.findOne({
+				where: {
+					channelId: queueChannel.id
+				}
+			})) ??
+			new QueueConfig(queueChannel.id, {
+				entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+				cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
+				submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+				blacklistedUsers: []
+			});
+		await transaction.save(config);
+
+		// Add the entry
+		const queueEntries = transaction.getRepository(QueueEntry);
+		const queueEntry = new QueueEntry(queueChannel.id, queueChannel.guild.id, entry);
+		return queueEntries.save(queueEntry);
+	});
+}
+
+/**
+ * Removes the queue entry from the database.
+ *
+ * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
+ * @param queueChannel The channel that identifies the request queue.
+ */
+export async function removeEntryFromMessage(
+	queueMessageId: Snowflake,
+	queueChannel: Discord.TextChannel
+): Promise<void> {
+	await useRepository(QueueEntry, repo =>
+		repo.delete({
+			channelId: queueChannel.id,
+			guildId: queueChannel.guild.id,
+			queueMessageId
+		})
+	);
+}
+
 // ** Everything Else **
 
 export class QueueEntryManager {
@@ -101,57 +177,6 @@ export class QueueEntryManager {
 
 	constructor(queueChannel: Discord.TextChannel) {
 		this.queueChannel = queueChannel;
-	}
-
-	/** Adds the queue entry to the database. */
-	async create(entry: Omit<QueueEntry, "channelId" | "guildId">): Promise<QueueEntry> {
-		return useTransaction(async transaction => {
-			const guilds = transaction.getRepository(Guild);
-			const queueConfigs = transaction.getRepository(QueueConfig);
-
-			// Make sure the guild and channels are in there
-			const guild =
-				(await guilds.findOne({
-					where: {
-						id: this.queueChannel.guild.id
-					}
-				})) ?? new Guild(this.queueChannel.guild.id, false, this.queueChannel.id);
-			await transaction.save(guild);
-
-			const channel = new Channel(this.queueChannel.id, this.queueChannel.guild.id);
-			await transaction.save(channel);
-
-			// Make sure we have at least the default config
-			const config =
-				(await queueConfigs.findOne({
-					where: {
-						channelId: this.queueChannel.id
-					}
-				})) ??
-				new QueueConfig(this.queueChannel.id, {
-					entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-					cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-					submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
-					blacklistedUsers: []
-				});
-			await transaction.save(config);
-
-			// Add the entry
-			const queueEntries = transaction.getRepository(QueueEntry);
-			const queueEntry = new QueueEntry(this.queueChannel.id, this.queueChannel.guild.id, entry);
-			return queueEntries.save(queueEntry);
-		});
-	}
-
-	/** Removes the queue entry from the database. */
-	async removeEntryFromMessage(queueMessageId: Snowflake): Promise<void> {
-		await useRepository(QueueEntry, repo =>
-			repo.delete({
-				channelId: this.queueChannel.id,
-				guildId: this.queueChannel.guild.id,
-				queueMessageId
-			})
-		);
 	}
 
 	/** Fetches an entry with the given message ID. */
