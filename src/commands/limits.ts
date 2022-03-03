@@ -103,7 +103,9 @@ const limits: Command = {
 			usageEmbed.addField(name, value);
 		}
 
-		await followUp({ embeds: [usageEmbed], ephemeral: true });
+		if (usageEmbed.fields.length > 0) {
+			await followUp({ embeds: [usageEmbed], ephemeral: true });
+		}
 	}
 };
 
