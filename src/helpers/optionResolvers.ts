@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import getChannelFromMention from "./getChannelFromMention";
-import getUserFromMention from "./getUserFromMention";
+import getChannelFromMention from "./getChannelFromMention.js";
+import getUserFromMention from "./getUserFromMention.js";
 
 export async function resolveUserFromOption(
 	option: Discord.CommandInteractionOption,

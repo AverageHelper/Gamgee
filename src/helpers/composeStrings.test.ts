@@ -1,4 +1,4 @@
-import type { PartialString } from "./composeStrings";
+import type { PartialString } from "./composeStrings.js";
 import {
 	composed,
 	createPartialString,
@@ -6,7 +6,7 @@ import {
 	pushCode,
 	pushNewLine,
 	push
-} from "./composeStrings";
+} from "./composeStrings.js";
 
 describe("String Builder", () => {
 	let partial: PartialString;

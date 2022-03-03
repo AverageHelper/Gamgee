@@ -1,8 +1,8 @@
-import type { CommandContext } from "../../commands";
+import type { CommandContext } from "../../commands/index.js";
 import type Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import { getQueueChannelId } from "../../useGuildStorage";
-import { useLogger } from "../../logger";
+import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { getQueueChannelId } from "../../useGuildStorage.js";
+import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
 

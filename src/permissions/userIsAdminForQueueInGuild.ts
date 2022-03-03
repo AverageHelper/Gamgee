@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild";
-import { ROLE_CATEGORY_QUEUE_ADMIN } from "./RoleCategories";
+import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild.js";
+import { ROLE_CATEGORY_QUEUE_ADMIN } from "./RoleCategories.js";
 
 export async function userIsAdminForQueueInGuild(
 	user: Discord.User,

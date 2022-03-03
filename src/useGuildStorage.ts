@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import { getEnv } from "./helpers/environment";
-import { Guild, Role } from "./database/model";
-import { useRepository, useTransaction } from "./database/useDatabase";
+import { getEnv } from "./helpers/environment.js";
+import { Guild, Role } from "./database/model/index.js";
+import { useRepository, useTransaction } from "./database/useDatabase.js";
 
 /**
  * Retrives the list of Discord Role IDs whose members have permission to manage

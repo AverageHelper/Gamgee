@@ -1,4 +1,4 @@
-import { requireEnv } from "../src/helpers/environment";
+import { requireEnv } from "../src/helpers/environment.js";
 import {
 	setIsQueueAdmin,
 	setIsQueueCreator,
@@ -6,7 +6,7 @@ import {
 	sendCommand,
 	waitForMessage,
 	sendMessage
-} from "./discordUtils";
+} from "./discordUtils/index.js";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");

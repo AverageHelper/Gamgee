@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
-import type { Command, GuildedCommand, GlobalCommand } from "../commands";
-import { allCommands, resolvePermissions } from "../commands";
-import { useLogger } from "../logger";
-import richErrorMessage from "../helpers/richErrorMessage";
+import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
+import { allCommands, resolvePermissions } from "../commands/index.js";
+import { useLogger } from "../logger.js";
+import richErrorMessage from "../helpers/richErrorMessage.js";
 
 const testMode: boolean = false;
 const logger = useLogger("verbose");

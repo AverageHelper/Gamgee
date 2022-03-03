@@ -1,11 +1,11 @@
 jest.mock("../../useGuildStorage");
 
-import { setQueueChannel } from "../../useGuildStorage";
+import { setQueueChannel } from "../../useGuildStorage.js";
 const mockSetQueueChannel = setQueueChannel as jest.Mock;
 
-import type { GuildedCommandContext } from "../Command";
-import { useTestLogger } from "../../../tests/testUtils/logger";
-import teardown from "./teardown";
+import type { GuildedCommandContext } from "../Command.js";
+import { useTestLogger } from "../../../tests/testUtils/logger.js";
+import teardown from "./teardown.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 

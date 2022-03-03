@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import EnvVariableNotFoundError from "./EnvVariableNotFoundError";
+import EnvVariableNotFoundError from "./EnvVariableNotFoundError.js";
 
 type EnvKey =
 	| "NODE_ENV"

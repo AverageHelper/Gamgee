@@ -1,9 +1,9 @@
-import type { Subcommand } from "../Command";
-import { SAFE_PRINT_LENGTH } from "../../constants/output";
-import { listKeys, allKeys } from "../../constants/config/keys";
-import { isConfigKey, isConfigValue } from "../../constants/config";
-import { resolveStringFromOption } from "../../helpers/optionResolvers";
-import { setConfigValue } from "../../actions/config/setConfigValue";
+import type { Subcommand } from "../Command.js";
+import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { listKeys, allKeys } from "../../constants/config/keys.js";
+import { isConfigKey, isConfigValue } from "../../constants/config/index.js";
+import { resolveStringFromOption } from "../../helpers/optionResolvers.js";
+import { setConfigValue } from "../../actions/config/setConfigValue.js";
 
 const set: Subcommand = {
 	name: "set",

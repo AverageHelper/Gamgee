@@ -2,17 +2,17 @@ jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 
-import { getQueueConfig } from "../useQueueStorage";
+import { getQueueConfig } from "../useQueueStorage.js";
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { useQueue } from "../actions/queue/useQueue";
+import { useQueue } from "../actions/queue/useQueue.js";
 const mockUseQueue = useQueue as jest.Mock;
 
-import type { GuildedCommandContext } from "./CommandContext";
-import limits from "./limits";
+import type { GuildedCommandContext } from "./CommandContext.js";
+import limits from "./limits.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 

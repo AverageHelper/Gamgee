@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import { ROLE_CATEGORY_OWNER } from "./RoleCategories";
-import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild";
+import { ROLE_CATEGORY_OWNER } from "./RoleCategories.js";
+import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild.js";
 
 /**
  * Returns `true` if the user owns the provided guild.

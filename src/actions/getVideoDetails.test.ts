@@ -1,4 +1,4 @@
-import getVideoDetails from "./getVideoDetails";
+import getVideoDetails from "./getVideoDetails.js";
 
 describe("Video details", () => {
 	// YouTube

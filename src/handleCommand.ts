@@ -21,7 +21,7 @@ import {
 	randomPhrase,
 	randomQuestion,
 	unwrappingWith
-} from "./helpers/randomStrings";
+} from "./helpers/randomStrings.js";
 
 interface QueryMessage {
 	/** The command and its arguments. */

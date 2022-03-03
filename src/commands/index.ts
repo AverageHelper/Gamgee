@@ -1,21 +1,21 @@
-import type { Command } from "./Command";
+import type { Command } from "./Command.js";
 import Discord from "discord.js";
 
-export * from "./Command";
+export * from "./Command.js";
 
-import config from "./config";
-import help from "./help";
-import howto from "./howto";
-import languages from "./languages";
-import limits from "./limits";
-import nowPlaying from "./nowPlaying";
-import ping from "./ping";
-import queue from "./queue";
-import songRequest from "./songRequest";
-import test from "./test";
-import typeHere from "./type";
-import version from "./version";
-import video from "./video";
+import config from "./config/index.js";
+import help from "./help.js";
+import howto from "./howto.js";
+import languages from "./languages.js";
+import limits from "./limits.js";
+import nowPlaying from "./nowPlaying.js";
+import ping from "./ping.js";
+import queue from "./queue/index.js";
+import songRequest from "./songRequest.js";
+import test from "./test.js";
+import typeHere from "./type.js";
+import version from "./version.js";
+import video from "./video.js";
 
 export const allCommands = new Discord.Collection<string, Command>();
 

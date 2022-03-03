@@ -1,10 +1,10 @@
-import type { Command, Subcommand } from "../Command";
-import { invokeCommand } from "../../actions/invokeCommand";
-import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers";
+import type { Command, Subcommand } from "../Command.js";
+import { invokeCommand } from "../../actions/invokeCommand.js";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import Discord from "discord.js";
-import get from "./get";
-import set from "./set";
-import unset from "./unset";
+import get from "./get.js";
+import set from "./set.js";
+import unset from "./unset.js";
 
 const namedSubcommands: NonEmptyArray<Subcommand> = [get, set, unset];
 

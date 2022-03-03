@@ -1,8 +1,8 @@
-import type { Subcommand } from "../Command";
-import { resolveUserFromOption } from "../../helpers/optionResolvers";
-import { useQueueStorage } from "../../useQueueStorage";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
-import logUser from "../../helpers/logUser";
+import type { Subcommand } from "../Command.js";
+import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
+import { useQueueStorage } from "../../useQueueStorage.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import logUser from "../../helpers/logUser.js";
 
 const whitelist: Subcommand = {
 	name: "whitelist",

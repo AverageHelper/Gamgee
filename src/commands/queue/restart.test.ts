@@ -4,24 +4,24 @@ jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../permissions");
 
-import { bulkDeleteMessagesWithIds } from "../../actions/messages";
+import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
 
-import { fetchAllEntries } from "../../useQueueStorage";
+import { fetchAllEntries } from "../../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;
 
-import { useQueue } from "../../actions/queue/useQueue";
+import { useQueue } from "../../actions/queue/useQueue.js";
 const mockUseQueue = useQueue as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 const mockQueueClear = jest.fn();
 
 import type Discord from "discord.js";
-import type { GuildedCommandContext } from "../Command";
-import restart from "./restart";
-import { useTestLogger } from "../../../tests/testUtils/logger";
+import type { GuildedCommandContext } from "../Command.js";
+import restart from "./restart.js";
+import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
 const mockReply = jest.fn().mockResolvedValue(undefined);

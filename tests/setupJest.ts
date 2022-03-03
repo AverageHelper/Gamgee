@@ -1,5 +1,5 @@
-import { logOut } from "./discordUtils";
-import { useTestLogger } from "./testUtils/logger";
+import { logOut } from "./discordUtils/index.js";
+import { useTestLogger } from "./testUtils/logger.js";
 
 const logger = useTestLogger(/* "info" */);
 logger.info(`Node ${process.version}`);

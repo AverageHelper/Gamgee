@@ -1,6 +1,6 @@
-import type { Subcommand } from "../Command";
-import { setQueueChannel } from "../../useGuildStorage";
-import { resolveChannelFromOption } from "../../helpers/optionResolvers";
+import type { Subcommand } from "../Command.js";
+import { setQueueChannel } from "../../useGuildStorage.js";
+import { resolveChannelFromOption } from "../../helpers/optionResolvers.js";
 
 const setup: Subcommand = {
 	name: "setup",

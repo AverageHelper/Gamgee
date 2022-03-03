@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import getChannelIdFromMention from "./getChannelIdFromMention";
-import { useLogger } from "../logger";
+import getChannelIdFromMention from "./getChannelIdFromMention.js";
+import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 

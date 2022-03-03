@@ -1,4 +1,4 @@
-import { randomInt } from "./randomInt";
+import { randomInt } from "./randomInt.js";
 
 /**
  * Returns a random element from an array.
@@ -6,7 +6,7 @@ import { randomInt } from "./randomInt";
  * @param array The array
  * @returns A random element of the array.
  */
-export default function randomElementOfArray<T>(array: NonEmptyArray<T>): T;
+function randomElementOfArray<T>(array: NonEmptyArray<T>): T;
 
 /**
  * Returns a random element from an array.
@@ -14,8 +14,10 @@ export default function randomElementOfArray<T>(array: NonEmptyArray<T>): T;
  * @param array The array
  * @returns A random element of the array.
  */
-export default function randomElementOfArray<T>(array: Array<T>): T | undefined;
+function randomElementOfArray<T>(array: Array<T>): T | undefined;
 
-export default function randomElementOfArray<T>(array: Array<T>): T | undefined {
+function randomElementOfArray<T>(array: Array<T>): T | undefined {
 	return array[randomInt(array.length)];
 }
+
+export default randomElementOfArray;

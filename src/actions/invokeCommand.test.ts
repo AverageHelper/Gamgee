@@ -2,14 +2,14 @@ jest.mock("../useGuildStorage");
 jest.mock("../permissions");
 
 import type Discord from "discord.js";
-import type { CommandContext, GlobalCommand, GuildedCommand } from "../commands";
-import { invokeCommand } from "./invokeCommand";
+import type { CommandContext, GlobalCommand, GuildedCommand } from "../commands/index.js";
+import { invokeCommand } from "./invokeCommand.js";
 
-import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 const mockGetQueueAdminRoles = getQueueAdminRoles as jest.Mock;
 const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
 
-import { userHasRoleInGuild } from "../permissions";
+import { userHasRoleInGuild } from "../permissions/index.js";
 const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock;
 
 const mockExecute = jest.fn().mockResolvedValue(undefined);

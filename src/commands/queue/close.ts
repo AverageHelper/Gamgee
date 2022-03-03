@@ -1,6 +1,6 @@
-import type { GuildedSubcommand } from "../Command";
-import { isQueueOpen, setQueueOpen } from "../../useGuildStorage";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import type { GuildedSubcommand } from "../Command.js";
+import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 const close: GuildedSubcommand = {
 	name: "close",

@@ -81,7 +81,7 @@ const limit: Subcommand = {
 		const valueOption: CommandInteractionOption | undefined = options.data[1];
 
 		if (!keyOption) {
-			const { default: limits } = await import("../limits");
+			const { default: limits } = await import("../limits.js");
 			return limits.execute(context);
 		}
 

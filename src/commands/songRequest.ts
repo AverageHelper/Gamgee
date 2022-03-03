@@ -49,7 +49,7 @@ const sr: GuildedCommand = {
 
 		const firstOption = options.data[0];
 		if (!firstOption) {
-			const howTo = (await import("./howto")).default;
+			const howTo = (await import("./howto.js")).default;
 			return howTo.execute(context);
 		}
 

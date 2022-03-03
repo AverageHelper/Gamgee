@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 
 export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
 	/** The `id` of the role or user */

@@ -1,4 +1,4 @@
-import { addStrikethrough, removeStrikethrough } from "./strikethroughText";
+import { addStrikethrough, removeStrikethrough } from "./strikethroughText.js";
 
 describe("Add strikethrough", () => {
 	test("adds strikethrough to a normal string", () => {

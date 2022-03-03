@@ -4,22 +4,22 @@ jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/getVideoDetails");
 
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage";
+import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
-import * as queueActions from "../actions/queue/useQueue";
+import * as queueActions from "../actions/queue/useQueue.js";
 const mockUseQueue = queueActions.useQueue as jest.Mock;
 
-import { isQueueOpen } from "../useGuildStorage";
+import { isQueueOpen } from "../useGuildStorage.js";
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { randomInt } from "../helpers/randomInt";
-import getVideoDetails from "../actions/getVideoDetails";
+import { randomInt } from "../helpers/randomInt.js";
+import getVideoDetails from "../actions/getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
 	// Enough uncertainty that *something* should go out of order if it's going to
@@ -34,11 +34,11 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
-import type { GuildedCommandContext } from "./Command";
+import type { GuildedCommandContext } from "./Command.js";
 import { URL } from "url";
-import { useTestLogger } from "../../tests/testUtils/logger";
+import { useTestLogger } from "../../tests/testUtils/logger.js";
 import Discord from "discord.js";
-import songRequest from "./songRequest";
+import songRequest from "./songRequest.js";
 
 const logger = useTestLogger("error");
 

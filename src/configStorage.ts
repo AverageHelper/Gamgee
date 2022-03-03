@@ -1,4 +1,4 @@
-import type { Logger } from "./logger";
+import type { Logger } from "./logger.js";
 import Discord from "discord.js";
 import storage from "node-persist";
 

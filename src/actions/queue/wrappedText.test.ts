@@ -1,4 +1,4 @@
-import { addCharactersAround } from "./wrappedText";
+import { addCharactersAround } from "./wrappedText.js";
 
 describe("Add pre- and postfix", () => {
 	test("adds strikethrough to a normal string", () => {

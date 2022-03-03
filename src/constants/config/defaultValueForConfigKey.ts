@@ -1,5 +1,5 @@
-import type { ConfigKey } from "./keys";
-import { CONFIG_KEY_COMMAND_PREFIX } from "./keys";
+import type { ConfigKey } from "./keys.js";
+import { CONFIG_KEY_COMMAND_PREFIX } from "./keys.js";
 
 export type ConfigValue = string | number | null;
 

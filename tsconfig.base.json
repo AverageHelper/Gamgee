@@ -1,9 +1,10 @@
 {
 	"compilerOptions": {
 		"target": "ES2021",
-		"module": "CommonJS",
+		"module": "ES2020",
 		"lib": ["ES2021"],
 		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
 		"allowJs": false,
 		"declaration": false,
 		"removeComments": true,

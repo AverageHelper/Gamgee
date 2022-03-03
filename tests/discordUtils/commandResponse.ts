@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import { requireEnv } from "../../src/helpers/environment";
-import { sendCommand } from "./sendMessage";
-import { waitForMessage } from "./messageDispatch";
+import { requireEnv } from "../../src/helpers/environment.js";
+import { sendCommand } from "./sendMessage.js";
+import { waitForMessage } from "./messageDispatch.js";
 
 const UUT_ID: Discord.Snowflake = requireEnv("BOT_TEST_ID");
 const TEST_CHANNEL_ID: Discord.Snowflake = requireEnv("CHANNEL_ID");

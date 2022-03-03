@@ -1,15 +1,15 @@
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useGuildStorage");
 
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { isQueueOpen, setQueueOpen } from "../../useGuildStorage";
+import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
 const mockSetQueueOpen = setQueueOpen as jest.Mock;
 
-import type { GuildedCommandContext } from "../CommandContext";
-import open from "./open";
+import type { GuildedCommandContext } from "../CommandContext.js";
+import open from "./open.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockFollowUp = jest.fn().mockResolvedValue(undefined);

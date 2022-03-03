@@ -1,9 +1,9 @@
 import type Discord from "discord.js";
-import type { CommandContext, GuildedCommandContext } from "./CommandContext";
-import type { CommandPermission, PermissionAlias } from "./CommandPermission";
+import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
+import type { CommandPermission, PermissionAlias } from "./CommandPermission.js";
 
-export * from "./CommandContext";
-export * from "./CommandPermission";
+export * from "./CommandContext.js";
+export * from "./CommandPermission.js";
 
 type PermissionAliasList = Array<PermissionAlias>;
 

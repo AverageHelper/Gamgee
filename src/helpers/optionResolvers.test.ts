@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import { resolveChannelFromOption } from "./optionResolvers";
+import { resolveChannelFromOption } from "./optionResolvers.js";
 
 const mockResolveChannel = jest.fn();
 

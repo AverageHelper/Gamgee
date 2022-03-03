@@ -1,13 +1,13 @@
 import path from "path";
-import { DEFAULT_DATABASE_FOLDER } from "../constants/database";
+import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
 import { v4 as uuid } from "uuid";
-import { getEnv } from "../helpers/environment";
+import { getEnv } from "../helpers/environment.js";
 import { createConnection } from "typeorm";
-import { useLogger } from "../logger";
-import { DatabaseLogger } from "./DatabaseLogger";
+import { useLogger } from "../logger.js";
+import { DatabaseLogger } from "./DatabaseLogger.js";
 import type { EntityTarget, EntityManager, Repository, Connection } from "typeorm";
-import * as entities from "./model";
-import * as migrations from "./migrations";
+import * as entities from "./model/index.js";
+import * as migrations from "./migrations/index.js";
 
 const logger = useLogger();
 

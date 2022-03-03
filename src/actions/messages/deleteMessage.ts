@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import isError from "../../helpers/isError";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import { useLogger } from "../../logger";
+import isError from "../../helpers/isError.js";
+import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
 

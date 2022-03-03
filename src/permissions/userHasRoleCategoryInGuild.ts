@@ -1,13 +1,13 @@
-import type { RoleCategory } from "./RoleCategories";
+import type { RoleCategory } from "./RoleCategories.js";
 import {
 	ROLE_CATEGORY_OWNER,
 	ROLE_CATEGORY_QUEUE_ADMIN,
 	ROLE_CATEGORY_GUILD_ADMIN
-} from "./RoleCategories";
+} from "./RoleCategories.js";
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage";
-import { userHasOneOfRoles } from "./userHasOneOfRoles";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
+import { userHasOneOfRoles } from "./userHasOneOfRoles.js";
 
 export async function userHasRoleCategoryInGuild(
 	user: Discord.User,

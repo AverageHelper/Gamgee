@@ -1,11 +1,11 @@
 import Discord from "discord.js";
-import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey";
+import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey.js";
 
 jest.mock("./commands");
-import { allCommands as mockCommandDefinitions } from "./commands";
+import { allCommands as mockCommandDefinitions } from "./commands/index.js";
 
-import { handleCommand, optionsFromArgs } from "./handleCommand";
-import { useTestLogger } from "../tests/testUtils/logger";
+import { handleCommand, optionsFromArgs } from "./handleCommand.js";
+import { useTestLogger } from "../tests/testUtils/logger.js";
 
 const logger = useTestLogger("error");
 

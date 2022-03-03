@@ -3,21 +3,21 @@ jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
 jest.mock("../../permissions");
 
-import getUserFromMention from "../../helpers/getUserFromMention";
+import getUserFromMention from "../../helpers/getUserFromMention.js";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { getQueueConfig, useQueueStorage } from "../../useQueueStorage";
+import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockUseQueueStorage = useQueueStorage as jest.Mock;
 
-import type { QueueEntryManager } from "../../useQueueStorage";
-import type { GuildedCommandContext } from "../Command";
-import { useTestLogger } from "../../../tests/testUtils/logger";
+import type { QueueEntryManager } from "../../useQueueStorage.js";
+import type { GuildedCommandContext } from "../Command.js";
+import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import Discord from "discord.js";
-import blacklist from "./blacklist";
+import blacklist from "./blacklist.js";
 
 const mockBlacklistUser = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);

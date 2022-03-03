@@ -1,11 +1,12 @@
 import Discord from "discord.js";
-import winston, { format } from "winston";
-import { getEnv } from "./helpers/environment";
+import winston from "winston";
+import { getEnv } from "./helpers/environment.js";
 
 export type Logger = winston.Logger;
 export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error";
 
 const loggers = new Discord.Collection<LogLevel, Logger>();
+const format = winston.format;
 
 // TODO: Get logger display level from environment vars. Default to "verbose"
 const nodeEnv = getEnv("NODE_ENV");

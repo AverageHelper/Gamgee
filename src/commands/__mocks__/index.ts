@@ -5,10 +5,10 @@ interface MockCommand {
 	execute: jest.Mock;
 }
 
-export { invokeCommand } from "../../actions/invokeCommand";
+export { invokeCommand } from "../../actions/invokeCommand.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/consistent-type-imports
-const { resolveAlias } = jest.requireActual("../index") as typeof import("../index");
+const { resolveAlias } = jest.requireActual("../index.js") as typeof import("../index.js");
 export { resolveAlias };
 
 export const allCommands = new Discord.Collection<string, MockCommand>();

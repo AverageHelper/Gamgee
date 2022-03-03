@@ -1,5 +1,5 @@
-import type { Subcommand } from "../Command";
-import { setQueueChannel } from "../../useGuildStorage";
+import type { Subcommand } from "../Command.js";
+import { setQueueChannel } from "../../useGuildStorage.js";
 
 const teardown: Subcommand = {
 	name: "teardown",

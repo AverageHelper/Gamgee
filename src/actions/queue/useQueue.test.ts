@@ -6,23 +6,23 @@ import {
 	fetchEntryFromMessage,
 	getQueueConfig,
 	removeEntryFromMessage
-} from "../../useQueueStorage";
+} from "../../useQueueStorage.js";
 const mockCreateEntry = createEntry as jest.Mock;
 const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
 
-import { deleteMessage } from "../messages";
+import { deleteMessage } from "../messages/index.js";
 const mockDeleteMessage = deleteMessage as jest.Mock;
 
 const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
 
 import type Discord from "discord.js";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
-import { flushPromises } from "../../../tests/testUtils/flushPromises";
+import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
+import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
-import { QueueManager } from "./useQueue";
+import { QueueManager } from "./useQueue.js";
 
 describe("Request Queue", () => {
 	const guildId = "the-guild";

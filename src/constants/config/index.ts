@@ -1,3 +1,3 @@
-export * from "./keys";
-export type { ConfigValue } from "./defaultValueForConfigKey";
-export { default as defaultValueForConfigKey, isConfigValue } from "./defaultValueForConfigKey";
+export * from "./keys.js";
+export type { ConfigValue } from "./defaultValueForConfigKey.js";
+export { default as defaultValueForConfigKey, isConfigValue } from "./defaultValueForConfigKey.js";

@@ -1,1 +1,1 @@
-export * from "./1619229105559-AddUserBlacklist";
+export * from "./1619229105559-AddUserBlacklist.js";

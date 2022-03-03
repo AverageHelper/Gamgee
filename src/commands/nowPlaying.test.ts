@@ -3,13 +3,13 @@ jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../useQueueStorage");
 jest.mock("../permissions");
 
-import { fetchAllEntries } from "../useQueueStorage";
+import { fetchAllEntries } from "../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;
 
-import { useQueue } from "../actions/queue/useQueue";
+import { useQueue } from "../actions/queue/useQueue.js";
 const mockUseQueue = useQueue as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 mockGetAllEntries.mockResolvedValue(undefined);
@@ -20,10 +20,10 @@ const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 const mockAddUserToHaveCalledNowPlaying = jest.fn().mockResolvedValue(undefined);
 
-import nowPlaying from "./nowPlaying";
-import { useTestLogger } from "../../tests/testUtils/logger";
-import type { GuildedCommandContext } from "./Command";
-import type { QueueEntry } from "../useQueueStorage";
+import nowPlaying from "./nowPlaying.js";
+import { useTestLogger } from "../../tests/testUtils/logger.js";
+import type { GuildedCommandContext } from "./Command.js";
+import type { QueueEntry } from "../useQueueStorage.js";
 
 const logger = useTestLogger("error");
 
