@@ -1,18 +1,20 @@
 import type Discord from "discord.js";
 import type { MessageButton } from "../../buttons.js";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
+import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
 import durationString from "../../helpers/durationString.js";
 import {
+	addToHaveCalledNowPlaying,
+	clearEntries,
 	createEntry,
 	fetchAllEntries,
 	fetchAllEntriesFrom,
 	fetchEntryFromMessage,
 	removeEntryFromMessage,
-	useQueueStorage
+	markEntryDone
 } from "../../useQueueStorage.js";
 
 function queueMessageFromEntry(
@@ -65,11 +67,9 @@ function queueMessageFromEntry(
  * queue and manage messages in the queue channel.
  */
 export class QueueManager {
-	private readonly queueStorage: QueueEntryManager;
 	private readonly queueChannel: Discord.TextChannel;
 
-	constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
-		this.queueStorage = queueStorage;
+	constructor(queueChannel: Discord.TextChannel) {
 		this.queueChannel = queueChannel;
 	}
 
@@ -139,7 +139,7 @@ export class QueueManager {
 
 	/** If the message represents a "done" entry, that entry is unmarked. */
 	async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		await this.queueStorage.markEntryDone(false, queueMessage.id);
+		await markEntryDone(false, queueMessage.id, this.queueChannel);
 		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
 
@@ -149,7 +149,7 @@ export class QueueManager {
 
 	/** If the message represents a "not done" entry, that entry is marked "done". */
 	async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		await this.queueStorage.markEntryDone(true, queueMessage.id);
+		await markEntryDone(true, queueMessage.id, this.queueChannel);
 		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
 
@@ -162,7 +162,7 @@ export class QueueManager {
 		user: Discord.Snowflake,
 		queueMessage: Discord.Message | Discord.PartialMessage
 	): Promise<void> {
-		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
+		await addToHaveCalledNowPlaying(user, queueMessage.id, this.queueChannel);
 
 		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (!entry) return;
@@ -181,7 +181,7 @@ export class QueueManager {
 		const entry = await fetchEntryFromMessage(queueMessage.id, this.queueChannel);
 		if (entry === null) return entry;
 
-		// TODO: Check the docs that both Message and PartialMessage would return an ID
+		// TODO: Check the docs that both Message and PartialMessage would contain an ID
 		await removeEntryFromMessage(queueMessage.id, this.queueChannel);
 		await deleteMessage(queueMessage);
 
@@ -203,7 +203,7 @@ export class QueueManager {
 
 	/** Resets the queue. Deletes all cached data about the queue. */
 	async clear(): Promise<void> {
-		return this.queueStorage.clear();
+		return clearEntries(this.queueChannel);
 	}
 }
 
@@ -216,6 +216,5 @@ export class QueueManager {
  *  or cached, whichever is handy.
  */
 export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
-	const queueStorage = useQueueStorage(queueChannel);
-	return new QueueManager(queueStorage, queueChannel);
+	return new QueueManager(queueChannel);
 }

@@ -9,17 +9,15 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
+import { getQueueConfig, blacklistUser } from "../../useQueueStorage.js";
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
-const mockUseQueueStorage = useQueueStorage as jest.Mock;
+const mockBlacklistUser = blacklistUser as jest.Mock;
 
-import type { QueueEntryManager } from "../../useQueueStorage.js";
 import type { GuildedCommandContext } from "../Command.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import Discord from "discord.js";
 import blacklist from "./blacklist.js";
 
-const mockBlacklistUser = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
@@ -28,13 +26,13 @@ const logger = useTestLogger("error");
 
 describe("Manage the Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
+	const queueChannel = { id: queueChannelId };
 
 	const ownerId = "server-owner" as Discord.Snowflake;
 	const badUserId = "bad-user";
 	const mockClient: Discord.Client = ({} as unknown) as Discord.Client;
 
 	let context: GuildedCommandContext;
-	let queue: QueueEntryManager;
 
 	beforeEach(() => {
 		context = ({
@@ -57,15 +55,10 @@ describe("Manage the Queue Blacklist", () => {
 			deleteInvocation: mockDeleteMessage
 		} as unknown) as GuildedCommandContext;
 
-		queue = ({
-			blacklistUser: mockBlacklistUser
-		} as unknown) as QueueEntryManager;
-
-		mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
+		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: badUserId });
 		mockGetQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
 
-		mockUseQueueStorage.mockReturnValue(queue);
 		mockBlacklistUser.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
@@ -161,7 +154,7 @@ describe("Manage the Queue Blacklist", () => {
 
 			// blacklist effect
 			expect(mockBlacklistUser).toHaveBeenCalledTimes(1);
-			expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId);
+			expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId, queueChannel);
 
 			// response
 			expect(mockReply).toHaveBeenCalledTimes(1);

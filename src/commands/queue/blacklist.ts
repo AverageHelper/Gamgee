@@ -1,6 +1,6 @@
 import type { Subcommand } from "../Command.js";
+import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
-import { getQueueConfig, useQueueStorage } from "../../useQueueStorage.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 import logUser from "../../helpers/logUser.js";
@@ -44,8 +44,6 @@ const blacklist: Subcommand = {
 		if (!queueChannel) {
 			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
-
-		const queue = useQueueStorage(queueChannel);
 
 		const firstOption = options.data[0];
 		if (!firstOption) {
@@ -113,7 +111,7 @@ const blacklist: Subcommand = {
 			});
 		}
 
-		await queue.blacklistUser(subject.id);
+		await blacklistUser(subject.id, queueChannel);
 		logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
 		return reply({

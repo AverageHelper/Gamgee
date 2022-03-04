@@ -8,17 +8,15 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { useQueueStorage } from "../../useQueueStorage.js";
-const mockUseQueueStorage = useQueueStorage as jest.Mock;
+import { whitelistUser } from "../../useQueueStorage.js";
+const mockWhitelistUser = whitelistUser as jest.Mock;
 
-import type { QueueEntryManager } from "../../useQueueStorage.js";
 import type { GuildedCommandContext } from "../Command.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import Discord from "discord.js";
 import whitelist from "./whitelist.js";
 
 const mockClient = ({} as unknown) as Discord.Client;
-const mockWhitelistUser = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
@@ -26,12 +24,12 @@ const logger = useTestLogger("error");
 
 describe("Removing from Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
+	const queueChannel = { id: queueChannelId };
 
 	const ownerId = "server-owner";
 	const goodUserId = "good-user";
 
 	let context: GuildedCommandContext;
-	let queue: QueueEntryManager;
 
 	beforeEach(() => {
 		context = ({
@@ -49,14 +47,9 @@ describe("Removing from Queue Blacklist", () => {
 			deleteInvocation: mockDeleteMessage
 		} as unknown) as GuildedCommandContext;
 
-		queue = ({
-			whitelistUser: mockWhitelistUser
-		} as unknown) as QueueEntryManager;
-
-		mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
+		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: goodUserId });
 
-		mockUseQueueStorage.mockReturnValue(queue);
 		mockWhitelistUser.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
@@ -115,7 +108,7 @@ describe("Removing from Queue Blacklist", () => {
 
 		// whitelist effect
 		expect(mockWhitelistUser).toHaveBeenCalledTimes(1);
-		expect(mockWhitelistUser).toHaveBeenCalledWith(goodUserId);
+		expect(mockWhitelistUser).toHaveBeenCalledWith(goodUserId, queueChannel);
 
 		// response
 		expect(mockReply).toHaveBeenCalledTimes(1);

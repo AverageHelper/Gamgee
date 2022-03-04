@@ -19,7 +19,7 @@ const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
 
 import type Discord from "discord.js";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage.js";
+import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
 import { QueueManager } from "./useQueue.js";
@@ -41,8 +41,7 @@ describe("Request Queue", () => {
 			send: mockChannelSend
 		} as unknown) as Discord.TextChannel;
 
-		const storage = ({} as unknown) as QueueEntryManager;
-		queue = new QueueManager(storage, queueChannel);
+		queue = new QueueManager(queueChannel);
 
 		message = ({
 			id: queueMessageId,
