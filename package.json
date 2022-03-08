@@ -43,6 +43,7 @@
 	"homepage": "https://github.com/AverageHelper/Gamgee#readme",
 	"dependencies": {
 		"@averagehelper/job-queue": "^0.9.5",
+		"cheerio": "^1.0.0-rc.10",
 		"discord.js": "^13.1.0",
 		"dotenv": "^8.2.0",
 		"humanize-duration": "^3.25.1",
@@ -53,7 +54,6 @@
 		"source-map-support": "^0.5.19",
 		"sqlite3": "^5.0.2",
 		"typeorm": "^0.2.32",
-		"url-metadata": "^2.5.0",
 		"uuid": "^8.3.2",
 		"winston": "^3.3.3",
 		"yargs": "^17.0.1",

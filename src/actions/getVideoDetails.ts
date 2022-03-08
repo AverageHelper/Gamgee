@@ -1,11 +1,12 @@
 import type { Logger } from "../logger.js";
+import type { Metadata } from "../helpers/urlMetadata/index.js";
 import { isString } from "../helpers/guards.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
 import isError from "../helpers/isError.js";
 import richErrorMessage from "../helpers/richErrorMessage.js";
 import SoundCloud from "soundcloud-scraper";
-import urlMetadata from "url-metadata";
+import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
 
 export interface VideoDetails {
@@ -141,10 +142,9 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
  * @returns a `Promise` that resolves with the track details.
  */
 export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
-	const urlString = url.toString();
-	let metadata: urlMetadata.Result;
+	let metadata: Metadata;
 	try {
-		metadata = await urlMetadata(urlString, { timeout: 5000 });
+		metadata = await urlMetadata(url, { timeout: 5000 });
 	} catch (error: unknown) {
 		throw new VideoError(error);
 	}
@@ -174,8 +174,8 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	if (title === null || !title) throw new VideoError("Title not found");
 
 	return {
-		url: metadata.url,
-		title: metadata.title,
+		url: metadata.url ?? url.href,
+		title,
 		duration: { seconds: Math.floor(totalSeconds) }
 	};
 }
