@@ -1,7 +1,8 @@
 import getVideoDetails from "./getVideoDetails.js";
 
 describe("Video details", () => {
-	// YouTube
+	// ** YouTube
+
 	const testVid1 = "https://www.youtube.com/watch?v=9Y8ZGLiqXB8";
 
 	test.each`
@@ -40,7 +41,8 @@ describe("Video details", () => {
 		}
 	);
 
-	// SoundCloud
+	// ** SoundCloud
+
 	const testVid2 = "https://soundcloud.com/hwps/no999";
 
 	test.each`
@@ -59,14 +61,14 @@ describe("Video details", () => {
 
 	test("returns infinite duration for a live stream", async () => {
 		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
-		const url = "https://www.youtube.com/watch?v=yJqb8MUX0Kk";
+		const url = "https://www.youtube.com/watch?v=mnCJHuH9Oxw";
 		const details = await getVideoDetails(url, null);
 		expect(details).toHaveProperty("url", url);
 		expect(details?.duration.seconds).toBeDefined();
 		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
 	});
 
-	// BandCamp
+	// ** BandCamp
 
 	test("returns null for bandcamp album links", async () => {
 		const url = "https://poniesatdawn.bandcamp.com/album/memories";
