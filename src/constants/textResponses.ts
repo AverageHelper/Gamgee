@@ -1,3 +1,20 @@
+/*
+ * --- Response Types ---
+ *
+ * 1. A `string` defines a single response.
+ *
+ * 2. An `Array<string>` defines multiple responses, each
+ *    sent with a noticeable delay between them.
+ *
+ * 3. A function may return a response of type 1 or 2. May use
+ *    contextual information about the interaction, such as the
+ *    bot's display name and the user who initiated the conversation.
+ *    Also useful for adding randomized bits to responses!
+ *
+ * Note: New responses should make some sense in *any* type of server,
+ *    and must follow our **CODE_OF_CONDUCT**.
+ */
+
 import type { ResponseRepository } from "../helpers/randomStrings.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
@@ -7,25 +24,11 @@ import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 
-/*
- * --- Response Types ---
- *
- * 1. A string defines a single response.
- *
- * 2. An array of strings defines multiple responses, each
- *    sent with a noticeable delay between them.
- *
- * 3. A function defines response of type 1 or 2. May incorporate
- *    contextual information about the interaction, such as the
- *    bot's display name and the user who initiated the conversation.
- */
+export const SHRUGGIE = "¯\\_(ツ)_/¯";
 
 // NOTE: disabling ESLint here because we don't need to have
 // `: void` declarations sprinkled in the middle of so many blocks
-
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
-
-export const SHRUGGIE = "¯\\_(ツ)_/¯";
 
 /**
  * Said in response to messages whose only content is a mention to the bot
@@ -337,3 +340,8 @@ export const hugs: ResponseRepository = [
 	"*glomps*",
 	"*snugs*"
 ];
+
+/*
+ * Thanks to all of the lovely people who add to this file!
+ * Your contributions help bring smiles, and I love that.
+ */
