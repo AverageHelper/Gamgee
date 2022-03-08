@@ -1,12 +1,15 @@
 /*
  * --- Response Types ---
  *
+ * A `ResponseRepository` is an array that contains any
+ * of the following `Response` types:
+ *
  * 1. A `string` defines a single response.
  *
  * 2. An `Array<string>` defines multiple responses, each
  *    sent with a noticeable delay between them.
  *
- * 3. A function may return a response of type 1 or 2. May use
+ * 3. A function that returns a response of type 1 or 2. May use
  *    contextual information about the interaction, such as the
  *    bot's display name and the user who initiated the conversation.
  *    Also useful for adding randomized bits to responses!
