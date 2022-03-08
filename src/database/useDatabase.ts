@@ -29,7 +29,9 @@ export async function useDatabaseConnection<T = undefined>(
 		logging: "all",
 		logger: new DatabaseLogger(logger),
 		entities: Object.values(entities),
-		migrations: Object.values(migrations),
+		// FIXME: This assertion should be unnecessary
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+		migrations: Object.values(migrations) as Array<() => unknown | string>,
 		synchronize: true // assumes migration was run before we get here
 	});
 

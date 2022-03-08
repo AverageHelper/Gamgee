@@ -53,7 +53,7 @@
 		"reflect-metadata": "^0.1.13",
 		"soundcloud-scraper": "^4.0.3",
 		"source-map-support": "^0.5.19",
-		"typeorm": "^0.2.32",
+		"typeorm": "^0.2.45",
 		"uuid": "^8.3.2",
 		"winston": "^3.3.3",
 		"yargs": "^17.0.1",
