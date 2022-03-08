@@ -456,17 +456,14 @@ export async function blacklistUser(
 	userId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	// FIXME: Do we need to hit the database twice here?
-	const config = await getQueueConfig(queueChannel);
-
-	// The user is already blacklisted
-	if (config.blacklistedUsers.some(user => user.id === userId)) return;
-
-	// Add the user to the blacklist
 	await useTransaction(async transaction => {
+		const queue = await getQueueConfig(queueChannel, transaction);
+
+		// The user is already blacklisted
+		if (queue.blacklistedUsers.some(user => user.id === userId)) return;
 		const users = transaction.getRepository(User);
 
-		const queue = await getQueueConfig(queueChannel, transaction);
+		// Add the user to the blacklist
 		let newUser = await users.findOne(userId);
 
 		if (!newUser) {
