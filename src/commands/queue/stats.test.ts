@@ -8,8 +8,14 @@ const mockGetQueueChannel = getQueueChannel as jest.Mock;
 import { countAllEntries } from "../../useQueueStorage.js";
 const mockCount = countAllEntries as jest.Mock;
 
-import { useQueue } from "../../actions/queue/useQueue.js";
-const mockUseQueue = useQueue as jest.Mock;
+import {
+	playtimeAverageInQueue,
+	playtimeRemainingInQueue,
+	playtimeTotalInQueue
+} from "../../actions/queue/useQueue.js";
+const mockPlaytimeRemaining = playtimeRemainingInQueue as jest.Mock;
+const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
+const mockPlaytimeAverage = playtimeAverageInQueue as jest.Mock;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
@@ -20,10 +26,6 @@ const logger = useTestLogger();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
-
-const mockPlaytimeRemaining = jest.fn();
-const mockPlaytimeTotal = jest.fn();
-const mockPlaytimeAverage = jest.fn();
 
 describe("Queue Statistics", () => {
 	let context: GuildedCommandContext;
@@ -46,22 +48,21 @@ describe("Queue Statistics", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockUseQueue.mockReturnValue({
-			playtimeRemaining: mockPlaytimeRemaining,
-			playtimeTotal: mockPlaytimeTotal,
-			playtimeAverage: mockPlaytimeAverage
-		});
 	});
 
 	test("does nothing when the guild has no queue", async () => {
 		mockGetQueueChannel.mockResolvedValue(null);
 		await expect(stats.execute(context)).resolves.toBeUndefined();
-		expect(mockUseQueue).not.toHaveBeenCalled();
+		expect(mockPlaytimeAverage).not.toHaveBeenCalled();
+		expect(mockPlaytimeRemaining).not.toHaveBeenCalled();
+		expect(mockPlaytimeTotal).not.toHaveBeenCalled();
 	});
 
 	test("displays queue statistics to the user", async () => {
 		await expect(stats.execute(context)).resolves.toBeUndefined();
-		expect(mockUseQueue).toHaveBeenCalledTimes(1);
+		expect(mockPlaytimeAverage).toHaveBeenCalledTimes(1);
+		expect(mockPlaytimeRemaining).toHaveBeenCalledTimes(1);
+		expect(mockPlaytimeTotal).toHaveBeenCalledTimes(1);
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
 	});
 });

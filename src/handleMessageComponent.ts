@@ -8,10 +8,14 @@ import { getEnv } from "./helpers/environment.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
 import { sendPrivately } from "./actions/messages/index.js";
 import { isQueueOpen } from "./useGuildStorage.js";
-import { useQueue } from "./actions/queue/useQueue.js";
 import getQueueChannel from "./actions/queue/getQueueChannel.js";
 import logUser from "./helpers/logUser.js";
 import richErrorMessage from "./helpers/richErrorMessage.js";
+import {
+	deleteEntryFromMessage,
+	markEntryDoneInQueue,
+	markEntryNotDoneInQueue
+} from "./actions/queue/useQueue.js";
 
 /**
  * Performs actions from a Discord command interaction.
@@ -53,7 +57,6 @@ export async function handleMessageComponent(
 	}
 
 	const message = await queueChannel.messages.fetch(interaction.message.id);
-	const queue = useQueue(queueChannel);
 	const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
@@ -75,7 +78,7 @@ export async function handleMessageComponent(
 	switch (interaction.customId) {
 		case DONE_BUTTON.id:
 			logger.debug("Marking done....");
-			await queue.markDone(message);
+			await markEntryDoneInQueue(message, queueChannel);
 			logger.debug("Marked an entry done.");
 			try {
 				await interaction.deferUpdate();
@@ -86,7 +89,7 @@ export async function handleMessageComponent(
 
 		case RESTORE_BUTTON.id:
 			logger.debug("Marking undone....");
-			await queue.markNotDone(message);
+			await markEntryNotDoneInQueue(message, queueChannel);
 			logger.debug("Marked an entry undone");
 			try {
 				await interaction.deferUpdate();
@@ -97,7 +100,7 @@ export async function handleMessageComponent(
 
 		case DELETE_BUTTON.id: {
 			logger.debug("Deleting entry...");
-			const entry = await queue.deleteEntryFromMessage(message);
+			const entry = await deleteEntryFromMessage(message, queueChannel);
 			if (!entry) {
 				logger.debug("There was no entry to delete.");
 				break;

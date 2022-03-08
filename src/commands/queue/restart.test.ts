@@ -7,16 +7,12 @@ jest.mock("../../permissions");
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
 
-import { fetchAllEntries } from "../../useQueueStorage.js";
+import { fetchAllEntries, clearEntries } from "../../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;
-
-import { useQueue } from "../../actions/queue/useQueue.js";
-const mockUseQueue = useQueue as jest.Mock;
+const mockQueueClear = clearEntries as jest.Mock;
 
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
-
-const mockQueueClear = jest.fn();
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
@@ -39,9 +35,6 @@ describe("Clear queue contents", () => {
 			reply: mockReply
 		} as unknown) as GuildedCommandContext;
 
-		mockUseQueue.mockReturnValue({
-			clear: mockQueueClear
-		});
 		mockGetAllEntries.mockResolvedValue([]);
 		mockQueueClear.mockResolvedValue(undefined);
 	});
@@ -53,7 +46,7 @@ describe("Clear queue contents", () => {
 
 		expect(mockReply).toHaveBeenCalledTimes(1);
 		expect(mockReply).toHaveBeenCalledWith("No queue is set up. Maybe that's what you wanted...?");
-		expect(mockUseQueue).not.toHaveBeenCalled();
+		expect(mockQueueClear).not.toHaveBeenCalled();
 	});
 
 	test.each`
@@ -84,8 +77,8 @@ describe("Clear queue contents", () => {
 			expect(mockReply).toHaveBeenCalledWith("The queue has restarted.");
 
 			// Actions
-			expect(mockUseQueue).toHaveBeenCalledTimes(1);
-			expect(mockUseQueue).toHaveBeenCalledWith(queueChannel);
+			expect(mockQueueClear).toHaveBeenCalledTimes(1);
+			expect(mockQueueClear).toHaveBeenCalledWith(queueChannel);
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledTimes(1);
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledWith(
 				queueEntries.map(entry => entry.queueMessageId),

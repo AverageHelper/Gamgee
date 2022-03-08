@@ -1,11 +1,15 @@
 import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 import { MessageEmbed } from "discord.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
-import { useQueue } from "../actions/queue/useQueue.js";
 import durationString from "../helpers/durationString.js";
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import {
+	averageSubmissionPlaytimeForUser,
+	countAllEntriesFrom,
+	fetchLatestEntryFrom,
+	getQueueConfig
+} from "../useQueueStorage.js";
 
 const limits: Command = {
 	name: "limits",
@@ -17,7 +21,6 @@ const limits: Command = {
 			return reply("No queue is set up.");
 		}
 
-		const queue = useQueue(queueChannel);
 		const config = await getQueueConfig(queueChannel);
 
 		// Read out the existing limits
@@ -64,7 +67,7 @@ const limits: Command = {
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
 			fetchLatestEntryFrom(user.id, queueChannel),
 			countAllEntriesFrom(user.id /* since: Date */, queueChannel),
-			queue.getAveragePlaytimeFrom(user.id)
+			averageSubmissionPlaytimeForUser(user.id, queueChannel)
 		]);
 
 		// Average song length

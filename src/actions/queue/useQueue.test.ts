@@ -22,7 +22,7 @@ import type Discord from "discord.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
-import { QueueManager } from "./useQueue.js";
+import { deleteEntryFromMessage, pushEntryToQueue } from "./useQueue.js";
 
 describe("Request Queue", () => {
 	const guildId = "the-guild";
@@ -30,7 +30,6 @@ describe("Request Queue", () => {
 	const entrySenderId = "some-user" as Discord.Snowflake;
 	const entryUrl = "the-entry-url";
 
-	let queue: QueueManager;
 	let queueChannel: Discord.TextChannel;
 	let message: Discord.Message;
 	let entry: QueueEntry;
@@ -40,8 +39,6 @@ describe("Request Queue", () => {
 			id: "queue-channel",
 			send: mockChannelSend
 		} as unknown) as Discord.TextChannel;
-
-		queue = new QueueManager(queueChannel);
 
 		message = ({
 			id: queueMessageId,
@@ -91,7 +88,7 @@ describe("Request Queue", () => {
 
 	test("does nothing when a message has nothing to do with a queue entry", async () => {
 		message.id = "not-a-queue-message" as Discord.Snowflake;
-		await expect(queue.deleteEntryFromMessage(message)).resolves.toBeNull();
+		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBeNull();
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).not.toHaveBeenCalled();
@@ -99,7 +96,7 @@ describe("Request Queue", () => {
 
 	test("deletes a queue entry based on a message", async () => {
 		message.id = queueMessageId;
-		await expect(queue.deleteEntryFromMessage(message)).resolves.toBe(entry);
+		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBe(entry);
 
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledTimes(1);
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
@@ -114,8 +111,10 @@ describe("Request Queue", () => {
 	};
 
 	test("stores queue entries", async () => {
-		await expect(queue.push(request)).resolves.toContainEntries<Record<string, unknown>>([
-			...Object.entries(request),
+		await expect(pushEntryToQueue(request, queueChannel)).resolves.toContainEntries<
+			Record<string, unknown>
+		>([
+			...Object.entries(request), //
 			["channelId", queueChannel.id]
 		]);
 

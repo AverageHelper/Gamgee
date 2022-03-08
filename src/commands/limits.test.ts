@@ -8,9 +8,6 @@ const mockGetQueueConfig = getQueueConfig as jest.Mock;
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { useQueue } from "../actions/queue/useQueue.js";
-const mockUseQueue = useQueue as jest.Mock;
-
 import type { GuildedCommandContext } from "./CommandContext.js";
 import limits from "./limits.js";
 
@@ -22,6 +19,7 @@ describe("Get Queue Limits", () => {
 	beforeEach(() => {
 		context = ({
 			guild: "the-guild",
+			user: { id: "the-user" },
 			reply: mockReply
 		} as unknown) as GuildedCommandContext;
 
@@ -38,7 +36,7 @@ describe("Get Queue Limits", () => {
 	test("cannot show statistics on a queue that does not exist", async () => {
 		mockGetQueueChannel.mockResolvedValue(null);
 		await expect(limits.execute(context)).resolves.toBeUndefined();
-		expect(mockUseQueue).not.toHaveBeenCalled();
+		// TODO: Somehow assert specifics on this case
 	});
 
 	test.each`
@@ -68,8 +66,6 @@ describe("Get Queue Limits", () => {
 				submissionMaxQuantity
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();
-			expect(mockUseQueue).toHaveBeenCalledTimes(1);
-			expect(mockUseQueue).toHaveBeenCalledWith({ id: "queue-channel" });
 			expect(mockReply).toHaveBeenCalledTimes(1);
 
 			const replyArgs = mockReply.mock.calls[0] as Array<unknown>;

@@ -309,6 +309,22 @@ export async function countAllEntriesFrom(
 	);
 }
 
+/** Returns the average entry duration of the submissions of the user with the provided ID. */
+export async function averageSubmissionPlaytimeForUser(
+	userId: Snowflake,
+	queueChannel: Discord.TextChannel
+): Promise<number> {
+	const entries = await fetchAllEntriesFrom(userId, queueChannel);
+	let average = 0;
+
+	entries.forEach(entry => {
+		average += entry.seconds;
+	});
+	average /= entries.length;
+
+	return average;
+}
+
 /**
  * Sets the entry's "done" value.
  *

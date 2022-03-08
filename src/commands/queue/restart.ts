@@ -1,7 +1,6 @@
 import type { Subcommand } from "../Command.js";
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
-import { fetchAllEntries } from "../../useQueueStorage.js";
-import { useQueue } from "../../actions/queue/useQueue.js";
+import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 const restart: Subcommand = {
@@ -19,10 +18,9 @@ const restart: Subcommand = {
 
 		await prepareForLongRunningTasks();
 
-		const queue = useQueue(queueChannel);
 		const toBeDeleted = (await fetchAllEntries(queueChannel)).map(entry => entry.queueMessageId);
 		await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
-		await queue.clear();
+		await clearEntries(queueChannel);
 
 		return reply("The queue has restarted.");
 	}

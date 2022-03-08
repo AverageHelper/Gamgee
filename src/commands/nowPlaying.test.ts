@@ -6,8 +6,8 @@ jest.mock("../permissions");
 import { fetchAllEntries } from "../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;
 
-import { useQueue } from "../actions/queue/useQueue.js";
-const mockUseQueue = useQueue as jest.Mock;
+import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
+const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as jest.Mock;
 
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -18,7 +18,7 @@ const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
-const mockAddUserToHaveCalledNowPlaying = jest.fn().mockResolvedValue(undefined);
+mockAddUserToHaveCalledNowPlaying.mockResolvedValue(undefined);
 
 import nowPlaying from "./nowPlaying.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
@@ -41,9 +41,6 @@ describe("Now-Playing", () => {
 			deleteInvocation: mockDeleteMessage
 		} as unknown) as GuildedCommandContext;
 
-		mockUseQueue.mockReturnValue({
-			addUserToHaveCalledNowPlaying: mockAddUserToHaveCalledNowPlaying
-		});
 		mockGetAllEntries.mockResolvedValue([]);
 		mockReplyWithMention.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
@@ -56,8 +53,7 @@ describe("Now-Playing", () => {
 
 		await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
-		expect(mockUseQueue).not.toHaveBeenCalled();
-
+		expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 		expect(mockReplyWithMention).not.toHaveBeenCalled();
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
@@ -77,8 +73,7 @@ describe("Now-Playing", () => {
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
-			expect(mockUseQueue).toHaveBeenCalledTimes(1);
-
+			expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
 			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
 			expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
@@ -108,8 +103,6 @@ describe("Now-Playing", () => {
 			});
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
-
-			expect(mockUseQueue).toHaveBeenCalledTimes(1);
 
 			expect(mockAddUserToHaveCalledNowPlaying).toHaveBeenCalledTimes(1);
 			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);

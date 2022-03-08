@@ -9,8 +9,8 @@ const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
-import * as queueActions from "../actions/queue/useQueue.js";
-const mockUseQueue = queueActions.useQueue as jest.Mock;
+import { pushEntryToQueue } from "../actions/queue/useQueue.js";
+const mockQueuePush = pushEntryToQueue as jest.Mock;
 
 import { isQueueOpen } from "../useGuildStorage.js";
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
@@ -67,24 +67,19 @@ describe("Song request via URL", () => {
 	mockQueueGetLatestUserEntry.mockResolvedValue(null);
 	mockQueueUserEntryCount.mockResolvedValue(0);
 
-	const mockQueuePush = jest.fn();
-
 	mockIsQueueOpen.mockResolvedValue(true);
 
-	mockGetQueueChannel.mockResolvedValue({
+	const queueChannel = {
 		id: "queue-channel-123",
 		name: "queue"
-	});
+	};
+	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
 	mockGetQueueConfig.mockResolvedValue({
 		entryDurationSeconds: null,
 		cooldownSeconds: 600,
 		submissionMaxQuantity: null,
 		blacklistedUsers: []
-	});
-
-	mockUseQueue.mockReturnValue({
-		push: mockQueuePush
 	});
 
 	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;
@@ -212,7 +207,10 @@ describe("Song request via URL", () => {
 
 		// queue.push should only have been called on the first URL
 		expect(mockQueuePush).toHaveBeenCalledTimes(1);
-		expect(mockQueuePush).toHaveBeenCalledWith(expect.toContainEntry(["url", urls[0]]));
+		expect(mockQueuePush).toHaveBeenCalledWith(
+			expect.toContainEntry(["url", urls[0]]),
+			queueChannel
+		);
 
 		// The submission should have been rejected with a cooldown warning via DMs
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
@@ -267,7 +265,8 @@ describe("Song request via URL", () => {
 				expect.toContainEntries([
 					["url", url],
 					["senderId", `user-${i + 1}`]
-				])
+				]),
+				queueChannel
 			);
 		});
 		expect(mockQueuePush).toHaveBeenCalledTimes(10);

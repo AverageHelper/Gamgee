@@ -1,7 +1,6 @@
 import type Discord from "discord.js";
 import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
-import type { QueueManager } from "./useQueue.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
@@ -9,7 +8,7 @@ import { deleteMessage } from "../../actions/messages/index.js";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
-import { useQueue } from "./useQueue.js";
+import { pushEntryToQueue } from "./useQueue.js";
 import durationString from "../../helpers/durationString.js";
 import getVideoDetails from "../getVideoDetails.js";
 import logUser from "../../helpers/logUser.js";
@@ -68,7 +67,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 }
 
 interface SongAcceptance {
-	queue: QueueManager;
+	queueChannel: Discord.TextChannel;
 	context: CommandContext;
 	entry: UnsentQueueEntry;
 	logger: Logger;
@@ -79,8 +78,13 @@ interface SongAcceptance {
  *
  * @param param0 The feedback context.
  */
-async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptance): Promise<void> {
-	await queue.push(entry);
+async function acceptSongRequest({
+	queueChannel,
+	context,
+	entry,
+	logger
+}: SongAcceptance): Promise<void> {
+	await pushEntryToQueue(entry, queueChannel);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
 		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
@@ -108,7 +112,6 @@ export default async function processSongRequest(request: SongRequest): Promise<
 	const senderId = context.user.id;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
-	const queue = useQueue(queueChannel);
 
 	try {
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
@@ -207,7 +210,7 @@ export default async function processSongRequest(request: SongRequest): Promise<
 		const entry = { url, seconds, senderId };
 
 		// ** Full send!
-		return await acceptSongRequest({ queue, context, entry, logger });
+		return await acceptSongRequest({ queueChannel, context, entry, logger });
 
 		// Handle fetch errors
 	} catch (error: unknown) {

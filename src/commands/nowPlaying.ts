@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { fetchAllEntries } from "../useQueueStorage.js";
-import { useQueue } from "../actions/queue/useQueue.js";
+import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import getQueueChannel from "../actions/queue/getQueueChannel.js";
 import randomElementOfArray from "../helpers/randomElementOfArray.js";
 
@@ -45,7 +45,6 @@ const nowPlaying: Command = {
 			return replyPrivately("There's no queue set up right now, so nothing is playing.");
 		}
 
-		const queue = useQueue(queueChannel);
 		const allEntries = await fetchAllEntries(queueChannel);
 		const firstNotDone = allEntries.find(entry => !entry.isDone);
 
@@ -56,9 +55,10 @@ const nowPlaying: Command = {
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
 
-		await queue.addUserToHaveCalledNowPlaying(
+		await addUserToHaveCalledNowPlaying(
 			user.id,
-			await queueChannel.messages.fetch(firstNotDone.queueMessageId)
+			await queueChannel.messages.fetch(firstNotDone.queueMessageId),
+			queueChannel
 		);
 
 		const response = createPartialString();
