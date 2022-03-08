@@ -160,7 +160,10 @@ export const phrases: ResponseRepository = [
 	"Another good song!",
 	"Are we there yet?",
 	"Are you sure you typed your message correctly? All I see is a bunch of words",
+	"Based",
 	"Bit of a tongue twister",
+	"Bloatware!? I don't see any, wdym??",
+	"Bloatware!? I heard that's just a Windows thing",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
 	[
@@ -199,6 +202,7 @@ export const phrases: ResponseRepository = [
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
+	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands. :D",
 	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
@@ -216,6 +220,7 @@ export const phrases: ResponseRepository = [
 	["I", "just wasted", "ten seconds", "of your life"],
 	"I like youtube links, they're comfortable and easy to manage.",
 	"I love when it when it\n:thinking:\nbottom text",
+	"I must go, Technology needs me!",
 	"I see Discord's redecorated! ... I don't like it",
 	"I see friends shaking hands, saying 'How do you do?' :musical_note:",
 	"I think I'll write some of these down!",
@@ -284,7 +289,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 186 of these
+]; // 191 of these
 logger.debug(`I have ${phrases.length} random things to say ^^`);
 
 /**
