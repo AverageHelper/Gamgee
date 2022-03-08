@@ -24,11 +24,10 @@ export async function useDatabaseConnection<T = undefined>(
 
 	const connection = await createConnection({
 		name: connId,
-		type: "sqlite",
+		type: "better-sqlite3",
 		database: dbFile,
 		logging: "all",
 		logger: new DatabaseLogger(logger),
-		busyErrorRetry: 100,
 		entities: Object.values(entities),
 		migrations: Object.values(migrations),
 		synchronize: true // assumes migration was run before we get here

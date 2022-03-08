@@ -2,7 +2,7 @@ const entities = require("./dist/database/model");
 const migrations = require("./dist/database/migrations");
 
 module.exports = {
-	type: "sqlite",
+	type: "better-sqlite3",
 	database: "./db/db.sqlite",
 	entities: Object.values(entities),
 	migrations: Object.values(migrations),

@@ -43,6 +43,7 @@
 	"homepage": "https://github.com/AverageHelper/Gamgee#readme",
 	"dependencies": {
 		"@averagehelper/job-queue": "^0.9.5",
+		"better-sqlite3": "^7.5.0",
 		"cheerio": "^1.0.0-rc.10",
 		"discord.js": "^13.1.0",
 		"dotenv": "^8.2.0",
@@ -52,7 +53,6 @@
 		"reflect-metadata": "^0.1.13",
 		"soundcloud-scraper": "^4.0.3",
 		"source-map-support": "^0.5.19",
-		"sqlite3": "^5.0.2",
 		"typeorm": "^0.2.32",
 		"uuid": "^8.3.2",
 		"winston": "^3.3.3",
