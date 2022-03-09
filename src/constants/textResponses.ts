@@ -316,7 +316,7 @@ export const questions: ResponseRepository = [
 	"Speak. Your servant hears",
 	"Who dares?",
 	"Quit yer lollygaggin'!",
-	"Wha-whAT?! I'm up!",
+	"Wha-whAT?!  I'm up!",
 	":eyes:",
 	":eyes: :eyes: :eyes:",
 	"I'm not a fan of spam"

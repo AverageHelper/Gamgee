@@ -24,7 +24,7 @@ export async function useDatabaseConnection<T = undefined>(
 
 	const connection = await createConnection({
 		name: connId,
-		type: "better-sqlite3",
+		type: "sqlite",
 		database: dbFile,
 		logging: "all",
 		logger: new DatabaseLogger(logger),
