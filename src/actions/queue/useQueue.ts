@@ -1,35 +1,54 @@
 import type Discord from "discord.js";
-import type { MessageButton } from "../../buttons";
-import type { QueueConfig } from "../../database/model/QueueConfig";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
-import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons";
-import { addStrikethrough } from "./strikethroughText";
-import { deleteMessage, editMessage, escapeUriInString } from "../messages";
-import { useQueueStorage } from "../../useQueueStorage";
-import durationString from "../../helpers/durationString";
-import StringBuilder from "../../helpers/StringBuilder";
+import type { MessageButton } from "../../buttons.js";
+import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
+import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
+import { addStrikethrough } from "./strikethroughText.js";
+import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
+import durationString from "../../helpers/durationString.js";
+import {
+	addToHaveCalledNowPlaying,
+	createEntry,
+	fetchAllEntries,
+	fetchEntryFromMessage,
+	removeEntryFromMessage,
+	markEntryDone
+} from "../../useQueueStorage.js";
 
+// FIXME: Some of these may be inlined with functions from useQueueStorage.js, and should be inlined to avoid confusion between raw database function and full queue functions
+
+/**
+ * Generates a Discord message that describes the entry. Good for inserting into the guild's queue channel.
+ */
 function queueMessageFromEntry(
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
 ): Discord.MessageOptions {
-	const contentBuilder = new StringBuilder();
-	contentBuilder.push(`<@!${entry.senderId}>`);
-	contentBuilder.push(" requested a song that's ");
-	contentBuilder.pushBold(durationString(entry.seconds));
-	contentBuilder.push(" long: ");
+	const partialContent = createPartialString();
+	push(`<@!${entry.senderId}>`, partialContent);
+	push(" requested a song that's ", partialContent);
+	pushBold(durationString(entry.seconds), partialContent);
+	push(" long: ", partialContent);
 
 	// Suppress embeds if the entry is marked "Done"
 	if (entry.isDone) {
-		contentBuilder.push(escapeUriInString(entry.url));
+		push(escapeUriInString(entry.url), partialContent);
 	} else {
-		contentBuilder.push(entry.url);
+		push(entry.url, partialContent);
 	}
 
+	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
-	contentBuilder.push(`\nIt has ${likeCount} like${likeCount === 1 ? "" : "s"}.`);
+	const likeMessage = `\n${likeCount} ${
+		likeCount === 1 ? "person" : "people"
+	} asked for this link.`;
+	if (likeCount === 0) {
+		push(likeMessage, partialContent);
+	} else {
+		pushBold(likeMessage, partialContent);
+	}
 
 	// Strike the message through if the entry is marked "Done"
-	const result = contentBuilder.result();
+	const result = composed(partialContent);
 	const content = entry.isDone ? addStrikethrough(result) : result;
 
 	// Only show the restore button if the entry is marked "Done"
@@ -44,194 +63,128 @@ function queueMessageFromEntry(
 	};
 }
 
-/**
- * A proxy for queue management and feedback. These methods may modify the
- * queue and manage messages in the queue channel.
- */
-export class QueueManager {
-	private readonly queueStorage: QueueEntryManager;
-	private readonly queueChannel: Discord.TextChannel;
-
-	constructor(queueStorage: QueueEntryManager, queueChannel: Discord.TextChannel) {
-		this.queueStorage = queueStorage;
-		this.queueChannel = queueChannel;
-	}
-
-	/** Retrieves the queue's configuration settings. */
-	async getConfig(): Promise<QueueConfig> {
-		return this.queueStorage.getConfig();
-	}
-
-	/** Updates the provided properties of a queue's configuration settings. */
-	async updateConfig(config: Partial<QueueConfig>): Promise<void> {
-		return this.queueStorage.updateConfig(config);
-	}
-
-	/** Retrieves the number of entries in the queue */
-	async count(): Promise<number> {
-		return this.queueStorage.countAll();
-	}
-
-	/** Retrieves the number of entries in the queue submitted by the given user. */
-	async countFrom(userId: string): Promise<number> {
-		return this.queueStorage.countAllFrom(userId);
-	}
-
-	/** Retrieves the playtime of the queue's unfinished entries. */
-	async playtimeRemaining(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
-		let duration = 0;
-		queue
-			.filter(e => !e.isDone)
-			.forEach(e => {
-				duration += e.seconds;
-			});
-		return duration;
-	}
-
-	/** Retrieves the total playtime of the queue's entries. */
-	async playtimeTotal(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
-		let duration = 0;
-		queue.forEach(e => {
+/** Retrieves the playtime of the queue's unfinished entries. */
+export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+	const queue = await fetchAllEntries(queueChannel);
+	let duration = 0;
+	queue
+		.filter(e => !e.isDone)
+		.forEach(e => {
 			duration += e.seconds;
 		});
-		return duration;
-	}
+	return duration;
+}
 
-	/** Retrieves the average playtime of the queue's entries. */
-	async playtimeAverage(): Promise<number> {
-		const queue = await this.queueStorage.fetchAll();
-		let average = 0;
-		queue.forEach(e => {
-			average += e.seconds;
-		});
-		average /= queue.length;
-		return average;
-	}
+/** Retrieves the total playtime of the queue's entries. */
+export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+	const queue = await fetchAllEntries(queueChannel);
+	let duration = 0;
+	queue.forEach(e => {
+		duration += e.seconds;
+	});
+	return duration;
+}
 
-	/** Adds an entry to the queue cache and sends the entry to the queue channel. */
-	async push(newEntry: UnsentQueueEntry): Promise<QueueEntry> {
-		const messageOptions = queueMessageFromEntry({
-			...newEntry,
-			isDone: false,
-			haveCalledNowPlaying: []
-		});
-		const queueMessage = await this.queueChannel.send(messageOptions);
+/** Retrieves the average playtime of the queue's entries. */
+export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+	const queue = await fetchAllEntries(queueChannel);
+	let average = 0;
+	queue.forEach(e => {
+		average += e.seconds;
+	});
+	average /= queue.length;
+	return average;
+}
 
-		let entry: QueueEntry;
-		try {
-			entry = await this.queueStorage.create({
+/** Adds an entry to the queue cache and sends the entry to the queue channel. */
+export async function pushEntryToQueue(
+	newEntry: UnsentQueueEntry,
+	queueChannel: Discord.TextChannel
+): Promise<QueueEntry> {
+	const messageOptions = queueMessageFromEntry({
+		...newEntry,
+		isDone: false,
+		haveCalledNowPlaying: []
+	});
+	const queueMessage = await queueChannel.send(messageOptions);
+
+	let entry: QueueEntry;
+	try {
+		entry = await createEntry(
+			{
 				...newEntry,
 				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
 				isDone: false,
 				haveCalledNowPlaying: []
-			});
+			},
+			queueChannel
+		);
 
-			// If the database write fails...
-		} catch (error: unknown) {
-			await deleteMessage(queueMessage);
-			throw error;
-		}
-
-		return entry;
-	}
-
-	/** Fetches an entry with the given message ID. */
-	async getEntryFromMessage(queueMessageId: string): Promise<QueueEntry | null> {
-		return this.queueStorage.fetchEntryFromMessage(queueMessageId);
-	}
-
-	/** If the message represents a "done" entry, that entry is unmarked. */
-	async markNotDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		await this.queueStorage.markEntryDone(false, queueMessage.id);
-		const entry = await this.getEntryFromMessage(queueMessage.id);
-		if (!entry) return;
-
-		const editOptions = queueMessageFromEntry(entry);
-		await editMessage(queueMessage, editOptions);
-	}
-
-	/** If the message represents a "not done" entry, that entry is marked "done". */
-	async markDone(queueMessage: Discord.Message | Discord.PartialMessage): Promise<void> {
-		await this.queueStorage.markEntryDone(true, queueMessage.id);
-		const entry = await this.getEntryFromMessage(queueMessage.id);
-		if (!entry) return;
-
-		const editOptions = queueMessageFromEntry(entry);
-		await editMessage(queueMessage, editOptions);
-	}
-
-	/** Add the given user to the haveCalledNowPlaying field of the queue entry if they aren't already on it. */
-	async addUserToHaveCalledNowPlaying(
-		user: Discord.Snowflake,
-		queueMessage: Discord.Message | Discord.PartialMessage
-	): Promise<void> {
-		await this.queueStorage.addToHaveCalledNowPlaying(user, queueMessage.id);
-
-		const entry = await this.getEntryFromMessage(queueMessage.id);
-		if (!entry) return;
-
-		await editMessage(queueMessage, queueMessageFromEntry(entry));
-	}
-
-	/**
-	 * If the message represents a queue entry, that entry is removed and the message deleted.
-	 *
-	 * @returns the entry that was deleted.
-	 */
-	async deleteEntryFromMessage(
-		queueMessage: Discord.Message | Discord.PartialMessage
-	): Promise<QueueEntry | null> {
-		const entry = await this.queueStorage.fetchEntryFromMessage(queueMessage.id);
-		if (entry === null) return entry;
-
-		// FIXME: I think both Message and PartialMessage would return a Snowflake ID. IDK
-		await this.queueStorage.removeEntryFromMessage(queueMessage.id);
+		// If the database write fails...
+	} catch (error: unknown) {
 		await deleteMessage(queueMessage);
-
-		return entry;
+		throw error;
 	}
 
-	/** Returns all entries in the queue. */
-	async getAllEntries(): Promise<Array<QueueEntry>> {
-		return this.queueStorage.fetchAll();
-	}
+	return entry;
+}
 
-	/** Returns the latest entry from the user with the provided ID. */
-	async getLatestEntryFrom(userId: string): Promise<QueueEntry | null> {
-		return this.queueStorage.fetchLatestFrom(userId);
-	}
+/** If the message represents a "done" entry, that entry is unmarked. */
+export async function markEntryNotDoneInQueue(
+	queueMessage: Discord.Message | Discord.PartialMessage,
+	queueChannel: Discord.TextChannel
+): Promise<void> {
+	await markEntryDone(false, queueMessage.id, queueChannel);
+	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	if (!entry) return;
 
-	/** Returns the average entry duration of the submissions of the user with the provided ID. */
-	async getAveragePlaytimeFrom(userId: string): Promise<number> {
-		const entries = await this.queueStorage.fetchAllFrom(userId);
-		let average = 0;
+	const editOptions = queueMessageFromEntry(entry);
+	await editMessage(queueMessage, editOptions);
+}
 
-		entries.forEach(entry => {
-			average += entry.seconds;
-		});
-		average /= entries.length;
+/** If the message represents a "not done" entry, that entry is marked "done". */
+export async function markEntryDoneInQueue(
+	queueMessage: Discord.Message | Discord.PartialMessage,
+	queueChannel: Discord.TextChannel
+): Promise<void> {
+	await markEntryDone(true, queueMessage.id, queueChannel);
+	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	if (!entry) return;
 
-		return average;
-	}
+	const editOptions = queueMessageFromEntry(entry);
+	await editMessage(queueMessage, editOptions);
+}
 
-	/** Resets the queue. Deletes all cached data about the queue. */
-	async clear(): Promise<void> {
-		return this.queueStorage.clear();
-	}
+/** Add the given user to the haveCalledNowPlaying field of the queue entry if they aren't already on it. */
+export async function addUserToHaveCalledNowPlaying(
+	user: Discord.Snowflake,
+	queueMessage: Discord.Message | Discord.PartialMessage,
+	queueChannel: Discord.TextChannel
+): Promise<void> {
+	await addToHaveCalledNowPlaying(user, queueMessage.id, queueChannel);
+
+	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	if (!entry) return;
+
+	await editMessage(queueMessage, queueMessageFromEntry(entry));
 }
 
 /**
- * Sets up and returns an interface for the queue cache and long-term storage.
+ * If the message represents a queue entry, that entry is removed and the message deleted.
  *
- * @param queueChannel The channel for the current queue.
- * @returns If we don't have a queue cache stored for the given channel, a new
- *  one is created. We return that. Otherwise, we just return what we have stored
- *  or cached, whichever is handy.
+ * @returns the entry that was deleted.
  */
-export function useQueue(queueChannel: Discord.TextChannel): QueueManager {
-	const queueStorage = useQueueStorage(queueChannel);
-	return new QueueManager(queueStorage, queueChannel);
+export async function deleteEntryFromMessage(
+	queueMessage: Discord.Message | Discord.PartialMessage,
+	queueChannel: Discord.TextChannel
+): Promise<QueueEntry | null> {
+	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	if (entry === null) return entry;
+
+	// TODO: Check the docs that both Message and PartialMessage would contain an ID
+	await removeEntryFromMessage(queueMessage.id, queueChannel);
+	await deleteMessage(queueMessage);
+
+	return entry;
 }

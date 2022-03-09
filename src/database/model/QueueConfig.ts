@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, ManyToMany, JoinTable } from "typeorm";
-import { User } from "./User";
+import { User } from "./User.js";
 
 @Entity({ name: "queue-configs" })
 export class QueueConfig {

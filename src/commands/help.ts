@@ -1,5 +1,5 @@
-import type { Command } from "./Command";
-import describeAllCommands from "../actions/describeAllCommands";
+import type { Command } from "./Command.js";
+import describeAllCommands from "../actions/describeAllCommands.js";
 
 const help: Command = {
 	name: "help",
@@ -7,7 +7,7 @@ const help: Command = {
 	requiresGuild: false,
 	async execute(context) {
 		// Dynamic import here, b/c ./index depends on us to resolve
-		const { allCommands } = await import("./index");
+		const { allCommands } = await import("./index.js");
 
 		const descriptions = await describeAllCommands(context, allCommands);
 		return context.replyPrivately(`Commands:\n${descriptions}`);

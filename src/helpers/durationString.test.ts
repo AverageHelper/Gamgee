@@ -1,4 +1,4 @@
-import durationString from "./durationString";
+import durationString from "./durationString.js";
 
 describe("Seconds to duration", () => {
 	test("reports 0 seconds from zero", () => {

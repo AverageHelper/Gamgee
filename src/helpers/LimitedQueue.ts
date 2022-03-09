@@ -1,3 +1,5 @@
+// TODO: See if we'll ever actually use this. Because of the way Discord text channels work, I doubt this will work for our use case.
+
 /**
  * An object which manages an array like a queue with a limited number of total items.
  */

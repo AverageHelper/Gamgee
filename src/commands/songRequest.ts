@@ -1,13 +1,13 @@
 import type Discord from "discord.js";
-import type { GuildedCommand } from "./Command";
-import type { SongRequest } from "../actions/queue/processSongRequest";
-import { resolveStringFromOption } from "../helpers/optionResolvers";
+import type { GuildedCommand } from "./Command.js";
+import type { SongRequest } from "../actions/queue/processSongRequest.js";
+import { resolveStringFromOption } from "../helpers/optionResolvers.js";
+import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "url";
-import { useGuildStorage } from "../useGuildStorage";
+import { isQueueOpen } from "../useGuildStorage.js";
 import { useJobQueue } from "@averagehelper/job-queue";
-import getQueueChannel from "../actions/queue/getQueueChannel";
-import processRequest from "../actions/queue/processSongRequest";
-import { sendMessageInChannel } from "../actions/messages";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import processRequest from "../actions/queue/processSongRequest.js";
 
 const sr: GuildedCommand = {
 	name: "sr",
@@ -49,7 +49,7 @@ const sr: GuildedCommand = {
 
 		const firstOption = options.data[0];
 		if (!firstOption) {
-			const howTo = (await import("./howto")).default;
+			const howTo = (await import("./howto.js")).default;
 			return howTo.execute(context);
 		}
 
@@ -61,9 +61,8 @@ const sr: GuildedCommand = {
 			return;
 		}
 
-		const guildStorage = useGuildStorage(guild);
-		const isQueueOpen = await guildStorage.isQueueOpen();
-		if (!isQueueOpen) {
+		const isQueueNotOpen = !(await isQueueOpen(guild));
+		if (isQueueNotOpen) {
 			return reply({
 				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
 				ephemeral: true

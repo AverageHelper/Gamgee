@@ -1,10 +1,10 @@
-import { requireEnv } from "../src/helpers/environment";
+import { requireEnv } from "../src/helpers/environment.js";
 import {
 	setIsQueueAdmin,
 	setIsQueueCreator,
 	commandResponseInSameChannel,
 	sendMessage
-} from "./discordUtils";
+} from "./discordUtils/index.js";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 

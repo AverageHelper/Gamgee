@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
-import type { Logger } from "./logger";
-import { getEnv } from "./helpers/environment";
-import logUser from "./helpers/logUser";
+import type { Logger } from "./logger.js";
+import { getEnv } from "./helpers/environment.js";
+import logUser from "./helpers/logUser.js";
 
 export async function handleReactionAdd(
 	reaction: Discord.MessageReaction,

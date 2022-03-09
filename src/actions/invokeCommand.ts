@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
-import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands";
-import { isGuildedCommandContext, resolvePermissions } from "../commands";
-import { useLogger } from "../logger";
-import { userHasRoleInGuild } from "../permissions";
+import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands/index.js";
+import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
+import { useLogger } from "../logger.js";
+import { userHasRoleInGuild } from "../permissions/index.js";
 
 const logger = useLogger();
 

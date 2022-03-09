@@ -1,9 +1,17 @@
 import type Discord from "discord.js";
-import type { Command, CommandContext, Subcommand } from "../commands";
-import { assertUserCanRunCommand } from "./invokeCommand";
-import { getConfigCommandPrefix } from "./config/getConfigValue";
-import StringBuilder from "../helpers/StringBuilder";
+import type { Command, CommandContext, Subcommand } from "../commands/index.js";
+import type { PartialString } from "../helpers/composeStrings.js";
+import { assertUserCanRunCommand } from "./invokeCommand.js";
+import { getConfigCommandPrefix } from "./config/getConfigValue.js";
+import {
+	createPartialString,
+	composed,
+	push,
+	pushCode,
+	pushNewLine
+} from "../helpers/composeStrings.js";
 
+// Standard punctuation that we'll only use here
 const DASH = " - ";
 const SEP = " | ";
 const INDENT = "    ";
@@ -28,62 +36,62 @@ export default async function describeAllCommands(
 		context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
 
 	// Describe all commands
-	const bodyBuilder = new StringBuilder();
+	const description = createPartialString();
 	const allCommands = [...commands.values()];
 	for (const command of allCommands) {
 		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
 		if (!canRun) continue;
 
-		const cmdDesc = new StringBuilder();
+		const cmdDesc = createPartialString();
 
 		// Describe the command
-		cmdDesc.push(CODE);
-		cmdDesc.push(`${COMMAND_PREFIX}${command.name}`);
+		push(CODE, cmdDesc);
+		push(`${COMMAND_PREFIX}${command.name}`, cmdDesc);
 
 		describeParameters(command.options ?? [], cmdDesc);
 
-		cmdDesc.push(CODE);
+		push(CODE, cmdDesc);
 
 		if (context.type === "message") {
 			// Slash-commands have autocomplete, so aliases aren't as useful. We'll ignore them in the /help buzz
 			const aliases = (command.aliases ?? []).filter(alias => alias !== command.name);
 			if (aliases.length > 0) {
 				aliases.forEach(alias => {
-					cmdDesc.push(" OR ");
-					cmdDesc.pushCode(`${COMMAND_PREFIX}${alias}`);
+					push(" OR ", cmdDesc);
+					pushCode(`${COMMAND_PREFIX}${alias}`, cmdDesc);
 				});
 			}
 		}
 
-		cmdDesc.push(DASH);
-		cmdDesc.push(command.description);
+		push(DASH, cmdDesc);
+		push(command.description, cmdDesc);
 
 		// Describe all subcommands
 		command.options
 			?.filter(optn => optn.type === "SUB_COMMAND")
 			?.forEach(sub => {
 				// Describe the subcommand
-				const subDesc = new StringBuilder();
-				subDesc.pushNewLine();
-				subDesc.push(INDENT);
+				const subDesc = createPartialString();
+				pushNewLine(subDesc);
+				push(INDENT, subDesc);
 
-				subDesc.push(CODE);
-				subDesc.push(`${COMMAND_PREFIX}${command.name} ${sub.name}`);
+				push(CODE, subDesc);
+				push(`${COMMAND_PREFIX}${command.name} ${sub.name}`, subDesc);
 
 				describeParameters(sub.options ?? [], subDesc);
 
-				subDesc.push(CODE);
+				push(CODE, subDesc);
 
-				subDesc.push(DASH);
-				subDesc.push(sub.description);
-				cmdDesc.push(subDesc.result());
+				push(DASH, subDesc);
+				push(sub.description, subDesc);
+				push(composed(subDesc), cmdDesc);
 			});
 
-		bodyBuilder.push(cmdDesc.result());
-		bodyBuilder.pushNewLine();
+		push(composed(cmdDesc), description);
+		pushNewLine(description);
 	}
 
-	return bodyBuilder.result();
+	return composed(description);
 }
 
 function describeParameters(
@@ -93,7 +101,7 @@ function describeParameters(
 		| Discord.ApplicationCommandNonOptionsData
 		| Subcommand
 	>,
-	cmdDesc: StringBuilder
+	cmdDesc: PartialString
 ): void {
 	options
 		?.filter(optn => optn.type !== "SUB_COMMAND")
@@ -101,34 +109,34 @@ function describeParameters(
 			const option = o as Discord.ApplicationCommandChoicesData;
 
 			// Describe the parameter
-			const subDesc = new StringBuilder();
-			subDesc.push(" ");
+			const subDesc = createPartialString();
+			push(" ", subDesc);
 
 			if (option.required === true && option.choices) {
-				subDesc.push(REQ_START);
+				push(REQ_START, subDesc);
 			} else {
-				subDesc.push(VAL_START);
+				push(VAL_START, subDesc);
 			}
 
 			if (option.required === undefined || !option.required) {
-				subDesc.push(OPT);
+				push(OPT, subDesc);
 			}
 
 			if (option.choices) {
 				// specific value
 				const choiceValues = option.choices.map(ch => ch.value.toString());
-				subDesc.push(choiceValues.join(SEP) ?? "");
+				push(choiceValues.join(SEP) ?? "", subDesc);
 			} else {
 				// arbitrary value
-				subDesc.push(option.name);
+				push(option.name, subDesc);
 			}
 
 			if (option.required === true && option.choices) {
-				subDesc.push(REQ_END);
+				push(REQ_END, subDesc);
 			} else {
-				subDesc.push(VAL_END);
+				push(VAL_END, subDesc);
 			}
 
-			cmdDesc.push(subDesc.result());
+			push(composed(subDesc), cmdDesc);
 		});
 }

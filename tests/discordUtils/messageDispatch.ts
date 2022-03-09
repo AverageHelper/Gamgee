@@ -1,7 +1,7 @@
 import Discord from "discord.js";
-import LimitedQueue from "../../src/helpers/LimitedQueue";
-import { messageWaiters, messageDeleteWaiters } from "./testerClient";
-import { useTestLogger } from "../testUtils/logger";
+import LimitedQueue from "../../src/helpers/LimitedQueue.js";
+import { messageWaiters, messageDeleteWaiters } from "./testerClient.js";
+import { useTestLogger } from "../testUtils/logger.js";
 
 const logger = useTestLogger();
 

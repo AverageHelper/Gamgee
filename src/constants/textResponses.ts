@@ -1,27 +1,37 @@
-import type { ResponseRepository } from "../helpers/randomStrings";
-import { firstWord } from "../helpers/firstWord";
-import { indefiniteArticle } from "../helpers/indefiniteArticle";
-import { randomInt } from "../helpers/randomInt";
-
 /*
  * --- Response Types ---
  *
- * 1. A string defines a single response.
+ * A `ResponseRepository` is an array that contains any
+ * of the following `Response` types:
  *
- * 2. An array of strings defines multiple responses, each
+ * 1. A `string` defines a single response.
+ *
+ * 2. An `Array<string>` defines multiple responses, each
  *    sent with a noticeable delay between them.
  *
- * 3. A function defines response of type 1 or 2. May incorporate
+ * 3. A function that returns a response of type 1 or 2. May use
  *    contextual information about the interaction, such as the
  *    bot's display name and the user who initiated the conversation.
+ *    Also useful for adding randomized bits to responses!
+ *
+ * Note: New responses should make some sense in *any* type of server,
+ *    and must follow our **CODE_OF_CONDUCT**.
  */
+
+import type { ResponseRepository } from "../helpers/randomStrings.js";
+import { firstWord } from "../helpers/firstWord.js";
+import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
+import { randomBoolean } from "../helpers/randomBoolean.js";
+import { randomInt } from "../helpers/randomInt.js";
+import { useLogger } from "../logger.js";
+
+const logger = useLogger();
+
+export const SHRUGGIE = "¯\\_(ツ)_/¯";
 
 // NOTE: disabling ESLint here because we don't need to have
 // `: void` declarations sprinkled in the middle of so many blocks
-
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
-
-export const SHRUGGIE = "¯\\_(ツ)_/¯";
 
 /**
  * Said in response to messages whose only content is a mention to the bot
@@ -83,6 +93,12 @@ export const phrases: ResponseRepository = [
 	"We may yet, Mr. Frodo. We may.",
 	"We're taking the hobbit to Isengard!",
 
+	// Marvel
+	({ me }) =>
+		`Time. Space. Reality. It's more than a linear path. It's a prism of endless possibility. Where a single choice can branch out into infinite realities, creating alternate worlds from the ones you know. Each a reflection of what could have been. Some heroes will rise, others will fall. And nothing will be the same. I am ${me}. I am your guide through these vast new realities. Follow me and dare to face the unknown, and ponder the question... *${
+			randomBoolean() ? "What if" : "Who asked"
+		}?*`,
+
 	// Pony
 	"And that's how Equestria was made!",
 	"Eternal chaos comes with chocolate rain, you guys!",
@@ -93,7 +109,7 @@ export const phrases: ResponseRepository = [
 	"... I've a nagging fear someone else is pulling at the strings!",
 	"It's about time...",
 	"Oatmeal!? Are you crazy?",
-	"Piece by piece, snip by snip. Croup, dock, haunch, shoulders, hip. Thread by thread, primmed and pressed. Yard by yard, never stressed. And that's the art of the dress",
+	"Piece by piece, snip by snip... something something... and that's the art of the dress :musical_note:",
 	["Pony pony pony pony", "pony"],
 	"That message needs to be about... 20% cooler.",
 	"Trying to rebuild a house of glass...",
@@ -116,6 +132,7 @@ export const phrases: ResponseRepository = [
 	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
 	"Rai and Jiri at Lungha. Rai of Lowani. Lowani under two moons. Jiri of Umbaya. Umbaya of crossed roads. At Lungha. Lungha, her sky gray.",
 	"Shaka, when the walls fell",
+	"Sokath, his eyes open!",
 	"Tanagra, on the ocean. Darmok at Tanagra.",
 	"Tea, Earl Grey, hot",
 	"Temba, his arms wide",
@@ -128,7 +145,7 @@ export const phrases: ResponseRepository = [
 	"If you want to view paradise, simply look around and view it.",
 	"It happens every time. They all become blueberries",
 	"So shines a good deed in a weary world.",
-	"Strike that. Reserve it.",
+	"Strike that. Reverse it.",
 	"The suspense is terrible. I hope it'll last",
 	"There's no earthly way of knowing. which direction they are going.",
 	"We are the music makers and we are the dreamers of the dreams.",
@@ -146,9 +163,13 @@ export const phrases: ResponseRepository = [
 	"You can make a religion out of this",
 
 	// Other
+	"Another good song!",
 	"Are we there yet?",
 	"Are you sure you typed your message correctly? All I see is a bunch of words",
+	"Based",
 	"Bit of a tongue twister",
+	"Bloatware!? I don't see any, wdym??",
+	"Bloatware!? I heard that's just a Windows thing",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
 	[
@@ -179,6 +200,7 @@ export const phrases: ResponseRepository = [
 		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
 	],
 	"Fan of squirrels.",
+	"Fire is toasty warm!",
 	"Fit as a fiddle on a woodbench!",
 	"Fond of cats.",
 	"Google Translate is fun, I used it and it's really good! I remember the day I did this, I practically translated my post into other languages and then back to English when I translated, my post was different, but the context was the same and it still made sense!",
@@ -186,6 +208,7 @@ export const phrases: ResponseRepository = [
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
+	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands. :D",
 	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
@@ -203,6 +226,7 @@ export const phrases: ResponseRepository = [
 	["I", "just wasted", "ten seconds", "of your life"],
 	"I like youtube links, they're comfortable and easy to manage.",
 	"I love when it when it\n:thinking:\nbottom text",
+	"I must go, Technology needs me!",
 	"I see Discord's redecorated! ... I don't like it",
 	"I see friends shaking hands, saying 'How do you do?' :musical_note:",
 	"I think I'll write some of these down!",
@@ -215,6 +239,7 @@ export const phrases: ResponseRepository = [
 	"I've never seen an eclipse.",
 	"I'm processing your message. I should be ready in... a few years ^^",
 	["I'm so hungry, I could eat a...", "*nevermind*", ">.>", "<.<"],
+	"It's not a phase!",
 	"Jack and Jill ran up the hill...",
 	"Keep moving forward!",
 	"Let me play among the stars...",
@@ -222,9 +247,12 @@ export const phrases: ResponseRepository = [
 	"Like and subscribe",
 	"Lorem ipsum dolor sit amet...",
 	"My favorite type of music is the one with all of the instruments and sounds.",
+	["Nice question!", "Only one small issue:", "*I am inside your PC*"],
 	["Odds aren't good.", "I prefer evens"],
+	"Gonna go check out the vendor hall now k byee",
 	"Oh hai there!",
 	"One day I'm gonna run out of funny random stuff to say and you'll only have yourselves to blame!",
+	"Praise the bots!",
 	"Prose, maybe even poetry",
 	"Quite remarkable",
 	['"Road work ahead?"', "Uh, yeah I sure hope it does..."],
@@ -267,7 +295,8 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 181 of these, if I counted right
+]; // 191 of these
+logger.debug(`I have ${phrases.length} random things to say ^^`);
 
 /**
  * Said in response to messages whose only content is a mention to the bot.
@@ -287,7 +316,7 @@ export const questions: ResponseRepository = [
 	"Speak. Your servant hears",
 	"Who dares?",
 	"Quit yer lollygaggin'!",
-	"Wha-whAT?! I'm up!",
+	"Wha-whAT?!  I'm up!",
 	":eyes:",
 	":eyes: :eyes: :eyes:",
 	"I'm not a fan of spam"
@@ -314,3 +343,8 @@ export const hugs: ResponseRepository = [
 	"*glomps*",
 	"*snugs*"
 ];
+
+/*
+ * Thanks to all of the lovely people who add to this file!
+ * Your contributions help bring smiles, and I love that.
+ */

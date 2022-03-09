@@ -1,6 +1,6 @@
-import type { GuildedSubcommand } from "../Command";
-import { useGuildStorage } from "../../useGuildStorage";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import type { GuildedSubcommand } from "../Command.js";
+import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 const open: GuildedSubcommand = {
 	name: "open",
@@ -9,7 +9,6 @@ const open: GuildedSubcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "queue-admin"],
 	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
-		const guildStorage = useGuildStorage(guild);
 		const [queueChannel] = await Promise.all([
 			getQueueChannel(guild), //
 			deleteInvocation()
@@ -21,12 +20,12 @@ const open: GuildedSubcommand = {
 				ephemeral: true
 			});
 		}
-		const isAlreadyOpen = await guildStorage.isQueueOpen();
+		const isAlreadyOpen = await isQueueOpen(guild);
 		if (isAlreadyOpen) {
 			return reply({ content: "The queue's already open! :smiley:", ephemeral: true });
 		}
 
-		await guildStorage.setQueueOpen(true);
+		await setQueueOpen(true, guild);
 
 		const queueIsCurrent = channel?.id === queueChannel.id;
 		await queueChannel.send("This queue is now open! :smiley:");

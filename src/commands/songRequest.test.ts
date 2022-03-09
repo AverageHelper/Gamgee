@@ -1,19 +1,25 @@
 jest.mock("../useGuildStorage");
+jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/getVideoDetails");
 
-import * as queueActions from "../actions/queue/useQueue";
-const mockUseQueue = queueActions.useQueue as jest.Mock;
+import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
+const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
-import * as guildStorage from "../useGuildStorage";
-const mockGuildStorage = guildStorage.useGuildStorage as jest.Mock;
+import { pushEntryToQueue } from "../actions/queue/useQueue.js";
+const mockQueuePush = pushEntryToQueue as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import { isQueueOpen } from "../useGuildStorage.js";
+const mockIsQueueOpen = isQueueOpen as jest.Mock;
+
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { randomInt } from "../helpers/randomInt";
-import getVideoDetails from "../actions/getVideoDetails";
+import { randomInt } from "../helpers/randomInt.js";
+import getVideoDetails from "../actions/getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
 	// Enough uncertainty that *something* should go out of order if it's going to
@@ -28,11 +34,11 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
-import type { GuildedCommandContext } from "./Command";
+import type { GuildedCommandContext } from "./Command.js";
 import { URL } from "url";
-import { useTestLogger } from "../../tests/testUtils/logger";
+import { useTestLogger } from "../../tests/testUtils/logger.js";
 import Discord from "discord.js";
-import songRequest from "./songRequest";
+import songRequest from "./songRequest.js";
 
 const logger = useTestLogger("error");
 
@@ -58,30 +64,22 @@ describe("Song request via URL", () => {
 	const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 	const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 
-	const mockQueueGetLatestUserEntry = jest.fn().mockResolvedValue(null);
-	const mockQueueUserEntryCount = jest.fn().mockResolvedValue(0);
+	mockQueueGetLatestUserEntry.mockResolvedValue(null);
+	mockQueueUserEntryCount.mockResolvedValue(0);
 
-	const mockQueuePush = jest.fn();
+	mockIsQueueOpen.mockResolvedValue(true);
 
-	mockGuildStorage.mockReturnValue({
-		isQueueOpen: jest.fn().mockResolvedValue(true)
-	});
-
-	mockGetQueueChannel.mockResolvedValue({
+	const queueChannel = {
 		id: "queue-channel-123",
 		name: "queue"
-	});
+	};
+	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
-	mockUseQueue.mockReturnValue({
-		getConfig: jest.fn().mockResolvedValue({
-			entryDurationSeconds: null,
-			cooldownSeconds: 600,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
-		}),
-		push: mockQueuePush,
-		getLatestEntryFrom: mockQueueGetLatestUserEntry,
-		countFrom: mockQueueUserEntryCount
+	mockGetQueueConfig.mockResolvedValue({
+		entryDurationSeconds: null,
+		cooldownSeconds: 600,
+		submissionMaxQuantity: null,
+		blacklistedUsers: []
 	});
 
 	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;
@@ -209,7 +207,10 @@ describe("Song request via URL", () => {
 
 		// queue.push should only have been called on the first URL
 		expect(mockQueuePush).toHaveBeenCalledTimes(1);
-		expect(mockQueuePush).toHaveBeenCalledWith(expect.toContainEntry(["url", urls[0]]));
+		expect(mockQueuePush).toHaveBeenCalledWith(
+			expect.toContainEntry(["url", urls[0]]),
+			queueChannel
+		);
 
 		// The submission should have been rejected with a cooldown warning via DMs
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
@@ -264,7 +265,8 @@ describe("Song request via URL", () => {
 				expect.toContainEntries([
 					["url", url],
 					["senderId", `user-${i + 1}`]
-				])
+				]),
+				queueChannel
 			);
 		});
 		expect(mockQueuePush).toHaveBeenCalledTimes(10);

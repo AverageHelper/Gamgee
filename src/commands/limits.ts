@@ -1,10 +1,15 @@
-import type { Command } from "./Command";
-import { allLimits } from "./queue/limit";
+import type { Command } from "./Command.js";
+import { allLimits } from "./queue/limit.js";
 import { MessageEmbed } from "discord.js";
-import { MILLISECONDS_IN_SECOND } from "../constants/time";
-import { useQueue } from "../actions/queue/useQueue";
-import durationString from "../helpers/durationString";
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
+import durationString from "../helpers/durationString.js";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import {
+	averageSubmissionPlaytimeForUser,
+	countAllEntriesFrom,
+	fetchLatestEntryFrom,
+	getQueueConfig
+} from "../useQueueStorage.js";
 
 const limits: Command = {
 	name: "limits",
@@ -16,8 +21,7 @@ const limits: Command = {
 			return reply("No queue is set up.");
 		}
 
-		const queue = useQueue(queueChannel);
-		const config = await queue.getConfig();
+		const config = await getQueueConfig(queueChannel);
 
 		// Read out the existing limits
 		const embed = new MessageEmbed().setTitle("Queue Limits");
@@ -61,9 +65,9 @@ const limits: Command = {
 		// If the queue is open, display the user's limit usage
 		const usageEmbed = new MessageEmbed().setTitle("Personal Statistics");
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
-			queue.getLatestEntryFrom(user.id),
-			queue.countFrom(user.id /* since: Date */),
-			queue.getAveragePlaytimeFrom(user.id)
+			fetchLatestEntryFrom(user.id, queueChannel),
+			countAllEntriesFrom(user.id /* since: Date */, queueChannel),
+			averageSubmissionPlaytimeForUser(user.id, queueChannel)
 		]);
 
 		// Average song length
@@ -102,7 +106,9 @@ const limits: Command = {
 			usageEmbed.addField(name, value);
 		}
 
-		await followUp({ embeds: [usageEmbed], ephemeral: true });
+		if (usageEmbed.fields.length > 0) {
+			await followUp({ embeds: [usageEmbed], ephemeral: true });
+		}
 	}
 };
 

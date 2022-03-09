@@ -1,7 +1,7 @@
-import type { Subcommand } from "../Command";
-import { bulkDeleteMessagesWithIds } from "../../actions/messages";
-import { useQueue } from "../../actions/queue/useQueue";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
+import type { Subcommand } from "../Command.js";
+import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
+import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 const restart: Subcommand = {
 	name: "restart",
@@ -18,10 +18,9 @@ const restart: Subcommand = {
 
 		await prepareForLongRunningTasks();
 
-		const queue = useQueue(queueChannel);
-		const toBeDeleted = (await queue.getAllEntries()).map(entry => entry.queueMessageId);
+		const toBeDeleted = (await fetchAllEntries(queueChannel)).map(entry => entry.queueMessageId);
 		await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
-		await queue.clear();
+		await clearEntries(queueChannel);
 
 		return reply("The queue has restarted.");
 	}

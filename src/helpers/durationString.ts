@@ -1,5 +1,5 @@
 import humanize from "humanize-duration";
-import { MILLISECONDS_IN_SECOND } from "../constants/time";
+import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 
 function shortDurationString(seconds: number): string {
 	return new Date(1000 * seconds).toISOString().slice(11, 19);

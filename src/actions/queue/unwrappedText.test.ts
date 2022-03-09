@@ -1,4 +1,4 @@
-import { removeCharactersAround } from "./unwrappedText";
+import { removeCharactersAround } from "./unwrappedText.js";
 
 describe("Remove strikethrough", () => {
 	test("removes strikethrough from normal stricken text", () => {

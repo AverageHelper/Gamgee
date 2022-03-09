@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import type { Storage } from "../configStorage";
-import type { Logger } from "../logger";
+import type { Storage } from "../configStorage.js";
+import type { Logger } from "../logger.js";
 
 export interface MessageCommandInteractionOption extends Discord.CommandInteractionOption {
 	value: string;

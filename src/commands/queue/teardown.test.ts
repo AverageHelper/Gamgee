@@ -1,13 +1,12 @@
 jest.mock("../../useGuildStorage");
 
-import { useGuildStorage } from "../../useGuildStorage";
-const mockUseGuildStorage = useGuildStorage as jest.Mock;
+import { setQueueChannel } from "../../useGuildStorage.js";
+const mockSetQueueChannel = setQueueChannel as jest.Mock;
 
-import type { GuildedCommandContext } from "../Command";
-import { useTestLogger } from "../../../tests/testUtils/logger";
-import teardown from "./teardown";
+import type { GuildedCommandContext } from "../Command.js";
+import { useTestLogger } from "../../../tests/testUtils/logger.js";
+import teardown from "./teardown.js";
 
-const mockSetQueueChannel = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger("error");
@@ -22,9 +21,6 @@ describe("Queue teardown", () => {
 			reply: mockReply
 		} as unknown) as GuildedCommandContext;
 
-		mockUseGuildStorage.mockReturnValue({
-			setQueueChannel: mockSetQueueChannel
-		});
 		mockSetQueueChannel.mockResolvedValue(undefined);
 	});
 
@@ -34,6 +30,6 @@ describe("Queue teardown", () => {
 		expect(mockReply).toHaveBeenCalledTimes(1);
 		expect(mockReply).toHaveBeenCalledWith("Queue deleted.");
 		expect(mockSetQueueChannel).toHaveBeenCalledTimes(1);
-		expect(mockSetQueueChannel).toHaveBeenCalledWith(null);
+		expect(mockSetQueueChannel).toHaveBeenCalledWith(null, context.guild);
 	});
 });

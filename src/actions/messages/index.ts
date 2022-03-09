@@ -1,3 +1,3 @@
-export * from "./deleteMessage";
-export * from "./editMessage";
-export * from "./replyToMessage";
+export * from "./deleteMessage.js";
+export * from "./editMessage.js";
+export * from "./replyToMessage.js";

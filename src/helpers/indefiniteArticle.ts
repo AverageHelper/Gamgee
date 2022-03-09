@@ -1,4 +1,4 @@
-import { startsWithVowel } from "./startsWithVowel";
+import { startsWithVowel } from "./startsWithVowel.js";
 
 /**
  * Returns `"a"` or `"an"`, as appropriate for the provided noun.

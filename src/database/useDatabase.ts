@@ -1,13 +1,13 @@
 import path from "path";
-import { DEFAULT_DATABASE_FOLDER } from "../constants/database";
+import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
 import { v4 as uuid } from "uuid";
-import { getEnv } from "../helpers/environment";
+import { getEnv } from "../helpers/environment.js";
 import { createConnection } from "typeorm";
-import { useLogger } from "../logger";
-import { DatabaseLogger } from "./DatabaseLogger";
+import { useLogger } from "../logger.js";
+import { DatabaseLogger } from "./DatabaseLogger.js";
 import type { EntityTarget, EntityManager, Repository, Connection } from "typeorm";
-import * as entities from "./model";
-import * as migrations from "./migrations";
+import * as entities from "./model/index.js";
+import * as migrations from "./migrations/index.js";
 
 const logger = useLogger();
 
@@ -28,9 +28,10 @@ export async function useDatabaseConnection<T = undefined>(
 		database: dbFile,
 		logging: "all",
 		logger: new DatabaseLogger(logger),
-		busyErrorRetry: 100,
 		entities: Object.values(entities),
-		migrations: Object.values(migrations),
+		// FIXME: This assertion should be unnecessary
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+		migrations: Object.values(migrations) as Array<() => unknown | string>,
 		synchronize: true // assumes migration was run before we get here
 	});
 
@@ -43,11 +44,14 @@ export async function useDatabaseConnection<T = undefined>(
 }
 
 export async function useRepository<Entity, T = undefined>(
-	target: EntityTarget<Entity>,
+	targetOrRepository: EntityTarget<Entity> | Repository<Entity>,
 	cb: (repository: Repository<Entity>) => T | Promise<T>
 ): Promise<T> {
 	return useDatabaseConnection(connection => {
-		return cb(connection.getRepository(target));
+		if (typeof targetOrRepository !== "string" && "manager" in targetOrRepository) {
+			return cb(targetOrRepository);
+		}
+		return cb(connection.getRepository(targetOrRepository));
 	});
 }
 

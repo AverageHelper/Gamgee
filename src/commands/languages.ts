@@ -1,7 +1,7 @@
-import type { GitHubMetadata } from "../helpers/githubMetadata";
-import type { GlobalCommand } from "./Command";
-import { gitHubMetadata } from "../helpers/githubMetadata";
-import richErrorMessage from "../helpers/richErrorMessage";
+import type { GitHubMetadata } from "../helpers/githubMetadata.js";
+import type { GlobalCommand } from "./Command.js";
+import { gitHubMetadata } from "../helpers/githubMetadata.js";
+import richErrorMessage from "../helpers/richErrorMessage.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 

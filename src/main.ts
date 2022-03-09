@@ -1,22 +1,23 @@
-import "source-map-support/register";
+import "source-map-support/register.js";
 import "reflect-metadata";
-import { getEnv, requireEnv } from "./helpers/environment";
-import { handleCommand } from "./handleCommand";
-import { handleInteraction } from "./handleInteraction";
-import { handleMessageComponent } from "./handleMessageComponent";
-import { handleReactionAdd } from "./handleReactionAdd";
+import { getEnv, requireEnv } from "./helpers/environment.js";
+import { handleCommand } from "./handleCommand.js";
+import { handleInteraction } from "./handleInteraction.js";
+import { handleMessageComponent } from "./handleMessageComponent.js";
+import { handleReactionAdd } from "./handleReactionAdd.js";
+import { hideBin } from "yargs/helpers";
+import { useLogger } from "./logger.js";
+import { useStorage } from "./configStorage.js";
+import { version as gamgeeVersion } from "./version.js";
+import Discord from "discord.js";
+import richErrorMessage from "./helpers/richErrorMessage.js";
+import yargs from "yargs";
 import {
 	prepareSlashCommandsThenExit,
 	revokeSlashCommandsThenExit
-} from "./actions/prepareSlashCommands";
-import { useLogger } from "./logger";
-import { useStorage } from "./configStorage";
-import { version as gamgeeVersion } from "./version";
-import Discord from "discord.js";
-import richErrorMessage from "./helpers/richErrorMessage";
-import yargs from "yargs";
+} from "./actions/prepareSlashCommands.js";
 
-const args = yargs
+const args = yargs(hideBin(process.argv))
 	.option("deploy-commands", {
 		alias: "c",
 		description: "Upload Discord commands, then exit",
@@ -29,8 +30,10 @@ const args = yargs
 		type: "boolean",
 		default: false
 	})
+	.version(gamgeeVersion)
 	.help()
-	.alias("help", "h").argv;
+	.alias("help", "h")
+	.alias("version", "v").argv;
 
 const shouldStartNormally = !args["deploy-commands"] && !args["revoke-commands"];
 

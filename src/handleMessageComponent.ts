@@ -1,16 +1,21 @@
 import type Discord from "discord.js";
-import type { Logger } from "./logger";
-import type { Storage } from "./configStorage";
-import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons";
-import { useQueue } from "./actions/queue/useQueue";
-import { getEnv } from "./helpers/environment";
-import { getUserWithId } from "./helpers/getUserWithId";
-import { sendPrivately } from "./actions/messages";
-import { useGuildStorage } from "./useGuildStorage";
-import logUser from "./helpers/logUser";
-import getQueueChannel from "./actions/queue/getQueueChannel";
-import richErrorMessage from "./helpers/richErrorMessage";
-import StringBuilder from "./helpers/StringBuilder";
+import type { Logger } from "./logger.js";
+import type { Storage } from "./configStorage.js";
+import { createPartialString, composed, push } from "./helpers/composeStrings.js";
+import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
+import { fetchEntryFromMessage } from "./useQueueStorage.js";
+import { getEnv } from "./helpers/environment.js";
+import { getUserWithId } from "./helpers/getUserWithId.js";
+import { sendPrivately } from "./actions/messages/index.js";
+import { isQueueOpen } from "./useGuildStorage.js";
+import getQueueChannel from "./actions/queue/getQueueChannel.js";
+import logUser from "./helpers/logUser.js";
+import richErrorMessage from "./helpers/richErrorMessage.js";
+import {
+	deleteEntryFromMessage,
+	markEntryDoneInQueue,
+	markEntryNotDoneInQueue
+} from "./actions/queue/useQueue.js";
 
 /**
  * Performs actions from a Discord command interaction.
@@ -19,11 +24,12 @@ import StringBuilder from "./helpers/StringBuilder";
  * @param client The Discord client.
  * @param message The Discord message to handle.
  * @param storage Arbitrary persistent storage.
+ * @param logger The logger to talk to about what's going on.
  */
 export async function handleMessageComponent(
 	client: Discord.Client,
 	interaction: Discord.MessageComponentInteraction,
-	storage: Storage | null,
+	storage: Storage | null, // FIXME: Do we need this?
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -51,8 +57,7 @@ export async function handleMessageComponent(
 	}
 
 	const message = await queueChannel.messages.fetch(interaction.message.id);
-	const queue = useQueue(queueChannel);
-	const entry = await queue.getEntryFromMessage(interaction.message.id);
+	const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
 		try {
@@ -73,7 +78,7 @@ export async function handleMessageComponent(
 	switch (interaction.customId) {
 		case DONE_BUTTON.id:
 			logger.debug("Marking done....");
-			await queue.markDone(message);
+			await markEntryDoneInQueue(message, queueChannel);
 			logger.debug("Marked an entry done.");
 			try {
 				await interaction.deferUpdate();
@@ -84,7 +89,7 @@ export async function handleMessageComponent(
 
 		case RESTORE_BUTTON.id:
 			logger.debug("Marking undone....");
-			await queue.markNotDone(message);
+			await markEntryNotDoneInQueue(message, queueChannel);
 			logger.debug("Marked an entry undone");
 			try {
 				await interaction.deferUpdate();
@@ -95,7 +100,7 @@ export async function handleMessageComponent(
 
 		case DELETE_BUTTON.id: {
 			logger.debug("Deleting entry...");
-			const entry = await queue.deleteEntryFromMessage(message);
+			const entry = await deleteEntryFromMessage(message, queueChannel);
 			if (!entry) {
 				logger.debug("There was no entry to delete.");
 				break;
@@ -108,17 +113,16 @@ export async function handleMessageComponent(
 				logger.debug(`Queue message ${message.id} has no guild.`);
 				return;
 			}
-			const guildStorage = useGuildStorage(guild);
 			const user = await getUserWithId(guild, userId);
 
 			logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
-			const builder = new StringBuilder();
-			builder.push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ");
-			builder.push(entry.url);
+			const rejection = createPartialString();
+			push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection);
+			push(entry.url, rejection);
 
-			await sendPrivately(user, builder.result());
+			await sendPrivately(user, composed(rejection));
 
-			if (await guildStorage.isQueueOpen()) {
+			if (await isQueueOpen(guild)) {
 				await new Promise(resolve => setTimeout(resolve, 2000));
 				await sendPrivately(user, "You can resubmit another song if you'd like to. :slight_smile:");
 			}

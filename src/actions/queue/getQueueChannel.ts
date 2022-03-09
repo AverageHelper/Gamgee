@@ -1,8 +1,8 @@
-import type { CommandContext } from "../../commands";
+import type { CommandContext } from "../../commands/index.js";
 import type Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import { useGuildStorage } from "../../useGuildStorage";
-import { useLogger } from "../../logger";
+import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { getQueueChannelId } from "../../useGuildStorage.js";
+import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
 
@@ -11,9 +11,7 @@ async function getQueueChannelFromCommand(
 ): Promise<Discord.TextChannel | null> {
 	if (!context.guild) return null;
 
-	const guildInfo = useGuildStorage(context.guild);
-
-	const queueChannelId = await guildInfo.getQueueChannelId();
+	const queueChannelId = await getQueueChannelId(context.guild);
 	if (queueChannelId === null || !queueChannelId) return null;
 
 	let queueChannel: Discord.Channel | null;
@@ -41,9 +39,7 @@ async function getQueueChannelFromCommand(
 }
 
 async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.TextChannel | null> {
-	const guildInfo = useGuildStorage(guild);
-
-	const queueChannelId = await guildInfo.getQueueChannelId();
+	const queueChannelId = await getQueueChannelId(guild);
 	if (queueChannelId === null || !queueChannelId) {
 		return null;
 	}

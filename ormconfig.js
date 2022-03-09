@@ -1,11 +1,11 @@
-const entities = require("./dist/database/model");
-const migrations = require("./dist/database/migrations");
+import * as _entities from "./dist/database/model/index.js";
+import * as _migrations from "./dist/database/migrations/index.js";
 
-module.exports = {
-	type: "sqlite",
+export default {
+	type: "sqlite3",
 	database: "./db/db.sqlite",
-	entities: Object.values(entities),
-	migrations: Object.values(migrations),
+	entities: Object.values(_entities),
+	migrations: Object.values(_migrations),
 	synchronize: false,
 	cli: {
 		entitiesDir: "src/database/model",

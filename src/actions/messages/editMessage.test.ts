@@ -1,5 +1,5 @@
-import type { Range } from "./editMessage";
-import { positionsOfUriInText, escapeUriInString, stopEscapingUriInString } from "./editMessage";
+import type { Range } from "./editMessage.js";
+import { positionsOfUriInText, escapeUriInString, stopEscapingUriInString } from "./editMessage.js";
 
 describe("Identifying URIs in strings", () => {
 	test.each`

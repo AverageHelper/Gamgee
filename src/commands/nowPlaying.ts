@@ -1,9 +1,10 @@
 import type Discord from "discord.js";
-import type { Command } from "./Command";
-import { useQueue } from "../actions/queue/useQueue";
-import getQueueChannel from "../actions/queue/getQueueChannel";
-import randomElementOfArray from "../helpers/randomElementOfArray";
-import StringBuilder from "../helpers/StringBuilder";
+import type { Command } from "./Command.js";
+import { composed, createPartialString, push } from "../helpers/composeStrings.js";
+import { fetchAllEntries } from "../useQueueStorage.js";
+import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import randomElementOfArray from "../helpers/randomElementOfArray.js";
 
 const uncertainties = ["There's a good chance", "I'm like 85% sure", "Very likely,", "I think"];
 let lastUncertainty: string | null = null;
@@ -44,8 +45,7 @@ const nowPlaying: Command = {
 			return replyPrivately("There's no queue set up right now, so nothing is playing.");
 		}
 
-		const queue = useQueue(queueChannel);
-		const allEntries = await queue.getAllEntries();
+		const allEntries = await fetchAllEntries(queueChannel);
 		const firstNotDone = allEntries.find(entry => !entry.isDone);
 
 		if (!firstNotDone) {
@@ -55,24 +55,25 @@ const nowPlaying: Command = {
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
 
-		await queue.addUserToHaveCalledNowPlaying(
+		await addUserToHaveCalledNowPlaying(
 			user.id,
-			await queueChannel.messages.fetch(firstNotDone.queueMessageId)
+			await queueChannel.messages.fetch(firstNotDone.queueMessageId),
+			queueChannel
 		);
 
-		const response = new StringBuilder();
+		const response = createPartialString();
 
-		response.push(randomUncertainty());
-		response.push(" ");
+		push(randomUncertainty(), response);
+		push(" ", response);
 
-		response.push(randomCurrent());
-		response.push(" ");
+		push(randomCurrent(), response);
+		push(" ", response);
 
-		response.push(`<@${firstNotDone.senderId}>'s submission: `);
-		response.push(firstNotDone.url);
+		push(`<@${firstNotDone.senderId}>'s submission: `, response);
+		push(firstNotDone.url, response);
 		// TODO: Also read out the song's title. Store this in the database as it comes in.
 
-		return replyPrivately(response.result(), true);
+		return replyPrivately(composed(response), true);
 	}
 };
 

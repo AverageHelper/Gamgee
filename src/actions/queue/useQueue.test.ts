@@ -1,21 +1,28 @@
 jest.mock("../messages");
+jest.mock("../../useQueueStorage");
 
-import { deleteMessage } from "../messages";
+import {
+	createEntry,
+	fetchEntryFromMessage,
+	getQueueConfig,
+	removeEntryFromMessage
+} from "../../useQueueStorage.js";
+const mockCreateEntry = createEntry as jest.Mock;
+const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
+
+import { deleteMessage } from "../messages/index.js";
 const mockDeleteMessage = deleteMessage as jest.Mock;
-
-const mockFetchEntryFromMessage = jest.fn();
-const mockRemoveEntryFromMessage = jest.fn();
-const mockCreateEntry = jest.fn();
-const mockGetConfig = jest.fn();
 
 const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
 
 import type Discord from "discord.js";
-import type { QueueEntry, QueueEntryManager, UnsentQueueEntry } from "../../useQueueStorage";
-import { flushPromises } from "../../../tests/testUtils/flushPromises";
+import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
+import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
-import { QueueManager } from "./useQueue";
+import { deleteEntryFromMessage, pushEntryToQueue } from "./useQueue.js";
 
 describe("Request Queue", () => {
 	const guildId = "the-guild";
@@ -23,8 +30,6 @@ describe("Request Queue", () => {
 	const entrySenderId = "some-user" as Discord.Snowflake;
 	const entryUrl = "the-entry-url";
 
-	let storage: QueueEntryManager;
-	let queue: QueueManager;
 	let queueChannel: Discord.TextChannel;
 	let message: Discord.Message;
 	let entry: QueueEntry;
@@ -34,15 +39,6 @@ describe("Request Queue", () => {
 			id: "queue-channel",
 			send: mockChannelSend
 		} as unknown) as Discord.TextChannel;
-
-		storage = ({
-			fetchEntryFromMessage: mockFetchEntryFromMessage,
-			removeEntryFromMessage: mockRemoveEntryFromMessage,
-			create: mockCreateEntry,
-			getConfig: mockGetConfig
-		} as unknown) as QueueEntryManager;
-
-		queue = new QueueManager(storage, queueChannel);
 
 		message = ({
 			id: queueMessageId,
@@ -74,7 +70,7 @@ describe("Request Queue", () => {
 		mockCreateEntry.mockImplementation((entry: UnsentQueueEntry) => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
-		mockGetConfig.mockResolvedValue({
+		mockGetQueueConfig.mockResolvedValue({
 			channelId: queueChannel.id,
 			entryDurationSeconds: 430,
 			cooldownSeconds: 960,
@@ -92,7 +88,7 @@ describe("Request Queue", () => {
 
 	test("does nothing when a message has nothing to do with a queue entry", async () => {
 		message.id = "not-a-queue-message" as Discord.Snowflake;
-		await expect(queue.deleteEntryFromMessage(message)).resolves.toBeNull();
+		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBeNull();
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).not.toHaveBeenCalled();
@@ -100,10 +96,10 @@ describe("Request Queue", () => {
 
 	test("deletes a queue entry based on a message", async () => {
 		message.id = queueMessageId;
-		await expect(queue.deleteEntryFromMessage(message)).resolves.toBe(entry);
+		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBe(entry);
 
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledTimes(1);
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
+		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
 		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -115,21 +111,26 @@ describe("Request Queue", () => {
 	};
 
 	test("stores queue entries", async () => {
-		await expect(queue.push(request)).resolves.toContainEntries<Record<string, unknown>>([
-			...Object.entries(request),
+		await expect(pushEntryToQueue(request, queueChannel)).resolves.toContainEntries<
+			Record<string, unknown>
+		>([
+			...Object.entries(request), //
 			["channelId", queueChannel.id]
 		]);
 
 		await flushPromises();
 
 		expect(mockCreateEntry).toHaveBeenCalledTimes(1);
-		expect(mockCreateEntry).toHaveBeenCalledWith({
-			...request,
-			isDone: false,
-			sentAt: expect.toBeValidDate() as Date,
-			queueMessageId: "new-message",
-			haveCalledNowPlaying: [] as Array<Discord.Snowflake>
-		});
+		expect(mockCreateEntry).toHaveBeenCalledWith(
+			{
+				...request,
+				isDone: false,
+				sentAt: expect.toBeValidDate() as Date,
+				queueMessageId: "new-message",
+				haveCalledNowPlaying: [] as Array<Discord.Snowflake>
+			},
+			queueChannel
+		);
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
 	});

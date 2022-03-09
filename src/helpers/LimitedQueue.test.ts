@@ -1,4 +1,4 @@
-import LimitedQueue from "./LimitedQueue";
+import LimitedQueue from "./LimitedQueue.js";
 
 describe("Limited queue", () => {
 	let queue: LimitedQueue<number>;

@@ -1,8 +1,8 @@
-import type { Subcommand } from "../Command";
-import { resolveUserFromOption } from "../../helpers/optionResolvers";
-import { useQueueStorage } from "../../useQueueStorage";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
-import logUser from "../../helpers/logUser";
+import type { Subcommand } from "../Command.js";
+import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
+import { whitelistUser } from "../../useQueueStorage.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import logUser from "../../helpers/logUser.js";
 
 const whitelist: Subcommand = {
 	name: "whitelist",
@@ -46,8 +46,7 @@ const whitelist: Subcommand = {
 			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
-		const queue = useQueueStorage(queueChannel);
-		await queue.whitelistUser(subject.id);
+		await whitelistUser(subject.id, queueChannel);
 		logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
 		return reply({

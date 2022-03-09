@@ -1,13 +1,13 @@
-import type { RoleCategory } from "./RoleCategories";
+import type { RoleCategory } from "./RoleCategories.js";
 import {
 	ROLE_CATEGORY_OWNER,
 	ROLE_CATEGORY_QUEUE_ADMIN,
 	ROLE_CATEGORY_GUILD_ADMIN
-} from "./RoleCategories";
+} from "./RoleCategories.js";
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import { useGuildStorage } from "../useGuildStorage";
-import { userHasOneOfRoles } from "./userHasOneOfRoles";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
+import { userHasOneOfRoles } from "./userHasOneOfRoles.js";
 
 export async function userHasRoleCategoryInGuild(
 	user: Discord.User,
@@ -24,15 +24,13 @@ export async function userHasRoleCategoryInGuild(
 
 		case ROLE_CATEGORY_GUILD_ADMIN: {
 			if (isOwner) return true; // Always true for owner
-			const guildStorage = useGuildStorage(guild);
-			knownAdminRoleIDs = await guildStorage.getGuildAdminRoles();
+			knownAdminRoleIDs = await getGuildAdminRoles(guild);
 			break;
 		}
 
 		case ROLE_CATEGORY_QUEUE_ADMIN: {
 			if (isOwner) return true; // Always true for owner
-			const guildStorage = useGuildStorage(guild);
-			knownAdminRoleIDs = await guildStorage.getQueueAdminRoles();
+			knownAdminRoleIDs = await getQueueAdminRoles(guild);
 			break;
 		}
 	}

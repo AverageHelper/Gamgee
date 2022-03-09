@@ -1,8 +1,13 @@
-import type { Subcommand } from "../Command";
+import type { Subcommand } from "../Command.js";
+import { countAllEntries } from "../../useQueueStorage.js";
 import { MessageEmbed } from "discord.js";
-import { useQueue } from "../../actions/queue/useQueue";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
-import durationString from "../../helpers/durationString";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import durationString from "../../helpers/durationString.js";
+import {
+	playtimeAverageInQueue,
+	playtimeRemainingInQueue,
+	playtimeTotalInQueue
+} from "../../actions/queue/useQueue.js";
 
 const stats: Subcommand = {
 	name: "stats",
@@ -18,12 +23,11 @@ const stats: Subcommand = {
 
 		// Get the current queue's statistics
 		const queueIsCurrent = channel?.id === queueChannel.id;
-		const queue = useQueue(queueChannel);
 		const [count, playtimeRemaining, playtimeTotal, playtimeAverage] = await Promise.all([
-			queue.count(),
-			queue.playtimeRemaining(),
-			queue.playtimeTotal(),
-			queue.playtimeAverage()
+			countAllEntries(queueChannel),
+			playtimeRemainingInQueue(queueChannel),
+			playtimeTotalInQueue(queueChannel),
+			playtimeAverageInQueue(queueChannel)
 		]);
 		const playtimePlayed = playtimeTotal - playtimeRemaining;
 		logger.info(

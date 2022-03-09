@@ -1,12 +1,18 @@
-import type { Subcommand } from "../Command";
-import { useQueueStorage } from "../../useQueueStorage";
-import { getConfigCommandPrefix } from "../../actions/config/getConfigValue";
-import { resolveUserFromOption } from "../../helpers/optionResolvers";
-import getQueueChannel from "../../actions/queue/getQueueChannel";
-import logUser from "../../helpers/logUser";
-import parentCommand from "../songRequest";
-import StringBuilder from "../../helpers/StringBuilder";
-import whitelist from "./whitelist";
+import type { Subcommand } from "../Command.js";
+import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
+import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
+import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
+import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import logUser from "../../helpers/logUser.js";
+import parentCommand from "../songRequest.js";
+import whitelist from "./whitelist.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushCode,
+	pushNewLine
+} from "../../helpers/composeStrings.js";
 
 const blacklist: Subcommand = {
 	name: "blacklist",
@@ -39,8 +45,6 @@ const blacklist: Subcommand = {
 			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
-		const queue = useQueueStorage(queueChannel);
-
 		const firstOption = options.data[0];
 		if (!firstOption) {
 			if (context.type === "message") {
@@ -49,44 +53,44 @@ const blacklist: Subcommand = {
 				await reply(":paperclip: Check the list in your DMs");
 			}
 
-			const queueConfig = await queue.getConfig();
+			const queueConfig = await getQueueConfig(queueChannel);
 			const blacklistedUsers = queueConfig.blacklistedUsers.map(user => user.id);
 
 			const prefix = await getConfigCommandPrefix(storage);
 			const guildName = guild.name.trim();
 
-			const replyBuilder = new StringBuilder();
+			const replyMsg = createPartialString();
 
-			replyBuilder.push(`**Song Request Blacklist for *${guildName}***`);
-			replyBuilder.pushNewLine();
+			push(`**Song Request Blacklist for *${guildName}***`, replyMsg);
+			pushNewLine(replyMsg);
 			if (blacklistedUsers.length === 0) {
-				replyBuilder.push(" - Nobody. (Let's hope it remains this way.)");
-				replyBuilder.pushNewLine();
+				push(" - Nobody. (Let's hope it remains this way.)", replyMsg);
+				pushNewLine(replyMsg);
 			}
 
 			blacklistedUsers.forEach(userId => {
-				replyBuilder.push(` - <@${userId}>`);
-				replyBuilder.pushNewLine();
+				push(` - <@${userId}>`, replyMsg);
+				pushNewLine(replyMsg);
 			});
 
-			replyBuilder.pushNewLine();
-			replyBuilder.push("To add a user to the blacklist, run ");
-			replyBuilder.pushCode(`${prefix}${parentCommand.name} ${blacklist.name} <user mention>`);
-			replyBuilder.push(".");
+			pushNewLine(replyMsg);
+			push("To add a user to the blacklist, run ", replyMsg);
+			pushCode(`${prefix}${parentCommand.name} ${blacklist.name} <user mention>`, replyMsg);
+			push(".", replyMsg);
 
-			replyBuilder.pushNewLine();
-			replyBuilder.push("To remove a user from the blacklist, run ");
-			replyBuilder.pushCode(`${prefix}${parentCommand.name} ${whitelist.name} <user mention>`);
-			replyBuilder.push(".");
-			replyBuilder.pushNewLine();
+			pushNewLine(replyMsg);
+			push("To remove a user from the blacklist, run ", replyMsg);
+			pushCode(`${prefix}${parentCommand.name} ${whitelist.name} <user mention>`, replyMsg);
+			push(".", replyMsg);
+			pushNewLine(replyMsg);
 			if (context.type === "message") {
 				// These are DMs. Be clear about where to run commands.
-				replyBuilder.push("(Run these in ");
-				replyBuilder.push(`*${guildName}*`);
-				replyBuilder.push(", obviously)");
+				push("(Run these in ", replyMsg);
+				push(`*${guildName}*`, replyMsg);
+				push(", obviously)", replyMsg);
 			}
 
-			return replyPrivately(replyBuilder.result());
+			return replyPrivately(composed(replyMsg));
 		}
 
 		await deleteInvocation();
@@ -107,7 +111,7 @@ const blacklist: Subcommand = {
 			});
 		}
 
-		await queue.blacklistUser(subject.id);
+		await blacklistUser(subject.id, queueChannel);
 		logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
 		return reply({

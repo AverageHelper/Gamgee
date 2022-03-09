@@ -1,18 +1,17 @@
+jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 
-import getQueueChannel from "../actions/queue/getQueueChannel";
+import { getQueueConfig } from "../useQueueStorage.js";
+const mockGetQueueConfig = getQueueConfig as jest.Mock;
+
+import getQueueChannel from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { useQueue } from "../actions/queue/useQueue";
-const mockUseQueue = useQueue as jest.Mock;
-
-import type { GuildedCommandContext } from "./CommandContext";
-import limits from "./limits";
+import type { GuildedCommandContext } from "./CommandContext.js";
+import limits from "./limits.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
-
-const mockGetConfig = jest.fn();
 
 describe("Get Queue Limits", () => {
 	let context: GuildedCommandContext;
@@ -20,16 +19,14 @@ describe("Get Queue Limits", () => {
 	beforeEach(() => {
 		context = ({
 			guild: "the-guild",
+			user: { id: "the-user" },
 			reply: mockReply
 		} as unknown) as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockUseQueue.mockReturnValue({
-			getConfig: mockGetConfig
-		});
-		mockGetConfig.mockResolvedValue({
+		mockGetQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
 			entryDurationSeconds: null,
 			submissionMaxQuantity: null
@@ -39,7 +36,7 @@ describe("Get Queue Limits", () => {
 	test("cannot show statistics on a queue that does not exist", async () => {
 		mockGetQueueChannel.mockResolvedValue(null);
 		await expect(limits.execute(context)).resolves.toBeUndefined();
-		expect(mockUseQueue).not.toHaveBeenCalled();
+		// TODO: Somehow assert specifics on this case
 	});
 
 	test.each`
@@ -63,14 +60,12 @@ describe("Get Queue Limits", () => {
 			entryDurationSeconds: number | null;
 			submissionMaxQuantity: number | null;
 		}) => {
-			mockGetConfig.mockResolvedValue({
+			mockGetQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationSeconds,
 				submissionMaxQuantity
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();
-			expect(mockUseQueue).toHaveBeenCalledTimes(1);
-			expect(mockUseQueue).toHaveBeenCalledWith({ id: "queue-channel" });
 			expect(mockReply).toHaveBeenCalledTimes(1);
 
 			const replyArgs = mockReply.mock.calls[0] as Array<unknown>;

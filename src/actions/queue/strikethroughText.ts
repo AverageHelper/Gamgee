@@ -1,5 +1,5 @@
-import { addCharactersAround } from "./wrappedText";
-import { removeCharactersAround } from "./unwrappedText";
+import { addCharactersAround } from "./wrappedText.js";
+import { removeCharactersAround } from "./unwrappedText.js";
 
 /**
  * Adds Markdown strikethrough markers to the string.

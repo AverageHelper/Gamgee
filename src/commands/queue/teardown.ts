@@ -1,5 +1,5 @@
-import type { Subcommand } from "../Command";
-import { useGuildStorage } from "../../useGuildStorage";
+import type { Subcommand } from "../Command.js";
+import { setQueueChannel } from "../../useGuildStorage.js";
 
 const teardown: Subcommand = {
 	name: "teardown",
@@ -8,10 +8,8 @@ const teardown: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin"],
 	async execute({ guild, logger, reply }) {
-		const guildStorage = useGuildStorage(guild);
-
 		logger.info(`Forgetting queue channel for guild ${guild.id}.`);
-		await guildStorage.setQueueChannel(null);
+		await setQueueChannel(null, guild);
 		return reply("Queue deleted.");
 	}
 };

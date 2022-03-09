@@ -1,6 +1,6 @@
 import Discord from "discord.js";
-import { requireEnv } from "../../src/helpers/environment";
-import { useDispatchLoop } from "./dispatchLoop";
+import { requireEnv } from "../../src/helpers/environment.js";
+import { useDispatchLoop } from "./dispatchLoop.js";
 
 let isClientLoggedIn = false;
 const client = new Discord.Client({

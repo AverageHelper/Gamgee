@@ -1,4 +1,4 @@
-import type { Logger as GamgeeLogger } from "../logger";
+import type { Logger as GamgeeLogger } from "../logger.js";
 import type { Logger as TypeORMLogger } from "typeorm";
 
 export class DatabaseLogger implements TypeORMLogger {

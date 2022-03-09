@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import { useGuildStorage } from "../useGuildStorage";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 
 export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
 	/** The `id` of the role or user */
@@ -46,7 +46,7 @@ export async function adminRolePermissions(
 	guild: Discord.Guild,
 	permission: boolean
 ): Promise<Array<CommandPermission>> {
-	const knownAdminRoleIDs = await useGuildStorage(guild).getGuildAdminRoles();
+	const knownAdminRoleIDs = await getGuildAdminRoles(guild);
 	return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 
@@ -65,7 +65,7 @@ export async function queueAdminRolePermissions(
 	guild: Discord.Guild,
 	permission: boolean
 ): Promise<Array<CommandPermission>> {
-	const knownRoleIDs = await useGuildStorage(guild).getQueueAdminRoles();
+	const knownRoleIDs = await getQueueAdminRoles(guild);
 	return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
 }
 

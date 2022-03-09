@@ -1,7 +1,11 @@
-import type { Command } from "./Command";
-import { getYouTubeVideo, getSoundCloudTrack, getBandcampTrack } from "../actions/getVideoDetails";
+import type { Command } from "./Command.js";
 import { MessageEmbed } from "discord.js";
 import { URL } from "url";
+import {
+	getYouTubeVideo,
+	getSoundCloudTrack,
+	getBandcampTrack
+} from "../actions/getVideoDetails.js";
 
 type FetchTestFunction = typeof getYouTubeVideo;
 

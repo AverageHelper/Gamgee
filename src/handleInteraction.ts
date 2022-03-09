@@ -1,13 +1,13 @@
 import type Discord from "discord.js";
-import type { CommandContext } from "./commands";
-import type { Logger } from "./logger";
-import type { Storage } from "./configStorage";
-import { invokeCommand } from "./actions/invokeCommand";
-import { allCommands } from "./commands";
-import { getEnv } from "./helpers/environment";
-import { replyPrivately, sendMessageInChannel } from "./actions/messages";
-import logUser from "./helpers/logUser";
-import richErrorMessage from "./helpers/richErrorMessage";
+import type { CommandContext } from "./commands/index.js";
+import type { Logger } from "./logger.js";
+import type { Storage } from "./configStorage.js";
+import { invokeCommand } from "./actions/invokeCommand.js";
+import { allCommands } from "./commands/index.js";
+import { getEnv } from "./helpers/environment.js";
+import { replyPrivately, sendMessageInChannel } from "./actions/messages/index.js";
+import logUser from "./helpers/logUser.js";
+import richErrorMessage from "./helpers/richErrorMessage.js";
 
 /**
  * Performs actions from a Discord command interaction.

@@ -1,10 +1,10 @@
-import type { Subcommand } from "../Command";
-import { SAFE_PRINT_LENGTH } from "../../constants/output";
-import { listKeys } from "../../constants/config/keys";
-import { isConfigKey, allKeys } from "../../constants/config";
-import { getConfigValue } from "../../actions/config/getConfigValue";
-import { setConfigValue } from "../../actions/config/setConfigValue";
-import { resolveStringFromOption } from "../../helpers/optionResolvers";
+import type { Subcommand } from "../Command.js";
+import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { listKeys } from "../../constants/config/keys.js";
+import { isConfigKey, allKeys } from "../../constants/config/index.js";
+import { getConfigValue } from "../../actions/config/getConfigValue.js";
+import { setConfigValue } from "../../actions/config/setConfigValue.js";
+import { resolveStringFromOption } from "../../helpers/optionResolvers.js";
 
 const unset: Subcommand = {
 	name: "unset",

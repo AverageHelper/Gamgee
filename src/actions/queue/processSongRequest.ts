@@ -1,19 +1,23 @@
 import type Discord from "discord.js";
-import type { CommandContext } from "../../commands";
-import type { Logger } from "../../logger";
-import type { QueueManager } from "./useQueue";
-import type { UnsentQueueEntry } from "../../useQueueStorage";
+import type { CommandContext } from "../../commands/index.js";
+import type { Logger } from "../../logger.js";
+import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
-import { deleteMessage } from "../../actions/messages";
-import { MILLISECONDS_IN_SECOND } from "../../constants/time";
-import { SHRUGGIE } from "../../constants/textResponses";
-import { useLogger } from "../../logger";
-import { useQueue } from "./useQueue";
-import durationString from "../../helpers/durationString";
-import getVideoDetails from "../getVideoDetails";
-import logUser from "../../helpers/logUser";
-import richErrorMessage from "../../helpers/richErrorMessage";
-import StringBuilder from "../../helpers/StringBuilder";
+import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { deleteMessage } from "../../actions/messages/index.js";
+import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
+import { SHRUGGIE } from "../../constants/textResponses.js";
+import { useLogger } from "../../logger.js";
+import { pushEntryToQueue } from "./useQueue.js";
+import durationString from "../../helpers/durationString.js";
+import getVideoDetails from "../getVideoDetails.js";
+import logUser from "../../helpers/logUser.js";
+import richErrorMessage from "../../helpers/richErrorMessage.js";
+import {
+	countAllEntriesFrom,
+	fetchLatestEntryFrom,
+	getQueueConfig
+} from "../../useQueueStorage.js";
 
 export interface SongRequest {
 	songUrl: URL;
@@ -63,7 +67,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 }
 
 interface SongAcceptance {
-	queue: QueueManager;
+	queueChannel: Discord.TextChannel;
 	context: CommandContext;
 	entry: UnsentQueueEntry;
 	logger: Logger;
@@ -74,8 +78,13 @@ interface SongAcceptance {
  *
  * @param param0 The feedback context.
  */
-async function acceptSongRequest({ queue, context, entry, logger }: SongAcceptance): Promise<void> {
-	await queue.push(entry);
+async function acceptSongRequest({
+	queueChannel,
+	context,
+	entry,
+	logger
+}: SongAcceptance): Promise<void> {
+	await pushEntryToQueue(entry, queueChannel);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
 		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
@@ -103,13 +112,12 @@ export default async function processSongRequest(request: SongRequest): Promise<
 	const senderId = context.user.id;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
-	const queue = useQueue(queueChannel);
 
 	try {
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
-			queue.getConfig(),
-			queue.getLatestEntryFrom(senderId),
-			queue.countFrom(senderId /* since: Date */)
+			getQueueConfig(queueChannel),
+			fetchLatestEntryFrom(senderId, queueChannel),
+			countAllEntriesFrom(senderId /* since: Date */, queueChannel)
 		]);
 
 		// ** If the user is blacklisted, reject!
@@ -131,12 +139,12 @@ export default async function processSongRequest(request: SongRequest): Promise<
 			} before this one`
 		);
 		if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
-			const rejectionBuilder = new StringBuilder();
-			rejectionBuilder.push("You have used all ");
-			rejectionBuilder.pushBold(`${maxSubs}`);
-			rejectionBuilder.push(" of your allotted submissions.");
+			const rejection = createPartialString();
+			push("You have used all ", rejection);
+			pushBold(`${maxSubs}`, rejection);
+			push(" of your allotted submissions.", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(request, rejectionBuilder.result());
+			return reject_private(request, composed(rejection));
 		}
 
 		// ** If the user is still under cooldown, reject!
@@ -161,14 +169,14 @@ export default async function processSongRequest(request: SongRequest): Promise<
 			timeSinceLatest !== null &&
 			cooldown > timeSinceLatest
 		) {
-			const rejectionBuilder = new StringBuilder();
-			rejectionBuilder.push("You've already submitted a song within the last ");
-			rejectionBuilder.push(durationString(cooldown));
-			rejectionBuilder.push(". You must wait ");
-			rejectionBuilder.pushBold(durationString(cooldown - timeSinceLatest));
-			rejectionBuilder.push(" before submitting again.");
+			const rejection = createPartialString();
+			push("You've already submitted a song within the last ", rejection);
+			push(durationString(cooldown), rejection);
+			push(". You must wait ", rejection);
+			pushBold(durationString(cooldown - timeSinceLatest), rejection);
+			push(" before submitting again.", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(request, rejectionBuilder.result());
+			return reject_private(request, composed(rejection));
 		}
 
 		const song = await songInfoPromise; // we need this info now
@@ -192,17 +200,17 @@ export default async function processSongRequest(request: SongRequest): Promise<
 			)} long.`
 		);
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
-			const rejectionBuilder = new StringBuilder();
-			rejectionBuilder.push("That song is too long. The limit is ");
-			rejectionBuilder.pushBold(`${durationString(maxDuration)}`);
+			const rejection = createPartialString();
+			push("That song is too long. The limit is ", rejection);
+			pushBold(`${durationString(maxDuration)}`, rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_public(context, rejectionBuilder.result());
+			return reject_public(context, composed(rejection));
 		}
 
 		const entry = { url, seconds, senderId };
 
 		// ** Full send!
-		return await acceptSongRequest({ queue, context, entry, logger });
+		return await acceptSongRequest({ queueChannel, context, entry, logger });
 
 		// Handle fetch errors
 	} catch (error: unknown) {

@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
-import getUserIdFromMention from "./getUserIdFromMention";
-import { getUserWithId } from "./getUserWithId";
-import { useLogger } from "../logger";
-import logUser from "./logUser";
+import getUserIdFromMention from "./getUserIdFromMention.js";
+import { getUserWithId } from "./getUserWithId.js";
+import { useLogger } from "../logger.js";
+import logUser from "./logUser.js";
 
 const logger = useLogger();
 
