@@ -47,6 +47,7 @@
 		"discord.js": "^13.1.0",
 		"dotenv": "^8.2.0",
 		"humanize-duration": "^3.25.1",
+		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.6",
 		"node-persist": "^3.1.0",
 		"reflect-metadata": "^0.1.13",
@@ -62,6 +63,7 @@
 	"devDependencies": {
 		"@types/humanize-duration": "^3.18.1",
 		"@types/jest": "^27.4.0",
+		"@types/lodash": "^4.14.179",
 		"@types/node": "^16.6.2",
 		"@types/node-fetch": "^2.5.12",
 		"@types/node-persist": "^3.1.1",
