@@ -37,6 +37,7 @@ describe("Clear queue contents", () => {
 
 		mockGetAllEntries.mockResolvedValue([]);
 		mockQueueClear.mockResolvedValue(undefined);
+		mockBulkDeleteMessagesWithIds.mockResolvedValue(true);
 	});
 
 	test("does nothing when no queue is set up", async () => {
@@ -87,4 +88,12 @@ describe("Clear queue contents", () => {
 			expect(mockQueueClear).toHaveBeenCalledTimes(1);
 		}
 	);
+
+	test("Does not clear the database when clearing messages fails", async () => {
+		mockBulkDeleteMessagesWithIds.mockResolvedValueOnce(false); // something goes wrong
+
+		await expect(restart.execute(context)).resolves.toBeUndefined(); // don't throw
+
+		expect(mockQueueClear).not.toHaveBeenCalled(); // don't clear
+	});
 });

@@ -19,7 +19,10 @@ const restart: Subcommand = {
 		await prepareForLongRunningTasks();
 
 		const toBeDeleted = (await fetchAllEntries(queueChannel)).map(entry => entry.queueMessageId);
-		await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
+		const didDelete = await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
+		if (!didDelete) {
+			return reply("Something went wrong. I couldn't get that queue cleared, sorry.");
+		}
 		await clearEntries(queueChannel);
 
 		return reply("The queue has restarted.");

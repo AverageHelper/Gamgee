@@ -51,7 +51,7 @@ const languages: GlobalCommand = {
 
 		const stats = Object.entries(languages).map(([languageName, languageUse]) => {
 			const use = (languageUse ?? 0) / totalUse;
-			return `${languageName} (${(use * 100).toFixed(1)}%)`;
+			return `${(use * 100).toFixed(1)}% ${languageName}`;
 		});
 
 		logger.debug(`Gamgee is made of ${totalLanguages} languages: ${stats.join(", ")}`);

@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
+import chunk from "lodash/chunk.js";
 import isError from "../../helpers/isError.js";
 import richErrorMessage from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
@@ -68,8 +69,20 @@ export async function bulkDeleteMessagesWithIds(
 	messageIds: Array<Snowflake>,
 	channel: Discord.TextChannel
 ): Promise<boolean> {
+	if (messageIds.length === 0) return true;
+
 	try {
-		await channel.bulkDelete(messageIds);
+		// Batch up to 100 IDs at a time
+		for (const ids of chunk(messageIds, 100)) {
+			if (ids.length === 1) {
+				// Given one ID, just delete individually
+				const messageId = ids[0] as string;
+				await channel.messages.delete(messageId);
+			} else {
+				await channel.bulkDelete(ids);
+			}
+		}
+
 		return true;
 	} catch (error: unknown) {
 		if (isError(error) && error.code === "50034") {
