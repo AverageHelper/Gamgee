@@ -8,6 +8,7 @@ import richErrorMessage from "../helpers/richErrorMessage.js";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
+import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 
 export interface VideoDetails {
 	url: string;
@@ -58,6 +59,15 @@ export class InvalidYouTubeUrlError extends VideoError {
 	constructor(url: URL) {
 		super(`This URL isn't a valid YouTube video URL: ${url.toString()}`);
 		this.name = "InvalidYouTubeUrlError";
+	}
+}
+
+export class InvalidPonyFmUrlError extends VideoError {
+	code = "422";
+
+	constructor(url: URL) {
+		super(`This URL isn't a valid Pony.fm song URL: ${url.toString()}`);
+		this.name = "InvalidPonyFmUrlError";
 	}
 }
 
@@ -181,6 +191,43 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 }
 
 /**
+ * Gets information about a Pony.fm track.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws an `InvalidPonyFmUrlError` if the provided URL is not a Pony.fm URL.
+ * @throws a `VideoError` if the track info couldn't be found for the provided URL.
+ * @returns a `Promise` that resolves with the track details.
+ */
+export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
+	// Full link looks like this: https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine
+	// Short link looks like this: https://pony.fm/t46025
+
+	const pathnameLower = url.pathname.toLowerCase();
+
+	// Throw out obviously invalid links
+	if (url.host.toLowerCase() !== "pony.fm" || !pathnameLower.startsWith("/t")) {
+		throw new InvalidPonyFmUrlError(url);
+	}
+
+	// Calculate start index based on link type
+	const startIndex = pathnameLower.startsWith("racks/", 2) ? 8 : 2;
+
+	// Parse out ID and fetch track info
+	const trackId = Number.parseInt(url.pathname.slice(startIndex), 10);
+	if(isNaN(trackId)) {
+		throw new InvalidPonyFmUrlError(url);
+	}
+	const trackData = await getPonyFmTrackInfoFromId(trackId);
+
+	return {
+		url: trackData.url,
+		title: trackData.title,
+		duration: { seconds: Math.floor(Number.parseFloat(trackData.duration)) }
+	};
+}
+
+/**
  * Retrieves details about a video.
  *
  * @param urlOrString The location of an online video. If the URL is a YouTube
@@ -200,7 +247,8 @@ export default async function getVideoDetails(
 		return await Promise.any([
 			getYouTubeVideo(url), //
 			getSoundCloudTrack(url),
-			getBandcampTrack(url)
+			getBandcampTrack(url),
+			getPonyFmTrack(url)
 		]);
 	} catch (error: unknown) {
 		logger?.error(
