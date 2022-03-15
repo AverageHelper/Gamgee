@@ -215,7 +215,7 @@ export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
 
 	// Parse out ID and fetch track info
 	const trackId = Number.parseInt(url.pathname.slice(startIndex), 10);
-	if(isNaN(trackId)) {
+	if (Number.isNaN(trackId)) {
 		throw new InvalidPonyFmUrlError(url);
 	}
 	const trackData = await getPonyFmTrackInfoFromId(trackId);
