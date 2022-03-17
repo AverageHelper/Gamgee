@@ -71,8 +71,8 @@ function addResult(result: FetchResult, embed: MessageEmbed): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
 	embed.addField(
-		`${result.error ? FAILURE : SUCCESS} ${name} (${runTime}ms)`,
-		result.error?.message ?? "Success!"
+		name,
+		`${result.error ? FAILURE : SUCCESS} ${result.error?.message ?? "Success"} (${runTime}ms)`
 	);
 }
 
@@ -98,6 +98,13 @@ const type: Command = {
 
 			// Prepare response
 			const embed = new MessageEmbed();
+			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
+			const supportedPlatformsList =
+				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
+			embed.setTitle("Test Results");
+			embed.setDescription(
+				`See the [list of supported platforms](${supportedPlatformsList}) on our GitHub.`
+			);
 			results.forEach(result => addResult(result, embed));
 
 			const anyFailures = results.some(result => result.error !== undefined);
