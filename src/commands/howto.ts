@@ -21,11 +21,19 @@ const howto: GuildedCommand = {
 		const msg = createPartialString();
 
 		push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`, msg);
-		// TODO: Clarify that YouTube, Bandcamp, or SoundCloud track links will work
 		pushNewLine(msg);
 		push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``, msg);
 		pushNewLine(msg);
 		push("I will respond with a text verification indicating your song has joined the queue!", msg);
+		pushNewLine(msg);
+
+		const supportedPlatformsList =
+			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
+		const supportedPlatforms =
+			type === "interaction"
+				? `See [our list of supported platforms](<${supportedPlatformsList}>)`
+				: `See our list of supported platforms at <${supportedPlatformsList}>.`;
+		push(supportedPlatforms, msg);
 		pushNewLine(msg);
 		pushNewLine(msg);
 

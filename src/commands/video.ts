@@ -11,29 +11,39 @@ const video: Command = {
 	options: [
 		{
 			name: "url",
-			description: "A YouTube, SoundCloud, or Bandcamp link",
+			description: "A track link from a supported platform",
 			type: "STRING",
 			required: true
 		}
 	],
 	requiresGuild: false,
 	async execute(context) {
-		const { logger, options, reply } = context;
+		const { logger, options, type, reply } = context;
 		const firstOption = options.data[0];
 		if (!firstOption) {
 			return reply({ content: "You're gonna have to add a song link to that.", ephemeral: true });
 		}
 		const urlString: string = resolveStringFromOption(firstOption);
 
+		const supportedPlatformsList =
+			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
+		const supportedPlatform =
+			type === "interaction"
+				? `[supported platform](<${supportedPlatformsList}>)`
+				: "supported platform";
+
 		try {
 			const video = await getVideoDetails(urlString);
 			if (video === null) {
-				return reply({ content: "I couldn't get a song from that.", ephemeral: true });
+				return reply({
+					content: `I couldn't get a song from that. Try a link from a ${supportedPlatform}.`,
+					ephemeral: true
+				});
 			}
 
 			const response = createPartialString();
 
-			if (context.type === "interaction") {
+			if (type === "interaction") {
 				// We haven't had this link embedded yet
 				push(video.url, response);
 				pushNewLine(response);

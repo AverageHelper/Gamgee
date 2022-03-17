@@ -2,9 +2,10 @@ import type { Command } from "./Command.js";
 import { MessageEmbed } from "discord.js";
 import { URL } from "url";
 import {
-	getYouTubeVideo,
+	getBandcampTrack,
+	getPonyFmTrack,
 	getSoundCloudTrack,
-	getBandcampTrack
+	getYouTubeVideo
 } from "../actions/getVideoDetails.js";
 
 type FetchTestFunction = typeof getYouTubeVideo;
@@ -22,7 +23,7 @@ interface FetchResult {
 	error?: NodeJS.ErrnoException;
 }
 
-const SERVICE_TESTS = [
+const SERVICE_TESTS: NonEmptyArray<FetchTest> = [
 	{
 		name: "YouTube",
 		fn: getYouTubeVideo,
@@ -40,6 +41,12 @@ const SERVICE_TESTS = [
 		fn: getBandcampTrack,
 		// WoodLore - Let The Magic Fill Your Soul
 		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"
+	},
+	{
+		name: "Pony.FM",
+		fn: getPonyFmTrack,
+		// https://pony.fm/tracks/5591-birdsong-ft-relative1pitch
+		urlString: "https://pony.fm/tracks/5591-birdsong-ft-relative1pitch"
 	}
 ];
 
@@ -64,8 +71,8 @@ function addResult(result: FetchResult, embed: MessageEmbed): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
 	embed.addField(
-		`${result.error ? FAILURE : SUCCESS} ${name} (${runTime}ms)`,
-		result.error?.message ?? "Success!"
+		name,
+		`${result.error ? FAILURE : SUCCESS} ${result.error?.message ?? "Success"} (${runTime}ms)`
 	);
 }
 
@@ -91,6 +98,13 @@ const type: Command = {
 
 			// Prepare response
 			const embed = new MessageEmbed();
+			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
+			const supportedPlatformsList =
+				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
+			embed.setTitle("Test Results");
+			embed.setDescription(
+				`See the [list of supported platforms](${supportedPlatformsList}) on our GitHub.`
+			);
 			results.forEach(result => addResult(result, embed));
 
 			const anyFailures = results.some(result => result.error !== undefined);

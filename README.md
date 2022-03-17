@@ -131,6 +131,15 @@ Gamgee generates some files as needed. This is normal, and you should not bother
 - `logs/` contains log files for events that the server thinks might be useful one day. Most of these have to do with smol important things Gamgee does without you worrying. Feel free to look in here if you're ever curious. You may delete them periodically, if you want.
 - `db/` contains Gamgee's database if you've not selected your own DB path. Don't touch this unless you know what you're doing.
 
+### Supported Music Platforms
+
+Gamgee supports the following music (and video) streaming platforms:
+
+- [YouTube](https://www.youtube.com/)
+- [SoundCloud](https://soundcloud.com/)
+- [Bandcamp](https://bandcamp.com/)
+- [Pony.FM](https://pony.fm/)
+
 ## Commands
 
 All commands must begin with a command prefix (`/` for Slash Commands; `?` by default for messages; a mention to the bot.) Yes, you can mention the bot to run commands. For example, if your bot's account name is EC, `@EC help` will run the `help` command. (This is handy in case you forget the command prefix, or don't feel like typing `/`. ;)
@@ -231,11 +240,11 @@ Access the song queue. Run this command alone to print instructions on how to su
 
 #### `sr <url>`
 
-Submits a song to the queue. Users must provide a valid YouTube, SoundCloud, or Bandcamp link in order to be considered.
+Submits a song to the queue. For songs to be considered, submissions must be a valid track link from a [supported platform](#supported-music-platforms).
 
 ### `test`
 
-Runs test queries against YouTube, SoundCloud, and Bandcamp, and responds with useful statistics. This is handy for making sure that Gamgee still knows how to talk to external services whose API may change without notice.
+Runs test queries against each of our [supported platforms](#supported-music-platforms), and responds with useful statistics. This is handy for making sure that Gamgee still knows how to talk to external services whose API may change without notice.
 
 ### `t`
 
@@ -247,7 +256,7 @@ Display's the current version of Gamgee Core. (see [package.json](https://github
 
 ### `video <url>`
 
-Given a YouTube, SoundCloud, or Bandcamp track link, Gamgee responds with that video's title and duration. Handy for testing specific cases. Anyone may use this command at any time.
+Given a track link from a [supported platform](#supported-music-platforms), Gamgee responds with that video's title and duration. Handy for testing specific cases. Anyone may use this command at any time.
 
 ## Contributing
 

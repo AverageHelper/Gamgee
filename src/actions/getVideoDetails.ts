@@ -1,5 +1,6 @@
 import type { Logger } from "../logger.js";
 import type { Metadata } from "../helpers/urlMetadata/index.js";
+import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 import { isString } from "../helpers/guards.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
@@ -8,7 +9,6 @@ import richErrorMessage from "../helpers/richErrorMessage.js";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
-import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 
 export interface VideoDetails {
 	url: string;

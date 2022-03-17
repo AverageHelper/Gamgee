@@ -12,10 +12,14 @@ describe("Video details", () => {
 		${"unavailable video (9Y8ZGLiqXba)"} | ${"https://youtu.be/9Y8ZGLiqXba"}
 		${"unavailable video (dmneTS-Gows)"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}
 		${"is too short"}                    | ${"https://www.youtube.com/watch?v=9Y8ZGL"}
-	`("returns null with $desc", async ({ url }: { url: string }) => {
-		const details = await getVideoDetails(url, null);
-		expect(details).toBeNull();
-	});
+	`(
+		"returns null with $desc",
+		async ({ url }: { url: string }) => {
+			const details = await getVideoDetails(url, null);
+			expect(details).toBeNull();
+		},
+		10000
+	);
 
 	test.each`
 		desc                                      | url                                                                                                                    | result                                           | duration
