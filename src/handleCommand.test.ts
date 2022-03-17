@@ -159,7 +159,8 @@ describe("Command handler", () => {
 				if (mockCommandDefinitions.size > 13)
 					console.log("mockCommandDefinitions", mockCommandDefinitions);
 				expect.assertions(mockCommandDefinitions.size);
-			}
+			},
+			10000
 		);
 
 		test.each`
