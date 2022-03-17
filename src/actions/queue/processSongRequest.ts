@@ -183,9 +183,15 @@ export default async function processSongRequest(request: SongRequest): Promise<
 		if (song === null) {
 			logger.verbose("Could not find the requested song.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			const supportedPlatformsList =
+				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
+			const supportedPlatform =
+				context.type === "interaction"
+					? `[supported platform](<${supportedPlatformsList}>)`
+					: "supported platform";
 			return reject_public(
 				context,
-				`I can't find that song. ${SHRUGGIE}\nTry a YouTube, SoundCloud, or Bandcamp link.`
+				`I can't find that song. ${SHRUGGIE}\nTry a link from a ${supportedPlatform}.`
 			);
 		}
 

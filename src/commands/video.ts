@@ -11,7 +11,7 @@ const video: Command = {
 	options: [
 		{
 			name: "url",
-			description: "A YouTube, SoundCloud, or Bandcamp link",
+			description: "A track link from a supported platform",
 			type: "STRING",
 			required: true
 		}
