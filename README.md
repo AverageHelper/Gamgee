@@ -137,7 +137,7 @@ Gamgee supports several streaming platforms, including:
 
 - [YouTube](https://www.youtube.com/)
 - [SoundCloud](https://soundcloud.com/)
-- [BandCamp](https://bandcamp.com/)
+- [Bandcamp](https://bandcamp.com/)
 - [Pony.FM](https://pony.fm/)
 
 ## Commands

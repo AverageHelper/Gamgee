@@ -2,9 +2,10 @@ import type { Command } from "./Command.js";
 import { MessageEmbed } from "discord.js";
 import { URL } from "url";
 import {
-	getYouTubeVideo,
+	getBandcampTrack,
+	getPonyFmTrack,
 	getSoundCloudTrack,
-	getBandcampTrack
+	getYouTubeVideo
 } from "../actions/getVideoDetails.js";
 
 type FetchTestFunction = typeof getYouTubeVideo;
@@ -22,7 +23,7 @@ interface FetchResult {
 	error?: NodeJS.ErrnoException;
 }
 
-const SERVICE_TESTS = [
+const SERVICE_TESTS: NonEmptyArray<FetchTest> = [
 	{
 		name: "YouTube",
 		fn: getYouTubeVideo,
@@ -40,6 +41,12 @@ const SERVICE_TESTS = [
 		fn: getBandcampTrack,
 		// WoodLore - Let The Magic Fill Your Soul
 		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"
+	},
+	{
+		name: "Pony.FM",
+		fn: getPonyFmTrack,
+		// https://pony.fm/tracks/5591-birdsong-ft-relative1pitch
+		urlString: "https://pony.fm/tracks/5591-birdsong-ft-relative1pitch"
 	}
 ];
 
