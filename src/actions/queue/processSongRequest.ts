@@ -183,15 +183,10 @@ export default async function processSongRequest(request: SongRequest): Promise<
 		if (song === null) {
 			logger.verbose("Could not find the requested song.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			const supportedPlatformsList =
-				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
-			const supportedPlatform =
-				context.type === "interaction"
-					? `[supported platform](<${supportedPlatformsList}>)`
-					: "supported platform";
+			// FIXME: This response is too generic. Present something more actionable based on why the song can't be found
 			return reject_public(
 				context,
-				`I can't find that song. ${SHRUGGIE}\nTry a link from a ${supportedPlatform}.`
+				`I can't find that song. ${SHRUGGIE}\nTry a link from a supported platform.`
 			);
 		}
 

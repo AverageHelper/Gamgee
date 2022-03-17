@@ -133,7 +133,7 @@ Gamgee generates some files as needed. This is normal, and you should not bother
 
 ### Supported Music Platforms
 
-Gamgee supports several streaming platforms, including:
+Gamgee supports the following music (and video) streaming platforms:
 
 - [YouTube](https://www.youtube.com/)
 - [SoundCloud](https://soundcloud.com/)
