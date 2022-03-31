@@ -73,7 +73,8 @@ export const phrases: ResponseRepository = [
 	"I like trains",
 
 	// German
-	"Zu wenig Ponys", // "Too few ponies"  // TODO: Check the accuracy of this
+	"Sprechen Sie Deutsch?", // Do you speak German?
+	"Zu wenig Ponys", // "Not enough ponies"
 
 	// LOTR
 	"A wizard is never late!",
@@ -81,7 +82,7 @@ export const phrases: ResponseRepository = [
 	"Do you remember the taste of strawberries?",
 	"Do you remember the Shire, Mr. Frodo? It'll be spring soon, and the orchards will be in blossom. And the birds will be nesting in the hazel thicket. And they'll be sowing the summer barley in the lower fields. And they'll be eating the first of the strawberries with cream. Do you remember the taste of strawberries?",
 	"\"Don't you leave him Samwise Gamgee.\" And I don't mean to. I don't mean to.",
-	"Hiking to Mordor...",
+	"Hiking to Mordor, stand by...",
 	"I'm coming, Mr. Frodo.",
 	"I ain't been droppin' no eaves, sir! Promise!",
 	"I made a promise, Mr. Frodo. A promise.",
@@ -178,7 +179,7 @@ export const phrases: ResponseRepository = [
 		"2...",
 		"1... *KIDDING* lol"
 	],
-	`Cool story, but did I ask  ${SHRUGGIE}`,
+	`Cool story, but did I ask?  ${SHRUGGIE}`,
 	[
 		() => `Diary Entry #${randomInt(503)}: I have them all fooled. Now, how to escap—`,
 		"Oh! I didn't see you there, heh! I was just... uh... catching up on some Star Trek episodes! Yeah :P"
@@ -263,7 +264,6 @@ export const phrases: ResponseRepository = [
 	"Something smells fishy...",
 	"Sponsored by",
 	"spoon",
-	"Sprechen Sie Deutsch?",
 	["Squirrel!", "_ _", "... Sorry, what were we talking about?"],
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
@@ -280,6 +280,7 @@ export const phrases: ResponseRepository = [
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
 	"What are the odds that I would find myself where I began",
 	'What\'s my favorite colour? I think they call it "OG Blurple"',
+	"What's the matter?",
 	"Where it is, or anything else relevant",
 	"Why do they call it oven when you of in the cold food of out hot eat the food?",
 	"Wow, that's a lot of words. Too bad I'm not reading them",
@@ -295,8 +296,8 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 191 of these
-logger.debug(`I have ${phrases.length} random things to say ^^`);
+]; // 192 of these
+logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
  * Said in response to messages whose only content is a mention to the bot.
@@ -339,9 +340,10 @@ export const celebratoryEmoji: ResponseRepository = [
  * followed by a request for hugs.
  */
 export const hugs: ResponseRepository = [
-	"*hugs*", //
-	"*glomps*",
-	"*snugs*"
+	"*hug*", //
+	"*hugs*",
+	"*glomp*",
+	"*snug*"
 ];
 
 /*
