@@ -11,7 +11,7 @@ const logger = useLogger();
  * @param mention The mention string, in the form `<#[0-9]>`.
  * @returns A Discord channel, or `undefined` if the user cannot be determined from the providedd `mention` string.
  */
-export default function getChannelFromMention(
+export function getChannelFromMention(
 	guild: Discord.Guild | null,
 	mention: string
 ): Discord.GuildChannel | Discord.ThreadChannel | undefined {
@@ -28,3 +28,5 @@ export default function getChannelFromMention(
 
 	return channel;
 }
+
+export default getChannelFromMention;

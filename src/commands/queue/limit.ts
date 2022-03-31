@@ -47,7 +47,7 @@ function isLimitKey(value: unknown): value is LimitKey {
 	);
 }
 
-const limit: Subcommand = {
+export const limit: Subcommand = {
 	name: "limit", // TODO: Alias this to "limits"
 	description: "Set a limit value on the queue. (Time in seconds, where applicable)",
 	options: [

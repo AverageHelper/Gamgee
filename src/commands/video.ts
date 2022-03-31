@@ -5,7 +5,7 @@ import getVideoDetails from "../actions/getVideoDetails.js";
 import durationString from "../helpers/durationString.js";
 import richErrorMessage from "../helpers/richErrorMessage.js";
 
-const video: Command = {
+export const video: Command = {
 	name: "video",
 	description: "Reply with the video title and duration.",
 	options: [

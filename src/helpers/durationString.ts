@@ -14,9 +14,11 @@ function shortDurationString(seconds: number): string {
  *
  * @returns A user-readable string describing the number of seconds.
  */
-export default function durationString(seconds: number, short: boolean = false): string {
+export function durationString(seconds: number, short: boolean = false): string {
 	if (short) {
 		return shortDurationString(seconds);
 	}
 	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
 }
+
+export default durationString;

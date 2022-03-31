@@ -11,7 +11,7 @@ import {
 	getQueueConfig
 } from "../useQueueStorage.js";
 
-const limits: Command = {
+export const limits: Command = {
 	name: "limits",
 	description: "Display the song queue's submission limits.",
 	requiresGuild: true,

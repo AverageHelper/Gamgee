@@ -1,6 +1,6 @@
 import type { Command } from "./Command.js";
 
-const type: Command = {
+export const type: Command = {
 	name: "t",
 	description: "Start a typing indicator.",
 	requiresGuild: false,

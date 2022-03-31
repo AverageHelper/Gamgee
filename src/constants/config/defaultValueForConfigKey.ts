@@ -10,9 +10,11 @@ export function isConfigValue(value: unknown): value is ConfigValue {
 	);
 }
 
-export default function defaultValueForConfigKey(key: ConfigKey): ConfigValue {
+export function defaultValueForConfigKey(key: ConfigKey): ConfigValue {
 	switch (key) {
 		case CONFIG_KEY_COMMAND_PREFIX:
 			return "?";
 	}
 }
+
+export default defaultValueForConfigKey;

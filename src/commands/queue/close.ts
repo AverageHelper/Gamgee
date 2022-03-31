@@ -2,7 +2,7 @@ import type { GuildedSubcommand } from "../Command.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
-const close: GuildedSubcommand = {
+export const close: GuildedSubcommand = {
 	name: "close",
 	description: "Stop accepting song requests to the queue.",
 	type: "SUB_COMMAND",

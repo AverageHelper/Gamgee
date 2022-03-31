@@ -6,6 +6,8 @@ import type Discord from "discord.js";
  * @param user The user to log.
  * @returns a string of the form `"{user ID} ({username})"`
  */
-export default function logUser(user: Discord.User): string {
+export function logUser(user: Discord.User): string {
 	return `${user.id} (${user.username})`;
 }
+
+export default logUser;

@@ -1,7 +1,7 @@
 import type { Subcommand } from "../Command.js";
 import { setQueueChannel } from "../../useGuildStorage.js";
 
-const teardown: Subcommand = {
+export const teardown: Subcommand = {
 	name: "teardown",
 	description: "Deletes and un-sets the current queue.",
 	type: "SUB_COMMAND",

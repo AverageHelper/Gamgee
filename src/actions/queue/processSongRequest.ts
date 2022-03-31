@@ -107,7 +107,7 @@ async function acceptSongRequest({
  *
  * @param request The song request context.
  */
-export default async function processSongRequest(request: SongRequest): Promise<void> {
+export async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;
 	const senderId = context.user.id;
 
@@ -219,3 +219,5 @@ export default async function processSongRequest(request: SongRequest): Promise<
 		return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
 	}
 }
+
+export default processSongRequest;

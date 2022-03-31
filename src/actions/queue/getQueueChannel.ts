@@ -69,10 +69,12 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
  *
  * @returns the guild's queue channel, or `null` if it has none.
  */
-export default async function getQueueChannel(
+export async function getQueueChannel(
 	source: CommandContext | Discord.Guild | null
 ): Promise<Discord.TextChannel | null> {
 	if (!source) return null;
 	if ("type" in source) return getQueueChannelFromCommand(source);
 	return getQueueChannelFromGuild(source);
 }
+
+export default getQueueChannel;

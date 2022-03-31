@@ -9,7 +9,7 @@ import {
 	playtimeTotalInQueue
 } from "../../actions/queue/useQueue.js";
 
-const stats: Subcommand = {
+export const stats: Subcommand = {
 	name: "stats",
 	description: "Print statistics on the current queue.",
 	type: "SUB_COMMAND",

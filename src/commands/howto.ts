@@ -8,7 +8,7 @@ import {
 	pushNewLine
 } from "../helpers/composeStrings.js";
 
-const howto: GuildedCommand = {
+export const howto: GuildedCommand = {
 	name: "howto",
 	description: "Print instructions for using the common queue commands.",
 	requiresGuild: true,

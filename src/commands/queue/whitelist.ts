@@ -4,7 +4,7 @@ import { whitelistUser } from "../../useQueueStorage.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 import logUser from "../../helpers/logUser.js";
 
-const whitelist: Subcommand = {
+export const whitelist: Subcommand = {
 	name: "whitelist",
 	description: "Allows a previously-blacklisted user to make song requests.",
 	options: [

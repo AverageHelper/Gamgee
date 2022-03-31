@@ -1,10 +1,10 @@
 import type Discord from "discord.js";
 import type { Command } from "./Command.js";
+import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { fetchAllEntries } from "../useQueueStorage.js";
-import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
-import getQueueChannel from "../actions/queue/getQueueChannel.js";
-import randomElementOfArray from "../helpers/randomElementOfArray.js";
+import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
+import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 
 const uncertainties = ["There's a good chance", "I'm like 85% sure", "Very likely,", "I think"];
 let lastUncertainty: string | null = null;
@@ -30,7 +30,7 @@ function randomCurrent(): string {
 	return random;
 }
 
-const nowPlaying: Command = {
+export const nowPlaying: Command = {
 	name: "now-playing",
 	aliases: ["nowplaying"],
 	description: "Reveal the current song in the queue (or my best guess).",

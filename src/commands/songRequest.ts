@@ -1,15 +1,15 @@
 import type Discord from "discord.js";
 import type { GuildedCommand } from "./Command.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
+import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
+import { isQueueOpen } from "../useGuildStorage.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "url";
-import { isQueueOpen } from "../useGuildStorage.js";
 import { useJobQueue } from "@averagehelper/job-queue";
-import getQueueChannel from "../actions/queue/getQueueChannel.js";
 import processRequest from "../actions/queue/processSongRequest.js";
 
-const sr: GuildedCommand = {
+export const sr: GuildedCommand = {
 	name: "sr",
 	description: "Submit a song to the queue.",
 	options: [
