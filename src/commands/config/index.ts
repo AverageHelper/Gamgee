@@ -13,7 +13,7 @@ const subargsList = namedSubcommands
 	.map(v => `\`${v}\``)
 	.join(", ");
 
-const config: Command = {
+export const config: Command = {
 	name: "config",
 	description: "Read and modify config options.",
 	options: namedSubcommands,

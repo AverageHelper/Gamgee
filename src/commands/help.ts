@@ -1,7 +1,7 @@
 import type { Command } from "./Command.js";
 import describeAllCommands from "../actions/describeAllCommands.js";
 
-const help: Command = {
+export const help: Command = {
 	name: "help",
 	description: "Print a handy help message.",
 	requiresGuild: false,

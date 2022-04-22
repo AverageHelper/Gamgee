@@ -8,7 +8,7 @@ import type { Snowflake } from "discord.js";
  *
  * @returns The ID string between the mention markers.
  */
-export default function getUserIdFromMention(mention: string): Snowflake | null {
+export function getUserIdFromMention(mention: string): Snowflake | null {
 	let id = mention.slice();
 	if (!id) return null;
 
@@ -29,3 +29,5 @@ export default function getUserIdFromMention(mention: string): Snowflake | null 
 
 	return null;
 }
+
+export default getUserIdFromMention;

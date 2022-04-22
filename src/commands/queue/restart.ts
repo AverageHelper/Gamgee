@@ -3,7 +3,7 @@ import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
 import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
-const restart: Subcommand = {
+export const restart: Subcommand = {
 	name: "restart",
 	description: "Empty the queue and start a fresh queue session.",
 	type: "SUB_COMMAND",

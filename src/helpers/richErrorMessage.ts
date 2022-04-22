@@ -1,7 +1,7 @@
 import isError from "./isError.js";
 import { composed, createPartialString, push, pushNewLine } from "./composeStrings.js";
 
-export default function richErrorMessage(preamble: string, error: unknown): string {
+export function richErrorMessage(preamble: string, error: unknown): string {
 	const messageBuilder = createPartialString(preamble);
 	pushNewLine(messageBuilder);
 
@@ -43,3 +43,5 @@ export default function richErrorMessage(preamble: string, error: unknown): stri
 
 	return composed(messageBuilder);
 }
+
+export default richErrorMessage;

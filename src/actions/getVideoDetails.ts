@@ -237,7 +237,7 @@ export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
  * @returns a details about the video, or `null` if no video could be
  * found from the provided query.
  */
-export default async function getVideoDetails(
+export async function getVideoDetails(
 	urlOrString: URL | string,
 	logger: Logger | null = useLogger()
 ): Promise<VideoDetails | null> {
@@ -257,3 +257,5 @@ export default async function getVideoDetails(
 		return null;
 	}
 }
+
+export default getVideoDetails;

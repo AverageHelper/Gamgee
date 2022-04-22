@@ -5,7 +5,7 @@ import richErrorMessage from "../helpers/richErrorMessage.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
-const languages: GlobalCommand = {
+export const languages: GlobalCommand = {
 	name: "languages",
 	description: "Print my core repository's language statistics.",
 	requiresGuild: false,

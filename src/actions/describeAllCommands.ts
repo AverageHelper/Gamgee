@@ -28,7 +28,7 @@ const OPT = "?";
  * @param commands The collection of available commands.
  * @returns a string describing all commands.
  */
-export default async function describeAllCommands(
+export async function describeAllCommands(
 	context: CommandContext,
 	commands: Discord.Collection<string, Command>
 ): Promise<string> {
@@ -140,3 +140,5 @@ function describeParameters(
 			push(composed(subDesc), cmdDesc);
 		});
 }
+
+export default describeAllCommands;

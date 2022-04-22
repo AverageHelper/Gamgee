@@ -31,7 +31,7 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	restart
 ];
 
-const sr: Command = {
+export const sr: Command = {
 	name: "quo",
 	description: "Administrative commands to manage the song queue.",
 	options: namedSubcommands,

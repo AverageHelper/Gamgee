@@ -78,7 +78,7 @@ function addResult(result: FetchResult, embed: MessageEmbed): void {
 
 let isTesting = false;
 
-const type: Command = {
+export const type: Command = {
 	name: "test",
 	description: "Make sure I still know how to talk to video services.",
 	requiresGuild: false,

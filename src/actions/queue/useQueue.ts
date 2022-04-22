@@ -3,7 +3,6 @@ import type { MessageButton } from "../../buttons.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
-import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
 import durationString from "../../helpers/durationString.js";
 import {
@@ -14,6 +13,13 @@ import {
 	removeEntryFromMessage,
 	markEntryDone
 } from "../../useQueueStorage.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushBold,
+	pushNewLine
+} from "../../helpers/composeStrings.js";
 
 // FIXME: Some of these may be inlined with functions from useQueueStorage.js, and should be inlined to avoid confusion between raw database function and full queue functions
 
@@ -35,12 +41,11 @@ function queueMessageFromEntry(
 	} else {
 		push(entry.url, partialContent);
 	}
+	pushNewLine(partialContent);
 
 	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
-	const likeMessage = `\n${likeCount} ${
-		likeCount === 1 ? "person" : "people"
-	} asked for this link.`;
+	const likeMessage = `${likeCount} ${likeCount === 1 ? "person" : "people"} asked for this link.`;
 	if (likeCount === 0) {
 		push(likeMessage, partialContent);
 	} else {
