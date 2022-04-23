@@ -4,7 +4,7 @@ import Discord from "discord.js";
 export * from "./Command.js";
 
 import { config } from "./config/index.js";
-// import { cooldown } from "./cooldown.js";
+import { cooldown } from "./cooldown.js";
 import { help } from "./help.js";
 import { howto } from "./howto.js";
 import { languages } from "./languages.js";
@@ -13,6 +13,7 @@ import { nowPlaying } from "./nowPlaying.js";
 import { ping } from "./ping.js";
 import { quo } from "./queue/index.js";
 import { sr } from "./songRequest.js";
+import { stats } from "./stats.js";
 import { test } from "./test.js";
 import { t } from "./type.js";
 import { version } from "./version.js";
@@ -47,7 +48,7 @@ function add(command: Command): void {
 }
 
 add(config);
-// add(cooldown);
+add(cooldown);
 add(help);
 add(howto);
 add(languages);
@@ -56,6 +57,7 @@ add(nowPlaying);
 add(ping);
 add(quo);
 add(sr);
+add(stats);
 add(test);
 add(t);
 add(version);
