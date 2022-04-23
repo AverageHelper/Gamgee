@@ -45,14 +45,25 @@ describe("Video details", () => {
 		}
 	);
 
+	test("returns infinite duration for a live stream", async () => {
+		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
+		const url = "https://www.youtube.com/watch?v=CmoUkFbk5VM";
+		const details = await getVideoDetails(url, null);
+		expect(details).toHaveProperty("url", url);
+		expect(details?.duration.seconds).toBeDefined();
+		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
+	});
+
 	// ** SoundCloud
 
 	const testVid2 = "https://soundcloud.com/hwps/no999";
 
 	test.each`
-		desc                | url                             | result      | duration
-		${"is valid"}       | ${testVid2}                     | ${testVid2} | ${95}
-		${"has extra info"} | ${`${testVid2} Text and stuff`} | ${testVid2} | ${95}
+		desc                  | url                                                                                                  | result                                                                         | duration
+		${"is valid"}         | ${testVid2}                                                                                          | ${testVid2}                                                                    | ${95}
+		${"has extra info"}   | ${`${testVid2} Text and stuff`}                                                                      | ${testVid2}                                                                    | ${95}
+		${"has query params"} | ${"https://soundcloud.com/sparkeemusic/deadmau5-strobe-sparkee-nudisco-remix?ref=clipboard&p=i&c=0"} | ${"https://soundcloud.com/sparkeemusic/deadmau5-strobe-sparkee-nudisco-remix"} | ${219}
+		${"has query params"} | ${"https://soundcloud.com/hollmusic/hol-x-afk-critical?si=5e39c7c7e7764f32b325c514cf19757e"}         | ${"https://soundcloud.com/hollmusic/hol-x-afk-critical"}                       | ${189}
 	`(
 		"returns info for a SoundCloud link that $desc, $duration seconds long",
 		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
@@ -63,14 +74,20 @@ describe("Video details", () => {
 		}
 	);
 
-	test("returns infinite duration for a live stream", async () => {
-		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
-		const url = "https://www.youtube.com/watch?v=CmoUkFbk5VM";
-		const details = await getVideoDetails(url, null);
-		expect(details).toHaveProperty("url", url);
-		expect(details?.duration.seconds).toBeDefined();
-		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
-	});
+	test.each`
+		url                                                  | result
+		${"https://soundcloud.app.goo.gl/rDUoyrX52jAXwRDt6"} | ${"https://soundcloud.com/sparkeemusic/deadmau5-strobe-sparkee-nudisco-remix"}
+		${"https://soundcloud.app.goo.gl/sRGYg37yafy3GVoC7"} | ${"https://soundcloud.com/zoltrag/shirk-haunted"}
+		${"https://soundcloud.app.goo.gl/87dF3tEe353HkEBNA"} | ${"https://soundcloud.com/radiarc/ex-nocte"}
+		${"https://soundcloud.app.goo.gl/TFifgUex2VxKxwqZ7"} | ${"https://soundcloud.com/user-417212429-654736718/spy-vs-spy-c64-remix-lukhash"}
+	`(
+		"returns info for a link shared from SoundCloud's mobile app",
+		async ({ url, result }: { url: string; result: string }) => {
+			const details = await getVideoDetails(url, null);
+			expect(details).toHaveProperty("url", result);
+			expect(details?.duration.seconds).toBePositive();
+		}
+	);
 
 	// ** BandCamp
 

@@ -5,6 +5,7 @@ import { isString } from "../helpers/guards.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
+import fetch from "node-fetch";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
@@ -34,7 +35,7 @@ export interface VideoDetails {
  * @returns a `Promise` that resolves with the video details.
  */
 export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
-	const urlString = url.toString();
+	const urlString = url.href;
 	if (!ytdl.validateURL(urlString)) throw new InvalidYouTubeUrlError(url);
 
 	let info: ytdl.videoInfo;
@@ -78,12 +79,30 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
  * provided `url`.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
-	const urlString = url.toString();
+export async function getSoundCloudTrack(
+	url: URL,
+	logger: Logger | null = useLogger()
+): Promise<VideoDetails> {
+	// Handle redirects, because our SoundCloud client is silly
+	// (*.app.goo.gl links come from the app, and redirect to the song page)
+	let parsedUrl: URL;
+	try {
+		const response = await fetch(url, { redirect: "follow" });
+		parsedUrl = new URL(response.url);
+	} catch (error) {
+		logger?.error(
+			richErrorMessage(`Failed to follow redirects from '${url.href}'. Using the original.`, error)
+		);
+		parsedUrl = url;
+	}
+
+	// Remove query params, because our SoundCloud client is silly
+	parsedUrl.search = "";
+
 	const client = new SoundCloud.Client();
 	let song: SoundCloud.Song;
 	try {
-		song = await client.getSongInfo(urlString);
+		song = await client.getSongInfo(parsedUrl.href);
 	} catch (error) {
 		throw new VideoError(error);
 	}
