@@ -24,11 +24,11 @@ describe("User retrieving their own cooldown", () => {
 	const cooldownSeconds = 120;
 
 	beforeAll(() => {
-		jest.useFakeTimers("modern");
+		jest.useFakeTimers();
 	});
 
 	beforeEach(() => {
-		jest.setSystemTime(new Date("2021-03-14 11:24")); // date of first commit to Gamgee ^^
+		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 24)); // 2021-03-14 11:24, date of first commit to Gamgee ^^
 
 		context = ({
 			guild: "the-guild",
@@ -111,7 +111,7 @@ describe("User retrieving their own cooldown", () => {
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
-				sentAt: new Date("2021-03-14 11:21"),
+				sentAt: new Date(Date.UTC(2021, 3, 14, 11, 21)),
 				senderId: context.user.id,
 				isDone: false
 			});
@@ -167,7 +167,7 @@ describe("User retrieving their own cooldown", () => {
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
-				sentAt: new Date("2021-03-14 11:21"),
+				sentAt: new Date(Date.UTC(2021, 3, 14, 11, 21)),
 				senderId: context.user.id,
 				isDone: false
 			});
@@ -214,7 +214,7 @@ describe("User retrieving their own cooldown", () => {
 
 		// Second invocation, getting antsy (absolute time remains the same)
 		mockReplyPrivately.mockClear();
-		jest.setSystemTime(new Date("2021-03-14 11:24:10"));
+		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 24, 10));
 		relative = "1 minute, 50 seconds";
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -224,7 +224,7 @@ describe("User retrieving their own cooldown", () => {
 
 		// Third invocation, waited a while (absolute time remains the same)
 		mockReplyPrivately.mockClear();
-		jest.setSystemTime(new Date("2021-03-14 11:25:10"));
+		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 25, 10));
 		relative = "50 seconds";
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
