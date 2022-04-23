@@ -65,7 +65,7 @@ export async function handleMessageComponent(
 				content: "I don't recognize that entry. Sorry  :slight_frown:",
 				ephemeral: true
 			});
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(richErrorMessage(`Failed to reply to interaction`, error));
 		}
 		return;
@@ -82,7 +82,7 @@ export async function handleMessageComponent(
 			logger.debug("Marked an entry done.");
 			try {
 				await interaction.deferUpdate();
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(richErrorMessage(`Failed to defer update`, error));
 			}
 			break;
@@ -93,7 +93,7 @@ export async function handleMessageComponent(
 			logger.debug("Marked an entry undone");
 			try {
 				await interaction.deferUpdate();
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(richErrorMessage(`Failed to defer update`, error));
 			}
 			break;

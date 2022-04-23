@@ -81,7 +81,7 @@ async function preparePrivilegedCommands(
 
 				successfulPrivilegedPushes += 1;
 				return appCommand;
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(
 					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}`, error)
 				);

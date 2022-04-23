@@ -97,7 +97,7 @@ export async function handleInteraction(
 				if (interaction.deferred) {
 					try {
 						await interaction.editReply(options);
-					} catch (error: unknown) {
+					} catch (error) {
 						logger.error(richErrorMessage("Failed to edit reply to interaction.", error));
 						await interaction.followUp(options);
 					}
@@ -133,7 +133,7 @@ export async function handleInteraction(
 			},
 			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {
-				channel?.sendTyping();
+				void channel?.sendTyping();
 				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);
 			}
 		};

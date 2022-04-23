@@ -87,7 +87,7 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 	let info: ytdl.videoInfo;
 	try {
 		info = await ytdl.getBasicInfo(urlString);
-	} catch (error: unknown) {
+	} catch (error) {
 		const err = new VideoError(error);
 		switch (err.message) {
 			case "Status code: 410":
@@ -131,7 +131,7 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 	let song: SoundCloud.Song;
 	try {
 		song = await client.getSongInfo(urlString);
-	} catch (error: unknown) {
+	} catch (error) {
 		throw new VideoError(error);
 	}
 	return {
@@ -155,7 +155,7 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	let metadata: Metadata;
 	try {
 		metadata = await urlMetadata(url, { timeout: 5000 });
-	} catch (error: unknown) {
+	} catch (error) {
 		throw new VideoError(error);
 	}
 
@@ -250,7 +250,7 @@ export async function getVideoDetails(
 			getBandcampTrack(url),
 			getPonyFmTrack(url)
 		]);
-	} catch (error: unknown) {
+	} catch (error) {
 		logger?.error(
 			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error)
 		);

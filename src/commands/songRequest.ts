@@ -75,7 +75,7 @@ export const sr: GuildedCommand = {
 
 		try {
 			songUrl = new URL(songUrlString);
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
 			return reply(`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?`);
 		}

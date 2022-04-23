@@ -127,7 +127,7 @@ export async function pushEntryToQueue(
 		);
 
 		// If the database write fails...
-	} catch (error: unknown) {
+	} catch (error) {
 		await deleteMessage(queueMessage);
 		throw error;
 	}

@@ -84,7 +84,7 @@ try {
 				const message = await msg.fetch();
 				const storage = await useStorage(message.guild, logger);
 				await handleCommand(client, message, storage, logger);
-			} catch (error: unknown) {
+			} catch (error) {
 				const msgDescription = JSON.stringify(msg, undefined, 2);
 				logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
 			}
@@ -103,7 +103,7 @@ try {
 			try {
 				const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
 				await handleReactionAdd(reaction, user, logger);
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(richErrorMessage("Failed to handle reaction add.", error));
 			}
 		});
@@ -117,6 +117,6 @@ try {
 	void client.login(requireEnv("DISCORD_TOKEN"));
 
 	// Handle top-level errors
-} catch (error: unknown) {
+} catch (error) {
 	logger.error(richErrorMessage("Something bad has happened and we had to stop a command.", error));
 }

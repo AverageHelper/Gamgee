@@ -58,7 +58,7 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	const result: FetchResult = { test, startTime };
 	try {
 		await test.fn(new URL(test.urlString));
-	} catch (error: unknown) {
+	} catch (error) {
 		result.error = error as NodeJS.ErrnoException;
 	} finally {
 		result.endTime = Date.now();

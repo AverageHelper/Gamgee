@@ -26,7 +26,7 @@ export async function deleteMessage(
 	try {
 		await message.delete();
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to delete a message.", error));
 		return false;
 	}
@@ -49,7 +49,7 @@ export async function deleteMessageWithId(
 	try {
 		await channel.messages.delete(messageId);
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to delete a message.", error));
 		return false;
 	}
@@ -84,7 +84,7 @@ export async function bulkDeleteMessagesWithIds(
 		}
 
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		if (isDiscordError(error) && error.code === 50034) {
 			// Error 50034: You can only bulk delete messages that are under 14 days old.
 			logger.warn(error.message);

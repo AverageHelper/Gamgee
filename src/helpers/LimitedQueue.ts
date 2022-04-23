@@ -14,6 +14,20 @@ export default class LimitedQueue<T> {
 	}
 
 	/**
+	 * The current number of items in the queue.
+	 */
+	get length(): number {
+		return this.array().length;
+	}
+
+	/**
+	 * The maximum number of items allowed in the queue at any given time.
+	 */
+	get limit(): number {
+		return this.#limit;
+	}
+
+	/**
 	 * A read-only view of the queue's internal storage.
 	 *
 	 * Before any mutations take place on this value, it should first be `slice`d.
@@ -40,20 +54,6 @@ export default class LimitedQueue<T> {
 		thisArg?: unknown
 	): void {
 		return this.array().forEach(callbackfn, thisArg);
-	}
-
-	/**
-	 * The current number of items in the queue.
-	 */
-	get length(): number {
-		return this.array().length;
-	}
-
-	/**
-	 * The maximum number of items allowed in the queue at any given time.
-	 */
-	get limit(): number {
-		return this.#limit;
 	}
 
 	/**

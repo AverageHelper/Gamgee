@@ -43,7 +43,7 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 				content,
 				allowedMentions: { users: [context.user.id], repliedUser: true }
 			});
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	} else {
@@ -60,7 +60,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 	} else {
 		try {
 			await context.interaction.editReply("Done.");
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	}
@@ -95,7 +95,7 @@ async function acceptSongRequest({
 	if (context.type === "interaction") {
 		try {
 			await context.interaction.editReply("Done.");
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	}
@@ -214,7 +214,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		return await acceptSongRequest({ queueChannel, context, entry, logger });
 
 		// Handle fetch errors
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to process song request", error));
 		return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
 	}

@@ -53,7 +53,7 @@ async function sendDM(
 ): Promise<Discord.Message | null> {
 	try {
 		return await user.send(content);
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(
 			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
 		);
@@ -103,7 +103,7 @@ async function sendDMReply(
 			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
 		);
 		return null;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(
 			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
 		);
@@ -126,7 +126,7 @@ async function sendEphemeralReply(
 			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`
 		);
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage(`Failed to send ephemeral message.`, error));
 		return false;
 	}
@@ -202,7 +202,7 @@ export async function sendMessageInChannel(
 ): Promise<Discord.Message | null> {
 	try {
 		return await channel.send(content);
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage(`Failed to send message ${JSON.stringify(content)}.`, error));
 		return null;
 	}
@@ -231,7 +231,7 @@ export async function reply(
 			return await message.reply({ content, allowedMentions: { users: [] } });
 		}
 		return await message.reply({ ...content, allowedMentions: { users: [] } });
-	} catch (error: unknown) {
+	} catch (error) {
 		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
 			logger.debug(
 				`The message ${message.id} must have been deleted. Sending reply in same channel.`

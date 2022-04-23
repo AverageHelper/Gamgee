@@ -24,7 +24,7 @@ export const languages: GlobalCommand = {
 
 				// eslint-disable-next-line require-atomic-updates
 				cachedMetadata = await gitHubMetadata({ owner, repo });
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
 				return reply("Erm... I'm not sure :sweat_smile:");
 			}

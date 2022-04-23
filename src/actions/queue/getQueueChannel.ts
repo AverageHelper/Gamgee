@@ -17,7 +17,7 @@ async function getQueueChannelFromCommand(
 	let queueChannel: Discord.Channel | null;
 	try {
 		queueChannel = await context.client.channels.fetch(queueChannelId);
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to fetch queue channel.", error));
 		await context.reply(
 			"The configured channel doesn't exist. Have an administrator set the queue back up."
@@ -47,7 +47,7 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
 	let queueChannel: Discord.TextChannel;
 	try {
 		queueChannel = (await guild.client.channels.fetch(queueChannelId)) as Discord.TextChannel;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to fetch queue channel.", error));
 		return null;
 	}

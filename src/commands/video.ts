@@ -56,7 +56,7 @@ export const video: Command = {
 			return reply(composed(response));
 
 			// Handle fetch errors
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(richErrorMessage(`Failed to run query for URL: ${urlString}`, error));
 			return reply("That video query gave me an error.");
 		}
