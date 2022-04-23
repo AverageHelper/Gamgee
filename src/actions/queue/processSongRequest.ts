@@ -117,7 +117,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
 			getQueueConfig(queueChannel),
 			fetchLatestEntryFrom(senderId, queueChannel),
-			countAllEntriesFrom(senderId /* since: Date */, queueChannel)
+			countAllEntriesFrom(senderId, queueChannel)
 		]);
 
 		// ** If the user is blacklisted, reject!

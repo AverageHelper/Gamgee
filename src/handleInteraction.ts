@@ -131,7 +131,7 @@ export async function handleInteraction(
 				}
 				return (await interaction.followUp(options)) as Discord.Message;
 			},
-			deleteInvocation: () => Promise.resolve(undefined),
+			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {
 				channel?.sendTyping();
 				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);

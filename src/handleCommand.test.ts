@@ -157,7 +157,7 @@ describe("Command handler", () => {
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
 				await new Promise(resolve => setTimeout(resolve, 20));
 				if (mockCommandDefinitions.size > 13)
-					console.log("mockCommandDefinitions", mockCommandDefinitions);
+					logger.debug("mockCommandDefinitions", mockCommandDefinitions);
 				expect.assertions(mockCommandDefinitions.size);
 			},
 			10000
