@@ -1,5 +1,6 @@
 import type { CommandInteractionOption } from "discord.js";
 import type { Subcommand } from "../Command.js";
+import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
@@ -10,7 +11,7 @@ import {
 	resolveStringFromOption
 } from "../../helpers/optionResolvers.js";
 
-type LimitKey = "entry-duration" | "cooldown" | "count";
+type LimitKey = "queue-duration" | "entry-duration" | "cooldown" | "count";
 
 export interface QueueLimitArg {
 	name: string;
@@ -20,20 +21,26 @@ export interface QueueLimitArg {
 
 export const allLimits: Array<QueueLimitArg> = [
 	{
-		name: "Song Length",
-		value: "entry-duration",
-		description: "The maximum duration of a song submission."
+		name: "Number of Submissions",
+		value: "count",
+		description: "The maximum number of submissions that each user may submit."
 	},
 	{
 		name: "Submission Cooldown",
 		value: "cooldown",
 		description:
-			"The minimum amount of time that each user must wait between their own submissions."
+			"The minimum amount of time (in seconds) that each user must wait between their own submissions."
 	},
 	{
-		name: "Number of Submissions",
-		value: "count",
-		description: "The maximum number of submissions that each user may submit."
+		name: "Song Length",
+		value: "entry-duration",
+		description: "The maximum duration (in seconds) of a song submission."
+	},
+	{
+		name: "Total Queue Length",
+		value: "queue-duration",
+		description:
+			"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
 	}
 ];
 
@@ -95,12 +102,12 @@ export const limit: Subcommand = {
 		// Set limits on the queue
 		switch (key) {
 			case "entry-duration": {
-				// Limit each duration entry
+				// ** Limit each entry's duration
 				if (!valueOption) {
 					// Read the current limit
 					const value = config.entryDurationSeconds;
 					if (value === null) {
-						return reply(`There is no limit on entry duration.`);
+						return reply("There is no limit on entry duration.");
 					}
 					return reply(`Entry duration limit is **${durationString(value)}**`);
 				}
@@ -123,8 +130,37 @@ export const limit: Subcommand = {
 				return reply(composed(response));
 			}
 
+			case "queue-duration": {
+				// ** Limit the total queue duration
+				if (!valueOption) {
+					// Read the current limit
+					const value = config.queueDurationSeconds;
+					if (value === null) {
+						return reply("There is no limit on the queue's total duration.");
+					}
+					return reply(`Queue duration limit is **${durationString(value)}**`);
+				}
+
+				// Set a new limit
+				let value = resolveIntegerFromOption(valueOption);
+				if (value !== null && Number.isNaN(value)) {
+					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+				}
+				value = value === null || value <= 0 ? null : value;
+				await updateQueueConfig({ queueDurationSeconds: value }, queueChannel);
+
+				const response = createPartialString("Queue duration limit ");
+				if (value === null || value <= 0) {
+					pushBold("removed", response);
+				} else {
+					push("set to ", response);
+					pushBold(durationString(value), response);
+				}
+				return reply(composed(response));
+			}
+
 			case "cooldown": {
-				// Limit submission cooldown
+				// ** Limit submission cooldown
 				if (!valueOption) {
 					// Read the current limit
 					const value = config.cooldownSeconds;
@@ -154,7 +190,7 @@ export const limit: Subcommand = {
 			}
 
 			case "count": {
-				// Limit submission count per user
+				// ** Limit submission count per user
 				if (!valueOption) {
 					// Read the current limit
 					const value = config.submissionMaxQuantity;
@@ -182,6 +218,9 @@ export const limit: Subcommand = {
 				}
 				return reply(composed(response));
 			}
+
+			default:
+				assertUnreachable(key);
 		}
 	}
 };

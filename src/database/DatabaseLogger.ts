@@ -1,6 +1,9 @@
 import type { Logger as GamgeeLogger } from "../logger.js";
 import type { Logger as TypeORMLogger } from "typeorm";
 
+/**
+ * A TypeORM logger class that wraps a Winston logger instance.
+ */
 export class DatabaseLogger implements TypeORMLogger {
 	private readonly logger: GamgeeLogger;
 

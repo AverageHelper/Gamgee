@@ -61,10 +61,13 @@ async function sendDM(
 	}
 }
 
-function replyMessage(channel: { id: string } | null, content: string | null | undefined): string {
+function replyMessage(
+	source: Discord.TextBasedChannels | null,
+	content: string | null | undefined
+): string {
 	const msg = createPartialString();
-	if (channel) {
-		push(`(Reply from <#${channel.id}>)`, msg);
+	if (source && source.type !== "DM") {
+		push(`(Reply from <#${source.id}>)`, msg);
 		pushNewLine(msg);
 	}
 	push(content ?? "", msg);

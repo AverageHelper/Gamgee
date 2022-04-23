@@ -7,6 +7,6 @@ logger.info(`Node ${process.version}`);
 // 45-second timeout for E2E tests
 jest.setTimeout(45000);
 
-afterAll(() => {
-	logOut();
+afterAll(async () => {
+	await logOut();
 });
