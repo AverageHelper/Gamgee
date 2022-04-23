@@ -3,7 +3,6 @@ import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
-import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage } from "../../actions/messages/index.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getVideoDetails } from "../getVideoDetails.js";
@@ -19,6 +18,13 @@ import {
 	fetchLatestEntryFrom,
 	getQueueConfig
 } from "../../useQueueStorage.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushBold,
+	pushNewLine
+} from "../../helpers/composeStrings.js";
 
 export interface SongRequest {
 	songUrl: URL;
@@ -205,7 +211,12 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString();
 			push("That song is too long. The limit is ", rejection);
-			pushBold(`${durationString(maxDuration)}`, rejection);
+			pushBold(durationString(maxDuration), rejection);
+			push(", but this is ", rejection);
+			pushBold(durationString(seconds), rejection);
+			push(" long.", rejection);
+			pushNewLine(rejection);
+			push("Try something a bit shorter", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
 			return reject_public(context, composed(rejection));
 		}

@@ -3,6 +3,8 @@ import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 
 function shortDurationString(seconds: number): string {
 	if (Number.isNaN(seconds)) return "NaN";
+	if (!Number.isFinite(seconds)) return "Infinity";
+	if (typeof seconds !== "number" || seconds === undefined) return "NaN";
 	return new Date(1000 * seconds).toISOString().slice(11, 19);
 }
 
@@ -20,5 +22,7 @@ export function durationString(seconds: number, short: boolean = false): string 
 		return shortDurationString(seconds);
 	}
 	if (Number.isNaN(seconds)) return "NaN seconds";
+	if (!Number.isFinite(seconds)) return "Infinity seconds";
+	if (typeof seconds !== "number" || seconds === undefined) return "NaN seconds";
 	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
 }
