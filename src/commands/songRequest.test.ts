@@ -1,15 +1,16 @@
-jest.mock("../useGuildStorage");
-jest.mock("../useQueueStorage");
-jest.mock("../actions/queue/getQueueChannel");
-jest.mock("../actions/queue/useQueue");
-jest.mock("../actions/getVideoDetails");
+jest.mock("../useGuildStorage.js");
+jest.mock("../useQueueStorage.js");
+jest.mock("../actions/queue/getQueueChannel.js");
+jest.mock("../actions/queue/useQueue.js");
+jest.mock("../actions/getVideoDetails.js");
 
 import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
-import { pushEntryToQueue } from "../actions/queue/useQueue.js";
+import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
+const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
 const mockQueuePush = pushEntryToQueue as jest.Mock;
 
 import { isQueueOpen } from "../useGuildStorage.js";
@@ -67,6 +68,7 @@ describe("Song request via URL", () => {
 	mockQueueGetLatestUserEntry.mockResolvedValue(null);
 	mockQueueUserEntryCount.mockResolvedValue(0);
 
+	mockPlaytimeTotal.mockResolvedValue(0);
 	mockIsQueueOpen.mockResolvedValue(true);
 
 	const queueChannel = {
@@ -77,6 +79,7 @@ describe("Song request via URL", () => {
 
 	mockGetQueueConfig.mockResolvedValue({
 		entryDurationSeconds: null,
+		queueDurationSeconds: null,
 		cooldownSeconds: 600,
 		submissionMaxQuantity: null,
 		blacklistedUsers: []

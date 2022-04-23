@@ -2,6 +2,7 @@
 
 exports[`Help command describe pleb commands 1`] = `
 "Commands:
+\`?cooldown\` - Find out when you can submit again.
 \`?help\` - Print a handy help message.
 \`?howto\` - Print instructions for using the common queue commands.
 \`?languages\` - Print my core repository's language statistics.
@@ -9,6 +10,7 @@ exports[`Help command describe pleb commands 1`] = `
 \`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
 \`?ping\` - Ping my host server to check latency.
 \`?sr [url]\` - Submit a song to the queue.
+\`?stats\` - Get your personal queue statistics.
 \`?test\` - Make sure I still know how to talk to video services.
 \`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.
@@ -22,6 +24,7 @@ exports[`Help command describes all commands 1`] = `
     \`?config get <command_prefix>\` - Get the value of a configuration setting.
     \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
     \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Find out when you can submit again.
 \`?help\` - Print a handy help message.
 \`?howto\` - Print instructions for using the common queue commands.
 \`?languages\` - Print my core repository's language statistics.
@@ -35,10 +38,11 @@ exports[`Help command describes all commands 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit <entry-duration | cooldown | count> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit <count | cooldown | entry-duration | queue-duration> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?sr [url]\` - Submit a song to the queue.
+\`?stats\` - Get your personal queue statistics.
 \`?test\` - Make sure I still know how to talk to video services.
 \`?t\` - Start a typing indicator.
 \`?version\` - Display the bot's current codebase version.

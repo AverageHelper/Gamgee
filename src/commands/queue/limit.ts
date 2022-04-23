@@ -21,15 +21,9 @@ export interface QueueLimitArg {
 
 export const allLimits: Array<QueueLimitArg> = [
 	{
-		name: "Total Queue Length",
-		value: "queue-duration",
-		description:
-			"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
-	},
-	{
-		name: "Song Length",
-		value: "entry-duration",
-		description: "The maximum duration (in seconds) of a song submission."
+		name: "Number of Submissions",
+		value: "count",
+		description: "The maximum number of submissions that each user may submit."
 	},
 	{
 		name: "Submission Cooldown",
@@ -38,9 +32,15 @@ export const allLimits: Array<QueueLimitArg> = [
 			"The minimum amount of time (in seconds) that each user must wait between their own submissions."
 	},
 	{
-		name: "Number of Submissions",
-		value: "count",
-		description: "The maximum number of submissions that each user may submit."
+		name: "Song Length",
+		value: "entry-duration",
+		description: "The maximum duration (in seconds) of a song submission."
+	},
+	{
+		name: "Total Queue Length",
+		value: "queue-duration",
+		description:
+			"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
 	}
 ];
 
