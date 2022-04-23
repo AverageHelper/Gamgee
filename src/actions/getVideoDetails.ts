@@ -2,13 +2,19 @@ import type { Logger } from "../logger.js";
 import type { Metadata } from "../helpers/urlMetadata/index.js";
 import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 import { isString } from "../helpers/guards.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
-import isError from "../helpers/isError.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
+import {
+	InvalidPonyFmUrlError,
+	InvalidYouTubeUrlError,
+	NotFoundError,
+	UnavailableError,
+	VideoError
+} from "../errors/index.js";
 
 export interface VideoDetails {
 	url: string;
@@ -16,59 +22,6 @@ export interface VideoDetails {
 	duration: {
 		seconds: number;
 	};
-}
-
-export class VideoError extends Error implements NodeJS.ErrnoException {
-	code = "500";
-
-	constructor(error: unknown) {
-		super("Unknown error");
-
-		if (isError(error)) {
-			this.message = error.message;
-			this.code = error.code ?? "500";
-			this.stack = error.stack;
-		} else {
-			this.message = JSON.stringify(error);
-		}
-		this.name = "VideoError";
-	}
-}
-
-export class NotFoundError extends VideoError {
-	code = "404";
-
-	constructor(url: URL) {
-		super(`No video found at ${url.toString()}`);
-		this.name = "NotFoundError";
-	}
-}
-
-export class UnavailableError extends VideoError {
-	code = "410";
-
-	constructor(url: URL) {
-		super(`The video at this URL is not available: ${url.toString()}`);
-		this.name = "UnavailableError";
-	}
-}
-
-export class InvalidYouTubeUrlError extends VideoError {
-	code = "422";
-
-	constructor(url: URL) {
-		super(`This URL isn't a valid YouTube video URL: ${url.toString()}`);
-		this.name = "InvalidYouTubeUrlError";
-	}
-}
-
-export class InvalidPonyFmUrlError extends VideoError {
-	code = "422";
-
-	constructor(url: URL) {
-		super(`This URL isn't a valid Pony.fm song URL: ${url.toString()}`);
-		this.name = "InvalidPonyFmUrlError";
-	}
 }
 
 /**
