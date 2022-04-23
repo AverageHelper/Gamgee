@@ -40,32 +40,28 @@ export const cooldown: Command = {
 			countAllEntriesFrom(user.id, queueChannel)
 		]);
 
+		if (!latestSubmission) {
+			return replyPrivately(msgSubmitImmediately);
+		}
+
 		const userCanSubmitAgainLater =
 			config.submissionMaxQuantity === null ||
 			(config.submissionMaxQuantity > 0 && userSubmissionCount < config.submissionMaxQuantity);
 
 		if (userCanSubmitAgainLater) {
 			// There's still time!
-			const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
-			const timeSinceLatest =
-				latestTimestamp !== null //
-					? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND
-					: null;
-			const timeToWait =
-				config.cooldownSeconds !== null && //
-				config.cooldownSeconds > 0 &&
-				timeSinceLatest !== null
-					? Math.max(0, config.cooldownSeconds - timeSinceLatest)
-					: 0;
+			const latestTimestamp = latestSubmission.sentAt.getTime();
+			const timeSinceLatest = (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND;
+			const timeToWait = Math.max(0, config.cooldownSeconds - timeSinceLatest);
 
 			if (timeToWait <= 0) {
 				return replyPrivately(msgSubmitImmediately);
 			}
 
 			const absolute = Math.round(
-				((latestTimestamp ?? Date.now()) + timeToWait) / MILLISECONDS_IN_SECOND
+				latestTimestamp / MILLISECONDS_IN_SECOND + config.cooldownSeconds
 			);
-			const relative = `${durationString(timeToWait)}`;
+			const relative = durationString(timeToWait);
 
 			const msg = createPartialString("You may submit in ");
 			pushBold(relative, msg);

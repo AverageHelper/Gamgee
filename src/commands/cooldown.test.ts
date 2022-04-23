@@ -107,6 +107,14 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: number;
 		}) => {
 			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
+			mockQueueGetLatestUserEntry.mockResolvedValue({
+				queueMessageId: "message-1",
+				url: "https://example.com",
+				seconds: 500,
+				sentAt: new Date("2021-03-14 11:21"),
+				senderId: context.user.id,
+				isDone: false
+			});
 			mockGetQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationSeconds: null,
@@ -155,6 +163,14 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: number;
 		}) => {
 			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
+			mockQueueGetLatestUserEntry.mockResolvedValue({
+				queueMessageId: "message-1",
+				url: "https://example.com",
+				seconds: 500,
+				sentAt: new Date("2021-03-14 11:21"),
+				senderId: context.user.id,
+				isDone: false
+			});
 			mockGetQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationSeconds: null,
@@ -171,15 +187,15 @@ describe("User retrieving their own cooldown", () => {
 	test("cooldown wait time is formatted correctly after multiple invocations", async () => {
 		const submissionMaxQuantity = 3;
 		const userSubmissions = 1;
-		const absolute = "1615742640";
+		const absolute = "1615742760";
 		let relative = "2 minutes";
-		mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
 		mockGetQueueConfig.mockResolvedValue({
 			cooldownSeconds,
 			entryDurationSeconds: null,
 			submissionMaxQuantity,
 			blacklistedUsers: []
 		});
+		mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
 		mockQueueGetLatestUserEntry.mockResolvedValue({
 			queueMessageId: "message-1",
 			url: "https://example.com",
