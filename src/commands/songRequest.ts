@@ -61,8 +61,8 @@ export const sr: GuildedCommand = {
 			return;
 		}
 
-		const isQueueNotOpen = !(await isQueueOpen(guild));
-		if (isQueueNotOpen) {
+		const isOpen = await isQueueOpen(guild);
+		if (!isOpen) {
 			return reply({
 				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
 				ephemeral: true

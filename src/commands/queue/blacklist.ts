@@ -54,7 +54,7 @@ export const blacklist: Subcommand = {
 			}
 
 			const queueConfig = await getQueueConfig(queueChannel);
-			const blacklistedUsers = queueConfig.blacklistedUsers.map(user => user.id);
+			const blacklistedUsers = queueConfig.blacklistedUsers?.map(user => user.id) ?? [];
 
 			const prefix = await getConfigCommandPrefix(storage);
 			const guildName = guild.name.trim();

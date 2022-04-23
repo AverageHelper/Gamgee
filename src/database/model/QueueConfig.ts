@@ -26,7 +26,7 @@ export class QueueConfig {
 		nullable: false
 	})
 	@JoinTable()
-	blacklistedUsers!: Array<User>;
+	blacklistedUsers?: Array<User>;
 	// FIXME: `blacklistedUsers` is undefined on a fresh database
 
 	constructor(channelId: string, config: Omit<QueueConfig, "channelId">);

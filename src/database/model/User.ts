@@ -7,7 +7,7 @@ export class User {
 	id: string;
 
 	/** Queues from which the user is barred from submitting requests. */
-	@ManyToMany(() => QueueConfig, queue => queue.blacklistedUsers, {
+	@ManyToMany(() => QueueConfig, queue => queue.blacklistedUsers ?? [], {
 		nullable: false
 	})
 	blacklistedQueues!: Array<QueueConfig>;

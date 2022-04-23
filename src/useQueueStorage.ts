@@ -87,7 +87,7 @@ export async function updateQueueConfig(
 
 		let blacklistedUsers: Array<User>;
 		if (config.blacklistedUsers === undefined) {
-			blacklistedUsers = oldConfig.blacklistedUsers;
+			blacklistedUsers = oldConfig.blacklistedUsers ?? [];
 		} else {
 			blacklistedUsers = config.blacklistedUsers;
 		}
@@ -458,6 +458,7 @@ export async function blacklistUser(
 ): Promise<void> {
 	await useTransaction(async transaction => {
 		const queue = await getQueueConfig(queueChannel, transaction);
+		queue.blacklistedUsers ??= [];
 
 		// The user is already blacklisted
 		if (queue.blacklistedUsers.some(user => user.id === userId)) return;
@@ -491,7 +492,7 @@ export async function whitelistUser(
 	await useTransaction(async transaction => {
 		const queue = await getQueueConfig(queueChannel, transaction);
 
-		queue.blacklistedUsers = queue.blacklistedUsers.filter(user => user.id !== userId);
+		queue.blacklistedUsers = queue.blacklistedUsers?.filter(user => user.id !== userId);
 		// TODO: Make sure this actually saves. (We used to call `save` on the repo iteself)
 		await transaction.save(queue);
 	});
