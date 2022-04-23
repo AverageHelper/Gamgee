@@ -41,5 +41,3 @@ export const get: Subcommand = {
 		});
 	}
 };
-
-export default get;

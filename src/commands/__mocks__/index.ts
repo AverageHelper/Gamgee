@@ -7,29 +7,22 @@ interface MockCommand {
 
 export { invokeCommand } from "../../actions/invokeCommand.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/consistent-type-imports
-const { resolveAlias } = jest.requireActual("../index.js") as typeof import("../index.js");
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+const { resolveAlias, allCommands: realAllCommands } = jest.requireActual<
+	typeof import("../index.js")
+>("../index.js");
+/* eslint-enable @typescript-eslint/consistent-type-imports */
+
 export { resolveAlias };
 
 export const allCommands = new Discord.Collection<string, MockCommand>();
 
-function add(commandName: string): void {
+function addMock(commandName: string): void {
 	allCommands.set(commandName, {
 		name: commandName,
 		execute: jest.fn().mockResolvedValue(undefined)
 	});
 }
 
-add("config");
-add("help");
-add("howto");
-add("languages");
-add("limits");
-add("now-playing");
-add("ping");
-add("test");
-add("quo");
-add("sr");
-add("t");
-add("version");
-add("video");
+// Add all commands to our mock commands list
+realAllCommands.forEach((_, key) => addMock(key));

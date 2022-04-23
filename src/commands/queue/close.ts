@@ -1,6 +1,6 @@
 import type { GuildedSubcommand } from "../Command.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 export const close: GuildedSubcommand = {
 	name: "close",
@@ -40,5 +40,3 @@ export const close: GuildedSubcommand = {
 		await followUp({ content: "The queue is now closed. :wave:", reply: false });
 	}
 };
-
-export default close;

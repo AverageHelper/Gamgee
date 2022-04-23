@@ -19,5 +19,3 @@ export function randomElementOfArray<T>(array: Array<T>): T | undefined;
 export function randomElementOfArray<T>(array: Array<T>): T | undefined {
 	return array[randomInt(array.length)];
 }
-
-export default randomElementOfArray;

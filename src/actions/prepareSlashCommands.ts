@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
 import { allCommands, resolvePermissions } from "../commands/index.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { useLogger } from "../logger.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
 
 const testMode: boolean = false;
 const logger = useLogger("verbose");
@@ -32,7 +32,7 @@ async function prepareUnprivilegedCommands(
 		`Creating ${unprivilegedCommands.length} command${pluralOf(unprivilegedCommands)}:`
 	);
 	unprivilegedCommands.forEach(command => {
-		logger.verbose(`\t'/${command.name}'  (requires guild, no privilege requirements)`);
+		logger.verbose(`\t'/${command.name}'  (requires guild, any privilege)`);
 	});
 
 	if (!testMode) {
@@ -56,7 +56,7 @@ async function preparePrivilegedCommands(
 					? Array.isArray(cmd.permissions)
 						? cmd.permissions.join(", ")
 						: "custom permissions"
-					: "no privilege requirements";
+					: "any privilege";
 				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
 				if (!testMode) {
 					appCommand = await guild.commands.create(cmd);
@@ -81,7 +81,7 @@ async function preparePrivilegedCommands(
 
 				successfulPrivilegedPushes += 1;
 				return appCommand;
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(
 					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}`, error)
 				);

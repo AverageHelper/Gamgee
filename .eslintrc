@@ -31,7 +31,6 @@
 		"consistent-return": "off", // TS handles this
 		"no-duplicate-imports": "off", // typescript-eslint handles this
 		"@typescript-eslint/no-duplicate-imports": "error",
-		"@typescript-eslint/no-implicit-any-catch": "error",
 		"@typescript-eslint/no-empty-interface": "off",
 		"@typescript-eslint/require-await": "warn",
 		"@typescript-eslint/no-inferrable-types": "off",

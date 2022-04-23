@@ -13,5 +13,3 @@ export const teardown: Subcommand = {
 		return reply("Queue deleted.");
 	}
 };
-
-export default teardown;

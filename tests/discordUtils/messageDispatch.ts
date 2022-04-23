@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import LimitedQueue from "../../src/helpers/LimitedQueue.js";
+import { LimitedQueue } from "../../src/helpers/LimitedQueue.js";
 import { messageWaiters, messageDeleteWaiters } from "./testerClient.js";
 import { useTestLogger } from "../testUtils/logger.js";
 

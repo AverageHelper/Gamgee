@@ -11,12 +11,12 @@ import { fetchAllEntries, clearEntries } from "../../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;
 const mockQueueClear = clearEntries as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
-import restart from "./restart.js";
+import { restart } from "./restart.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);

@@ -1,8 +1,9 @@
 import type { Subcommand } from "../Command.js";
 import { countAllEntries } from "../../useQueueStorage.js";
+import { durationString } from "../../helpers/durationString.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { MessageEmbed } from "discord.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
-import durationString from "../../helpers/durationString.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import {
 	playtimeAverageInQueue,
 	playtimeRemainingInQueue,
@@ -30,22 +31,32 @@ export const stats: Subcommand = {
 			playtimeAverageInQueue(queueChannel)
 		]);
 		const playtimePlayed = playtimeTotal - playtimeRemaining;
+
+		const formattedPlaytimeAverage = durationString(playtimeAverage, true);
+		const formattedPlaytimePlayed = durationString(playtimePlayed, true);
+		const formattedPlaytimeTotal = durationString(playtimeTotal, true);
+		const formattedPlaytimeRemaining = durationString(playtimeRemaining, true);
+
 		logger.info(
-			`Info requested: ${durationString(playtimePlayed)} of ${durationString(
-				playtimeTotal
-			)} played. (${durationString(playtimeRemaining)} remaining in queue)`
+			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`
 		);
 
-		const embed = new MessageEmbed().setTitle(`Statistics for #${queueChannel.name}`);
-		if (count === 0) {
-			embed.setDescription("Empty queue");
-		} else {
+		const embed = new MessageEmbed() //
+			.setTitle("Queue Statistics")
+			.setDescription(`<#${queueChannel.id}>`);
+
+		try {
 			embed.addField("Total Entries", `${count}`);
-			embed.addField("Average Song Playtime", durationString(playtimeAverage, true));
-			embed.addField("Total Playtime", durationString(playtimeTotal, true));
-			embed.addField("Played", `${durationString(playtimePlayed, true)}`, true);
-			embed.addField("Remaining Playtime", durationString(playtimeRemaining, true), true);
+			embed.addField("Average Song Playtime", formattedPlaytimeAverage);
+			embed.addField("Total Playtime", formattedPlaytimeTotal);
+			embed.addField("Played", `${formattedPlaytimePlayed}`, true);
+			embed.addField("Remaining Playtime", formattedPlaytimeRemaining, true);
 			// TODO: Include the number of submitters who used up their count limit
+		} catch (error) {
+			logger.error(richErrorMessage("Failed to generate queue statistics message.", error));
+			return replyPrivately(
+				"Something went wrong with setting up the statistics. Sorry :frowning:"
+			);
 		}
 
 		await Promise.all([
@@ -54,5 +65,3 @@ export const stats: Subcommand = {
 		]);
 	}
 };
-
-export default stats;

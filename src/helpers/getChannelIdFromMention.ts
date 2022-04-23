@@ -24,5 +24,3 @@ export function getChannelIdFromMention(mention: string): Snowflake | null {
 
 	return null;
 }
-
-export default getChannelIdFromMention;

@@ -7,5 +7,3 @@ export class EnvVariableNotFoundError extends Error {
 		this.name = "EnvVariableNotFoundError";
 	}
 }
-
-export default EnvVariableNotFoundError;

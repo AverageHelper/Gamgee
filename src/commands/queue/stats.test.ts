@@ -2,7 +2,7 @@ jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../actions/queue/useQueue");
 
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import { countAllEntries } from "../../useQueueStorage.js";
@@ -18,8 +18,8 @@ const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
 const mockPlaytimeAverage = playtimeAverageInQueue as jest.Mock;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
+import { stats } from "./stats.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
-import stats from "./stats.js";
 
 const logger = useTestLogger();
 

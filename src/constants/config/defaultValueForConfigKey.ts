@@ -16,5 +16,3 @@ export function defaultValueForConfigKey(key: ConfigKey): ConfigValue {
 			return "?";
 	}
 }
-
-export default defaultValueForConfigKey;

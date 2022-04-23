@@ -1,5 +1,5 @@
 import type { Command } from "./Command.js";
-import describeAllCommands from "../actions/describeAllCommands.js";
+import { describeAllCommands } from "../actions/describeAllCommands.js";
 
 export const help: Command = {
 	name: "help",
@@ -13,5 +13,3 @@ export const help: Command = {
 		return context.replyPrivately(`Commands:\n${descriptions}`);
 	}
 };
-
-export default help;

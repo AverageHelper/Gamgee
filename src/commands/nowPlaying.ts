@@ -76,5 +76,3 @@ export const nowPlaying: Command = {
 		return replyPrivately(composed(response), true);
 	}
 };
-
-export default nowPlaying;

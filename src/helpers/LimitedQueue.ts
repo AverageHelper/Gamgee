@@ -2,8 +2,9 @@
 
 /**
  * An object which manages an array like a queue with a limited number of total items.
+ * @deprecated
  */
-export default class LimitedQueue<T> {
+export class LimitedQueue<T> {
 	#storage: Array<T>;
 	#limit: number;
 
@@ -11,6 +12,20 @@ export default class LimitedQueue<T> {
 		if (limit < 1) throw new Error("Cannot create a `LimitedQueue` with max size less than 1.");
 		this.#limit = limit;
 		this.#storage = [];
+	}
+
+	/**
+	 * The current number of items in the queue.
+	 */
+	get length(): number {
+		return this.array().length;
+	}
+
+	/**
+	 * The maximum number of items allowed in the queue at any given time.
+	 */
+	get limit(): number {
+		return this.#limit;
 	}
 
 	/**
@@ -40,20 +55,6 @@ export default class LimitedQueue<T> {
 		thisArg?: unknown
 	): void {
 		return this.array().forEach(callbackfn, thisArg);
-	}
-
-	/**
-	 * The current number of items in the queue.
-	 */
-	get length(): number {
-		return this.array().length;
-	}
-
-	/**
-	 * The maximum number of items allowed in the queue at any given time.
-	 */
-	get limit(): number {
-		return this.#limit;
 	}
 
 	/**

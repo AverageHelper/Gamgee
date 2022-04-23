@@ -38,5 +38,3 @@ export const ping: Command = {
 		logger.info(`Sent ping response in ${responseTime}ms. API latency is ${apiLatency}ms.`);
 	}
 };
-
-export default ping;

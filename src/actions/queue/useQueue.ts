@@ -4,7 +4,7 @@ import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import durationString from "../../helpers/durationString.js";
+import { durationString } from "../../helpers/durationString.js";
 import {
 	addToHaveCalledNowPlaying,
 	createEntry,
@@ -41,14 +41,12 @@ function queueMessageFromEntry(
 	} else {
 		push(entry.url, partialContent);
 	}
-	pushNewLine(partialContent);
 
 	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
 	const likeMessage = `${likeCount} ${likeCount === 1 ? "person" : "people"} asked for this link.`;
-	if (likeCount === 0) {
-		push(likeMessage, partialContent);
-	} else {
+	if (likeCount > 0) {
+		pushNewLine(partialContent);
 		pushBold(likeMessage, partialContent);
 	}
 
@@ -127,7 +125,7 @@ export async function pushEntryToQueue(
 		);
 
 		// If the database write fails...
-	} catch (error: unknown) {
+	} catch (error) {
 		await deleteMessage(queueMessage);
 		throw error;
 	}

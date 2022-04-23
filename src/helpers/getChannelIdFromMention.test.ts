@@ -1,4 +1,4 @@
-import getChannelIdFromMention from "./getChannelIdFromMention.js";
+import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 
 describe("Channel ID from mention string", () => {
 	test("returns null from an empty string", () => {

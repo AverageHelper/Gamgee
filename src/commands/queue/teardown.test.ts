@@ -4,8 +4,8 @@ import { setQueueChannel } from "../../useGuildStorage.js";
 const mockSetQueueChannel = setQueueChannel as jest.Mock;
 
 import type { GuildedCommandContext } from "../Command.js";
+import { teardown } from "./teardown.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
-import teardown from "./teardown.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 

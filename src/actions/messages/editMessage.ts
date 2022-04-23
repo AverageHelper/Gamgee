@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
@@ -21,7 +21,7 @@ export async function editMessage(
 	try {
 		await message.edit(options);
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to edit a message.", error));
 		return false;
 	}
@@ -61,7 +61,7 @@ export async function suppressEmbedsForMessage(
 		} else {
 			await editMessage(message, { content: stopEscapingUriInString(message.content) });
 		}
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Cannot suppress message embeds.", error));
 	}
 }

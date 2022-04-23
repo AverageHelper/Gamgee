@@ -1,9 +1,9 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
-import chunk from "lodash/chunk.js";
-import isError from "../../helpers/isError.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { isDiscordError } from "../../helpers/isError.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
+import chunk from "lodash/chunk.js";
 
 const logger = useLogger();
 
@@ -26,7 +26,7 @@ export async function deleteMessage(
 	try {
 		await message.delete();
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to delete a message.", error));
 		return false;
 	}
@@ -49,7 +49,7 @@ export async function deleteMessageWithId(
 	try {
 		await channel.messages.delete(messageId);
 		return true;
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to delete a message.", error));
 		return false;
 	}
@@ -84,11 +84,11 @@ export async function bulkDeleteMessagesWithIds(
 		}
 
 		return true;
-	} catch (error: unknown) {
-		if (isError(error) && error.code === "50034") {
+	} catch (error) {
+		if (isDiscordError(error) && error.code === 50034) {
 			// Error 50034: You can only bulk delete messages that are under 14 days old.
-			logger.info(error.message);
-			await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel)));
+			logger.warn(error.message);
+			await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel))); // TODO: Handle these errors
 			return true;
 		}
 

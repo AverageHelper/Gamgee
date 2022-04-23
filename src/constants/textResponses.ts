@@ -168,6 +168,8 @@ export const phrases: ResponseRepository = [
 	"Are we there yet?",
 	"Are you sure you typed your message correctly? All I see is a bunch of words",
 	"Based",
+	"Based on what?",
+	"Before was was _was,_ was was _is._",
 	"Bit of a tongue twister",
 	"Bloatware!? I don't see any, wdym??",
 	"Bloatware!? I heard that's just a Windows thing",
@@ -296,7 +298,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 192 of these
+]; // 194 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

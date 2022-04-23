@@ -1,10 +1,10 @@
 import type { CommandInteractionOption } from "discord.js";
 import type { Subcommand } from "../Command.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
+import { durationString } from "../../helpers/durationString.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
-import durationString from "../../helpers/durationString.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
@@ -81,7 +81,7 @@ export const limit: Subcommand = {
 		const valueOption: CommandInteractionOption | undefined = options.data[1];
 
 		if (!keyOption) {
-			const { default: limits } = await import("../limits.js");
+			const { limits } = await import("../limits.js");
 			return limits.execute(context);
 		}
 
@@ -185,5 +185,3 @@ export const limit: Subcommand = {
 		}
 	}
 };
-
-export default limit;

@@ -13,8 +13,8 @@ export const howto: GuildedCommand = {
 	description: "Print instructions for using the common queue commands.",
 	requiresGuild: true,
 	async execute({ storage, type, reply }) {
-		const sr = (await import("./songRequest.js")).default;
-		const nowPlaying = (await import("./nowPlaying.js")).default;
+		const { sr } = await import("./songRequest.js");
+		const { nowPlaying } = await import("./nowPlaying.js");
 
 		// Print the standard help
 		const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
@@ -47,5 +47,3 @@ export const howto: GuildedCommand = {
 		return reply(composed(msg));
 	}
 };
-
-export default howto;

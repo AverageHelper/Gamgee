@@ -53,5 +53,3 @@ export const setup: Subcommand = {
 		return reply({ content: `New queue set up in <#${newQueueChannel.id}>`, ephemeral: true });
 	}
 };
-
-export default setup;
