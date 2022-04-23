@@ -24,7 +24,7 @@ describe("User retrieving their own cooldown", () => {
 	const cooldownSeconds = 120;
 
 	beforeAll(() => {
-		jest.useFakeTimers();
+		jest.useFakeTimers("modern");
 	});
 
 	beforeEach(() => {
