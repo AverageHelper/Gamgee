@@ -15,11 +15,11 @@ const mockQueuePush = pushEntryToQueue as jest.Mock;
 import { isQueueOpen } from "../useGuildStorage.js";
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import { randomInt } from "../helpers/randomInt.js";
-import getVideoDetails from "../actions/getVideoDetails.js";
+import { getVideoDetails } from "../actions/getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
 	// Enough uncertainty that *something* should go out of order if it's going to
@@ -35,10 +35,10 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type { GuildedCommandContext } from "./Command.js";
+import { sr as songRequest } from "./songRequest.js";
 import { URL } from "url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 import Discord from "discord.js";
-import songRequest from "./songRequest.js";
 
 const logger = useTestLogger("error");
 

@@ -4,7 +4,7 @@ import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import durationString from "../../helpers/durationString.js";
+import { durationString } from "../../helpers/durationString.js";
 import {
 	addToHaveCalledNowPlaying,
 	createEntry,

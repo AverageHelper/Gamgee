@@ -6,11 +6,11 @@ import { handleInteraction } from "./handleInteraction.js";
 import { handleMessageComponent } from "./handleMessageComponent.js";
 import { handleReactionAdd } from "./handleReactionAdd.js";
 import { hideBin } from "yargs/helpers";
+import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { useLogger } from "./logger.js";
 import { useStorage } from "./configStorage.js";
 import { version as gamgeeVersion } from "./version.js";
 import Discord from "discord.js";
-import richErrorMessage from "./helpers/richErrorMessage.js";
 import yargs from "yargs";
 import {
 	prepareSlashCommandsThenExit,

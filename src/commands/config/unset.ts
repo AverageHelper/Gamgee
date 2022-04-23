@@ -43,5 +43,3 @@ export const unset: Subcommand = {
 		});
 	}
 };
-
-export default unset;

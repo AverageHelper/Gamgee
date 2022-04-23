@@ -1,10 +1,10 @@
 import type { Command, Subcommand } from "../Command.js";
+import { get } from "./get.js";
 import { invokeCommand } from "../../actions/invokeCommand.js";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
+import { set } from "./set.js";
+import { unset } from "./unset.js";
 import Discord from "discord.js";
-import get from "./get.js";
-import set from "./set.js";
-import unset from "./unset.js";
 
 const namedSubcommands: NonEmptyArray<Subcommand> = [get, set, unset];
 
@@ -55,5 +55,3 @@ export const config: Command = {
 		return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
 	}
 };
-
-export default config;

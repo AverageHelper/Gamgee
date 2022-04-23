@@ -140,5 +140,3 @@ function describeParameters(
 			push(composed(subDesc), cmdDesc);
 		});
 }
-
-export default describeAllCommands;

@@ -3,11 +3,11 @@ import type { GuildedCommand } from "./Command.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
+import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "url";
 import { useJobQueue } from "@averagehelper/job-queue";
-import processRequest from "../actions/queue/processSongRequest.js";
 
 export const sr: GuildedCommand = {
 	name: "sr",
@@ -49,8 +49,8 @@ export const sr: GuildedCommand = {
 
 		const firstOption = options.data[0];
 		if (!firstOption) {
-			const howTo = (await import("./howto.js")).default;
-			return howTo.execute(context);
+			const { howto } = await import("./howto.js");
+			return howto.execute(context);
 		}
 
 		if (channel?.id === queueChannel.id) {
@@ -93,10 +93,8 @@ export const sr: GuildedCommand = {
 		}
 
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");
-		requestQueue.process(processRequest); // Same function instance, so a nonce call
+		requestQueue.process(processSongRequest); // Same function instance, so a nonce call
 
 		requestQueue.createJob({ songUrl, context, queueChannel, publicPreemptiveResponse, logger });
 	}
 };
-
-export default sr;

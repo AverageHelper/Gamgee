@@ -1,8 +1,8 @@
 import type Discord from "discord.js";
-import getUserIdFromMention from "./getUserIdFromMention.js";
+import { getUserIdFromMention } from "./getUserIdFromMention.js";
 import { getUserWithId } from "./getUserWithId.js";
+import { logUser } from "./logUser.js";
 import { useLogger } from "../logger.js";
-import logUser from "./logUser.js";
 
 const logger = useLogger();
 
@@ -28,5 +28,3 @@ export async function getUserFromMention(
 	logger.debug(`Found user ${logUser(user)}`);
 	return user;
 }
-
-export default getUserFromMention;

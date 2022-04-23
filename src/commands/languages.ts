@@ -1,7 +1,7 @@
 import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
@@ -65,5 +65,3 @@ export const languages: GlobalCommand = {
 		return reply(`I'm made of ${last}. :blush:`);
 	}
 };
-
-export default languages;

@@ -1,11 +1,11 @@
 import type { Subcommand } from "../Command.js";
 import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
+import { logUser } from "../../helpers/logUser.js";
+import { sr as parentCommand } from "../songRequest.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
-import logUser from "../../helpers/logUser.js";
-import parentCommand from "../songRequest.js";
-import whitelist from "./whitelist.js";
+import { whitelist } from "./whitelist.js";
 import {
 	composed,
 	createPartialString,
@@ -121,5 +121,3 @@ export const blacklist: Subcommand = {
 		});
 	}
 };
-
-export default blacklist;

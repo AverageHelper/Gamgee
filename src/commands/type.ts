@@ -1,6 +1,6 @@
 import type { Command } from "./Command.js";
 
-export const type: Command = {
+export const t: Command = {
 	name: "t",
 	description: "Start a typing indicator.",
 	requiresGuild: false,
@@ -25,5 +25,3 @@ export const type: Command = {
 		logger.debug(`Finished typing in channel ${channel.id}`);
 	}
 };
-
-export default type;

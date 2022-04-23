@@ -22,5 +22,3 @@ export function durationString(seconds: number, short: boolean = false): string 
 	if (Number.isNaN(seconds)) return "NaN seconds";
 	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
 }
-
-export default durationString;

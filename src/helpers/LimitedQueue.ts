@@ -2,8 +2,9 @@
 
 /**
  * An object which manages an array like a queue with a limited number of total items.
+ * @deprecated
  */
-export default class LimitedQueue<T> {
+export class LimitedQueue<T> {
 	#storage: Array<T>;
 	#limit: number;
 

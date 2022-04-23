@@ -1,7 +1,9 @@
 import type { Storage } from "../../configStorage.js";
 import type { ConfigKey, ConfigValue } from "../../constants/config/index.js";
-import { CONFIG_KEY_COMMAND_PREFIX } from "../../constants/config/index.js";
-import defaultValueForConfigKey from "../../constants/config/defaultValueForConfigKey.js";
+import {
+	CONFIG_KEY_COMMAND_PREFIX,
+	defaultValueForConfigKey
+} from "../../constants/config/index.js";
 
 export async function getConfigValue(
 	storage: Storage | null,

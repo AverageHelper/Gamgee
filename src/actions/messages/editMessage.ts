@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 
 const logger = useLogger();

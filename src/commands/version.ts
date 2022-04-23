@@ -30,5 +30,3 @@ export const version: Command = {
 		return reply(`I'm currently running Gamgee Core v${gamgeeVersion}.  ${celebration}`);
 	}
 };
-
-export default version;

@@ -1,9 +1,9 @@
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
+import { durationString } from "../helpers/durationString.js";
+import { getVideoDetails } from "../actions/getVideoDetails.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
-import getVideoDetails from "../actions/getVideoDetails.js";
-import durationString from "../helpers/durationString.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
 export const video: Command = {
 	name: "video",
@@ -62,5 +62,3 @@ export const video: Command = {
 		}
 	}
 };
-
-export default video;

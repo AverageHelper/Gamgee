@@ -9,7 +9,7 @@ const mockGetAllEntries = fetchAllEntries as jest.Mock;
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 mockGetAllEntries.mockResolvedValue(undefined);
@@ -20,7 +20,7 @@ const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 mockAddUserToHaveCalledNowPlaying.mockResolvedValue(undefined);
 
-import nowPlaying from "./nowPlaying.js";
+import { nowPlaying } from "./nowPlaying.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 import type { GuildedCommandContext } from "./Command.js";
 import type { QueueEntry } from "../useQueueStorage.js";

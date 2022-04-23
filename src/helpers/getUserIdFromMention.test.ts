@@ -1,4 +1,4 @@
-import getUserIdFromMention from "./getUserIdFromMention.js";
+import { getUserIdFromMention } from "./getUserIdFromMention.js";
 
 describe("User ID from mention string", () => {
 	test("returns null from an empty string", () => {

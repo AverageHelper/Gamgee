@@ -5,14 +5,14 @@ import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage } from "../../actions/messages/index.js";
+import { durationString } from "../../helpers/durationString.js";
+import { getVideoDetails } from "../getVideoDetails.js";
+import { logUser } from "../../helpers/logUser.js";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
+import { pushEntryToQueue } from "./useQueue.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
-import { pushEntryToQueue } from "./useQueue.js";
-import durationString from "../../helpers/durationString.js";
-import getVideoDetails from "../getVideoDetails.js";
-import logUser from "../../helpers/logUser.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
 import {
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
@@ -219,5 +219,3 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
 	}
 }
-
-export default processSongRequest;

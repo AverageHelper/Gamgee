@@ -19,5 +19,3 @@ export function isError(tbd: unknown): tbd is NodeJS.ErrnoException {
 export function isDiscordError(tbd: unknown): tbd is DiscordAPIError {
 	return tbd instanceof DiscordAPIError;
 }
-
-export default isError;

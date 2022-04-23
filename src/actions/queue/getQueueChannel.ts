@@ -1,7 +1,7 @@
 import type { CommandContext } from "../../commands/index.js";
 import type Discord from "discord.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
 import { getQueueChannelId } from "../../useGuildStorage.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
@@ -76,5 +76,3 @@ export async function getQueueChannel(
 	if ("type" in source) return getQueueChannelFromCommand(source);
 	return getQueueChannelFromGuild(source);
 }
-
-export default getQueueChannel;

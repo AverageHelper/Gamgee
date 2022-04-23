@@ -210,5 +210,3 @@ export async function getVideoDetails(
 		return null;
 	}
 }
-
-export default getVideoDetails;

@@ -5,9 +5,9 @@ import type { Storage } from "./configStorage.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { allCommands } from "./commands/index.js";
 import { getEnv } from "./helpers/environment.js";
+import { logUser } from "./helpers/logUser.js";
 import { replyPrivately, sendMessageInChannel } from "./actions/messages/index.js";
-import logUser from "./helpers/logUser.js";
-import richErrorMessage from "./helpers/richErrorMessage.js";
+import { richErrorMessage } from "./helpers/richErrorMessage.js";
 
 /**
  * Performs actions from a Discord command interaction.

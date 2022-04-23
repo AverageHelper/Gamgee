@@ -3,19 +3,20 @@ import Discord from "discord.js";
 
 export * from "./Command.js";
 
-import config from "./config/index.js";
-import help from "./help.js";
-import howto from "./howto.js";
-import languages from "./languages.js";
-import limits from "./limits.js";
-import nowPlaying from "./nowPlaying.js";
-import ping from "./ping.js";
-import queue from "./queue/index.js";
-import songRequest from "./songRequest.js";
-import test from "./test.js";
-import typeHere from "./type.js";
-import version from "./version.js";
-import video from "./video.js";
+import { config } from "./config/index.js";
+// import { cooldown } from "./cooldown.js";
+import { help } from "./help.js";
+import { howto } from "./howto.js";
+import { languages } from "./languages.js";
+import { limits } from "./limits.js";
+import { nowPlaying } from "./nowPlaying.js";
+import { ping } from "./ping.js";
+import { quo } from "./queue/index.js";
+import { sr } from "./songRequest.js";
+import { test } from "./test.js";
+import { t } from "./type.js";
+import { version } from "./version.js";
+import { video } from "./video.js";
 
 export const allCommands = new Discord.Collection<string, Command>();
 
@@ -46,15 +47,16 @@ function add(command: Command): void {
 }
 
 add(config);
+// add(cooldown);
 add(help);
 add(howto);
 add(languages);
 add(limits);
 add(nowPlaying);
 add(ping);
-add(queue);
-add(songRequest);
+add(quo);
+add(sr);
 add(test);
-add(typeHere);
+add(t);
 add(version);
 add(video);

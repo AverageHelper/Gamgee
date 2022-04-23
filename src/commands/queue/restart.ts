@@ -1,7 +1,7 @@
 import type { Subcommand } from "../Command.js";
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 
 export const restart: Subcommand = {
 	name: "restart",
@@ -28,5 +28,3 @@ export const restart: Subcommand = {
 		return reply("The queue has restarted.");
 	}
 };
-
-export default restart;

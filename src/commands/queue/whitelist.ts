@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
+import { logUser } from "../../helpers/logUser.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import { whitelistUser } from "../../useQueueStorage.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
-import logUser from "../../helpers/logUser.js";
 
 export const whitelist: Subcommand = {
 	name: "whitelist",
@@ -56,5 +56,3 @@ export const whitelist: Subcommand = {
 		});
 	}
 };
-
-export default whitelist;

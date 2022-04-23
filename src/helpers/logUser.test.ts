@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import logUser from "./logUser.js";
+import { logUser } from "./logUser.js";
 
 describe("Log user ID", () => {
 	const user = ({} as unknown) as Discord.User;

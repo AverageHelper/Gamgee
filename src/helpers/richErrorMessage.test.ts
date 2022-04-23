@@ -1,4 +1,4 @@
-import richErrorMessage from "./richErrorMessage.js";
+import { richErrorMessage } from "./richErrorMessage.js";
 
 describe("Rich error messages", () => {
 	test("contains relevant information about the error", () => {

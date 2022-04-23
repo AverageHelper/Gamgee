@@ -1,6 +1,6 @@
 import type { GuildedSubcommand } from "../Command.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 export const open: GuildedSubcommand = {
 	name: "open",
@@ -37,5 +37,3 @@ export const open: GuildedSubcommand = {
 		}
 	}
 };
-
-export default open;

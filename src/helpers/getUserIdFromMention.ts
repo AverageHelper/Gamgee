@@ -29,5 +29,3 @@ export function getUserIdFromMention(mention: string): Snowflake | null {
 
 	return null;
 }
-
-export default getUserIdFromMention;

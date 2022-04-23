@@ -4,7 +4,7 @@ import { assertUserCanRunCommand } from "../actions/invokeCommand.js";
 const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
 
 import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
-import help from "./help.js";
+import { help } from "./help.js";
 
 const mockReplyPrivately = jest.fn();
 

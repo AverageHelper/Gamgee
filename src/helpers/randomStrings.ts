@@ -1,6 +1,6 @@
 import { useLogger } from "../logger.js";
 import Discord from "discord.js";
-import randomElementOfArray from "./randomElementOfArray.js";
+import { randomElementOfArray } from "./randomElementOfArray.js";
 import {
 	celebratoryEmoji,
 	greetings,

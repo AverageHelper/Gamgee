@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import defaultValueForConfigKey from "./constants/config/defaultValueForConfigKey.js";
+import { defaultValueForConfigKey } from "./constants/config/defaultValueForConfigKey.js";
 
 jest.mock("./commands");
 import { allCommands as mockCommandDefinitions } from "./commands/index.js";

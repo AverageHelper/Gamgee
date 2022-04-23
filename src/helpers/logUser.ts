@@ -9,5 +9,3 @@ import type Discord from "discord.js";
 export function logUser(user: Discord.User): string {
 	return `${user.id} (${user.username})`;
 }
-
-export default logUser;
