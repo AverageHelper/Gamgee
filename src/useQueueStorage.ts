@@ -6,6 +6,7 @@ import { useRepository, useTransaction } from "./database/useDatabase.js";
 import { useLogger } from "./logger.js";
 import {
 	DEFAULT_ENTRY_DURATION,
+	DEFAULT_QUEUE_DURATION,
 	DEFAULT_SUBMISSION_COOLDOWN,
 	DEFAULT_SUBMISSION_MAX_QUANTITY
 } from "./constants/queues.js";
@@ -41,6 +42,7 @@ export async function getQueueConfig(
 	const defaultConfig = (): QueueConfig =>
 		new QueueConfig(channelId, {
 			entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+			queueDurationSeconds: DEFAULT_QUEUE_DURATION,
 			cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
 			submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
 			blacklistedUsers: []
@@ -71,6 +73,13 @@ export async function updateQueueConfig(
 			entryDurationSeconds = config.entryDurationSeconds;
 		}
 
+		let queueDurationSeconds: number | null;
+		if (config.queueDurationSeconds === undefined) {
+			queueDurationSeconds = oldConfig.queueDurationSeconds ?? null;
+		} else {
+			queueDurationSeconds = config.queueDurationSeconds;
+		}
+
 		let cooldownSeconds: number | null;
 		if (config.cooldownSeconds === undefined) {
 			cooldownSeconds = oldConfig.cooldownSeconds;
@@ -94,6 +103,7 @@ export async function updateQueueConfig(
 
 		const newConfig = new QueueConfig(queueChannel.id, {
 			entryDurationSeconds,
+			queueDurationSeconds,
 			cooldownSeconds,
 			submissionMaxQuantity,
 			blacklistedUsers
@@ -136,6 +146,7 @@ export async function createEntry(
 		const defaultConfig = (): QueueConfig =>
 			new QueueConfig(queueChannel.id, {
 				entryDurationSeconds: DEFAULT_ENTRY_DURATION,
+				queueDurationSeconds: DEFAULT_QUEUE_DURATION,
 				cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
 				submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
 				blacklistedUsers: []

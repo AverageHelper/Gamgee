@@ -9,8 +9,9 @@ import { durationString } from "../../helpers/durationString.js";
 import { getVideoDetails } from "../getVideoDetails.js";
 import { logUser } from "../../helpers/logUser.js";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
-import { pushEntryToQueue } from "./useQueue.js";
+import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
+import { setQueueOpen } from "../../useGuildStorage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
 import {
@@ -114,10 +115,11 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 
 	try {
-		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
+		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
 			getQueueConfig(queueChannel),
 			fetchLatestEntryFrom(senderId, queueChannel),
-			countAllEntriesFrom(senderId, queueChannel)
+			countAllEntriesFrom(senderId, queueChannel),
+			playtimeTotalInQueue(queueChannel)
 		]);
 
 		// ** If the user is blacklisted, reject!
@@ -208,10 +210,34 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			return reject_public(context, composed(rejection));
 		}
 
+		const durationBefore = durationString(playtimeTotal, true);
+		const durationAfter = durationString(playtimeTotal + seconds, true);
+		logger.info(`This submission would put the queue from ${durationBefore} to ${durationAfter}`);
+
 		const entry = { url, seconds, senderId };
 
 		// ** Full send!
-		return await acceptSongRequest({ queueChannel, context, entry, logger });
+		await acceptSongRequest({ queueChannel, context, entry, logger });
+
+		// ** If the queue would be overfull with this submission, accept the submission then close the queue
+		const totalPlaytimeLimit = config.queueDurationSeconds ?? null;
+		if (totalPlaytimeLimit !== null && playtimeTotal + seconds > totalPlaytimeLimit) {
+			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
+			logger.info(`The queue's duration limit is ${durationLimitMsg}. Closing the queue.`);
+
+			// This code is mainly copied from the implementation of `/quo close`
+			const queueIsCurrent = context.channel?.id === queueChannel.id;
+			const promises: Array<Promise<unknown>> = [setQueueOpen(false, queueChannel.guild)];
+			if (!queueIsCurrent) {
+				// Post in the queue channel if this command wasn't run from there
+				promises.push(queueChannel.send("This queue is full. I'm closing it now. :wave:"));
+			}
+			await Promise.all(promises);
+			await context.followUp({
+				content: "The queue is full. I'm closing it now. :wave:",
+				reply: false
+			});
+		}
 
 		// Handle fetch errors
 	} catch (error) {

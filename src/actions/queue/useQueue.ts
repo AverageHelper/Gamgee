@@ -66,7 +66,7 @@ function queueMessageFromEntry(
 	};
 }
 
-/** Retrieves the playtime of the queue's unfinished entries. */
+/** Retrieves the playtime (in seconds) of the queue's unfinished entries. */
 export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let duration = 0;
@@ -78,7 +78,7 @@ export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel
 	return duration;
 }
 
-/** Retrieves the total playtime of the queue's entries. */
+/** Retrieves the total playtime (in seconds) of the queue's entries. */
 export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let duration = 0;
@@ -88,7 +88,7 @@ export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): P
 	return duration;
 }
 
-/** Retrieves the average playtime of the queue's entries. */
+/** Retrieves the average playtime (in seconds) of the queue's entries. */
 export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let average = 0;

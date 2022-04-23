@@ -11,6 +11,10 @@ export class QueueConfig {
 	@Column({ type: "integer", nullable: true })
 	entryDurationSeconds: number | null;
 
+	/** The maximum time in seconds that the queue can take if all its entries were played end-to-end. */
+	@Column({ type: "integer", nullable: true })
+	queueDurationSeconds?: number | null;
+
 	/** The number of seconds that a user must wait between successful queue submissions. */
 	@Column({ type: "integer", nullable: true })
 	cooldownSeconds: number | null;
@@ -26,13 +30,13 @@ export class QueueConfig {
 		nullable: false
 	})
 	@JoinTable()
-	blacklistedUsers?: Array<User>;
-	// FIXME: `blacklistedUsers` is undefined on a fresh database
+	blacklistedUsers?: Array<User>; // `blacklistedUsers` is undefined on a fresh database
 
 	constructor(channelId: string, config: Omit<QueueConfig, "channelId">);
 	constructor(channelId?: string, config?: Omit<QueueConfig, "channelId">) {
 		this.channelId = channelId ?? "";
 		this.entryDurationSeconds = config?.entryDurationSeconds ?? null;
+		this.queueDurationSeconds = config?.queueDurationSeconds ?? null;
 		this.cooldownSeconds = config?.cooldownSeconds ?? null;
 		this.submissionMaxQuantity = config?.submissionMaxQuantity ?? null;
 	}

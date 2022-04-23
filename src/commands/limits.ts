@@ -1,5 +1,6 @@
 import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
+import { assertUnreachable } from "../helpers/assertUnreachable.js";
 import { durationString } from "../helpers/durationString.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getQueueConfig } from "../useQueueStorage.js";
@@ -39,6 +40,17 @@ export const limits: Command = {
 						value = "infinite";
 					}
 					break;
+				case "queue-duration":
+					if (
+						config.queueDurationSeconds !== undefined &&
+						config.queueDurationSeconds !== null &&
+						config.queueDurationSeconds > 0
+					) {
+						value = durationString(config.queueDurationSeconds);
+					} else {
+						value = "infinite";
+					}
+					break;
 				case "count":
 					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
 						value = config.submissionMaxQuantity.toString();
@@ -46,6 +58,8 @@ export const limits: Command = {
 						value = "infinite";
 					}
 					break;
+				default:
+					assertUnreachable(key.value);
 			}
 
 			embed.addField(`${key.name}:\t${value}`, key.description);
