@@ -65,7 +65,7 @@ export const cooldown: Command = {
 
 			const msg = createPartialString("You may submit in ");
 			pushBold(relative, msg);
-			push(`, at <t:${absolute}:T> (local time)`, msg);
+			push(`, at <t:${absolute}:T> local time`, msg);
 			await replyPrivately(composed(msg));
 		} else {
 			// We're finished, it is done, used all their submissions up

@@ -209,7 +209,7 @@ describe("User retrieving their own cooldown", () => {
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> (local time)`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
 		);
 
 		// Second invocation, getting antsy (absolute time remains the same)
@@ -219,7 +219,7 @@ describe("User retrieving their own cooldown", () => {
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> (local time)`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
 		);
 
 		// Third invocation, waited a while (absolute time remains the same)
@@ -229,7 +229,7 @@ describe("User retrieving their own cooldown", () => {
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> (local time)`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
 		);
 	});
 });
