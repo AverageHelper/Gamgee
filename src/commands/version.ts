@@ -19,10 +19,9 @@ export const version: Command = {
 		if (type === "interaction") {
 			// Discord lets bots link stuff in Markdown syntax, but it'll also embed by default. Use `<brackets>` to prevent the embed.
 			const repo = "https://github.com/AverageHelper/Gamgee";
-			const source = `${repo}/tree/v${gamgeeVersion}`;
 			const changelog = `${repo}/releases/tag/v${gamgeeVersion}`;
 			return reply(
-				`I'm currently running [Gamgee Core v${gamgeeVersion}](<${source}>)  ${celebration}\nYou can [read the changelog](<${changelog}>) on GitHub!`
+				`I'm currently running [Gamgee Core v${gamgeeVersion}](<${changelog}>)  ${celebration}`
 			);
 		}
 
