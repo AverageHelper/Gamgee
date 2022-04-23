@@ -187,7 +187,7 @@ describe("User retrieving their own cooldown", () => {
 	test("cooldown wait time is formatted correctly after multiple invocations", async () => {
 		const submissionMaxQuantity = 3;
 		const userSubmissions = 1;
-		const absolute = "1615742760";
+		const absolute = "1618399560";
 		let relative = "2 minutes";
 		mockGetQueueConfig.mockResolvedValue({
 			cooldownSeconds,
