@@ -39,27 +39,23 @@ export const stats: Command = {
 		]);
 
 		// Average song length
-		if (avgDuration > 0) {
-			const name = "Average Song Length";
-			const value = createPartialString(durationString(avgDuration));
-			if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-				push(` (limit ${durationString(config.entryDurationSeconds)})`, value);
-			}
-			embed.addField(name, composed(value));
+		const durationMsg = createPartialString(durationString(avgDuration));
+		if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
+			push(` (limit ${durationString(config.entryDurationSeconds)})`, durationMsg);
 		}
+		embed.addField("Average Song Length", composed(durationMsg));
 
 		// Total submissions
+		const requestCountMsg = createPartialString(`${userSubmissionCount}`);
 		if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-			const name = "Total Submissions";
-			const value = `${userSubmissionCount} of ${config.submissionMaxQuantity}`;
-			embed.addField(name, value);
+			push(` of ${config.submissionMaxQuantity}`, requestCountMsg);
 		}
+		embed.addField("Total Submissions", composed(requestCountMsg));
 
 		// Remaining wait time (if applicable)
 		const userCanSubmitAgainLater =
-			config.submissionMaxQuantity !== null &&
-			config.submissionMaxQuantity > 0 &&
-			userSubmissionCount < config.submissionMaxQuantity;
+			config.submissionMaxQuantity === null ||
+			(config.submissionMaxQuantity > 0 && userSubmissionCount < config.submissionMaxQuantity);
 
 		if (userCanSubmitAgainLater) {
 			const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
