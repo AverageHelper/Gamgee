@@ -134,7 +134,7 @@ export const limit: Subcommand = {
 				// ** Limit the total queue duration
 				if (!valueOption) {
 					// Read the current limit
-					const value = config.queueDurationSeconds ?? null;
+					const value = config.queueDurationSeconds;
 					if (value === null) {
 						return reply("There is no limit on the queue's total duration.");
 					}

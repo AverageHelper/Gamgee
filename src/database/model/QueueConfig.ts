@@ -13,7 +13,7 @@ export class QueueConfig {
 
 	/** The maximum time in seconds that the queue can take if all its entries were played end-to-end. */
 	@Column({ type: "integer", nullable: true })
-	queueDurationSeconds?: number | null;
+	queueDurationSeconds: number | null;
 
 	/** The number of seconds that a user must wait between successful queue submissions. */
 	@Column({ type: "integer", nullable: true })

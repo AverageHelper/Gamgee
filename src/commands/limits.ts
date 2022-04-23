@@ -41,11 +41,7 @@ export const limits: Command = {
 					}
 					break;
 				case "queue-duration":
-					if (
-						config.queueDurationSeconds !== undefined &&
-						config.queueDurationSeconds !== null &&
-						config.queueDurationSeconds > 0
-					) {
+					if (config.queueDurationSeconds !== null && config.queueDurationSeconds > 0) {
 						value = durationString(config.queueDurationSeconds);
 					} else {
 						value = "infinite";

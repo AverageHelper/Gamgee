@@ -220,7 +220,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		await acceptSongRequest({ queueChannel, context, entry, logger });
 
 		// ** If the queue would be overfull with this submission, accept the submission then close the queue
-		const totalPlaytimeLimit = config.queueDurationSeconds ?? null;
+		const totalPlaytimeLimit = config.queueDurationSeconds;
 		if (totalPlaytimeLimit !== null && playtimeTotal + seconds > totalPlaytimeLimit) {
 			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
 			logger.info(`The queue's duration limit is ${durationLimitMsg}. Closing the queue.`);
