@@ -80,6 +80,8 @@ export const stats: Command = {
 
 		if (embed.fields.length > 0) {
 			await replyPrivately({ embeds: [embed] });
+		} else {
+			await replyPrivately("The queue is empty. You have no stats lol");
 		}
 	}
 };
