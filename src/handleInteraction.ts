@@ -5,9 +5,9 @@ import type { Storage } from "./configStorage.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { allCommands } from "./commands/index.js";
 import { getEnv } from "./helpers/environment.js";
+import { logUser } from "./helpers/logUser.js";
 import { replyPrivately, sendMessageInChannel } from "./actions/messages/index.js";
-import logUser from "./helpers/logUser.js";
-import richErrorMessage from "./helpers/richErrorMessage.js";
+import { richErrorMessage } from "./helpers/richErrorMessage.js";
 
 /**
  * Performs actions from a Discord command interaction.
@@ -97,7 +97,7 @@ export async function handleInteraction(
 				if (interaction.deferred) {
 					try {
 						await interaction.editReply(options);
-					} catch (error: unknown) {
+					} catch (error) {
 						logger.error(richErrorMessage("Failed to edit reply to interaction.", error));
 						await interaction.followUp(options);
 					}
@@ -131,9 +131,9 @@ export async function handleInteraction(
 				}
 				return (await interaction.followUp(options)) as Discord.Message;
 			},
-			deleteInvocation: () => Promise.resolve(undefined),
+			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {
-				channel?.sendTyping();
+				void channel?.sendTyping();
 				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);
 			}
 		};

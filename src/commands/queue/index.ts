@@ -1,16 +1,16 @@
 import type { Command, Subcommand } from "../Command.js";
+import Discord from "discord.js";
 import { invokeCommand } from "../../actions/invokeCommand.js";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
-import Discord from "discord.js";
-import setup from "./setup.js";
-import teardown from "./teardown.js";
-import blacklist from "./blacklist.js";
-import whitelist from "./whitelist.js";
-import open from "./open.js";
-import close from "./close.js";
-import limit from "./limit.js";
-import stats from "./stats.js";
-import restart from "./restart.js";
+import { setup } from "./setup.js";
+import { teardown } from "./teardown.js";
+import { blacklist } from "./blacklist.js";
+import { whitelist } from "./whitelist.js";
+import { open } from "./open.js";
+import { close } from "./close.js";
+import { limit } from "./limit.js";
+import { stats } from "./stats.js";
+import { restart } from "./restart.js";
 import {
 	composed,
 	createPartialString,
@@ -31,7 +31,7 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	restart
 ];
 
-export const sr: Command = {
+export const quo: Command = {
 	name: "quo",
 	description: "Administrative commands to manage the song queue.",
 	options: namedSubcommands,
@@ -86,5 +86,3 @@ export const sr: Command = {
 		return context.reply(composed(response));
 	}
 };
-
-export default sr;

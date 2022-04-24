@@ -1,11 +1,21 @@
+import { DiscordAPIError } from "discord.js";
+
 /**
  * Asserts that a value is a NodeJS error.
  *
- * @param toBeDetermined The value to check.
+ * @param tbd The value to check.
  * @returns a boolean value indicating whether the provided value is an `Error`.
  */
-export function isError(toBeDetermined: unknown): toBeDetermined is NodeJS.ErrnoException {
-	return toBeDetermined instanceof Error;
+export function isError(tbd: unknown): tbd is NodeJS.ErrnoException {
+	return tbd instanceof Error;
 }
 
-export default isError;
+/**
+ * Asserts that a value is a Discord API error.
+ *
+ * @param tbd The value to check.
+ * @returns a boolean value indicating whether the provided value is a `DiscordAPIError`.
+ */
+export function isDiscordError(tbd: unknown): tbd is DiscordAPIError {
+	return tbd instanceof DiscordAPIError;
+}

@@ -1,13 +1,13 @@
-import path from "path";
-import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
-import { v4 as uuid } from "uuid";
-import { getEnv } from "../helpers/environment.js";
-import { createConnection } from "typeorm";
-import { useLogger } from "../logger.js";
-import { DatabaseLogger } from "./DatabaseLogger.js";
 import type { EntityTarget, EntityManager, Repository, Connection } from "typeorm";
+import { createConnection } from "typeorm";
+import { DatabaseLogger } from "./DatabaseLogger.js";
+import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
+import { getEnv } from "../helpers/environment.js";
+import { useLogger } from "../logger.js";
+import { v4 as uuid } from "uuid";
 import * as entities from "./model/index.js";
 import * as migrations from "./migrations/index.js";
+import path from "path";
 
 const logger = useLogger();
 
@@ -22,6 +22,8 @@ export async function useDatabaseConnection<T = undefined>(
 		`Opening a new connection to database at path '${dbFile}'; Connection ID: ${connId}`
 	);
 
+	// TODO: I'd rather use MongoDB (probs via mongoose or smth)
+
 	const connection = await createConnection({
 		name: connId,
 		type: "sqlite",
@@ -29,9 +31,7 @@ export async function useDatabaseConnection<T = undefined>(
 		logging: "all",
 		logger: new DatabaseLogger(logger),
 		entities: Object.values(entities),
-		// FIXME: This assertion should be unnecessary
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-		migrations: Object.values(migrations) as Array<() => unknown | string>,
+		migrations: Object.values(migrations),
 		synchronize: true // assumes migration was run before we get here
 	});
 
@@ -47,6 +47,8 @@ export async function useRepository<Entity, T = undefined>(
 	targetOrRepository: EntityTarget<Entity> | Repository<Entity>,
 	cb: (repository: Repository<Entity>) => T | Promise<T>
 ): Promise<T> {
+	// eslint-disable-next-line @typescript-eslint/no-base-to-string
+	// logger.debug(`Using DB repository: ${targetOrRepository.toString()}`);
 	return useDatabaseConnection(connection => {
 		if (typeof targetOrRepository !== "string" && "manager" in targetOrRepository) {
 			return cb(targetOrRepository);
@@ -58,6 +60,7 @@ export async function useRepository<Entity, T = undefined>(
 export async function useTransaction<T = undefined>(
 	cb: (entityManager: EntityManager) => T | Promise<T>
 ): Promise<T> {
+	// logger.debug(`Using DB transaction`);
 	return useDatabaseConnection(async connection => {
 		return connection.transaction(async transaction => {
 			return cb(transaction);

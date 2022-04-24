@@ -4,11 +4,11 @@ import type { Storage } from "./configStorage.js";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import { getEnv } from "./helpers/environment.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
+import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
+import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
 import Discord from "discord.js";
-import getUserIdFromMention from "./helpers/getUserIdFromMention.js";
-import logUser from "./helpers/logUser.js";
 import {
 	deleteMessage,
 	reply,
@@ -153,7 +153,7 @@ export async function handleCommand(
 		message.author.bot &&
 		(message.author.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
 	) {
-		logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
+		logger.debug("Momma always said not to talk to strangers. They could be *bots* ");
 		return;
 	}
 

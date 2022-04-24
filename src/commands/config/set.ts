@@ -55,5 +55,3 @@ export const set: Subcommand = {
 		return reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
 	}
 };
-
-export default set;

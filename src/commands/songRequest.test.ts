@@ -1,25 +1,26 @@
-jest.mock("../useGuildStorage");
-jest.mock("../useQueueStorage");
-jest.mock("../actions/queue/getQueueChannel");
-jest.mock("../actions/queue/useQueue");
-jest.mock("../actions/getVideoDetails");
+jest.mock("../useGuildStorage.js");
+jest.mock("../useQueueStorage.js");
+jest.mock("../actions/queue/getQueueChannel.js");
+jest.mock("../actions/queue/useQueue.js");
+jest.mock("../actions/getVideoDetails.js");
 
 import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
-import { pushEntryToQueue } from "../actions/queue/useQueue.js";
+import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
+const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
 const mockQueuePush = pushEntryToQueue as jest.Mock;
 
 import { isQueueOpen } from "../useGuildStorage.js";
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
 
-import getQueueChannel from "../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import { randomInt } from "../helpers/randomInt.js";
-import getVideoDetails from "../actions/getVideoDetails.js";
+import { getVideoDetails } from "../actions/getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock;
 mockGetVideoDetails.mockImplementation(async (url: string) => {
 	// Enough uncertainty that *something* should go out of order if it's going to
@@ -35,10 +36,10 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type { GuildedCommandContext } from "./Command.js";
+import { sr as songRequest } from "./songRequest.js";
 import { URL } from "url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 import Discord from "discord.js";
-import songRequest from "./songRequest.js";
 
 const logger = useTestLogger("error");
 
@@ -67,6 +68,7 @@ describe("Song request via URL", () => {
 	mockQueueGetLatestUserEntry.mockResolvedValue(null);
 	mockQueueUserEntryCount.mockResolvedValue(0);
 
+	mockPlaytimeTotal.mockResolvedValue(0);
 	mockIsQueueOpen.mockResolvedValue(true);
 
 	const queueChannel = {
@@ -77,6 +79,7 @@ describe("Song request via URL", () => {
 
 	mockGetQueueConfig.mockResolvedValue({
 		entryDurationSeconds: null,
+		queueDurationSeconds: null,
 		cooldownSeconds: 600,
 		submissionMaxQuantity: null,
 		blacklistedUsers: []

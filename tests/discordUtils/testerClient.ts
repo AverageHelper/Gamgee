@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import { MILLISECONDS_IN_SECOND } from "../../src/constants/time.js";
 import { requireEnv } from "../../src/helpers/environment.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
 
@@ -60,8 +61,9 @@ export async function testerClient(): Promise<Discord.Client> {
 /**
  * Logs out of the tester bot's Discord client.
  */
-export function logOut(): void {
+export async function logOut(): Promise<void> {
 	if (isClientLoggedIn) {
 		client.destroy();
+		await new Promise(resolve => setTimeout(resolve, MILLISECONDS_IN_SECOND)); // die after 1s
 	}
 }

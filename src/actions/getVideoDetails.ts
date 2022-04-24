@@ -2,13 +2,20 @@ import type { Logger } from "../logger.js";
 import type { Metadata } from "../helpers/urlMetadata/index.js";
 import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 import { isString } from "../helpers/guards.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
-import isError from "../helpers/isError.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
+import fetch from "node-fetch";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
+import {
+	InvalidPonyFmUrlError,
+	InvalidYouTubeUrlError,
+	NotFoundError,
+	UnavailableError,
+	VideoError
+} from "../errors/index.js";
 
 export interface VideoDetails {
 	url: string;
@@ -16,59 +23,6 @@ export interface VideoDetails {
 	duration: {
 		seconds: number;
 	};
-}
-
-export class VideoError extends Error implements NodeJS.ErrnoException {
-	code = "500";
-
-	constructor(error: unknown) {
-		super("Unknown error");
-
-		if (isError(error)) {
-			this.message = error.message;
-			this.code = error.code ?? "500";
-			this.stack = error.stack;
-		} else {
-			this.message = JSON.stringify(error);
-		}
-		this.name = "VideoError";
-	}
-}
-
-export class NotFoundError extends VideoError {
-	code = "404";
-
-	constructor(url: URL) {
-		super(`No video found at ${url.toString()}`);
-		this.name = "NotFoundError";
-	}
-}
-
-export class UnavailableError extends VideoError {
-	code = "410";
-
-	constructor(url: URL) {
-		super(`The video at this URL is not available: ${url.toString()}`);
-		this.name = "UnavailableError";
-	}
-}
-
-export class InvalidYouTubeUrlError extends VideoError {
-	code = "422";
-
-	constructor(url: URL) {
-		super(`This URL isn't a valid YouTube video URL: ${url.toString()}`);
-		this.name = "InvalidYouTubeUrlError";
-	}
-}
-
-export class InvalidPonyFmUrlError extends VideoError {
-	code = "422";
-
-	constructor(url: URL) {
-		super(`This URL isn't a valid Pony.fm song URL: ${url.toString()}`);
-		this.name = "InvalidPonyFmUrlError";
-	}
 }
 
 /**
@@ -81,13 +35,13 @@ export class InvalidPonyFmUrlError extends VideoError {
  * @returns a `Promise` that resolves with the video details.
  */
 export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
-	const urlString = url.toString();
+	const urlString = url.href;
 	if (!ytdl.validateURL(urlString)) throw new InvalidYouTubeUrlError(url);
 
 	let info: ytdl.videoInfo;
 	try {
 		info = await ytdl.getBasicInfo(urlString);
-	} catch (error: unknown) {
+	} catch (error) {
 		const err = new VideoError(error);
 		switch (err.message) {
 			case "Status code: 410":
@@ -125,13 +79,31 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
  * provided `url`.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
-	const urlString = url.toString();
+export async function getSoundCloudTrack(
+	url: URL,
+	logger: Logger | null = useLogger()
+): Promise<VideoDetails> {
+	// Handle redirects, because our SoundCloud client is silly
+	// (*.app.goo.gl links come from the app, and redirect to the song page)
+	let parsedUrl: URL;
+	try {
+		const response = await fetch(url, { redirect: "follow" });
+		parsedUrl = new URL(response.url);
+	} catch (error) {
+		logger?.error(
+			richErrorMessage(`Failed to follow redirects from '${url.href}'. Using the original.`, error)
+		);
+		parsedUrl = url;
+	}
+
+	// Remove query params, because our SoundCloud client is silly
+	parsedUrl.search = "";
+
 	const client = new SoundCloud.Client();
 	let song: SoundCloud.Song;
 	try {
-		song = await client.getSongInfo(urlString);
-	} catch (error: unknown) {
+		song = await client.getSongInfo(parsedUrl.href);
+	} catch (error) {
 		throw new VideoError(error);
 	}
 	return {
@@ -155,7 +127,7 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	let metadata: Metadata;
 	try {
 		metadata = await urlMetadata(url, { timeout: 5000 });
-	} catch (error: unknown) {
+	} catch (error) {
 		throw new VideoError(error);
 	}
 
@@ -250,12 +222,10 @@ export async function getVideoDetails(
 			getBandcampTrack(url),
 			getPonyFmTrack(url)
 		]);
-	} catch (error: unknown) {
+	} catch (error) {
 		logger?.error(
 			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error)
 		);
 		return null;
 	}
 }
-
-export default getVideoDetails;

@@ -83,7 +83,7 @@ async function getFrom<T>(url: URL, typeGuard: TypeGuard<T>): Promise<T> {
 		if (!typeGuard(json)) throw new UnexpectedResponseError();
 
 		return json;
-	} catch (error: unknown) {
+	} catch (error) {
 		// `fetch` only rejects on network failure.
 		// See https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 		logger.error("Network Failure:", error);

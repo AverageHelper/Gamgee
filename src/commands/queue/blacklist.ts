@@ -1,11 +1,11 @@
 import type { Subcommand } from "../Command.js";
 import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
+import { logUser } from "../../helpers/logUser.js";
+import { sr as parentCommand } from "../songRequest.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
-import logUser from "../../helpers/logUser.js";
-import parentCommand from "../songRequest.js";
-import whitelist from "./whitelist.js";
+import { whitelist } from "./whitelist.js";
 import {
 	composed,
 	createPartialString,
@@ -54,7 +54,7 @@ export const blacklist: Subcommand = {
 			}
 
 			const queueConfig = await getQueueConfig(queueChannel);
-			const blacklistedUsers = queueConfig.blacklistedUsers.map(user => user.id);
+			const blacklistedUsers = queueConfig.blacklistedUsers?.map(user => user.id) ?? [];
 
 			const prefix = await getConfigCommandPrefix(storage);
 			const guildName = guild.name.trim();
@@ -121,5 +121,3 @@ export const blacklist: Subcommand = {
 		});
 	}
 };
-
-export default blacklist;

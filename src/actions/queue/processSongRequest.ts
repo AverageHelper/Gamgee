@@ -3,21 +3,28 @@ import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "url";
-import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { deleteMessage } from "../../actions/messages/index.js";
+import { durationString } from "../../helpers/durationString.js";
+import { getVideoDetails } from "../getVideoDetails.js";
+import { logUser } from "../../helpers/logUser.js";
 import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
+import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
+import { setQueueOpen } from "../../useGuildStorage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
-import { pushEntryToQueue } from "./useQueue.js";
-import durationString from "../../helpers/durationString.js";
-import getVideoDetails from "../getVideoDetails.js";
-import logUser from "../../helpers/logUser.js";
-import richErrorMessage from "../../helpers/richErrorMessage.js";
 import {
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
 	getQueueConfig
 } from "../../useQueueStorage.js";
+import {
+	composed,
+	createPartialString,
+	push,
+	pushBold,
+	pushNewLine
+} from "../../helpers/composeStrings.js";
 
 export interface SongRequest {
 	songUrl: URL;
@@ -43,7 +50,7 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 				content,
 				allowedMentions: { users: [context.user.id], repliedUser: true }
 			});
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	} else {
@@ -60,7 +67,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 	} else {
 		try {
 			await context.interaction.editReply("Done.");
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	}
@@ -95,7 +102,7 @@ async function acceptSongRequest({
 	if (context.type === "interaction") {
 		try {
 			await context.interaction.editReply("Done.");
-		} catch (error: unknown) {
+		} catch (error) {
 			logger.error(error);
 		}
 	}
@@ -114,14 +121,15 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 
 	try {
-		const [config, latestSubmission, userSubmissionCount] = await Promise.all([
+		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
 			getQueueConfig(queueChannel),
 			fetchLatestEntryFrom(senderId, queueChannel),
-			countAllEntriesFrom(senderId /* since: Date */, queueChannel)
+			countAllEntriesFrom(senderId, queueChannel),
+			playtimeTotalInQueue(queueChannel)
 		]);
 
 		// ** If the user is blacklisted, reject!
-		if (config.blacklistedUsers?.some(user => user.id === context.user.id)) {
+		if (config.blacklistedUsers?.some(user => user.id === context.user.id) === true) {
 			logger.verbose(
 				`${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
 					context.user
@@ -203,21 +211,48 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString();
 			push("That song is too long. The limit is ", rejection);
-			pushBold(`${durationString(maxDuration)}`, rejection);
+			pushBold(durationString(maxDuration), rejection);
+			push(", but this is ", rejection);
+			pushBold(durationString(seconds), rejection);
+			push(" long.", rejection);
+			pushNewLine(rejection);
+			push("Try something a bit shorter", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
 			return reject_public(context, composed(rejection));
 		}
 
+		const durationBefore = durationString(playtimeTotal, true);
+		const durationAfter = durationString(playtimeTotal + seconds, true);
+		logger.info(`This submission would put the queue from ${durationBefore} to ${durationAfter}`);
+
 		const entry = { url, seconds, senderId };
 
 		// ** Full send!
-		return await acceptSongRequest({ queueChannel, context, entry, logger });
+		await acceptSongRequest({ queueChannel, context, entry, logger });
+
+		// ** If the queue would be overfull with this submission, accept the submission then close the queue
+		const totalPlaytimeLimit = config.queueDurationSeconds;
+		if (totalPlaytimeLimit !== null && playtimeTotal + seconds > totalPlaytimeLimit) {
+			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
+			logger.info(`The queue's duration limit is ${durationLimitMsg}. Closing the queue.`);
+
+			// This code is mainly copied from the implementation of `/quo close`
+			const queueIsCurrent = context.channel?.id === queueChannel.id;
+			const promises: Array<Promise<unknown>> = [setQueueOpen(false, queueChannel.guild)];
+			if (!queueIsCurrent) {
+				// Post in the queue channel if this command wasn't run from there
+				promises.push(queueChannel.send("This queue is full. I'm closing it now. :wave:"));
+			}
+			await Promise.all(promises);
+			await context.followUp({
+				content: "The queue is full. I'm closing it now. :wave:",
+				reply: false
+			});
+		}
 
 		// Handle fetch errors
-	} catch (error: unknown) {
+	} catch (error) {
 		logger.error(richErrorMessage("Failed to process song request", error));
 		return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
 	}
 }
-
-export default processSongRequest;

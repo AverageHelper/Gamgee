@@ -4,7 +4,7 @@ import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
-import durationString from "../../helpers/durationString.js";
+import { durationString } from "../../helpers/durationString.js";
 import {
 	addToHaveCalledNowPlaying,
 	createEntry,
@@ -41,14 +41,12 @@ function queueMessageFromEntry(
 	} else {
 		push(entry.url, partialContent);
 	}
-	pushNewLine(partialContent);
 
 	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
 	const likeMessage = `${likeCount} ${likeCount === 1 ? "person" : "people"} asked for this link.`;
-	if (likeCount === 0) {
-		push(likeMessage, partialContent);
-	} else {
+	if (likeCount > 0) {
+		pushNewLine(partialContent);
 		pushBold(likeMessage, partialContent);
 	}
 
@@ -68,7 +66,7 @@ function queueMessageFromEntry(
 	};
 }
 
-/** Retrieves the playtime of the queue's unfinished entries. */
+/** Retrieves the playtime (in seconds) of the queue's unfinished entries. */
 export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let duration = 0;
@@ -80,7 +78,7 @@ export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel
 	return duration;
 }
 
-/** Retrieves the total playtime of the queue's entries. */
+/** Retrieves the total playtime (in seconds) of the queue's entries. */
 export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let duration = 0;
@@ -90,7 +88,7 @@ export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): P
 	return duration;
 }
 
-/** Retrieves the average playtime of the queue's entries. */
+/** Retrieves the average playtime (in seconds) of the queue's entries. */
 export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
 	const queue = await fetchAllEntries(queueChannel);
 	let average = 0;
@@ -127,7 +125,7 @@ export async function pushEntryToQueue(
 		);
 
 		// If the database write fails...
-	} catch (error: unknown) {
+	} catch (error) {
 		await deleteMessage(queueMessage);
 		throw error;
 	}

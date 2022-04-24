@@ -50,7 +50,9 @@ export const nowPlaying: Command = {
 
 		if (!firstNotDone) {
 			logger.debug(`The song queue is currently empty.`);
-			return replyPrivately("There's nothing playing right now.");
+			return replyPrivately(
+				"There's probably nothing playing right now. (If there is, I can't hear it)"
+			);
 		}
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
@@ -76,5 +78,3 @@ export const nowPlaying: Command = {
 		return replyPrivately(composed(response), true);
 	}
 };
-
-export default nowPlaying;

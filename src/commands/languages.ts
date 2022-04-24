@@ -1,7 +1,7 @@
 import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
-import richErrorMessage from "../helpers/richErrorMessage.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
@@ -24,7 +24,7 @@ export const languages: GlobalCommand = {
 
 				// eslint-disable-next-line require-atomic-updates
 				cachedMetadata = await gitHubMetadata({ owner, repo });
-			} catch (error: unknown) {
+			} catch (error) {
 				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
 				return reply("Erm... I'm not sure :sweat_smile:");
 			}
@@ -65,5 +65,3 @@ export const languages: GlobalCommand = {
 		return reply(`I'm made of ${last}. :blush:`);
 	}
 };
-
-export default languages;

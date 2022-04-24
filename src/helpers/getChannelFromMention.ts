@@ -1,5 +1,5 @@
 import type Discord from "discord.js";
-import getChannelIdFromMention from "./getChannelIdFromMention.js";
+import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 import { useLogger } from "../logger.js";
 
 const logger = useLogger();
@@ -28,5 +28,3 @@ export function getChannelFromMention(
 
 	return channel;
 }
-
-export default getChannelFromMention;

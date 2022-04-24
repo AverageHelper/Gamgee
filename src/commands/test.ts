@@ -58,7 +58,7 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	const result: FetchResult = { test, startTime };
 	try {
 		await test.fn(new URL(test.urlString));
-	} catch (error: unknown) {
+	} catch (error) {
 		result.error = error as NodeJS.ErrnoException;
 	} finally {
 		result.endTime = Date.now();
@@ -78,7 +78,7 @@ function addResult(result: FetchResult, embed: MessageEmbed): void {
 
 let isTesting = false;
 
-export const type: Command = {
+export const test: Command = {
 	name: "test",
 	description: "Make sure I still know how to talk to video services.",
 	requiresGuild: false,
@@ -119,5 +119,3 @@ export const type: Command = {
 		}
 	}
 };
-
-export default type;

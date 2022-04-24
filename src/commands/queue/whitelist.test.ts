@@ -2,10 +2,10 @@ jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
 
-import getUserFromMention from "../../helpers/getUserFromMention.js";
+import { getUserFromMention } from "../../helpers/getUserFromMention.js";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
 
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
 import { whitelistUser } from "../../useQueueStorage.js";
@@ -13,8 +13,8 @@ const mockWhitelistUser = whitelistUser as jest.Mock;
 
 import type { GuildedCommandContext } from "../Command.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
+import { whitelist } from "./whitelist.js";
 import Discord from "discord.js";
-import whitelist from "./whitelist.js";
 
 const mockClient = ({} as unknown) as Discord.Client;
 const mockReply = jest.fn().mockResolvedValue(undefined);

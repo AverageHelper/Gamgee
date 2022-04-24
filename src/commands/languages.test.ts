@@ -5,7 +5,7 @@ const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
 
 import type { CommandContext } from "./Command.js";
-import languages from "./languages.js";
+import { languages } from "./languages.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
 const logger = useTestLogger("error");

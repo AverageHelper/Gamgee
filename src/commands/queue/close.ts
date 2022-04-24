@@ -1,6 +1,6 @@
 import type { GuildedSubcommand } from "../Command.js";
+import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-import getQueueChannel from "../../actions/queue/getQueueChannel.js";
 
 export const close: GuildedSubcommand = {
 	name: "close",
@@ -31,6 +31,7 @@ export const close: GuildedSubcommand = {
 		const queueIsCurrent = channel?.id === queueChannel.id;
 		const promises: Array<Promise<unknown>> = [setQueueOpen(false, guild)];
 		if (!queueIsCurrent) {
+			// Post in the queue channel if this command wasn't run from there
 			promises.push(queueChannel.send("This queue is closed. :wave:"));
 		}
 		if (type === "interaction") {
@@ -40,5 +41,3 @@ export const close: GuildedSubcommand = {
 		await followUp({ content: "The queue is now closed. :wave:", reply: false });
 	}
 };
-
-export default close;
