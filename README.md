@@ -220,7 +220,9 @@ If a request queue has been [set up](#quo-setup) and that queue is [open](#quo-o
 
 Manage queue limits. Provide a numeric value to set a new value for the limit, or leave just specify the limit to see its current value. To see the value of all limits run the [`limits`](#limits) command. The available limits are as follows:
 
-- `entry-duration` - The maximum length that a song can be.
+- `entry-duration` - The maximum amount of time (in seconds) that a song can be.
+- `entry-duration-min` - The minimum amount of time (in seconds) that a song can be.
+- `queue-duration` - The minimum amount of time (in seconds) of song time that may reside in the queue if every song in the queue were played end-to-end.
 - `cooldown` - How long a user must wait between submissions. This limit takes the amount of time from the user's most recent valid queue entry. If the configured cooldown has not elapsed, that user cannot make another submission yet. Gamgee will tell the user how much longer they have.
 - `count` - The maximum number of submissions a user may have in the queue. You may increase this limit for everybody, remove users' submissions from the queue, or `restart` the queue to allow users to submit again.
 

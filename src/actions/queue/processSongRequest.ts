@@ -200,14 +200,29 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 
 		const url = song.url;
 		const seconds = song.duration.seconds;
-
-		// ** If the song is too long, reject!
-		const maxDuration = config.entryDurationSeconds;
 		logger.verbose(
 			`User ${logUser(context.user)} wants to submit a song that is ${durationString(
 				seconds
 			)} long.`
 		);
+
+		// ** If the song is too short, reject!
+		const minDuration = config.entryDurationMinSeconds;
+		if (minDuration !== null && minDuration > 0 && seconds < minDuration) {
+			const rejection = createPartialString();
+			push("That song is too short. The limit is ", rejection);
+			pushBold(durationString(minDuration), rejection);
+			push(", but this is ", rejection);
+			pushBold(durationString(seconds), rejection);
+			push(" long.", rejection);
+			pushNewLine(rejection);
+			push("Try something a bit longer", rejection);
+			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			return reject_public(context, composed(rejection));
+		}
+
+		// ** If the song is too long, reject!
+		const maxDuration = config.entryDurationSeconds;
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString();
 			push("That song is too long. The limit is ", rejection);

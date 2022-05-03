@@ -142,7 +142,7 @@ export const phrases: ResponseRepository = [
 
 	// Wonka
 	"A little nonsense now and then is relished by the wisest men.",
-	"If the good lord had intended us to walk he wouldn't have invented roller skates.",
+	"If the Good Lord had intended us to walk, he wouldn't have invented roller skates!",
 	"If you want to view paradise, simply look around and view it.",
 	"It happens every time. They all become blueberries",
 	"So shines a good deed in a weary world.",

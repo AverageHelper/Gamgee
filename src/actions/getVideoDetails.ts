@@ -87,6 +87,7 @@ export async function getSoundCloudTrack(
 	// (*.app.goo.gl links come from the app, and redirect to the song page)
 	let parsedUrl: URL;
 	try {
+		// FIXME: This makes the function take twice as long to run
 		const response = await fetch(url, { redirect: "follow" });
 		parsedUrl = new URL(response.url);
 	} catch (error) {

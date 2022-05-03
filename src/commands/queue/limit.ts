@@ -3,15 +3,15 @@ import type { Subcommand } from "../Command.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
-import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
+import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
 } from "../../helpers/optionResolvers.js";
 
-type LimitKey = "queue-duration" | "entry-duration" | "cooldown" | "count";
+type LimitKey = "queue-duration" | "entry-duration" | "entry-duration-min" | "cooldown" | "count";
 
 export interface QueueLimitArg {
 	name: string;
@@ -19,29 +19,44 @@ export interface QueueLimitArg {
 	description: string;
 }
 
+export const countLimitMeta: QueueLimitArg = {
+	name: "Number of Submissions",
+	value: "count",
+	description: "The maximum number of submissions that each user may submit."
+};
+
+export const cooldownLimitMeta: QueueLimitArg = {
+	name: "Submission Cooldown",
+	value: "cooldown",
+	description:
+		"The minimum amount of time (in seconds) that each user must wait between their own submissions."
+};
+
+export const minDurationLimitMeta: QueueLimitArg = {
+	name: "Min Song Length",
+	value: "entry-duration-min",
+	description: "The minimum duration (in seconds) of a song submission."
+};
+
+export const maxDurationLimitMeta: QueueLimitArg = {
+	name: "Max Song Length",
+	value: "entry-duration", // TODO: Rename this to something more sane
+	description: "The maximum duration (in seconds) of a song submission."
+};
+
+export const totalQueueLengthLimitMeta: QueueLimitArg = {
+	name: "Total Queue Length",
+	value: "queue-duration",
+	description:
+		"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
+};
+
 export const allLimits: Array<QueueLimitArg> = [
-	{
-		name: "Number of Submissions",
-		value: "count",
-		description: "The maximum number of submissions that each user may submit."
-	},
-	{
-		name: "Submission Cooldown",
-		value: "cooldown",
-		description:
-			"The minimum amount of time (in seconds) that each user must wait between their own submissions."
-	},
-	{
-		name: "Song Length",
-		value: "entry-duration",
-		description: "The maximum duration (in seconds) of a song submission."
-	},
-	{
-		name: "Total Queue Length",
-		value: "queue-duration",
-		description:
-			"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
-	}
+	countLimitMeta,
+	cooldownLimitMeta,
+	minDurationLimitMeta,
+	maxDurationLimitMeta,
+	totalQueueLengthLimitMeta
 ];
 
 const limitsList = allLimits.map(l => `\`${l.value}\``).join(", ");
@@ -102,14 +117,14 @@ export const limit: Subcommand = {
 		// Set limits on the queue
 		switch (key) {
 			case "entry-duration": {
-				// ** Limit each entry's duration
+				// ** Limit each entry's max duration
 				if (!valueOption) {
 					// Read the current limit
 					const value = config.entryDurationSeconds;
 					if (value === null) {
-						return reply("There is no limit on entry duration.");
+						return reply("There is no upper limit on entry duration.");
 					}
-					return reply(`Entry duration limit is **${durationString(value)}**`);
+					return reply(`Upper entry duration limit is **${durationString(value)}**`);
 				}
 
 				// Set a new limit
@@ -120,7 +135,36 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ entryDurationSeconds: value }, queueChannel);
 
-				const response = createPartialString("Entry duration limit ");
+				const response = createPartialString("Entry duration upper limit was ");
+				if (value === null || value <= 0) {
+					pushBold("removed", response);
+				} else {
+					push("set to ", response);
+					pushBold(durationString(value), response);
+				}
+				return reply(composed(response));
+			}
+
+			case "entry-duration-min": {
+				// ** Limit each entry's min duration
+				if (!valueOption) {
+					// Read the current limit
+					const value = config.entryDurationMinSeconds;
+					if (value === null) {
+						return reply("There is no lower limit on entry duration.");
+					}
+					return reply(`Entry duration lower limit is **${durationString(value)}**`);
+				}
+
+				// Set a new limit
+				let value = resolveIntegerFromOption(valueOption);
+				if (value !== null && Number.isNaN(value)) {
+					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+				}
+				value = value === null || value <= 0 ? null : value;
+				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
+
+				const response = createPartialString("Entry duration lower limit was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {
@@ -149,7 +193,7 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ queueDurationSeconds: value }, queueChannel);
 
-				const response = createPartialString("Queue duration limit ");
+				const response = createPartialString("Queue duration limit was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {
@@ -179,7 +223,7 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ cooldownSeconds: value }, queueChannel);
 
-				const response = createPartialString("Submission cooldown ");
+				const response = createPartialString("Submission cooldown was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {
@@ -209,7 +253,7 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ submissionMaxQuantity: value }, queueChannel);
 
-				const response = createPartialString("Submission count limit per user ");
+				const response = createPartialString("Submission count limit per user was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {
