@@ -20,7 +20,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	infinite",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -62,7 +67,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	infinite",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -104,7 +114,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	42 seconds",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -146,7 +161,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	infinite",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -188,7 +208,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	42 seconds",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -230,7 +255,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	42 seconds",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -272,7 +302,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	infinite",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
@@ -314,7 +349,12 @@ Object {
         },
         Object {
           "inline": false,
-          "name": "Song Length:	42 seconds",
+          "name": "Min Song Length:	0",
+          "value": "The minimum duration (in seconds) of a song submission.",
+        },
+        Object {
+          "inline": false,
+          "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
