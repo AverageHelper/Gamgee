@@ -44,7 +44,9 @@ function queueMessageFromEntry(
 
 	// Bold engangement counter if it's nonzero
 	const likeCount = entry.haveCalledNowPlaying.length;
-	const likeMessage = `${likeCount} ${likeCount === 1 ? "person" : "people"} asked for this link.`;
+	const likeMessage = `${likeCount} ${
+		likeCount === 1 ? "person" : "people"
+	} asked me for this link.`;
 	if (likeCount > 0) {
 		pushNewLine(partialContent);
 		pushBold(likeMessage, partialContent);

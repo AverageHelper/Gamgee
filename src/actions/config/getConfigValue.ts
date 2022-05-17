@@ -21,6 +21,7 @@ export async function getConfigValue(
 	return storedValue ?? null;
 }
 
+// FIXME: Shouldn't this be set per-guild?
 export async function getConfigCommandPrefix(storage: Storage | null): Promise<string> {
 	const val = (await getConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX)) as string;
 	return val.toString();

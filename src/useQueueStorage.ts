@@ -4,12 +4,6 @@ import type { Snowflake } from "discord.js";
 import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model/index.js";
 import { useRepository, useTransaction } from "./database/useDatabase.js";
 import { useLogger } from "./logger.js";
-import {
-	DEFAULT_ENTRY_DURATION,
-	DEFAULT_QUEUE_DURATION,
-	DEFAULT_SUBMISSION_COOLDOWN,
-	DEFAULT_SUBMISSION_MAX_QUANTITY
-} from "./constants/queues.js";
 
 const logger = useLogger();
 
@@ -41,15 +35,17 @@ export async function getQueueConfig(
 	const channelId = queueChannel.id;
 	const defaultConfig = (): QueueConfig =>
 		new QueueConfig(channelId, {
-			entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-			queueDurationSeconds: DEFAULT_QUEUE_DURATION,
-			cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-			submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+			entryDurationSeconds: null,
+			entryDurationMinSeconds: null,
+			queueDurationSeconds: null,
+			cooldownSeconds: null,
+			submissionMaxQuantity: null,
 			blacklistedUsers: []
 		});
 
 	return useRepository(repo, async repo => {
-		return (await repo.findOne({ where: { channelId } })) ?? defaultConfig();
+		const config = await repo.findOne({ where: { channelId } });
+		return config ?? defaultConfig();
 	});
 }
 
@@ -71,6 +67,13 @@ export async function updateQueueConfig(
 			entryDurationSeconds = oldConfig.entryDurationSeconds;
 		} else {
 			entryDurationSeconds = config.entryDurationSeconds;
+		}
+
+		let entryDurationMinSeconds: number | null;
+		if (config.entryDurationMinSeconds === undefined) {
+			entryDurationMinSeconds = oldConfig.entryDurationMinSeconds;
+		} else {
+			entryDurationMinSeconds = config.entryDurationMinSeconds;
 		}
 
 		let queueDurationSeconds: number | null;
@@ -103,6 +106,7 @@ export async function updateQueueConfig(
 
 		const newConfig = new QueueConfig(queueChannel.id, {
 			entryDurationSeconds,
+			entryDurationMinSeconds,
 			queueDurationSeconds,
 			cooldownSeconds,
 			submissionMaxQuantity,
@@ -145,10 +149,11 @@ export async function createEntry(
 		// Make sure we have at least the default config
 		const defaultConfig = (): QueueConfig =>
 			new QueueConfig(queueChannel.id, {
-				entryDurationSeconds: DEFAULT_ENTRY_DURATION,
-				queueDurationSeconds: DEFAULT_QUEUE_DURATION,
-				cooldownSeconds: DEFAULT_SUBMISSION_COOLDOWN,
-				submissionMaxQuantity: DEFAULT_SUBMISSION_MAX_QUANTITY,
+				entryDurationSeconds: null,
+				entryDurationMinSeconds: null,
+				queueDurationSeconds: null,
+				cooldownSeconds: null,
+				submissionMaxQuantity: null,
 				blacklistedUsers: []
 			});
 		const channelId = queueChannel.id;

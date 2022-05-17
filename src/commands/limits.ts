@@ -40,6 +40,13 @@ export const limits: Command = {
 						value = "infinite";
 					}
 					break;
+				case "entry-duration-min":
+					if (config.entryDurationMinSeconds !== null && config.entryDurationMinSeconds > 0) {
+						value = durationString(config.entryDurationMinSeconds);
+					} else {
+						value = "0";
+					}
+					break;
 				case "queue-duration":
 					if (config.queueDurationSeconds !== null && config.queueDurationSeconds > 0) {
 						value = durationString(config.queueDurationSeconds);

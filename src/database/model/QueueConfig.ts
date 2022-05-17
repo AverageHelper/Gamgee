@@ -11,6 +11,10 @@ export class QueueConfig {
 	@Column({ type: "integer", nullable: true })
 	entryDurationSeconds: number | null;
 
+	/** The minimum time in seconds that a new queue entry may take to play. */
+	@Column({ type: "integer", nullable: true })
+	entryDurationMinSeconds: number | null;
+
 	/** The maximum time in seconds that the queue can take if all its entries were played end-to-end. */
 	@Column({ type: "integer", nullable: true })
 	queueDurationSeconds: number | null;
@@ -36,6 +40,7 @@ export class QueueConfig {
 	constructor(channelId?: string, config?: Omit<QueueConfig, "channelId">) {
 		this.channelId = channelId ?? "";
 		this.entryDurationSeconds = config?.entryDurationSeconds ?? null;
+		this.entryDurationMinSeconds = config?.entryDurationMinSeconds ?? null;
 		this.queueDurationSeconds = config?.queueDurationSeconds ?? null;
 		this.cooldownSeconds = config?.cooldownSeconds ?? null;
 		this.submissionMaxQuantity = config?.submissionMaxQuantity ?? null;

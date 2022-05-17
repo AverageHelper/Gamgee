@@ -50,17 +50,21 @@ try {
 			"DIRECT_MESSAGES",
 			"GUILD_MESSAGE_TYPING"
 		],
-		partials: ["REACTION", "CHANNEL", "MESSAGE"]
+		partials: ["REACTION", "CHANNEL", "MESSAGE"],
+		allowedMentions: {
+			parse: ["roles", "users"], // disallow @everyone pings
+			repliedUser: true
+		}
 	});
 
 	// ** Handle Events **
 
-	client.on("ready", async () => {
+	client.on("ready", async client => {
 		logger.debug(`Node ${process.version}`);
 		if (getEnv("NODE_ENV") === "test") {
-			logger.info(`Logged in as ${client.user?.username ?? "nobody right now"}`);
+			logger.info(`Logged in as ${client.user.username}`);
 		} else {
-			logger.info(`Logged in as ${client.user?.tag ?? "nobody right now"}`);
+			logger.info(`Logged in as ${client.user.tag}`);
 		}
 
 		if (args["deploy-commands"]) {
@@ -76,14 +80,13 @@ try {
 		logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
 		logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
-		// Handle client events
 		client.on("messageCreate", async msg => {
 			const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
 			if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user?.id) return;
 			try {
 				const message = await msg.fetch();
 				const storage = await useStorage(message.guild, logger);
-				await handleCommand(client, message, storage, logger);
+				await handleCommand(message, storage, logger);
 			} catch (error) {
 				const msgDescription = JSON.stringify(msg, undefined, 2);
 				logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
@@ -93,9 +96,9 @@ try {
 		client.on("interactionCreate", async interaction => {
 			const storage = await useStorage(interaction.guild, logger);
 			if (interaction.isCommand()) {
-				await handleInteraction(client, interaction, storage, logger);
+				await handleInteraction(interaction, storage, logger);
 			} else if (interaction.isMessageComponent()) {
-				await handleMessageComponent(client, interaction, storage, logger);
+				await handleMessageComponent(interaction, logger);
 			}
 		});
 

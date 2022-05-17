@@ -23,11 +23,32 @@ import {
 	unwrappingWith
 } from "./helpers/randomStrings.js";
 
+const SLASH_COMMAND_INTENT_PREFIX = "/";
+
+/**
+ * The method that was used to invoke a command via a normal Discord message.
+ *
+ * Slash-commands and other interactions do not apply here, because those
+ * interactions skip the message parser.
+ *
+ * A `"bot-mention"` invocation happens when the user mentions the bot user
+ * directly. (e.g. "@bot help")
+ *
+ * A `"prefix"` invocation happens when the user prefixes their message with
+ * the bot's configured command prefix. (e.g. "?help")
+ *
+ * A `"slash"` invocation happens when the user attempts to use a Discord
+ * Slash Command, but Discord didn't catch that that's what the user was doing.
+ * (e.g. "/help")
+ */
+type InvocationMethod = "bot-mention" | "prefix" | "slash";
+
 interface QueryMessage {
-	/** The command and its arguments. */
+	/** The command name and arguments. */
 	query: Array<string>;
-	/** Whether the user used the regular command prefix or a user mention. */
-	usedCommandPrefix: boolean;
+
+	/** The method the user used to invoke the command. */
+	invocationMethod: InvocationMethod;
 }
 
 /**
@@ -40,18 +61,18 @@ interface QueryMessage {
  *
  * Non-query messages will resolve to an `undefined` query, and should be ignored.
  *
- * @param client The Discord client.
  * @param message The message to parse.
  * @param storage The bot's persistent storage.
+ * @param logger The logger to send messages to.
  *
  * @returns The command query. The first argument is the command name, and the rest are arguments.
  */
-async function query(
-	client: Discord.Client,
+export async function queryFromMessage(
 	message: Discord.Message,
 	storage: Storage | null,
 	logger: Logger
 ): Promise<QueryMessage | null> {
+	const client = message.client;
 	const content = message.content.trim();
 	const query = content.split(/ +/u);
 
@@ -64,25 +85,40 @@ async function query(
 		if (client.user && mentionedUserId === client.user.id) {
 			logger.debug("They're talking to me!");
 			// It's for us. Return the query verbatim.
-			return { query: query.slice(1), usedCommandPrefix: false };
+			return { query: query.slice(1), invocationMethod: "bot-mention" };
 		}
 
-		// It's not for us.
+		// It's not for me.
 		logger.debug("They're not talking to me. Ignoring.");
 		return null;
 	}
 
-	// Make sure it's a command
-	const COMMAND_PREFIX = await getConfigCommandPrefix(storage);
-	if (!content.startsWith(COMMAND_PREFIX)) {
-		logger.debug("They're not talking to me. Ignoring.");
-		return null;
+	// See if it's an interaction-command intent
+	if (content.startsWith(SLASH_COMMAND_INTENT_PREFIX)) {
+		// get rid of the slash
+		query[0] = query[0]?.slice(SLASH_COMMAND_INTENT_PREFIX.length) ?? "";
+		query.forEach(s => s.trim());
+		return { query, invocationMethod: "slash" };
 	}
-	query[0] = query[0]?.slice(COMMAND_PREFIX.length) ?? "";
 
-	return { query, usedCommandPrefix: true };
+	// See if it's a message-command intent
+	const commandPrefix = await getConfigCommandPrefix(storage);
+	if (content.startsWith(commandPrefix)) {
+		// get rid of the prefix
+		query[0] = query[0]?.slice(commandPrefix.length) ?? "";
+		query.forEach(s => s.trim());
+		return { query, invocationMethod: "prefix" };
+	}
+
+	// It's not for me.
+	logger.debug("They're not talking to me. Ignoring.");
+	return null;
 }
 
+/**
+ * Translates an array of command argument strings into a
+ * {@link Discord.CommandInteractionOptionResolver}.
+ */
 export function optionsFromArgs(
 	client: Discord.Client,
 	args: Array<string>
@@ -116,14 +152,13 @@ export function optionsFromArgs(
 	return new Discord.CommandInteractionOptionResolver(client, options);
 }
 
-async function responseContext(
-	message: Discord.Message,
-	client: Discord.Client
-): Promise<ResponseContext> {
+/** Resolves guild member information for the bot and for the user who invoked the interaction. */
+async function responseContext(message: Discord.Message): Promise<ResponseContext> {
 	let me: string;
 	const otherUser = message.author;
 	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
 
+	const client = message.client;
 	if (client.user) {
 		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
 	} else {
@@ -138,12 +173,10 @@ async function responseContext(
  * message is from a bot or the message does not begin with the guild's
  * configured command prefix.
  *
- * @param client The Discord client.
  * @param message The Discord message to handle.
  * @param storage Arbitrary persistent storage.
  */
 export async function handleCommand(
-	client: Discord.Client,
 	message: Discord.Message,
 	storage: Storage | null,
 	logger: Logger
@@ -170,25 +203,36 @@ export async function handleCommand(
 		}`
 	);
 
-	// Don't bother with regular messages
-	const pq = await query(client, message, storage, logger);
-	if (!pq) return;
-	const { query: q, usedCommandPrefix } = pq;
+	const parsedQuery = await queryFromMessage(message, storage, logger);
+	if (!parsedQuery) return; // Don't bother with normal chatter
+	const { query, invocationMethod } = parsedQuery;
 
-	if (q.length === 0) {
+	if (query.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
-		const ctx = await responseContext(message, client);
+		const ctx = await responseContext(message);
 		return await unwrappingWith(ctx, randomQuestion(), r => message.reply(r));
 	}
 
 	// Get the command
-	const commandName = q[0]?.toLowerCase() ?? "";
-	if (!commandName) return;
+	const givenCommandName = query[0]?.toLowerCase() ?? "";
+	if (!givenCommandName) return;
 
-	const dealiasedCommandName = resolveAlias(commandName);
-	const command: Command | undefined = commands.get(dealiasedCommandName);
+	const commandName = resolveAlias(givenCommandName);
+	const command: Command | undefined = commands.get(commandName);
+
+	if (invocationMethod === "slash") {
+		// TODO: Educate the masses on Slash Commands
+		// const commandPrefix = await getConfigCommandPrefix(storage);
+		// await message.reply(
+		// 	`It seems like you tried a Slash Command (\`${SLASH_COMMAND_INTENT_PREFIX}${givenCommandName}\`), but Discord thought you were going for a normal message. If your text field doesn't show a command name above it as you type, Discord doesn't think you're writing a command.\n\nI'll take your message like an old-style command (\`${commandPrefix}${givenCommandName}\`) for now, but you might wanna practice your slasher skills for next time :P`
+		// );
+		return; // Comment this to continue handling the interaction even tho it's wrong
+	}
+
+	// Run the command
 	if (command) {
-		const options = optionsFromArgs(client, q.slice(1));
+		// Get args from the query. The first one is the command name, so we slice it off.
+		const options = optionsFromArgs(message.client, query.slice(1));
 
 		logger.debug(
 			`Calling command handler '${command.name}' with options ${JSON.stringify(
@@ -204,7 +248,7 @@ export async function handleCommand(
 			user: message.author,
 			guild: message.guild,
 			channel: message.channel,
-			client,
+			client: message.client,
 			message,
 			options,
 			storage,
@@ -248,11 +292,13 @@ export async function handleCommand(
 		return invokeCommand(command, context);
 	}
 
-	const messageContainsWord = (str: string): boolean => q.map(s => s.toLowerCase()).includes(str);
+	// Some helpers for parsing intents
+	const messageContainsWord = (str: string): boolean =>
+		query.map(s => s.toLowerCase()).includes(str);
 	const messageContainsOneOfWords = (strs: Array<string>): boolean =>
-		q.map(s => s.toLowerCase()).some(s => strs.includes(s));
+		query.map(s => s.toLowerCase()).some(s => strs.includes(s));
 
-	if (!usedCommandPrefix) {
+	if (invocationMethod === "bot-mention") {
 		// This is likely a game. Play along!
 		void message.channel.sendTyping();
 		logger.debug(
@@ -272,7 +318,7 @@ export async function handleCommand(
 			wrapped = randomPhrase();
 		}
 
-		const ctx = await responseContext(message, client);
+		const ctx = await responseContext(message);
 		await unwrappingWith(ctx, wrapped, r => message.channel.send(r));
 	}
 }
