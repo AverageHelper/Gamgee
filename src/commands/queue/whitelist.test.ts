@@ -14,9 +14,7 @@ const mockWhitelistUser = whitelistUser as jest.Mock;
 import type { GuildedCommandContext } from "../Command.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import { whitelist } from "./whitelist.js";
-import Discord from "discord.js";
 
-const mockClient = ({} as unknown) as Discord.Client;
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
@@ -35,13 +33,13 @@ describe("Removing from Queue Blacklist", () => {
 		context = ({
 			user: { id: "test-user" },
 			guild: { ownerId },
-			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+			options: [
 				{
 					name: "user",
 					value: `<@${goodUserId}>`,
 					type: "STRING"
 				}
-			]),
+			],
 			logger,
 			reply: mockReply,
 			deleteInvocation: mockDeleteMessage
@@ -56,7 +54,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing without a valid mention (empty space)", async () => {
-		context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockReply).toHaveBeenCalledTimes(1);
@@ -67,7 +65,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing without a mention (no further text)", async () => {
-		context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockReply).toHaveBeenCalledTimes(1);

@@ -15,7 +15,7 @@ interface BaseCommand {
 	name: string;
 	aliases?: Array<string>;
 	description: string;
-	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
+	options?: NonEmptyArray<Discord.ApplicationCommandOptionData | Subcommand>;
 }
 
 export interface GlobalCommand extends BaseCommand {

@@ -49,7 +49,7 @@ export async function sendPrivately(
  */
 async function sendDM(
 	user: Discord.User,
-	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+	content: string | Discord.MessageOptions
 ): Promise<Discord.Message | null> {
 	try {
 		return await user.send(content);
@@ -62,7 +62,7 @@ async function sendDM(
 }
 
 function replyMessage(
-	source: Discord.TextBasedChannels | null,
+	source: Discord.TextBasedChannel | null,
 	content: string | null | undefined
 ): string {
 	const msg = createPartialString();
@@ -76,7 +76,7 @@ function replyMessage(
 
 async function sendDMReply(
 	source: Discord.Message,
-	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+	options: string | Discord.MessageOptions | Discord.ReplyMessageOptions
 ): Promise<Discord.Message | null> {
 	const user: Discord.User = source.author;
 	try {
@@ -116,7 +116,7 @@ async function sendDMReply(
 
 async function sendEphemeralReply(
 	source: Discord.CommandInteraction,
-	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+	options: string | Discord.InteractionReplyOptions | Omit<Discord.ReplyMessageOptions, "flags"> // FIXME: flags
 ): Promise<boolean> {
 	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
@@ -151,7 +151,7 @@ async function sendEphemeralReply(
  */
 export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
-	options: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
+	options: string | Discord.MessageOptions | Omit<Discord.ReplyMessageOptions, "flags">, // FIXME: flags everywhere
 	preferDMs: boolean
 ): Promise<Discord.Message | boolean> {
 	let message: Discord.Message | null;
@@ -166,7 +166,6 @@ export async function replyPrivately(
 			message = await sendDM(source.user, replyMessage(source.channel, options));
 		} else {
 			message = await sendDM(source.user, {
-				ephemeral: true,
 				...options,
 				content: replyMessage(source.channel, options.content)
 			});
@@ -200,8 +199,8 @@ export async function replyPrivately(
  * @param content The message to send.
  */
 export async function sendMessageInChannel(
-	channel: Discord.TextBasedChannels,
-	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions
+	channel: Discord.TextBasedChannel,
+	content: string | Omit<Discord.ReplyMessageOptions, "flags">
 ): Promise<Discord.Message | null> {
 	try {
 		return await channel.send(content);
@@ -223,7 +222,7 @@ export async function sendMessageInChannel(
  */
 export async function reply(
 	message: Discord.Message,
-	content: string | Discord.InteractionReplyOptions | Discord.ReplyMessageOptions,
+	content: string | Discord.ReplyMessageOptions,
 	shouldMention: boolean = true
 ): Promise<Discord.Message | null> {
 	try {

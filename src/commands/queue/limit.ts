@@ -99,8 +99,8 @@ export const limit: Subcommand = {
 
 		const config = await getQueueConfig(queueChannel);
 
-		const keyOption: CommandInteractionOption | undefined = options.data[0];
-		const valueOption: CommandInteractionOption | undefined = options.data[1];
+		const keyOption: CommandInteractionOption | undefined = options[0];
+		const valueOption: CommandInteractionOption | undefined = options[1];
 
 		if (!keyOption) {
 			const { limits } = await import("../limits.js");
@@ -164,7 +164,7 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
 
-				const response = createPartialString("Entry duration lower limit was ");
+				const response = createPartialString("Entry duration lower limit was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {

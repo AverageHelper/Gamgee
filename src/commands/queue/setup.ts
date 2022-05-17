@@ -19,7 +19,7 @@ export const setup: Subcommand = {
 	async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
 		await deleteInvocation();
 
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			return reply({
 				content: `Please name a text channel to use for the queue!`,

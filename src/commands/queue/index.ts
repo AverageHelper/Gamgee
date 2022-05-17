@@ -1,5 +1,4 @@
 import type { Command, Subcommand } from "../Command.js";
-import Discord from "discord.js";
 import { invokeCommand } from "../../actions/invokeCommand.js";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import { setup } from "./setup.js";
@@ -38,7 +37,7 @@ export const quo: Command = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const firstOption = context.options.data[0];
+		const firstOption = context.options[0];
 		if (!firstOption) {
 			const response = createPartialString("The possible subcommands are:");
 			Object.values(namedSubcommands).forEach(command => {
@@ -65,7 +64,7 @@ export const quo: Command = {
 		);
 		for (const command of namedSubcommands) {
 			if (command.name === arg) {
-				context.options = new Discord.CommandInteractionOptionResolver(context.client, argOptions);
+				const subcommandContext = { ...context, options: argOptions };
 				context.logger.debug(
 					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
 						context.options,
@@ -73,7 +72,7 @@ export const quo: Command = {
 						2
 					)}`
 				);
-				return invokeCommand(command, context);
+				return invokeCommand(command, subcommandContext);
 			}
 		}
 

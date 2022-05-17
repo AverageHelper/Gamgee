@@ -1,14 +1,14 @@
-import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
+import type { Command, CommandContext, CommandOption } from "./commands/index.js";
 import type { Logger } from "./logger.js";
 import type { Storage } from "./configStorage.js";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
+import type Discord from "discord.js";
 import { getEnv } from "./helpers/environment.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
-import Discord from "discord.js";
 import {
 	deleteMessage,
 	reply,
@@ -116,19 +116,16 @@ export async function queryFromMessage(
 }
 
 /**
- * Translates an array of command argument strings into a
- * {@link Discord.CommandInteractionOptionResolver}.
+ * Translates an array of command argument strings into an array
+ * of Application Command options.
  */
-export function optionsFromArgs(
-	client: Discord.Client,
-	args: Array<string>
-): Discord.CommandInteractionOptionResolver {
-	const options: Array<MessageCommandInteractionOption> = [];
+export function optionsFromArgs(args: Array<string>): Array<CommandOption> {
+	const options: Array<CommandOption> = [];
 
 	// one argument
 	const firstArg = args.shift();
 	if (firstArg !== undefined) {
-		const subcommand: MessageCommandInteractionOption = {
+		const subcommand: CommandOption = {
 			name: firstArg,
 			type: "STRING",
 			value: firstArg,
@@ -138,7 +135,7 @@ export function optionsFromArgs(
 		while (args.length > 0) {
 			// two arguments or more
 			const name = args.shift() as string;
-			const nextOption: MessageCommandInteractionOption = {
+			const nextOption: CommandOption = {
 				name,
 				type: "STRING",
 				value: name,
@@ -149,7 +146,7 @@ export function optionsFromArgs(
 		}
 	}
 
-	return new Discord.CommandInteractionOptionResolver(client, options);
+	return options;
 }
 
 /** Resolves guild member information for the bot and for the user who invoked the interaction. */
@@ -232,7 +229,7 @@ export async function handleCommand(
 	// Run the command
 	if (command) {
 		// Get args from the query. The first one is the command name, so we slice it off.
-		const options = optionsFromArgs(message.client, query.slice(1));
+		const options = optionsFromArgs(query.slice(1));
 
 		logger.debug(
 			`Calling command handler '${command.name}' with options ${JSON.stringify(

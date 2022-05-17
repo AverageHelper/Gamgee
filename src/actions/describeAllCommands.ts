@@ -78,7 +78,8 @@ export async function describeAllCommands(
 				push(CODE, subDesc);
 				push(`${COMMAND_PREFIX}${command.name} ${sub.name}`, subDesc);
 
-				describeParameters(sub.options ?? [], subDesc);
+				const options = "options" in sub ? sub.options ?? [] : [];
+				describeParameters(options, subDesc);
 
 				push(CODE, subDesc);
 
@@ -97,6 +98,7 @@ export async function describeAllCommands(
 function describeParameters(
 	options: Array<
 		| Discord.ApplicationCommandOption
+		| Discord.ApplicationCommandOptionData
 		| Discord.ApplicationCommandChoicesData
 		| Discord.ApplicationCommandNonOptionsData
 		| Subcommand

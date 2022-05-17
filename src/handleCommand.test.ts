@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import { defaultValueForConfigKey } from "./constants/config/defaultValueForConfigKey.js";
 
 jest.mock("./commands");
@@ -59,17 +59,15 @@ describe("Command handler", () => {
 
 	describe("Options Parser", () => {
 		test("parses empty options from a root command", () => {
-			const options = optionsFromArgs(mockClient, []); // e.g: /help
-			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
-			expect(options.data.length).toBe(0);
+			const options = optionsFromArgs([]); // e.g: /help
+			expect(options).toBeArrayOfSize(0);
 		});
 
 		test("parses one option", () => {
 			const url = "https://youtu.be/9Y8ZGLiqXB8";
-			const options = optionsFromArgs(mockClient, [url]); // e.g: /video <url>
-			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
-			expect(options.data.length).toBe(1);
-			expect(options.data[0]).toStrictEqual({
+			const options = optionsFromArgs([url]); // e.g: /video <url>
+			expect(options).toBeArrayOfSize(1);
+			expect(options[0]).toStrictEqual({
 				name: url,
 				type: "STRING",
 				value: url,
@@ -80,17 +78,16 @@ describe("Command handler", () => {
 		test("parses two options as a parameter to a subcomand", () => {
 			const subcommand = "get";
 			const key = "cooldown";
-			const options = optionsFromArgs(mockClient, [subcommand, key]); // e.g: /config get <key>
-			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
-			expect(options.data.length).toBe(1);
-			expect(options.data[0]).toStrictEqual({
+			const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
+			expect(options).toBeArrayOfSize(1);
+			expect(options[0]).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
 				options: expect.toBeArrayOfSize(1) as Array<unknown>
 			});
-			expect(options.data[0]?.options).toBeDefined();
-			expect(options.data[0]?.options).toStrictEqual([
+			expect(options[0]?.options).toBeDefined();
+			expect(options[0]?.options).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
@@ -104,17 +101,16 @@ describe("Command handler", () => {
 			const subcommand = "set";
 			const key = "cooldown";
 			const value = "null";
-			const options = optionsFromArgs(mockClient, [subcommand, key, value]); // e.g: /config set <key> <value>
-			expect(options).toBeInstanceOf(Discord.CommandInteractionOptionResolver);
-			expect(options.data.length).toBe(1);
-			expect(options.data[0]).toStrictEqual({
+			const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
+			expect(options).toBeArrayOfSize(1);
+			expect(options[0]).toStrictEqual({
 				name: subcommand,
 				type: "SUB_COMMAND",
 				value: subcommand,
 				options: expect.toBeArrayOfSize(2) as Array<unknown>
 			});
-			expect(options.data[0]?.options).toBeDefined();
-			expect(options.data[0]?.options).toStrictEqual([
+			expect(options[0]?.options).toBeDefined();
+			expect(options[0]?.options).toStrictEqual([
 				{
 					name: key,
 					type: "STRING",
@@ -192,13 +188,10 @@ describe("Command handler", () => {
 					["message", mockMessage],
 					[
 						"options",
-						new Discord.CommandInteractionOptionResolver(
-							mockClient,
-							command
-								.split(/ +/u)
-								.slice(1)
-								.map(s => ({ name: s, type: "STRING" }))
-						)
+						command
+							.split(/ +/u)
+							.slice(1)
+							.map(s => ({ name: s, type: "STRING" }))
 					],
 					["storage", null]
 				])

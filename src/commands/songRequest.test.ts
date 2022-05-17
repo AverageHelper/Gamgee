@@ -36,10 +36,10 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 });
 
 import type { GuildedCommandContext } from "./Command.js";
+import type Discord from "discord.js";
 import { sr as songRequest } from "./songRequest.js";
 import { URL } from "url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
-import Discord from "discord.js";
 
 const logger = useTestLogger("error");
 
@@ -132,7 +132,7 @@ describe("Song request via URL", () => {
 				channel: "any-channel",
 				user: "doesn't matter",
 				createdTimestamp: new Date(),
-				options: new Discord.CommandInteractionOptionResolver(mockClient, []),
+				options: [],
 				logger,
 				prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 				reply: mockReply,
@@ -173,13 +173,13 @@ describe("Song request via URL", () => {
 			channel: mockMessage1.channel,
 			user: mockMessage1.author,
 			createdTimestamp: new Date(),
-			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+			options: [
 				{
 					name: "url",
 					value: urls[0].toString(),
 					type: "STRING"
 				}
-			]),
+			],
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply,
@@ -189,13 +189,13 @@ describe("Song request via URL", () => {
 		} as unknown) as GuildedCommandContext;
 		const context2 = ({
 			...context1,
-			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+			options: [
 				{
 					name: "url",
 					value: urls[1].toString(),
 					type: "STRING"
 				}
-			]),
+			],
 			user: mockMessage2.author,
 			guild: mockMessage2.guild,
 			channel: mockMessage2.channel
@@ -233,17 +233,14 @@ describe("Song request via URL", () => {
 			mockMessages
 				.map(message => {
 					return ({
-						options: new Discord.CommandInteractionOptionResolver(
-							mockClient,
-							message.content
-								.split(" ")
-								.slice(1)
-								.map(url => ({
-									name: "url",
-									value: url,
-									type: "STRING"
-								}))
-						),
+						options: message.content
+							.split(" ")
+							.slice(1)
+							.map(url => ({
+								name: "url",
+								value: url,
+								type: "STRING"
+							})),
 						guild: message.guild,
 						channel: message.channel,
 						user: message.author,

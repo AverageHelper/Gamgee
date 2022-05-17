@@ -2,74 +2,35 @@ import type Discord from "discord.js";
 import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
 
-export interface MessageCommandInteractionOption extends Discord.CommandInteractionOption {
-	value: string;
-}
+export type CommandOption = Discord.CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
-	client: Discord.Client;
+	readonly client: Discord.Client;
 
 	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
-	storage: Storage | null;
+	readonly storage: Storage | null;
 
 	/** A logger to use to submit informative debug messages. */
-	logger: Logger;
+	readonly logger: Logger;
 
 	/** The guild in which the command was invoked. */
-	guild: Discord.Guild | null;
+	readonly guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	channel: Discord.TextBasedChannels | null;
+	readonly channel: Discord.TextBasedChannel | null;
 
 	/** The user which invoked the command. */
-	user: Discord.User;
+	readonly user: Discord.User;
 
 	/** The UNIX time at which the command was invoked. */
-	createdTimestamp: number;
+	readonly createdTimestamp: number;
 
 	/** The options that were passed into the command. */
-	options: Discord.CommandInteractionOptionResolver;
+	readonly options: ReadonlyArray<CommandOption>;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
-
-	/**
-	 * Sends a DM or ephemeral reply to the command's sender.
-	 *
-	 * In the case of an interaction that was publicly deferred (e.g.
-	 * using `prepareForLongRunningTasks(true)`), this function will
-	 * edit that reply. The message will therefore be public.
-	 *
-	 * @param options The message payload to send.
-	 * @param viaDM Whether Gamgee should reply in DMs.
-	 */
-	replyPrivately: (
-		options: string | Discord.ReplyMessageOptions | Discord.InteractionReplyOptions,
-		viaDM?: true
-	) => Promise<void>;
-
-	/** Replies to the command invocation message, optionally pinging the command's sender. */
-	reply: (
-		options:
-			| string
-			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & {
-					shouldMention?: boolean;
-			  })
-	) => Promise<void>;
-
-	/**
-	 * Sends a message in the same channel to the user who invoked the command.
-	 * Does not constitute a "reply" in Discord's canonical sense.
-	 *
-	 * @returns a `Promise` that resolves with a reference to the message sent,
-	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
-	 */
-	followUp: (
-		options:
-			| string
-			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean })
-	) => Promise<Discord.Message | boolean>;
 
 	/**
 	 * Deletes the command invocation if it was sent as a text message.
@@ -82,21 +43,80 @@ interface BaseCommandContext {
 	sendTyping: () => void;
 }
 
-interface MessageCommandContext extends BaseCommandContext {
-	type: "message";
+export interface MessageCommandContext extends BaseCommandContext {
+	readonly type: "message";
 
 	/** The message that contains the command invocation. */
-	message: Discord.Message;
+	readonly message: Discord.Message;
 
 	/** The options that were passed into the command. */
-	options: Discord.CommandInteractionOptionResolver;
+	readonly options: ReadonlyArray<CommandOption>;
+
+	/**
+	 * Sends a DM or ephemeral reply to the command's sender.
+	 *
+	 * In the case of an interaction that was publicly deferred (e.g.
+	 * using `prepareForLongRunningTasks(true)`), this function will
+	 * edit that reply. The message will therefore be public.
+	 *
+	 * @param options The message payload to send.
+	 * @param viaDM Whether Gamgee should reply in DMs.
+	 */
+	replyPrivately: (options: string | Discord.ReplyMessageOptions, viaDM?: true) => Promise<void>;
+
+	/** Replies to the command invocation message, optionally pinging the command's sender. */
+	reply: (
+		options: string | (Discord.ReplyMessageOptions & { shouldMention?: boolean })
+	) => Promise<void>;
+
+	/**
+	 * Sends a message in the same channel to the user who invoked the command.
+	 * Does not constitute a "reply" in Discord's canonical sense.
+	 *
+	 * @returns a `Promise` that resolves with a reference to the message sent,
+	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
+	 */
+	followUp: (
+		options: string | (Discord.ReplyMessageOptions & { reply?: boolean; ephemeral?: boolean })
+	) => Promise<Discord.Message | boolean>;
 }
 
-interface InteractionCommandContext extends BaseCommandContext {
-	type: "interaction";
+export interface InteractionCommandContext extends BaseCommandContext {
+	readonly type: "interaction";
 
 	/** The interaction that represents the command invocation. */
-	interaction: Discord.CommandInteraction;
+	readonly interaction: Discord.CommandInteraction;
+
+	/**
+	 * Sends a DM or ephemeral reply to the command's sender.
+	 *
+	 * In the case of an interaction that was publicly deferred (e.g.
+	 * using `prepareForLongRunningTasks(true)`), this function will
+	 * edit that reply. The message will therefore be public.
+	 *
+	 * @param options The message payload to send.
+	 * @param viaDM Whether Gamgee should reply in DMs.
+	 */
+	replyPrivately: (
+		options: string | Discord.InteractionReplyOptions,
+		viaDM?: true
+	) => Promise<void>;
+
+	/** Replies to the command invocation message, optionally pinging the command's sender. */
+	reply: (
+		options: string | (Discord.InteractionReplyOptions & { shouldMention?: boolean })
+	) => Promise<void>;
+
+	/**
+	 * Sends a message in the same channel to the user who invoked the command.
+	 * Does not constitute a "reply" in Discord's canonical sense.
+	 *
+	 * @returns a `Promise` that resolves with a reference to the message sent,
+	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
+	 */
+	followUp: (
+		options: string | (Discord.InteractionReplyOptions & { reply?: boolean })
+	) => Promise<Discord.Message | boolean>;
 }
 
 /**

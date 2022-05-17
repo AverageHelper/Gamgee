@@ -9,10 +9,7 @@ const logger = useLogger();
 type Invocable = Command | Subcommand;
 
 async function failPermissions(context: CommandContext): Promise<void> {
-	return context.replyPrivately({
-		content: "You don't have permission to run that command.",
-		ephemeral: true
-	});
+	return context.replyPrivately("You don't have permission to run that command.");
 }
 
 async function failNoGuild(context: CommandContext): Promise<void> {

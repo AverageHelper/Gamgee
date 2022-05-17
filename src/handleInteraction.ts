@@ -46,7 +46,7 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let channel: Discord.TextBasedChannels | null = null;
+		let channel: Discord.TextBasedChannel | null = null;
 		if (interaction.channel?.isText() === true) {
 			channel = interaction.channel;
 		}
@@ -59,7 +59,7 @@ export async function handleInteraction(
 			channel,
 			client: interaction.client,
 			interaction,
-			options: interaction.options,
+			options: interaction.options.data,
 			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
@@ -81,12 +81,7 @@ export async function handleInteraction(
 						await interaction.followUp({ ephemeral: true, ...options });
 					}
 				} else {
-					let reply: Discord.Message | boolean;
-					if (typeof options === "string") {
-						reply = await replyPrivately(interaction, { ephemeral: true, content: options }, viaDM);
-					} else {
-						reply = await replyPrivately(interaction, { ephemeral: true, ...options }, viaDM);
-					}
+					const reply = await replyPrivately(interaction, options, viaDM);
 					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}

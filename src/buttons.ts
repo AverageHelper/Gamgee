@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import Discord from "discord.js";
 import type { URL } from "url";
 
 export interface MessageButton {
@@ -27,10 +27,10 @@ export const RESTORE_BUTTON: MessageButton = {
 	style: "SECONDARY"
 };
 
-export function actionRow(buttons: NonEmptyArray<MessageButton>): Discord.MessageActionRowOptions {
-	return {
-		type: "ACTION_ROW",
-		components: buttons.map<Discord.InteractionButtonOptions>(btn => ({
+export function actionRow(buttons: NonEmptyArray<MessageButton>): Discord.MessageActionRow {
+	const row = new Discord.MessageActionRow();
+	row.setComponents(
+		buttons.map<Discord.MessageActionRowComponentResolvable>(btn => ({
 			type: "BUTTON",
 			style: btn.style,
 			label: btn.label,
@@ -38,5 +38,6 @@ export function actionRow(buttons: NonEmptyArray<MessageButton>): Discord.Messag
 			url: btn.url?.toString() ?? "",
 			customId: btn.id
 		}))
-	};
+	);
+	return row;
 }

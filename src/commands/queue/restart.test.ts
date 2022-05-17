@@ -66,9 +66,12 @@ describe("Clear queue contents", () => {
 			];
 			mockGetQueueChannel.mockResolvedValue(queueChannel);
 			mockGetAllEntries.mockResolvedValue(queueEntries);
-			context.channel = ({
-				id: channelId
-			} as unknown) as Discord.TextChannel;
+			context = {
+				...context,
+				channel: ({
+					id: channelId
+				} as unknown) as Discord.TextChannel
+			};
 
 			await expect(restart.execute(context)).resolves.toBeUndefined();
 

@@ -65,10 +65,13 @@ describe("Invoke Command", () => {
 
 		beforeEach(() => {
 			command.requiresGuild = true;
-			context.guild = ({
-				id: "the-guild",
-				ownerId: callerId
-			} as unknown) as Discord.Guild;
+			context = {
+				...context,
+				guild: ({
+					id: "the-guild",
+					ownerId: callerId
+				} as unknown) as Discord.Guild
+			};
 			command.permissions = mockPermissions;
 
 			mockPermissions.mockResolvedValue([]);
