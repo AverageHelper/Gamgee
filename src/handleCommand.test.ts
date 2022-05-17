@@ -28,7 +28,7 @@ describe("Command handler", () => {
 			bot: false,
 			id: mockSenderMember.user.id
 		},
-		client: (mockClient as unknown) as Discord.Client,
+		client: mockClient,
 		reply: mockReply,
 		channel: {
 			send: mockChannelSend,
@@ -151,7 +151,7 @@ describe("Command handler", () => {
 			`does nothing with unknown command '${prefix}$content'`,
 			async ({ content }: { content: string }) => {
 				mockMessage.content = content;
-				await handleCommand(mockClient, mockMessage, null, logger);
+				await handleCommand(mockMessage, null, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
@@ -181,7 +181,7 @@ describe("Command handler", () => {
 		`("calls the $command command", async ({ command }: { command: string }) => {
 			mockMessage.content = `${prefix}${command}`;
 			mockMessage.author.bot = false;
-			await handleCommand(mockClient, mockMessage, null, logger);
+			await handleCommand(mockMessage, null, logger);
 
 			const mock = mockCommandDefinitions.get(command)?.execute;
 			expect(mock).toBeDefined();
@@ -225,7 +225,7 @@ describe("Command handler", () => {
 			async ({ command }: { command: string }) => {
 				mockMessage.content = `${prefix}${command}`;
 				mockMessage.author.bot = true;
-				await handleCommand(mockClient, mockMessage, null, logger);
+				await handleCommand(mockMessage, null, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				expect.assertions(mockCommandDefinitions.size);
@@ -234,7 +234,7 @@ describe("Command handler", () => {
 
 		test("Command alias `nowplaying` calls command `now-playing`", async () => {
 			mockMessage.content = `${prefix}nowplaying`;
-			await handleCommand(mockClient, mockMessage, null, logger);
+			await handleCommand(mockMessage, null, logger);
 
 			const mockNowPlaying = mockCommandDefinitions.get("now-playing");
 			expect(mockNowPlaying).toBeDefined();

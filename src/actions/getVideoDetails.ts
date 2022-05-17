@@ -137,6 +137,7 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 		| { name?: string; duration: `${string}H${Digit}${Digit}M${Digit}${Digit}S` }
 		| undefined;
 	if (!json) throw new VideoError("Duration and title not found");
+	if (!json.duration || !isString(json.duration)) throw new VideoError("Duration data not found");
 
 	const durationPropertiesMatch = json.duration.matchAll(/H([0-9]+)M([0-9]+)S/gu);
 	const durationProperties = Array.from(durationPropertiesMatch)[0] as

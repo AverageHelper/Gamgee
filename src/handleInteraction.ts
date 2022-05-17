@@ -18,7 +18,6 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * @param storage Arbitrary persistent storage.
  */
 export async function handleInteraction(
-	client: Discord.Client,
 	interaction: Discord.CommandInteraction,
 	storage: Storage | null,
 	logger: Logger
@@ -33,7 +32,7 @@ export async function handleInteraction(
 	}
 
 	// Ignore self interactions
-	if (interaction.user.id === client.user?.id) return;
+	if (interaction.user.id === interaction.client.user?.id) return;
 
 	logger.debug(`User ${logUser(interaction.user)} sent command: '${interaction.commandName}'`);
 
@@ -58,7 +57,7 @@ export async function handleInteraction(
 			user: interaction.user,
 			guild: interaction.guild,
 			channel,
-			client,
+			client: interaction.client,
 			interaction,
 			options: interaction.options,
 			storage,

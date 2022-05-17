@@ -1,6 +1,5 @@
 import type Discord from "discord.js";
 import type { Logger } from "./logger.js";
-import type { Storage } from "./configStorage.js";
 import { createPartialString, composed, push } from "./helpers/composeStrings.js";
 import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
 import { fetchEntryFromMessage } from "./useQueueStorage.js";
@@ -21,15 +20,11 @@ import {
  * Performs actions from a Discord command interaction.
  * The command is ignored if the interaction is from a bot.
  *
- * @param client The Discord client.
- * @param message The Discord message to handle.
- * @param storage Arbitrary persistent storage.
+ * @param interaction The Discord interaction to handle.
  * @param logger The logger to talk to about what's going on.
  */
 export async function handleMessageComponent(
-	client: Discord.Client,
 	interaction: Discord.MessageComponentInteraction,
-	storage: Storage | null, // FIXME: Do we need this?
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -42,7 +37,7 @@ export async function handleMessageComponent(
 	}
 
 	// Ignore self interactions
-	if (interaction.user.id === client.user?.id) return;
+	if (interaction.user.id === interaction.client.user?.id) return;
 
 	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customId}'`);
 

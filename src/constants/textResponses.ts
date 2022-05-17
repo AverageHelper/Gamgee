@@ -188,6 +188,7 @@ export const phrases: ResponseRepository = [
 	],
 	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
 	"Did you know: I'm pretty good at chess, I have won `0` games so far! :nerd:",
+	'Discord is weird. "Slash commands," for example. What\'s up with that?',
 	"Do I know you?",
 	"Do you know how painful my training was? The song _Never Gonna Give You Up_ by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
 	[
@@ -211,7 +212,7 @@ export const phrases: ResponseRepository = [
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
-	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands. :D",
+	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands :D",
 	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
@@ -244,6 +245,7 @@ export const phrases: ResponseRepository = [
 	["I'm so hungry, I could eat a...", "*nevermind*", ">.>", "<.<"],
 	"It's not a phase!",
 	"Jack and Jill ran up the hill...",
+	"James, while John had had 'had', had had 'had had'. 'Had had' had had a better effect on the teacher.",
 	"Keep moving forward!",
 	"Let me play among the stars...",
 	":cloud_lightning:  I smite thee!",
@@ -298,7 +300,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 194 of these
+]; // 196 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
