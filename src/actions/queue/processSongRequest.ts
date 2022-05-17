@@ -7,7 +7,7 @@ import { deleteMessage } from "../../actions/messages/index.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getVideoDetails } from "../getVideoDetails.js";
 import { logUser } from "../../helpers/logUser.js";
-import { MILLISECONDS_IN_SECOND } from "../../constants/time.js";
+import { MILLISECONDS_IN_SECOND, SECONDS_IN_MINUTE } from "../../constants/time.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { setQueueOpen } from "../../useGuildStorage.js";
@@ -245,22 +245,47 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		// ** Full send!
 		await acceptSongRequest({ queueChannel, context, entry, logger });
 
-		// ** If the queue would be overfull with this submission, accept the submission then close the queue
+		// ** Contingencies
 		const totalPlaytimeLimit = config.queueDurationSeconds;
+		const FOUR_MINUTES = 4 * SECONDS_IN_MINUTE;
+		const buffer = 1.5 * (maxDuration ?? FOUR_MINUTES);
+
+		// If the queue would be overfull with this submission, accept the submission then close the queue
 		if (totalPlaytimeLimit !== null && playtimeTotal + seconds > totalPlaytimeLimit) {
 			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
-			logger.info(`The queue's duration limit is ${durationLimitMsg}. Closing the queue.`);
+			const durationMsg = durationString(playtimeTotal + seconds, true);
+			logger.info(
+				`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue.`
+			);
 
 			// This code is mainly copied from the implementation of `/quo close`
-			const queueIsCurrent = context.channel?.id === queueChannel.id;
-			const promises: Array<Promise<unknown>> = [setQueueOpen(false, queueChannel.guild)];
-			if (!queueIsCurrent) {
-				// Post in the queue channel if this command wasn't run from there
-				promises.push(queueChannel.send("This queue is full. I'm closing it now. :wave:"));
-			}
+			const promises: Array<Promise<unknown>> = [
+				setQueueOpen(false, queueChannel.guild),
+				queueChannel.send("This queue is full. I'm closing it now. :wave:")
+			];
 			await Promise.all(promises);
 			await context.followUp({
-				content: "The queue is full. I'm closing it now. :wave:",
+				content:
+					"\\~\\~\\~\\~\\~\\~\\~\\~\n\n**The queue is full. I'm closing it now.**  :wave:\n\n\\~\\~\\~\\~\\~\\~\\~\\~",
+				reply: false
+			});
+
+			// If the queue will fill up soon, give warning, where
+			// "soon" ~= 1.5 times the upper entry duration limit,
+			// or 6m if no such limit is set
+		} else if (
+			totalPlaytimeLimit !== null &&
+			playtimeTotal + seconds + buffer > totalPlaytimeLimit
+		) {
+			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
+			const durationMsg = durationString(playtimeTotal + seconds, true);
+			logger.info(
+				`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue soon.`
+			);
+
+			await context.followUp({
+				content:
+					"========\n\n**The queue is nearly full. Get your submissions in while you still can!**  :checkered_flag:\n\n========",
 				reply: false
 			});
 		}
