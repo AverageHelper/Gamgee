@@ -7,9 +7,7 @@ export const t: Command = {
 	async execute({ type, channel, client, logger, reply, deleteInvocation, sendTyping }) {
 		if (!channel) return reply({ content: "This doesn't work as well in DMs." });
 
-		logger.debug(
-			`${client.user?.username.concat(" is") ?? "I am"} typing in channel ${channel.id}...`
-		);
+		logger.debug(`I, ${client.user.username}, started typing in channel ${channel.id}`);
 		await deleteInvocation();
 		if (type === "interaction") {
 			// We're going to stop typing in a bit. We `await` here, not `return`.

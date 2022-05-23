@@ -82,7 +82,7 @@ export async function queryFromMessage(
 	const mentionedUserId = getUserIdFromMention(commandOrMention);
 	if (mentionedUserId !== null) {
 		// See if it's for us.
-		if (client.user && mentionedUserId === client.user.id) {
+		if (client.isReady() && mentionedUserId === client.user.id) {
 			logger.debug("They're talking to me!");
 			// It's for us. Return the query verbatim.
 			return { query: query.slice(1), invocationMethod: "bot-mention" };
@@ -156,7 +156,7 @@ async function responseContext(message: Discord.Message): Promise<ResponseContex
 	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
 
 	const client = message.client;
-	if (client.user) {
+	if (client.isReady()) {
 		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
 	} else {
 		me = "Me";

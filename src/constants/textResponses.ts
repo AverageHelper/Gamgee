@@ -198,6 +198,7 @@ export const phrases: ResponseRepository = [
 	"Don't count your chickens",
 	"Down the hall, up the stairs, past the gargoyle",
 	"*ENERGY*",
+	"English is hard, but it can be learned through tough thorough thought, though.",
 	[
 		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
 		"_ _",
@@ -300,7 +301,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 196 of these
+]; // 197 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

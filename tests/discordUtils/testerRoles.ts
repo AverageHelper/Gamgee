@@ -14,9 +14,9 @@ async function setAdminRole(
 ): Promise<void> {
 	const client = await testerClient();
 
-	const user = client.user;
-	if (!user) throw new Error("The tester bot has no user object");
+	if (!client.isReady()) throw new Error("The tester bot is not ready");
 
+	const user = client.user;
 	const guild = await client.guilds.fetch(TEST_GUILD_ID);
 
 	const roleId: Snowflake = requireEnv(roleKey);

@@ -6,7 +6,7 @@ export type CommandOption = Discord.CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
-	readonly client: Discord.Client;
+	readonly client: Discord.Client<true>;
 
 	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
 	readonly storage: Storage | null;

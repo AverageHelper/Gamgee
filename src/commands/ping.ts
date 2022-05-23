@@ -10,7 +10,7 @@ export const ping: Command = {
 		const { client, user, logger } = context;
 		const random = unwrappingFirstWith(
 			{
-				me: client.user?.username ?? "Me",
+				me: client.user.username,
 				otherUser: user,
 				otherMember: null
 			},

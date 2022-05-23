@@ -37,7 +37,7 @@ export async function describeAllCommands(
 
 	// Describe all commands
 	const description = createPartialString();
-	const allCommands = [...commands.values()];
+	const allCommands = Array.from(commands.values());
 	for (const command of allCommands) {
 		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
 		if (!canRun) continue;

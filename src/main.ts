@@ -61,7 +61,47 @@ try {
 
 	client.on("ready", async client => {
 		logger.debug(`Node ${process.version}`);
+
+		if (shouldStartNormally) {
+			logger.verbose("*Yawn* Good morning!");
+			logger.verbose("Starting...");
+			logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
+			logger.info(`Started Gamgee Core v${gamgeeVersion}`);
+
+			client.on("messageCreate", async msg => {
+				const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
+				if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user.id) return;
+				try {
+					const message = await msg.fetch();
+					const storage = await useStorage(message.guild, logger);
+					await handleCommand(message, storage, logger);
+				} catch (error) {
+					const msgDescription = JSON.stringify(msg, undefined, 2);
+					logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
+				}
+			});
+
+			client.on("interactionCreate", async interaction => {
+				const storage = await useStorage(interaction.guild, logger);
+				if (interaction.isCommand()) {
+					await handleInteraction(interaction, storage, logger);
+				} else if (interaction.isMessageComponent()) {
+					await handleMessageComponent(interaction, logger);
+				}
+			});
+
+			client.on("messageReactionAdd", async (rxn, usr) => {
+				try {
+					const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
+					await handleReactionAdd(reaction, user, logger);
+				} catch (error) {
+					logger.error(richErrorMessage("Failed to handle reaction add.", error));
+				}
+			});
+		}
+
 		if (getEnv("NODE_ENV") === "test") {
+			// Don't log the tag in test mode, people might see that!
 			logger.info(`Logged in as ${client.user.username}`);
 		} else {
 			logger.info(`Logged in as ${client.user.tag}`);
@@ -73,44 +113,6 @@ try {
 			await revokeSlashCommandsThenExit(client);
 		}
 	});
-
-	if (shouldStartNormally) {
-		logger.verbose("*Yawn* Good morning!");
-		logger.verbose("Starting...");
-		logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
-		logger.info(`Started Gamgee Core v${gamgeeVersion}`);
-
-		client.on("messageCreate", async msg => {
-			const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
-			if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user?.id) return;
-			try {
-				const message = await msg.fetch();
-				const storage = await useStorage(message.guild, logger);
-				await handleCommand(message, storage, logger);
-			} catch (error) {
-				const msgDescription = JSON.stringify(msg, undefined, 2);
-				logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
-			}
-		});
-
-		client.on("interactionCreate", async interaction => {
-			const storage = await useStorage(interaction.guild, logger);
-			if (interaction.isCommand()) {
-				await handleInteraction(interaction, storage, logger);
-			} else if (interaction.isMessageComponent()) {
-				await handleMessageComponent(interaction, logger);
-			}
-		});
-
-		client.on("messageReactionAdd", async (rxn, usr) => {
-			try {
-				const [reaction, user] = await Promise.all([rxn.fetch(), usr.fetch()]);
-				await handleReactionAdd(reaction, user, logger);
-			} catch (error) {
-				logger.error(richErrorMessage("Failed to handle reaction add.", error));
-			}
-		});
-	}
 
 	client.on("error", error => {
 		logger.error(richErrorMessage("Received client error.", error));
