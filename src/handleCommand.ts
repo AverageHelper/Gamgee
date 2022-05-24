@@ -9,6 +9,7 @@ import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
+import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
 import {
 	deleteMessage,
 	reply,
@@ -301,7 +302,7 @@ export async function handleCommand(
 		logger.debug(
 			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
 		);
-		await new Promise(resolve => setTimeout(resolve, 2000));
+		await timeoutSeconds(2);
 
 		let wrapped: Response;
 

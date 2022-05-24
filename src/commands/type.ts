@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
 export const t: Command = {
 	name: "t",
@@ -19,7 +20,7 @@ export const t: Command = {
 
 		sendTyping();
 
-		await new Promise(resolve => setTimeout(resolve, 10000));
+		await timeoutSeconds(10);
 		logger.debug(`Finished typing in channel ${channel.id}`);
 	}
 };
