@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
-import { allCommands, resolvePermissions } from "../commands/index.js";
+import { allCommands } from "../commands/index.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { useLogger } from "../logger.js";
 
@@ -19,7 +19,6 @@ async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Clearing commands for guild ${guild.id}...`);
 	if (!testMode) {
 		await guild.commands.set([]); // set guild commands
-		await guild.commands.permissions.set({ fullPermissions: [] }); // set guild commands
 	}
 	logger.debug(`Commands cleared for guild ${guild.id}`);
 }
@@ -65,19 +64,7 @@ async function preparePrivilegedCommands(
 					logger.debug(`Created command '/${cmd.name}' in guild ${guild.id}`);
 				}
 
-				if (cmd.permissions) {
-					const permissions = Array.isArray(cmd.permissions)
-						? await resolvePermissions(cmd.permissions, guild)
-						: await cmd.permissions(guild);
-					if (appCommand) {
-						await appCommand.permissions.set({ permissions });
-						logger.debug(
-							`Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`
-						);
-					} else {
-						logger.debug(`Set permissions for command '/${cmd.name}' in guild ${guild.id}`);
-					}
-				}
+				// TODO: Set default permissions
 
 				successfulPrivilegedPushes += 1;
 				return appCommand;
@@ -122,7 +109,8 @@ async function prepareGuildedCommands(
 	guildCommands: Array<GuildedCommand>,
 	client: Discord.Client
 ): Promise<void> {
-	const guilds = [...client.guilds.cache.values()];
+	const oAuthGuilds = await client.guilds.fetch();
+	const guilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
 	logger.debug(`I am in ${guilds.length} guild${pluralOf(guilds)}.`);
 	logger.verbose(
 		`${guildCommands.length} command${pluralOf(guildCommands)} require a guild: ${JSON.stringify(
@@ -144,7 +132,9 @@ async function prepareGlobalCommands(
 	logger.debug(
 		`Creating all ${globalCommands.length} global command${pluralOf(globalCommands)} at once...`
 	);
-	await client.application?.commands.set(globalCommands); // set global commands
+	if (!testMode) {
+		await client.application?.commands.set(globalCommands); // set global commands
+	}
 	logger.verbose(`Set ${globalCommands.length} global command${pluralOf(globalCommands)}.`);
 }
 
