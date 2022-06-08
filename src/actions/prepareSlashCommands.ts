@@ -1,11 +1,13 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
-import { allCommands, resolvePermissions } from "../commands/index.js";
+import { allCommands } from "../commands/index.js";
+import { Permissions } from "discord.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 import { useLogger } from "../logger.js";
 
 const testMode: boolean = false;
-const logger = useLogger("verbose");
+const logger = useLogger("debug");
 
 function pluralOf(value: number | Array<unknown>): "" | "s" {
 	const PLURAL = "s";
@@ -18,8 +20,11 @@ function pluralOf(value: number | Array<unknown>): "" | "s" {
 async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Clearing commands for guild ${guild.id}...`);
 	if (!testMode) {
-		await guild.commands.set([]); // set guild commands
-		await guild.commands.permissions.set({ fullPermissions: [] }); // set guild commands
+		try {
+			await guild.commands.set([]); // set guild commands
+		} catch (error) {
+			logger.error(richErrorMessage(`Failed to reset permissions for guild ${guild.id}.`, error));
+		}
 	}
 	logger.debug(`Commands cleared for guild ${guild.id}`);
 }
@@ -46,50 +51,70 @@ async function preparePrivilegedCommands(
 	privilegedCommands: Array<GuildedCommand>,
 	guild: Discord.Guild
 ): Promise<number> {
-	let successfulPrivilegedPushes = 0;
+	// See https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions for the new way to do this
+
 	logger.verbose(`Creating ${privilegedCommands.length} command${pluralOf(privilegedCommands)}...`);
-	await Promise.allSettled(
+	const results = await Promise.allSettled(
 		privilegedCommands.map(async cmd => {
 			try {
+				logger.verbose(
+					`\t'/${cmd.name}'  (requires guild, ${
+						cmd.defaultMemberPermissions !== undefined ? "custom permissions" : "any privilege"
+					})`
+				);
+
+				// Prepare command payload
+				const payload: Discord.ApplicationCommandDataResolvable & {
+					default_member_permissions?: `${bigint}`; // TODO: Remove this augmentation
+					dm_permission?: boolean;
+				} = {
+					description: cmd.description,
+					type: "CHAT_INPUT",
+					name: cmd.name // TODO: Repeat this for command aliases
+				};
+				if (cmd.nameLocalizations !== undefined) {
+					payload.nameLocalizations = cmd.nameLocalizations;
+				}
+				if (cmd.descriptionLocalizations !== undefined) {
+					payload.descriptionLocalizations = cmd.descriptionLocalizations;
+				}
+				if (cmd.options !== undefined) {
+					payload.options = cmd.options;
+				}
+
+				// Resolve default member permissions bitfield
+				if (cmd.defaultMemberPermissions !== undefined) {
+					payload.default_member_permissions = `${
+						new Permissions(cmd.defaultMemberPermissions).bitfield
+					}`;
+				}
+
+				// Deploy command
 				let appCommand: Discord.ApplicationCommand | undefined;
-				const permissions = cmd.permissions
-					? Array.isArray(cmd.permissions)
-						? cmd.permissions.join(", ")
-						: "custom permissions"
-					: "any privilege";
-				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
 				if (!testMode) {
-					appCommand = await guild.commands.create(cmd);
-					logger.debug(`Created command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`);
-				} else {
-					logger.debug(`Created command '/${cmd.name}' in guild ${guild.id}`);
+					appCommand = await guild.commands.create(payload);
 				}
+				logger.debug(
+					`Created command '/${cmd.name}' (${appCommand?.id ?? "test mode"}) in guild ${guild.id}`
+				);
 
-				if (cmd.permissions) {
-					const permissions = Array.isArray(cmd.permissions)
-						? await resolvePermissions(cmd.permissions, guild)
-						: await cmd.permissions(guild);
-					if (appCommand) {
-						await appCommand.permissions.set({ permissions });
-						logger.debug(
-							`Set permissions for command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`
-						);
-					} else {
-						logger.debug(`Set permissions for command '/${cmd.name}' in guild ${guild.id}`);
-					}
-				}
-
-				successfulPrivilegedPushes += 1;
 				return appCommand;
 			} catch (error) {
 				logger.error(
-					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}`, error)
+					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}.`, error)
 				);
 				throw error;
 			}
 		})
 	);
-	return successfulPrivilegedPushes;
+
+	let numberSuccessful = 0;
+	results.forEach(result => {
+		if (result.status === "fulfilled") {
+			numberSuccessful += 1;
+		}
+	});
+	return numberSuccessful;
 }
 
 async function prepareCommandsForGuild(
@@ -98,8 +123,8 @@ async function prepareCommandsForGuild(
 ): Promise<void> {
 	await resetCommandsForGuild(guild);
 
-	const privilegedCmds: Array<GuildedCommand> = guildCommands.filter(cmd => cmd.permissions);
-	const unprivilegedCmds: Array<GuildedCommand> = guildCommands.filter(cmd => !cmd.permissions);
+	const privilegedCmds = guildCommands.filter(cmd => cmd.defaultMemberPermissions !== undefined);
+	const unprivilegedCmds = guildCommands.filter(cmd => cmd.defaultMemberPermissions === undefined);
 
 	const successfulUnprivilegedPushes = await prepareUnprivilegedCommands(unprivilegedCmds, guild);
 	const successfulPrivilegedPushes = await preparePrivilegedCommands(privilegedCmds, guild);
@@ -120,9 +145,10 @@ async function prepareCommandsForGuild(
 
 async function prepareGuildedCommands(
 	guildCommands: Array<GuildedCommand>,
-	client: Discord.Client
+	client: Discord.Client<true>
 ): Promise<void> {
-	const guilds = [...client.guilds.cache.values()];
+	const oAuthGuilds = await client.guilds.fetch();
+	const guilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
 	logger.debug(`I am in ${guilds.length} guild${pluralOf(guilds)}.`);
 	logger.verbose(
 		`${guildCommands.length} command${pluralOf(guildCommands)} require a guild: ${JSON.stringify(
@@ -134,7 +160,7 @@ async function prepareGuildedCommands(
 
 async function prepareGlobalCommands(
 	globalCommands: Array<GlobalCommand>,
-	client: Discord.Client
+	client: Discord.Client<true>
 ): Promise<void> {
 	logger.verbose(
 		`${globalCommands.length} command${pluralOf(
@@ -144,12 +170,21 @@ async function prepareGlobalCommands(
 	logger.debug(
 		`Creating all ${globalCommands.length} global command${pluralOf(globalCommands)} at once...`
 	);
-	await client.application?.commands.set(globalCommands); // set global commands
+	if (!testMode) {
+		await client.application?.commands.set(globalCommands); // set global commands
+	}
 	logger.verbose(`Set ${globalCommands.length} global command${pluralOf(globalCommands)}.`);
 }
 
-export async function prepareSlashCommandsThenExit(client: Discord.Client): Promise<void> {
-	const commands: Array<Command> = [...allCommands.values()];
+export async function prepareSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
+	// FIXME: Command Permissions v2 can't come to discord.js quickly enough!
+	/** @see https://discord.com/blog/slash-commands-permissions-discord-apps-bots */
+	logger.warn(
+		"Discord has changed the way command permissions work. Every command will by default be visible. Use the Integrations submenu in Server Settings to change this."
+	);
+	await timeoutSeconds(5);
+
+	const commands: Array<Command> = Array.from(allCommands.values());
 	logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
 	const guildCommands: Array<GuildedCommand> = [];
@@ -175,14 +210,24 @@ export async function prepareSlashCommandsThenExit(client: Discord.Client): Prom
 	process.exit(0);
 }
 
-export async function revokeSlashCommandsThenExit(client: Discord.Client): Promise<void> {
+export async function revokeSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
+	if (testMode) logger.info("Running in TEST mode");
+
+	// FIXME: Command Permissions v2 can't come to discord.js quickly enough!
+	/** @see https://discord.com/blog/slash-commands-permissions-discord-apps-bots */
+	logger.warn(
+		"Discord has changed the way command permissions work. Every command will by default be visible. Use the Integrations submenu in Server Settings to change this."
+	);
+	await timeoutSeconds(5);
+
 	logger.info("Unregistering global commands...");
 	if (!testMode) {
 		await client.application?.commands.set([]);
 	}
 	logger.info("Unregistered global commands");
 
-	const guilds = [...client.guilds.cache.values()];
+	const oAuthGuilds = await client.guilds.fetch();
+	const guilds = await Promise.all(oAuthGuilds.map(async g => g.fetch()));
 	logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
 	for (const guild of guilds) {
 		if (!testMode) {

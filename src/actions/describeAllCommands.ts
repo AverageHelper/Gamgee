@@ -3,6 +3,7 @@ import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
 import { getConfigCommandPrefix } from "./config/getConfigValue.js";
+import { isGuildedCommandContext } from "../commands/index.js";
 import {
 	createPartialString,
 	composed,
@@ -39,8 +40,14 @@ export async function describeAllCommands(
 	const description = createPartialString();
 	const allCommands = Array.from(commands.values());
 	for (const command of allCommands) {
-		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
-		if (!canRun) continue;
+		if (
+			isGuildedCommandContext(context) &&
+			context.channel &&
+			command.requiresGuild &&
+			!(await assertUserCanRunCommand(context.member, command, context.channel))
+		) {
+			continue; // User has no access, so move on
+		}
 
 		const cmdDesc = createPartialString();
 

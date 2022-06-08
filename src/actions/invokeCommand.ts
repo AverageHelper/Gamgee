@@ -1,8 +1,10 @@
 import type Discord from "discord.js";
-import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands/index.js";
-import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
+import type { Command, CommandContext, GuildedCommand, Subcommand } from "../commands/index.js";
+import { Collection, Permissions } from "discord.js";
+import { isGuildedCommandContext } from "../commands/index.js";
 import { useLogger } from "../logger.js";
-import { userHasRoleInGuild } from "../permissions/index.js";
+import { userHasPermissionInChannel, userHasRoleInGuild } from "../userHasOneOfRoles.js";
+import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
 const logger = useLogger();
 
@@ -20,47 +22,85 @@ function neverFallthrough(val: never): never {
 	throw new TypeError(`Unexpected case: ${JSON.stringify(val)}`);
 }
 
+/**
+ * Assesses whether the calling guild member is allowed to run the given command.
+ *
+ * @param member The calling guild member.
+ * @param command The command the user wants to run.
+ * @param channel The channel in which the command is being run.
+ *
+ * @returns `true` if the user may be permitted to run the command. `false` otherwise.
+ */
 export async function assertUserCanRunCommand(
-	user: Discord.User,
-	command: Invocable,
-	guild: Discord.Guild | null
+	member: Discord.GuildMember,
+	command: GuildedCommand,
+	channel: Discord.GuildTextBasedChannel
 ): Promise<boolean> {
-	if (command.requiresGuild && !guild) {
-		logger.debug(`Command '${command.name}' reqires a guild, but we don't have one right now.`);
-		return false;
-	}
+	// Gather permission details
+	const guild = channel.guild;
+	const guildId = guild.id;
+	const client = guild.client;
 
-	if (!command.permissions) {
-		// No permissions demanded
-		logger.debug(`Command '${command.name}' does not require specific user permissions.`);
-		logger.debug("Proceeding...");
+	// TODO: Cache this for each command on startup
+	const guildCommands = await guild.commands
+		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+		.fetch({ command: client.user?.id } as Discord.FetchGuildApplicationCommandFetchOptions) // FIXME: wating on v14 for this call to work
+		.catch((error: unknown) => {
+			logger.error(richErrorMessage(`Failed to fetch commands for guild ${guildId}`, error));
+			return new Collection<string, Discord.ApplicationCommand>();
+		});
+	const guildCommand = guildCommands.find(cmd => cmd.name === command.name) ?? null;
+
+	const defaultPermissions =
+		command.defaultMemberPermissions !== undefined
+			? new Permissions(command.defaultMemberPermissions)
+			: null;
+	// TODO: Cache this for each command on startup
+	const permissions = await guildCommand?.permissions //
+		.fetch({})
+		.catch((error: unknown) => {
+			logger.error(
+				richErrorMessage(
+					`Failed to fetch permissions for command '${guildCommand.name}' in guild ${guildId}`,
+					error
+				)
+			);
+			return undefined;
+		});
+
+	if (!permissions && !defaultPermissions) {
+		// No permissions configured, assume the user is fine
+		logger.debug(`Command '${command.name}' has no permission requirements to satisfy.`);
+		logger.debug("\tProceeding...");
 		return true;
 	}
 
-	const permissions: Array<CommandPermission> = guild
-		? Array.isArray(command.permissions)
-			? await resolvePermissions(command.permissions, guild)
-			: await command.permissions(guild)
-		: [];
+	if (permissions?.length === 0 || defaultPermissions?.toArray().length === 0) {
+		// Empty permissions configured, assume no access
+		logger.debug(`Command '${command.name}' is configured to block any access.`);
+		return false;
+	}
 
 	logger.debug(
-		`Command '${command.name}' requires that callers satisfy 1 of ${permissions.length} cases:`
+		`Command '${command.name}' requires that callers satisfy 1 of ${
+			permissions?.length ?? "null"
+		} cases:`
 	);
 
+	// Check configured permissions
 	let idx = 0;
-	for (const permission of permissions) {
+	for (const access of permissions ?? []) {
 		idx += 1;
 		logger.debug(
-			`\tCase ${idx}: User must${
-				permission.permission ? "" : " not"
-			} have ${permission.type.toLowerCase()} ID: ${permission.id}`
+			`\tCase ${idx}: User must${access.permission ? "" : " not"} have ${access.type} ID: ${
+				access.id
+			}`
 		);
-		switch (permission.type) {
+		switch (access.type) {
 			case "ROLE": {
-				const userHasRole =
-					guild !== null && (await userHasRoleInGuild(user, permission.id, guild));
-				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${permission.id}`);
-				if (permission.permission && userHasRole) {
+				const userHasRole = await userHasRoleInGuild(member, access.id, guild);
+				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${access.id}`);
+				if (access.permission && userHasRole) {
 					logger.debug("\tProceeding...");
 					return true;
 				}
@@ -68,9 +108,9 @@ export async function assertUserCanRunCommand(
 			}
 
 			case "USER": {
-				const userHasId = user.id === permission.id;
-				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${permission.id}`);
-				if (permission.permission && userHasId) {
+				const userHasId = member.user.id === access.id;
+				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${access.id}`);
+				if (access.permission && userHasId) {
 					logger.debug("\tProceeding...");
 					return true;
 				}
@@ -78,8 +118,13 @@ export async function assertUserCanRunCommand(
 			}
 
 			default:
-				return neverFallthrough(permission.type);
+				return neverFallthrough(access.type);
 		}
+	}
+
+	// Check default permissions
+	if (defaultPermissions && userHasPermissionInChannel(member, defaultPermissions, channel)) {
+		return true;
 	}
 
 	// Caller fails permissions checks
@@ -108,7 +153,11 @@ export async function invokeCommand(command: Invocable, context: CommandContext)
 		return failNoGuild(context);
 	}
 
-	if (await assertUserCanRunCommand(context.user, command, context.guild)) {
+	if (
+		context.channel &&
+		command.type !== "SUB_COMMAND" &&
+		(await assertUserCanRunCommand(context.member, command, context.channel))
+	) {
 		return command.execute(context);
 	}
 	return failPermissions(context);

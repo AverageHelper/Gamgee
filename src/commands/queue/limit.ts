@@ -1,10 +1,12 @@
-import type { CommandInteractionOption } from "discord.js";
+import type { CommandInteractionOption, ModalActionRowComponent } from "discord.js";
+import type { QueueConfig } from "../../database/model/QueueConfig.js";
 import type { Subcommand } from "../Command.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
+import { MessageActionRow, Modal, TextInputComponent } from "discord.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import {
 	resolveIntegerFromOption,
@@ -17,38 +19,59 @@ export interface QueueLimitArg {
 	name: string;
 	value: LimitKey;
 	description: string;
+	example: string;
+}
+
+function queueLimitValueForMeta(config: QueueConfig, meta: QueueLimitArg): number | null {
+	switch (meta.value) {
+		case "cooldown":
+			return config.cooldownSeconds;
+		case "count":
+			return config.submissionMaxQuantity;
+		case "entry-duration":
+			return config.entryDurationSeconds;
+		case "entry-duration-min":
+			return config.entryDurationMinSeconds;
+		case "queue-duration":
+			return config.queueDurationSeconds;
+	}
 }
 
 export const countLimitMeta: QueueLimitArg = {
 	name: "Number of Submissions",
 	value: "count",
-	description: "The maximum number of submissions that each user may submit."
+	description: "The maximum number of submissions that each user may submit.",
+	example: "4"
 };
 
 export const cooldownLimitMeta: QueueLimitArg = {
 	name: "Submission Cooldown",
 	value: "cooldown",
 	description:
-		"The minimum amount of time (in seconds) that each user must wait between their own submissions."
+		"The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+	example: "1800"
 };
 
 export const minDurationLimitMeta: QueueLimitArg = {
 	name: "Min Song Length",
 	value: "entry-duration-min",
-	description: "The minimum duration (in seconds) of a song submission."
+	description: "The minimum duration (in seconds) of a song submission.",
+	example: "0"
 };
 
 export const maxDurationLimitMeta: QueueLimitArg = {
 	name: "Max Song Length",
 	value: "entry-duration", // TODO: Rename this to something more sane
-	description: "The maximum duration (in seconds) of a song submission."
+	description: "The maximum duration (in seconds) of a song submission.",
+	example: "430"
 };
 
 export const totalQueueLengthLimitMeta: QueueLimitArg = {
 	name: "Total Queue Length",
 	value: "queue-duration",
 	description:
-		"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit."
+		"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+	example: "10800"
 };
 
 export const allLimits: Array<QueueLimitArg> = [
@@ -69,6 +92,9 @@ function isLimitKey(value: unknown): value is LimitKey {
 	);
 }
 
+/** @see https://discordjs.guide/interactions/modals.html#building-and-responding-with-modals */
+const MAX_INPUT_FIELDS_IN_MODAL = 5;
+
 export const limit: Subcommand = {
 	name: "limit", // TODO: Alias this to "limits"
 	description: "Set a limit value on the queue. (Time in seconds, where applicable)",
@@ -77,27 +103,48 @@ export const limit: Subcommand = {
 			name: "key",
 			description: "The name of the limit.",
 			type: "STRING",
-			required: true,
 			choices: allLimits
 		},
 		{
 			name: "value",
 			description: "The new value to set for the key.",
-			type: "INTEGER"
+			type: "INTEGER",
+			minValue: -1
 		}
 	],
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const { guild, options, reply } = context;
-		const queueChannel = await getQueueChannel(guild);
+		const { type, guild, options, reply } = context;
 
-		if (!queueChannel) {
-			return reply("No queue is set up.");
-		}
+		const queueChannel = await getQueueChannel(guild);
+		if (!queueChannel) return reply("No queue is set up.");
 
 		const config = await getQueueConfig(queueChannel);
+
+		if (type === "interaction" && allLimits.length < MAX_INPUT_FIELDS_IN_MODAL) {
+			const modal = new Modal() //
+				.setCustomId("queue-limit-config")
+				.setTitle("Queue Limits");
+
+			allLimits.forEach(meta => {
+				const value = queueLimitValueForMeta(config, meta);
+				const input = new TextInputComponent()
+					.setCustomId(meta.value)
+					.setLabel(meta.name)
+					.setPlaceholder(`e.g.: ${meta.example}`)
+					.setValue(`${value ?? ""}`)
+					.setStyle("SHORT")
+					.setRequired(false)
+					.setMinLength(1)
+					.setMaxLength(17); // <= 1 tril w/o commas, <= 10 quad w/ commas; should be enough
+				const row = new MessageActionRow<ModalActionRowComponent>() //
+					.addComponents(input);
+				modal.addComponents(row);
+			});
+
+			return await context.interaction.showModal(modal);
+		}
 
 		const keyOption: CommandInteractionOption | undefined = options[0];
 		const valueOption: CommandInteractionOption | undefined = options[1];

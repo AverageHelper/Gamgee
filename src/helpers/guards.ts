@@ -1,5 +1,9 @@
 import { URL } from "url";
 
+export function isNotNull<T>(tbd: T | null): tbd is T {
+	return tbd !== null;
+}
+
 export function isNonEmptyArray<T>(array: Array<T>): array is NonEmptyArray<T> {
 	return array.length > 0;
 }

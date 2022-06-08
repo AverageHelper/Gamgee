@@ -1,29 +1,34 @@
 import type Discord from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
-import type { CommandPermission, PermissionAlias } from "./CommandPermission.js";
+import type {
+	BaseApplicationCommandData,
+	ChatInputApplicationCommandData
+} from "discord.js/typings";
 
 export * from "./CommandContext.js";
-export * from "./CommandPermission.js";
-
-type PermissionAliasList = Array<PermissionAlias>;
-
-type PermissionGenerator = (
-	guild: Discord.Guild
-) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
 interface BaseCommand {
 	name: string;
+	nameLocalizations?: BaseApplicationCommandData["nameLocalizations"];
 	aliases?: Array<string>;
 	description: string;
+	descriptionLocalizations?: ChatInputApplicationCommandData["descriptionLocalizations"];
 	options?: NonEmptyArray<Discord.ApplicationCommandOptionData | Subcommand>;
+	type?: "CHAT_INPUT";
 }
 
 export interface GlobalCommand extends BaseCommand {
 	/** Whether the command requires a guild present to execute. */
 	requiresGuild: false;
 
-	/** Permission overwrites for user or guild command access. */
-	permissions?: undefined;
+	/**
+	 * Whether the command can be run in DMs.
+	 *
+	 * By default, all global commands are accessible in DMs.
+	 *
+	 * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions
+	 */
+	dmPermission?: boolean;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -38,8 +43,23 @@ export interface GuildedCommand extends BaseCommand {
 	/** Whether the command requires a guild present to execute. */
 	requiresGuild: true;
 
-	/** Permission overwrites for user or guild command access. */
-	permissions?: PermissionGenerator | PermissionAliasList;
+	/**
+	 * Default permission overwrites for user or guild command access.
+	 *
+	 * Unless the guild is configured otherwise, any user with one of the
+	 * given permission flags will be able to actuate this command.
+	 *
+	 * @example
+	 * ```ts
+	 * {
+	 * 	// any user with the `MANAGE_EVENTS` permission can use the command
+	 * 	defaultMemberPermissions: ["MANAGE_EVENTS"]
+	 * }
+	 * ```
+	 *
+	 * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions
+	 */
+	defaultMemberPermissions?: Discord.BitFieldResolvable<Discord.PermissionString, bigint>;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -63,9 +83,6 @@ export interface GlobalSubcommand extends BaseSubcommand {
 	/** Whether the subcommand requires a guild present to execute. */
 	requiresGuild: false;
 
-	/** Permission overwrites for user or guild subcommand access. */
-	permissions?: undefined;
-
 	/**
 	 * The command implementation. Receives contextual information about the
 	 * command invocation. May return a `Promise`.
@@ -78,9 +95,6 @@ export interface GlobalSubcommand extends BaseSubcommand {
 export interface GuildedSubcommand extends BaseSubcommand {
 	/** Whether the subcommand requires a guild present to execute. */
 	requiresGuild: true;
-
-	/** Permission overwrites for user or guild subcommand access. */
-	permissions?: PermissionGenerator | PermissionAliasList;
 
 	/**
 	 * The command implementation. Receives contextual information about the

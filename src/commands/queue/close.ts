@@ -7,7 +7,6 @@ export const close: GuildedSubcommand = {
 	description: "Stop accepting song requests to the queue.",
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
 		const [isQueueAlreadyOpen, queueChannel] = await Promise.all([
 			isQueueOpen(guild),

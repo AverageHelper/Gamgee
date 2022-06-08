@@ -8,7 +8,6 @@ export const restart: Subcommand = {
 	description: "Empty the queue and start a fresh queue session.",
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "queue-admin"],
 	async execute({ guild, prepareForLongRunningTasks, reply }) {
 		const queueChannel = await getQueueChannel(guild);
 

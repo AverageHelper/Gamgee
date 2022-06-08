@@ -10,12 +10,13 @@ export const setup: Subcommand = {
 			name: "channel",
 			description: "The channel to use as the 'queue' channel for the server",
 			type: "CHANNEL",
+			channelTypes: ["GUILD_TEXT"],
 			required: true
 		}
 	],
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin"],
+	// permissions: ["owner", "admin"], // TODO: Make this a separate command so that only server admins can use it by default
 	async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
 		await deleteInvocation();
 

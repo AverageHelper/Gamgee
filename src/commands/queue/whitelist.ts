@@ -17,7 +17,6 @@ export const whitelist: Subcommand = {
 	],
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ user, guild, options, logger, reply, deleteInvocation }) {
 		await deleteInvocation();
 

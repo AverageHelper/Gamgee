@@ -9,7 +9,7 @@ import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 const mockGetQueueAdminRoles = getQueueAdminRoles as jest.Mock;
 const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
 
-import { userHasRoleInGuild } from "../permissions/index.js";
+import { userHasRoleInGuild } from "../userHasOneOfRoles.js";
 const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock;
 
 const mockExecute = jest.fn().mockResolvedValue(undefined);
@@ -47,7 +47,7 @@ describe("Invoke Command", () => {
 	});
 
 	describe("Guild Guards", () => {
-		test("always executes if the command does not require a guild", async () => {
+		test("executes if the command does not require a guild", async () => {
 			((command as unknown) as GlobalCommand).requiresGuild = false;
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 			expect(mockExecute).toHaveBeenCalledTimes(1);
@@ -61,8 +61,6 @@ describe("Invoke Command", () => {
 	});
 
 	describe("Permission Guards", () => {
-		const mockPermissions = jest.fn();
-
 		beforeEach(() => {
 			command.requiresGuild = true;
 			context = {
@@ -72,130 +70,42 @@ describe("Invoke Command", () => {
 					ownerId: callerId
 				} as unknown) as Discord.Guild
 			};
-			command.permissions = mockPermissions;
-
-			mockPermissions.mockResolvedValue([]);
 		});
 
-		test("always executes if the command does not define permission requirements", async () => {
-			command.permissions = undefined;
+		test("executes if the command does not define permission requirements", async () => {
+			delete command.defaultMemberPermissions;
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 			expect(mockExecute).toHaveBeenCalledTimes(1);
 			expect(mockExecute).toHaveBeenCalledWith(context);
 		});
 
-		test("calls the command's permissions function for permission cases", async () => {
-			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-			expect(mockPermissions).toHaveBeenCalledTimes(1);
-			expect(mockPermissions).toHaveBeenCalledWith(context.guild);
-		});
-
-		test.each`
-			type          | permission | desc
-			${"function"} | ${true}    | ${"executes"}
-			${"array"}    | ${true}    | ${"executes"}
-			${"function"} | ${false}   | ${"does not execute"}
-			${"array"}    | ${false}   | ${"does not execute"}
-		`(
-			"$desc for owner if access == $permission ($type-based perm declaration)",
-			async ({ type, permission }: { type: string; permission: boolean }) => {
-				if (type === "array") {
-					command.permissions = permission ? ["owner"] : [];
-				} else {
-					mockPermissions.mockResolvedValueOnce([
-						{
-							id: callerId,
-							type: "USER",
-							permission
-						}
-					]);
-				}
-				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				/* eslint-disable jest/no-conditional-expect */
-				if (permission) {
-					expect(mockExecute).toHaveBeenCalledTimes(1);
-					expect(mockExecute).toHaveBeenCalledWith(context);
-				} else {
-					expect(mockExecute).not.toHaveBeenCalled();
-				}
-				/* eslint-enable jest/no-conditional-expect */
-			}
-		);
-
-		test.each`
-			type
-			${"function"}
-			${"array"}
-		`(
-			"does not execute for admin if admins are to be permitted ($type-based perm declaration)",
-			async ({ type }: { type: string }) => {
-				if (type === "array") {
-					command.permissions = ["admin"];
-				} else {
-					mockPermissions.mockResolvedValueOnce([
-						{
-							id: adminRoleId,
-							type: "ROLE",
-							permission: true
-						}
-					]);
-				}
-				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
-				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				expect(mockExecute).toHaveBeenCalledTimes(1);
-				expect(mockExecute).toHaveBeenCalledWith(context);
-			}
-		);
-
-		test("does not execute for admin if admins are to be denied", async () => {
-			mockPermissions.mockResolvedValueOnce([
-				{
-					id: adminRoleId,
-					type: "ROLE",
-					permission: false
-				}
-			]);
-			mockUserHasRoleInGuild.mockResolvedValueOnce(true);
+		test("does not execute for owner if access is by default denied", async () => {
+			command.defaultMemberPermissions = [];
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 			expect(mockExecute).not.toHaveBeenCalled();
 		});
 
-		test.each`
-			type
-			${"function"}
-			${"array"}
-		`(
-			"executes for queue admin if admins are to be permitted ($type-based perm declaration)",
-			async ({ type }: { type: string }) => {
-				if (type === "array") {
-					command.permissions = ["queue-admin"];
-				} else {
-					mockPermissions.mockResolvedValueOnce([
-						{
-							id: queueAdminRoleId,
-							type: "ROLE",
-							permission: true
-						}
-					]);
-				}
-				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
-				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				expect(mockExecute).toHaveBeenCalledTimes(1);
-				expect(mockExecute).toHaveBeenCalledWith(context);
-			}
-		);
+		test("executes for owner if access is by default allowed for admins", async () => {
+			command.defaultMemberPermissions = ["ADMINISTRATOR"];
+			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
+			expect(mockExecute).toHaveBeenCalledTimes(1);
+			expect(mockExecute).toHaveBeenCalledWith(context);
+		});
 
-		test("does not execute for queue admin if queue admins are to be denied", async () => {
-			mockPermissions.mockResolvedValueOnce([
-				{
-					id: queueAdminRoleId,
-					type: "ROLE",
-					permission: false
-				}
-			]);
+		test("does not execute for admin if admins are to be permitted", async () => {
+			command.defaultMemberPermissions = ["ADMINISTRATOR"];
 			mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-			expect(mockExecute).not.toHaveBeenCalled();
+			expect(mockExecute).toHaveBeenCalledTimes(1);
+			expect(mockExecute).toHaveBeenCalledWith(context);
+		});
+
+		test("executes for queue admin if admins are to be permitted", async () => {
+			command.defaultMemberPermissions = ["MANAGE_EVENTS"];
+			mockUserHasRoleInGuild.mockResolvedValueOnce(true);
+			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
+			expect(mockExecute).toHaveBeenCalledTimes(1);
+			expect(mockExecute).toHaveBeenCalledWith(context);
 		});
 	});
 });

@@ -2,17 +2,17 @@ import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
 
 /**
- * Returns `true` of the given user has the named roles in the provided guild.
+ * Returns `true` if the given user has the named roles in the provided guild.
  *
  * @param user The user whose roles to check.
  * @param roleId The ID of the requesite Discord role.
  * @param guild The guild in which the user should have the roles.
  *
- * @returns a `Promise` that resolves with `true` of the given user has the
- * named role in the provided guild
+ * @returns a `Promise` that resolves with `true` if the given user has the
+ * named role in the provided guild.
  */
 export async function userHasRoleInGuild(
-	user: Discord.User,
+	user: Discord.GuildMember,
 	roleId: Snowflake,
 	guild: Discord.Guild
 ): Promise<boolean> {
@@ -22,14 +22,34 @@ export async function userHasRoleInGuild(
 }
 
 /**
- * Returns `true` of the given user has one of the named roles in the provided guild.
+ * Returns `true` if the given user has the named permission in the provided channel.
+ *
+ * @param user The user whose permission to check.
+ * @param permission
+ * @param channel The channel in which the user should have permissions.
+ *
+ * @returns `true` if the given user has the
+ * named role in the provided channel.
+ */
+export function userHasPermissionInChannel(
+	user: Discord.GuildMember,
+	permission: Discord.PermissionResolvable,
+	channel: Discord.GuildChannelResolvable
+): boolean {
+	return user //
+		.permissionsIn(channel)
+		.has(permission);
+}
+
+/**
+ * Returns `true` if the given user has one of the named roles in the provided guild.
  *
  * @param user The user whose roles to check.
  * @param roleIds The IDs of the requesite Discord roles.
  * @param guild The guild in which the user should have the roles.
  *
- * @returns a `Promise` that resolves with `true` of the given user has one
- * of the named roles in the provided guild
+ * @returns a `Promise` that resolves with `true` if the given user has one
+ * of the named roles in the provided guild.
  */
 export async function userHasOneOfRoles(
 	user: Discord.User,

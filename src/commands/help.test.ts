@@ -1,6 +1,7 @@
 jest.mock("../actions/invokeCommand");
 
 import { assertUserCanRunCommand } from "../actions/invokeCommand.js";
+import { Permissions } from "discord.js";
 const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
 
 import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
@@ -36,10 +37,7 @@ describe("Help command", () => {
 
 	test("describe pleb commands", async () => {
 		mockAssertUserCanRunCommand.mockImplementation((user, command: GuildedCommand) => {
-			if (
-				Array.isArray(command.permissions) &&
-				command.permissions.some(perm => ["owner", "admin", "queue-admin"].includes(perm))
-			) {
+			if (new Permissions(command.defaultMemberPermissions).has("ADMINISTRATOR")) {
 				return Promise.resolve(false);
 			}
 			return Promise.resolve(true);

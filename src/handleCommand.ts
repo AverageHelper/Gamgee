@@ -240,12 +240,20 @@ export async function handleCommand(
 			)}`
 		);
 
+		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		if (message.channel?.type === "DM" && message.channel.partial) {
+			channel = await message.channel.fetch();
+		} else {
+			channel = message.channel;
+		}
+
 		const context: CommandContext = {
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
+			member: message.member,
 			guild: message.guild,
-			channel: message.channel,
+			channel,
 			client: message.client,
 			message,
 			options,

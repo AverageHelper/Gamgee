@@ -18,10 +18,13 @@ interface BaseCommandContext {
 	readonly guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	readonly channel: Discord.TextBasedChannel | null;
+	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
 
 	/** The user which invoked the command. */
 	readonly user: Discord.User;
+
+	/** The guild member which invoked the command. */
+	readonly member: Discord.GuildMember | null;
 
 	/** The UNIX time at which the command was invoked. */
 	readonly createdTimestamp: number;
@@ -127,8 +130,12 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
 /**
  * Information relevant to a command invocation.
  */
-export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
+export type GuildedCommandContext = CommandContext & {
+	readonly guild: Discord.Guild;
+	readonly member: Discord.GuildMember;
+	readonly channel: Discord.GuildTextBasedChannel | null;
+};
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
-	return tbd.guild !== null;
+	return tbd.guild !== null && tbd.member !== null && tbd.channel?.type !== "DM";
 }

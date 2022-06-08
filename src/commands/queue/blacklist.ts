@@ -27,7 +27,6 @@ export const blacklist: Subcommand = {
 	],
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
 		const {
 			guild,

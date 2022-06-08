@@ -7,7 +7,6 @@ export const open: GuildedSubcommand = {
 	description: "Start accepting song requests to the queue.",
 	type: "SUB_COMMAND",
 	requiresGuild: true,
-	permissions: ["owner", "queue-admin"],
 	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
 		const [queueChannel] = await Promise.all([
 			getQueueChannel(guild), //

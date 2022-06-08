@@ -46,8 +46,17 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let channel: Discord.TextBasedChannel | null = null;
-		if (interaction.channel?.isText() === true) {
+		let member: Discord.GuildMember | null;
+		if (interaction.inCachedGuild()) {
+			member = interaction.member;
+		} else {
+			member = (await interaction.guild?.members.fetch(interaction.user)) ?? null;
+		}
+
+		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		if (interaction.channel?.type === "DM" && interaction.channel.partial) {
+			channel = await interaction.channel.fetch();
+		} else {
 			channel = interaction.channel;
 		}
 
@@ -55,6 +64,7 @@ export async function handleInteraction(
 			type: "interaction",
 			createdTimestamp: interaction.createdTimestamp,
 			user: interaction.user,
+			member,
 			guild: interaction.guild,
 			channel,
 			client: interaction.client,
@@ -127,8 +137,10 @@ export async function handleInteraction(
 			},
 			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {
-				void channel?.sendTyping();
-				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);
+				void interaction.channel?.sendTyping();
+				logger.debug(
+					`Typing in channel ${interaction.channel?.id ?? "nowhere"} due to Context.sendTyping`
+				);
 			}
 		};
 
