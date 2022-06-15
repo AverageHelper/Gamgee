@@ -25,7 +25,7 @@ async function getQueueChannelFromCommand(
 		return null;
 	}
 
-	if (!queueChannel) return null;
+	if (!queueChannel || queueChannel.type !== "GUILD_TEXT") return null;
 
 	if (!queueChannel.isText()) {
 		logger.error("The configured channel is not a text channel.");
@@ -35,7 +35,7 @@ async function getQueueChannelFromCommand(
 		return null;
 	}
 
-	return queueChannel as Discord.TextChannel;
+	return queueChannel;
 }
 
 async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.TextChannel | null> {
@@ -44,13 +44,15 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
 		return null;
 	}
 
-	let queueChannel: Discord.TextChannel;
+	let queueChannel: Discord.AnyChannel | null;
 	try {
-		queueChannel = (await guild.client.channels.fetch(queueChannelId)) as Discord.TextChannel;
+		queueChannel = await guild.client.channels.fetch(queueChannelId);
 	} catch (error) {
 		logger.error(richErrorMessage("Failed to fetch queue channel.", error));
 		return null;
 	}
+
+	if (!queueChannel || queueChannel.type !== "GUILD_TEXT") return null;
 
 	if (!queueChannel.isText()) {
 		logger.error("The configured channel is not a text channel.");

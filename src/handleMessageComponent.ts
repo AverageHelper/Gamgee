@@ -10,6 +10,7 @@ import { isQueueOpen } from "./useGuildStorage.js";
 import { logUser } from "./helpers/logUser.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { sendPrivately } from "./actions/messages/index.js";
+import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
 import {
 	deleteEntryFromMessage,
 	markEntryDoneInQueue,
@@ -39,92 +40,102 @@ export async function handleMessageComponent(
 	// Ignore self interactions
 	if (interaction.user.id === interaction.client.user?.id) return;
 
-	logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customId}'`);
+	// Handle Button Presses
+	if (interaction.isButton()) {
+		logger.debug(`User ${logUser(interaction.user)} actuated button: '${interaction.customId}'`);
 
-	const queueChannel = await getQueueChannel(interaction.guild);
-	if (!queueChannel) {
-		logger.debug("There is no queue channel for this guild.");
-		return;
-	}
-	if (interaction.channel?.id !== queueChannel.id) {
-		logger.debug("This isn't the queue channel. Ignoring.");
-		return;
-	}
-
-	const message = await queueChannel.messages.fetch(interaction.message.id);
-	const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
-	if (!entry) {
-		logger.debug("The message does not represent a known song request.");
-		try {
-			await interaction.reply({
-				content: "I don't recognize that entry. Sorry  :slight_frown:",
-				ephemeral: true
-			});
-		} catch (error) {
-			logger.error(richErrorMessage(`Failed to reply to interaction`, error));
+		const queueChannel = await getQueueChannel(interaction.guild);
+		if (!queueChannel) {
+			logger.debug("There is no queue channel for this guild.");
+			return;
 		}
-		return;
-	}
+		if (interaction.channel?.id !== queueChannel.id) {
+			logger.debug("This isn't the queue channel. Ignoring.");
+			return;
+		}
 
-	logger.debug(
-		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
-	);
-
-	switch (interaction.customId) {
-		case DONE_BUTTON.id:
+		const message = await queueChannel.messages.fetch(interaction.message.id);
+		const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
+		if (!entry) {
+			logger.debug("The message does not represent a known song request.");
 			try {
-				await interaction.deferUpdate();
-				logger.debug("Marking done....");
-				await markEntryDoneInQueue(message, queueChannel);
-				logger.debug("Marked an entry done.");
+				await interaction.reply({
+					content: "I don't recognize that entry. Sorry  :slight_frown:",
+					ephemeral: true
+				});
 			} catch (error) {
-				logger.error(richErrorMessage(`Failed to mark done`, error));
+				logger.error(richErrorMessage(`Failed to reply to interaction`, error));
 			}
-			break;
+			return;
+		}
 
-		case RESTORE_BUTTON.id:
-			try {
-				await interaction.deferUpdate();
-				logger.debug("Marking undone....");
-				await markEntryNotDoneInQueue(message, queueChannel);
-				logger.debug("Marked an entry undone");
-			} catch (error) {
-				logger.error(richErrorMessage(`Failed to mark not done`, error));
-			}
-			break;
+		logger.debug(
+			`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
+		);
 
-		case DELETE_BUTTON.id: {
-			logger.debug("Deleting entry...");
-			const entry = await deleteEntryFromMessage(message, queueChannel);
-			if (!entry) {
-				logger.debug("There was no entry to delete.");
+		switch (interaction.customId) {
+			case DONE_BUTTON.id:
+				try {
+					await interaction.deferUpdate();
+					logger.debug("Marking done....");
+					await markEntryDoneInQueue(message, queueChannel);
+					logger.debug("Marked an entry done.");
+				} catch (error) {
+					logger.error(richErrorMessage(`Failed to defer update`, error));
+				}
+				break;
+
+			case RESTORE_BUTTON.id:
+				try {
+					await interaction.deferUpdate();
+					logger.debug("Marking undone....");
+					await markEntryNotDoneInQueue(message, queueChannel);
+					logger.debug("Marked an entry undone");
+				} catch (error) {
+					logger.error(richErrorMessage(`Failed to defer update`, error));
+				}
+				break;
+
+			case DELETE_BUTTON.id: {
+				logger.debug("Deleting entry...");
+				const entry = await deleteEntryFromMessage(message, queueChannel);
+				if (!entry) {
+					logger.debug("There was no entry to delete.");
+					break;
+				}
+				logger.debug("Deleted an entry");
+
+				const userId = entry.senderId;
+				const guild = interaction.guild;
+				if (!guild) {
+					logger.debug(`Queue message ${message.id} has no guild.`);
+					return;
+				}
+				const user = await getUserWithId(guild, userId);
+
+				logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
+				const rejection = createPartialString();
+				push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection);
+				push(entry.url, rejection);
+
+				await sendPrivately(user, composed(rejection));
+
+				if (await isQueueOpen(guild)) {
+					await timeoutSeconds(2);
+					await sendPrivately(
+						user,
+						"You can resubmit another song if you'd like to. :slight_smile:"
+					);
+				}
 				break;
 			}
-			logger.debug("Deleted an entry");
 
-			const userId = entry.senderId;
-			const guild = interaction.guild;
-			if (!guild) {
-				logger.debug(`Queue message ${message.id} has no guild.`);
-				return;
-			}
-			const user = await getUserWithId(guild, userId);
-
-			logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
-			const rejection = createPartialString();
-			push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection);
-			push(entry.url, rejection);
-
-			await sendPrivately(user, composed(rejection));
-
-			if (await isQueueOpen(guild)) {
-				await new Promise(resolve => setTimeout(resolve, 2000));
-				await sendPrivately(user, "You can resubmit another song if you'd like to. :slight_smile:");
-			}
-			break;
+			default:
+				break;
 		}
 
-		default:
-			break;
+		// Handle modal submit
+	} else if (interaction.isModalSubmit()) {
+		logger.debug(interaction);
 	}
 }

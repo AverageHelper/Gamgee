@@ -17,7 +17,10 @@ describe("Command handler", () => {
 	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
 
-	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;
+	const mockClient: Discord.Client<true> = ({
+		user: { id: botId },
+		isReady: () => true
+	} as unknown) as Discord.Client<true>;
 	const mockSenderMember: Discord.GuildMember = ({
 		user: { id: "another-user" }
 	} as unknown) as Discord.GuildMember;

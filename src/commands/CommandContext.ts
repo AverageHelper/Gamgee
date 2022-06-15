@@ -6,7 +6,7 @@ export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
-	readonly client: Discord.Client;
+	readonly client: Discord.Client<true>;
 
 	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
 	readonly storage: Storage | null;
@@ -31,6 +31,16 @@ interface BaseCommandContext {
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
+
+	/**
+	 * Deletes the command invocation if it was sent as a text message.
+	 *
+	 * Note: Slash command interactions are ephemeral until replied to. This method does nothing in the case of Discord Interactions.
+	 */
+	deleteInvocation: () => Promise<void>;
+
+	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */
+	sendTyping: () => void;
 
 	/**
 	 * Sends a DM or ephemeral reply to the command's sender.
@@ -75,16 +85,6 @@ interface BaseCommandContext {
 					reply?: boolean;
 			  })
 	) => Promise<Discord.Message | boolean>;
-
-	/**
-	 * Deletes the command invocation if it was sent as a text message.
-	 *
-	 * Note: Slash command interactions are ephemeral until replied to. This method does nothing in the case of Discord Interactions.
-	 */
-	deleteInvocation: () => Promise<void>;
-
-	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */
-	sendTyping: () => void;
 }
 
 interface MessageCommandContext extends BaseCommandContext {

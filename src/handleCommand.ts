@@ -9,6 +9,7 @@ import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
+import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
 import {
 	deleteMessage,
 	reply,
@@ -82,7 +83,7 @@ export async function queryFromMessage(
 	const mentionedUserId = getUserIdFromMention(commandOrMention);
 	if (mentionedUserId !== null) {
 		// See if it's for us.
-		if (client.user && mentionedUserId === client.user.id) {
+		if (client.isReady() && mentionedUserId === client.user.id) {
 			logger.debug("They're talking to me!");
 			// It's for us. Return the query verbatim.
 			return { query: query.slice(1), invocationMethod: "bot-mention" };
@@ -156,7 +157,7 @@ async function responseContext(message: Discord.Message): Promise<ResponseContex
 	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
 
 	const client = message.client;
-	if (client.user) {
+	if (client.isReady()) {
 		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
 	} else {
 		me = "Me";
@@ -306,7 +307,7 @@ export async function handleCommand(
 		logger.debug(
 			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
 		);
-		await new Promise(resolve => setTimeout(resolve, 2000));
+		await timeoutSeconds(2);
 
 		let wrapped: Response;
 

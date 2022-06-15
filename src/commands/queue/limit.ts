@@ -164,7 +164,7 @@ export const limit: Subcommand = {
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
 
-				const response = createPartialString("Entry duration lower limit was ");
+				const response = createPartialString("Entry duration lower limit was ");
 				if (value === null || value <= 0) {
 					pushBold("removed", response);
 				} else {

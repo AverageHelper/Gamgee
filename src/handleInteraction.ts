@@ -96,12 +96,7 @@ export async function handleInteraction(
 						logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					}
 				} else {
-					let reply: Discord.Message | boolean;
-					if (typeof options === "string") {
-						reply = await replyPrivately(interaction, { content: options }, viaDM);
-					} else {
-						reply = await replyPrivately(interaction, options, viaDM);
-					}
+					const reply = await replyPrivately(interaction, options, viaDM);
 					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}

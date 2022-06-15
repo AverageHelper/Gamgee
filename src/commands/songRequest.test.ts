@@ -85,7 +85,9 @@ describe("Song request via URL", () => {
 		blacklistedUsers: []
 	});
 
-	const mockClient: Discord.Client = ({ user: { id: botId } } as unknown) as Discord.Client;
+	const mockClient: Discord.Client<true> = ({
+		user: { id: botId }
+	} as unknown) as Discord.Client<true>;
 
 	function mockMessage(senderId: string, content: string): Discord.Message {
 		const mockSenderMember: Discord.GuildMember = ({
@@ -100,7 +102,7 @@ describe("Song request via URL", () => {
 				username: senderId
 			},
 			createdAt: new Date(),
-			client: (mockClient as unknown) as Discord.Client,
+			client: mockClient,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply,
 			channel: {
