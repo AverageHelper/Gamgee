@@ -23,7 +23,7 @@ export const get: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: true,
 	async execute({ options, storage, reply }) {
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			return reply({ content: listKeys(), ephemeral: true });
 		}

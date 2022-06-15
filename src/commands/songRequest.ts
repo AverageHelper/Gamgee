@@ -47,7 +47,7 @@ export const sr: GuildedCommand = {
 			return;
 		}
 
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			const { howto } = await import("./howto.js");
 			return howto.execute(context);

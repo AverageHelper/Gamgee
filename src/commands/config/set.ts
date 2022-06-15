@@ -29,8 +29,8 @@ export const set: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: true,
 	async execute({ options, storage, reply }) {
-		const keyOption = options.data[0];
-		const valueOption = options.data[1];
+		const keyOption = options[0];
+		const valueOption = options[1];
 		if (!keyOption || !valueOption) {
 			return reply({ content: listKeys(), ephemeral: true });
 		}

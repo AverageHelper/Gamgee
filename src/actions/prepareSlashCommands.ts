@@ -139,7 +139,7 @@ async function prepareGlobalCommands(
 }
 
 export async function prepareSlashCommandsThenExit(client: Discord.Client): Promise<void> {
-	const commands: Array<Command> = [...allCommands.values()];
+	const commands: Array<Command> = Array.from(allCommands.values());
 	logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
 	const guildCommands: Array<GuildedCommand> = [];
@@ -172,7 +172,8 @@ export async function revokeSlashCommandsThenExit(client: Discord.Client): Promi
 	}
 	logger.info("Unregistered global commands");
 
-	const guilds = [...client.guilds.cache.values()];
+	const oAuthGuilds = await client.guilds.fetch();
+	const guilds = await Promise.all(oAuthGuilds.map(async g => g.fetch()));
 	logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
 	for (const guild of guilds) {
 		if (!testMode) {

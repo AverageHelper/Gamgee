@@ -21,7 +21,7 @@ export const whitelist: Subcommand = {
 	async execute({ user, guild, options, logger, reply, deleteInvocation }) {
 		await deleteInvocation();
 
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			return reply({
 				content: ":x: You'll need to tell me who to whitelist. Try again, and mention someone.",
