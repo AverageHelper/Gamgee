@@ -112,7 +112,7 @@ export const test: Command = {
 				? ":sweat: Erm, something went wrong. Best look into this:"
 				: "I ran the numbers, and it looks like we're all good! :grin:";
 
-			await replyPrivately({ content, embeds: [embed] });
+			await replyPrivately({ content, embeds: [embed], ephemeral: true });
 		} finally {
 			// eslint-disable-next-line require-atomic-updates
 			isTesting = false;
