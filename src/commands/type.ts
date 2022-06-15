@@ -6,7 +6,7 @@ export const t: Command = {
 	description: "Start a typing indicator.",
 	requiresGuild: false,
 	async execute({ type, channel, client, logger, reply, deleteInvocation, sendTyping }) {
-		if (!channel) return reply({ content: "This doesn't work as well in DMs." });
+		if (!channel) return reply({ content: "This doesn't work as well in DMs.", ephemeral: true });
 
 		logger.debug(`I, ${client.user.username}, started typing in channel ${channel.id}`);
 		await deleteInvocation();

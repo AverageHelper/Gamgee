@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
 
-export type CommandOption = Discord.CommandInteractionOption;
+export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
@@ -27,7 +27,7 @@ interface BaseCommandContext {
 	readonly createdTimestamp: number;
 
 	/** The options that were passed into the command. */
-	readonly options: ReadonlyArray<CommandOption>;
+	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
@@ -41,51 +41,6 @@ interface BaseCommandContext {
 
 	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */
 	sendTyping: () => void;
-}
-
-export interface MessageCommandContext extends BaseCommandContext {
-	readonly type: "message";
-
-	/** The message that contains the command invocation. */
-	readonly message: Discord.Message;
-
-	/** The options that were passed into the command. */
-	readonly options: ReadonlyArray<CommandOption>;
-
-	/**
-	 * Sends a DM or ephemeral reply to the command's sender.
-	 *
-	 * In the case of an interaction that was publicly deferred (e.g.
-	 * using `prepareForLongRunningTasks(true)`), this function will
-	 * edit that reply. The message will therefore be public.
-	 *
-	 * @param options The message payload to send.
-	 * @param viaDM Whether Gamgee should reply in DMs.
-	 */
-	replyPrivately: (options: string | Discord.ReplyMessageOptions, viaDM?: true) => Promise<void>;
-
-	/** Replies to the command invocation message, optionally pinging the command's sender. */
-	reply: (
-		options: string | (Discord.ReplyMessageOptions & { shouldMention?: boolean })
-	) => Promise<void>;
-
-	/**
-	 * Sends a message in the same channel to the user who invoked the command.
-	 * Does not constitute a "reply" in Discord's canonical sense.
-	 *
-	 * @returns a `Promise` that resolves with a reference to the message sent,
-	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
-	 */
-	followUp: (
-		options: string | (Discord.ReplyMessageOptions & { reply?: boolean; ephemeral?: boolean })
-	) => Promise<Discord.Message | boolean>;
-}
-
-export interface InteractionCommandContext extends BaseCommandContext {
-	readonly type: "interaction";
-
-	/** The interaction that represents the command invocation. */
-	readonly interaction: Discord.CommandInteraction;
 
 	/**
 	 * Sends a DM or ephemeral reply to the command's sender.
@@ -98,13 +53,21 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	 * @param viaDM Whether Gamgee should reply in DMs.
 	 */
 	replyPrivately: (
-		options: string | Discord.InteractionReplyOptions,
+		options:
+			| string
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| Omit<Discord.InteractionReplyOptions, "flags">,
 		viaDM?: true
 	) => Promise<void>;
 
 	/** Replies to the command invocation message, optionally pinging the command's sender. */
 	reply: (
-		options: string | (Discord.InteractionReplyOptions & { shouldMention?: boolean })
+		options:
+			| string
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
+					shouldMention?: boolean;
+			  })
 	) => Promise<void>;
 
 	/**
@@ -115,8 +78,30 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
 	 */
 	followUp: (
-		options: string | (Discord.InteractionReplyOptions & { reply?: boolean })
+		options:
+			| string
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
+					reply?: boolean;
+			  })
 	) => Promise<Discord.Message | boolean>;
+}
+
+interface MessageCommandContext extends BaseCommandContext {
+	readonly type: "message";
+
+	/** The message that contains the command invocation. */
+	readonly message: Discord.Message;
+
+	/** The options that were passed into the command. */
+	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
+}
+
+interface InteractionCommandContext extends BaseCommandContext {
+	readonly type: "interaction";
+
+	/** The interaction that represents the command invocation. */
+	readonly interaction: Discord.CommandInteraction;
 }
 
 /**

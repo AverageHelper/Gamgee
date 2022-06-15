@@ -11,11 +11,9 @@ type PermissionGenerator = (
 	guild: Discord.Guild
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-interface BaseCommand {
-	name: string;
+interface BaseCommand extends Discord.ChatInputApplicationCommandData {
 	aliases?: Array<string>;
-	description: string;
-	options?: NonEmptyArray<Discord.ApplicationCommandOptionData | Subcommand>;
+	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
 }
 
 export interface GlobalCommand extends BaseCommand {

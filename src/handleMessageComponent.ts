@@ -75,22 +75,22 @@ export async function handleMessageComponent(
 
 		switch (interaction.customId) {
 			case DONE_BUTTON.id:
-				logger.debug("Marking done....");
-				await markEntryDoneInQueue(message, queueChannel);
-				logger.debug("Marked an entry done.");
 				try {
 					await interaction.deferUpdate();
+					logger.debug("Marking done....");
+					await markEntryDoneInQueue(message, queueChannel);
+					logger.debug("Marked an entry done.");
 				} catch (error) {
 					logger.error(richErrorMessage(`Failed to defer update`, error));
 				}
 				break;
 
 			case RESTORE_BUTTON.id:
-				logger.debug("Marking undone....");
-				await markEntryNotDoneInQueue(message, queueChannel);
-				logger.debug("Marked an entry undone");
 				try {
 					await interaction.deferUpdate();
+					logger.debug("Marking undone....");
+					await markEntryNotDoneInQueue(message, queueChannel);
+					logger.debug("Marked an entry undone");
 				} catch (error) {
 					logger.error(richErrorMessage(`Failed to defer update`, error));
 				}

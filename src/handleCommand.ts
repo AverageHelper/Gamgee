@@ -1,8 +1,8 @@
-import type { Command, CommandContext, CommandOption } from "./commands/index.js";
-import type { Logger } from "./logger.js";
-import type { Storage } from "./configStorage.js";
-import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import type Discord from "discord.js";
+import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
+import type { Logger } from "./logger.js";
+import type { Response, ResponseContext } from "./helpers/randomStrings.js";
+import type { Storage } from "./configStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
@@ -117,16 +117,16 @@ export async function queryFromMessage(
 }
 
 /**
- * Translates an array of command argument strings into an array
- * of Application Command options.
+ * Translates an array of command argument strings into an array of
+ * {@link MessageCommandInteractionOption}.
  */
-export function optionsFromArgs(args: Array<string>): Array<CommandOption> {
-	const options: Array<CommandOption> = [];
+export function optionsFromArgs(args: Array<string>): Array<MessageCommandInteractionOption> {
+	const options: Array<MessageCommandInteractionOption> = [];
 
 	// one argument
 	const firstArg = args.shift();
 	if (firstArg !== undefined) {
-		const subcommand: CommandOption = {
+		const subcommand: MessageCommandInteractionOption = {
 			name: firstArg,
 			type: "STRING",
 			value: firstArg,
@@ -136,7 +136,7 @@ export function optionsFromArgs(args: Array<string>): Array<CommandOption> {
 		while (args.length > 0) {
 			// two arguments or more
 			const name = args.shift() as string;
-			const nextOption: CommandOption = {
+			const nextOption: MessageCommandInteractionOption = {
 				name,
 				type: "STRING",
 				value: name,
@@ -266,7 +266,7 @@ export async function handleCommand(
 				}
 			},
 			reply: async options => {
-				if (typeof options === "string") {
+				if (typeof options === "string" || !("shouldMention" in options)) {
 					await reply(message, options);
 				} else {
 					await reply(message, options, options?.shouldMention);
@@ -276,7 +276,12 @@ export async function handleCommand(
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
 					return await replyPrivately(message, options, true);
 				}
-				return (await sendMessageInChannel(message.channel, options)) ?? false;
+				if (typeof options === "string") {
+					return (await sendMessageInChannel(message.channel, options)) ?? false;
+				}
+				return (
+					(await sendMessageInChannel(message.channel, { ...options, reply: undefined })) ?? false
+				);
 			},
 			deleteInvocation: async () => {
 				await deleteMessage(message);
