@@ -37,7 +37,7 @@ export async function describeAllCommands(
 
 	// Describe all commands
 	const description = createPartialString();
-	const allCommands = [...commands.values()];
+	const allCommands = Array.from(commands.values());
 	for (const command of allCommands) {
 		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
 		if (!canRun) continue;
@@ -78,7 +78,9 @@ export async function describeAllCommands(
 				push(CODE, subDesc);
 				push(`${COMMAND_PREFIX}${command.name} ${sub.name}`, subDesc);
 
-				describeParameters(sub.options ?? [], subDesc);
+				if ("options" in sub) {
+					describeParameters(sub.options ?? [], subDesc);
+				}
 
 				push(CODE, subDesc);
 
@@ -97,6 +99,7 @@ export async function describeAllCommands(
 function describeParameters(
 	options: Array<
 		| Discord.ApplicationCommandOption
+		| Discord.ApplicationCommandOptionData
 		| Discord.ApplicationCommandChoicesData
 		| Discord.ApplicationCommandNonOptionsData
 		| Subcommand

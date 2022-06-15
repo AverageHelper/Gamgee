@@ -28,7 +28,7 @@ import {
  */
 function queueMessageFromEntry(
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
-): Discord.MessageOptions {
+): Discord.MessageOptions & Discord.MessageEditOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
 	push(" requested a song that's ", partialContent);

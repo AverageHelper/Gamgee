@@ -19,7 +19,7 @@ export const video: Command = {
 	requiresGuild: false,
 	async execute(context) {
 		const { logger, options, type, reply } = context;
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			return reply({ content: "You're gonna have to add a song link to that.", ephemeral: true });
 		}

@@ -13,10 +13,10 @@ import { getQueueConfig, blacklistUser } from "../../useQueueStorage.js";
 const mockGetQueueConfig = getQueueConfig as jest.Mock;
 const mockBlacklistUser = blacklistUser as jest.Mock;
 
+import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
 import { blacklist } from "./blacklist.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
-import Discord from "discord.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
@@ -30,7 +30,6 @@ describe("Manage the Queue Blacklist", () => {
 
 	const ownerId = "server-owner" as Discord.Snowflake;
 	const badUserId = "bad-user";
-	const mockClient: Discord.Client = ({} as unknown) as Discord.Client;
 
 	let context: GuildedCommandContext;
 
@@ -42,13 +41,13 @@ describe("Manage the Queue Blacklist", () => {
 				name: "Test Guild"
 			},
 			user: { id: "test-user" },
-			options: new Discord.CommandInteractionOptionResolver(mockClient, [
+			options: [
 				{
 					name: "user",
 					value: `<@${badUserId}>`,
 					type: "STRING"
 				}
-			]),
+			],
 			logger,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
@@ -67,7 +66,7 @@ describe("Manage the Queue Blacklist", () => {
 
 	describe("Listing Blacklisted Users", () => {
 		test("reads off the list of blacklisted users when no user is provided (empty space)", async () => {
-			context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+			context = { ...context, options: [] };
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
@@ -79,7 +78,7 @@ describe("Manage the Queue Blacklist", () => {
 		});
 
 		test("reads off the list of blacklisted users when no user is provided (no further text)", async () => {
-			context.options = new Discord.CommandInteractionOptionResolver(mockClient, []);
+			context = { ...context, options: [] };
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();

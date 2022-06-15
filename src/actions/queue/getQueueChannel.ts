@@ -14,7 +14,7 @@ async function getQueueChannelFromCommand(
 	const queueChannelId = await getQueueChannelId(context.guild);
 	if (queueChannelId === null || !queueChannelId) return null;
 
-	let queueChannel: Discord.Channel | null;
+	let queueChannel: Discord.AnyChannel | null;
 	try {
 		queueChannel = await context.client.channels.fetch(queueChannelId);
 	} catch (error) {

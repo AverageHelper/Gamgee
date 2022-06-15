@@ -27,10 +27,14 @@ export const RESTORE_BUTTON: MessageButton = {
 	style: "SECONDARY"
 };
 
-export function actionRow(buttons: NonEmptyArray<MessageButton>): Discord.MessageActionRowOptions {
+export function actionRow(
+	buttons: NonEmptyArray<MessageButton>
+): Discord.MessageActionRowOptions & {
+	type: "ACTION_ROW" | "BUTTON" | "SELECT_MENU" | "TEXT_INPUT";
+} {
 	return {
 		type: "ACTION_ROW",
-		components: buttons.map<Discord.InteractionButtonOptions>(btn => ({
+		components: buttons.map<Discord.MessageActionRowComponentResolvable>(btn => ({
 			type: "BUTTON",
 			style: btn.style,
 			label: btn.label,

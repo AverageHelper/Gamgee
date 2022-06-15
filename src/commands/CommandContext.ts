@@ -2,34 +2,32 @@ import type Discord from "discord.js";
 import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
 
-export interface MessageCommandInteractionOption extends Discord.CommandInteractionOption {
-	value: string;
-}
+export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
-	client: Discord.Client;
+	readonly client: Discord.Client;
 
 	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
-	storage: Storage | null;
+	readonly storage: Storage | null;
 
 	/** A logger to use to submit informative debug messages. */
-	logger: Logger;
+	readonly logger: Logger;
 
 	/** The guild in which the command was invoked. */
-	guild: Discord.Guild | null;
+	readonly guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	channel: Discord.TextBasedChannels | null;
+	readonly channel: Discord.TextBasedChannel | null;
 
 	/** The user which invoked the command. */
-	user: Discord.User;
+	readonly user: Discord.User;
 
 	/** The UNIX time at which the command was invoked. */
-	createdTimestamp: number;
+	readonly createdTimestamp: number;
 
 	/** The options that were passed into the command. */
-	options: Discord.CommandInteractionOptionResolver;
+	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
 	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
@@ -45,7 +43,10 @@ interface BaseCommandContext {
 	 * @param viaDM Whether Gamgee should reply in DMs.
 	 */
 	replyPrivately: (
-		options: string | Discord.ReplyMessageOptions | Discord.InteractionReplyOptions,
+		options:
+			| string
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| Omit<Discord.InteractionReplyOptions, "flags">,
 		viaDM?: true
 	) => Promise<void>;
 
@@ -53,7 +54,8 @@ interface BaseCommandContext {
 	reply: (
 		options:
 			| string
-			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & {
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
 					shouldMention?: boolean;
 			  })
 	) => Promise<void>;
@@ -68,7 +70,10 @@ interface BaseCommandContext {
 	followUp: (
 		options:
 			| string
-			| ((Discord.ReplyMessageOptions | Discord.InteractionReplyOptions) & { reply?: boolean })
+			| Omit<Discord.ReplyMessageOptions, "flags">
+			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
+					reply?: boolean;
+			  })
 	) => Promise<Discord.Message | boolean>;
 
 	/**
@@ -83,20 +88,20 @@ interface BaseCommandContext {
 }
 
 interface MessageCommandContext extends BaseCommandContext {
-	type: "message";
+	readonly type: "message";
 
 	/** The message that contains the command invocation. */
-	message: Discord.Message;
+	readonly message: Discord.Message;
 
 	/** The options that were passed into the command. */
-	options: Discord.CommandInteractionOptionResolver;
+	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 }
 
 interface InteractionCommandContext extends BaseCommandContext {
-	type: "interaction";
+	readonly type: "interaction";
 
 	/** The interaction that represents the command invocation. */
-	interaction: Discord.CommandInteraction;
+	readonly interaction: Discord.CommandInteraction;
 }
 
 /**

@@ -4,7 +4,6 @@ import { invokeCommand } from "../../actions/invokeCommand.js";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import { set } from "./set.js";
 import { unset } from "./unset.js";
-import Discord from "discord.js";
 
 const namedSubcommands: NonEmptyArray<Subcommand> = [get, set, unset];
 
@@ -22,7 +21,7 @@ export const config: Command = {
 	async execute(context) {
 		const { options, reply } = context;
 
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			return reply(`Missing command structure. Expected ${subargsList}`);
 		}
@@ -40,7 +39,10 @@ export const config: Command = {
 		);
 		for (const command of namedSubcommands) {
 			if (command.name === arg) {
-				context.options = new Discord.CommandInteractionOptionResolver(context.client, argOptions);
+				const subcommandContext = {
+					...context,
+					options: argOptions.slice()
+				};
 				context.logger.debug(
 					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
 						context.options,
@@ -48,7 +50,7 @@ export const config: Command = {
 						2
 					)}`
 				);
-				return invokeCommand(command, context);
+				return invokeCommand(command, subcommandContext);
 			}
 		}
 

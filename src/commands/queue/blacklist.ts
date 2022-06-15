@@ -45,7 +45,7 @@ export const blacklist: Subcommand = {
 			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
-		const firstOption = options.data[0];
+		const firstOption = options[0];
 		if (!firstOption) {
 			if (context.type === "message") {
 				logger.debug("Private-ness for message commands is restricted to DMs.");

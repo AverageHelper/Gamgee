@@ -46,7 +46,7 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let channel: Discord.TextBasedChannels | null = null;
+		let channel: Discord.TextBasedChannel | null = null;
 		if (interaction.channel?.isText() === true) {
 			channel = interaction.channel;
 		}
@@ -59,7 +59,7 @@ export async function handleInteraction(
 			channel,
 			client: interaction.client,
 			interaction,
-			options: interaction.options,
+			options: interaction.options.data,
 			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
@@ -78,14 +78,14 @@ export async function handleInteraction(
 					if (typeof options === "string") {
 						await interaction.followUp({ ephemeral: true, content: options });
 					} else {
-						await interaction.followUp({ ephemeral: true, ...options });
+						await interaction.followUp({ ...options, ephemeral: true });
 					}
 				} else {
 					let reply: Discord.Message | boolean;
 					if (typeof options === "string") {
-						reply = await replyPrivately(interaction, { ephemeral: true, content: options }, viaDM);
+						reply = await replyPrivately(interaction, { content: options }, viaDM);
 					} else {
-						reply = await replyPrivately(interaction, { ephemeral: true, ...options }, viaDM);
+						reply = await replyPrivately(interaction, options, viaDM);
 					}
 					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
@@ -103,9 +103,15 @@ export async function handleInteraction(
 				} else {
 					if (typeof options === "string") {
 						await interaction.reply(options);
-					} else if (options.shouldMention === undefined || options.shouldMention) {
+					} else if (
+						!("shouldMention" in options) ||
+						options.shouldMention === undefined ||
+						options.shouldMention
+					) {
+						// Doesn't say whether to mention, default to `true`
 						await interaction.reply(options);
 					} else {
+						// Really shouldn't mention
 						await interaction.reply({
 							...options,
 							allowedMentions: { users: [] }
@@ -122,11 +128,14 @@ export async function handleInteraction(
 			followUp: async options => {
 				if (
 					typeof options !== "string" &&
-					options.reply === false &&
+					(!("reply" in options) || options.reply === false || options.reply === undefined) &&
 					interaction.channel &&
 					interaction.channel.isText()
 				) {
-					return (await sendMessageInChannel(interaction.channel, options)) ?? false;
+					return (
+						(await sendMessageInChannel(interaction.channel, { ...options, reply: undefined })) ??
+						false
+					);
 				}
 				return (await interaction.followUp(options)) as Discord.Message;
 			},

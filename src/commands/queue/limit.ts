@@ -99,8 +99,8 @@ export const limit: Subcommand = {
 
 		const config = await getQueueConfig(queueChannel);
 
-		const keyOption: CommandInteractionOption | undefined = options.data[0];
-		const valueOption: CommandInteractionOption | undefined = options.data[1];
+		const keyOption: CommandInteractionOption | undefined = options[0];
+		const valueOption: CommandInteractionOption | undefined = options[1];
 
 		if (!keyOption) {
 			const { limits } = await import("../limits.js");
