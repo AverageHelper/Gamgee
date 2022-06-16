@@ -51,7 +51,7 @@
 		"node-fetch": "^3.2.6",
 		"node-persist": "^3.1.0",
 		"reflect-metadata": "^0.1.13",
-		"soundcloud-scraper": "^4.0.3",
+		"soundcloud-scraper": "^5.0.2",
 		"source-map-support": "^0.5.19",
 		"sqlite3": "^5.0.2",
 		"typeorm": "^0.2.45",
