@@ -42,7 +42,7 @@ export default async function urlMetadata(url: URL, options?: Options): Promise<
 		encoding: opts.decode ? null : "utf8",
 		timeout: opts.timeout
 	};
-	const response = await fetch(url, requestOpts);
+	const response = await fetch(url.href, requestOpts);
 
 	if (response.status && response.status !== 200) {
 		throw new Error(`response code ${response.status}`);
