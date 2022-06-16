@@ -42,12 +42,12 @@ async function setAdminRole(
  * Grants or removes the Queue Admin role on the tester bot.
  */
 export async function setIsQueueAdmin(isAdmin: boolean): Promise<void> {
-	return setAdminRole("QUEUE_ADMIN_ROLE_ID", isAdmin);
+	return await setAdminRole("QUEUE_ADMIN_ROLE_ID", isAdmin);
 }
 
 /**
  * Grants or removes the Queue Creator role on the tester bot.
  */
 export async function setIsQueueCreator(isAdmin: boolean): Promise<void> {
-	return setAdminRole("QUEUE_CREATOR_ROLE_ID", isAdmin);
+	return await setAdminRole("QUEUE_CREATOR_ROLE_ID", isAdmin);
 }

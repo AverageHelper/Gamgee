@@ -6,5 +6,5 @@ export async function userIsAdminInGuild(
 	user: Discord.User,
 	guild: Discord.Guild
 ): Promise<boolean> {
-	return userHasRoleCategoryInGuild(user, ROLE_CATEGORY_GUILD_ADMIN, guild);
+	return await userHasRoleCategoryInGuild(user, ROLE_CATEGORY_GUILD_ADMIN, guild);
 }

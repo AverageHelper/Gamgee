@@ -9,14 +9,14 @@ const logger = useLogger();
 type Invocable = Command | Subcommand;
 
 async function failPermissions(context: CommandContext): Promise<void> {
-	return context.replyPrivately({
+	return await context.replyPrivately({
 		content: "You don't have permission to run that command.",
 		ephemeral: true
 	});
 }
 
 async function failNoGuild(context: CommandContext): Promise<void> {
-	return context.reply({ content: "Can't do that here.", ephemeral: true });
+	return await context.reply({ content: "Can't do that here.", ephemeral: true });
 }
 
 function neverFallthrough(val: never): never {
@@ -102,17 +102,17 @@ export async function invokeCommand(command: Invocable, context: CommandContext)
 		// No guild required
 		logger.debug(`Command '${command.name}' does not require guild information.`);
 		logger.debug("Proceeding...");
-		return command.execute(context);
+		return await command.execute(context);
 	}
 
 	if (!isGuildedCommandContext(context)) {
 		// No guild found
 		logger.debug(`Command '${command.name}' requires guild information, but none was found.`);
-		return failNoGuild(context);
+		return await failNoGuild(context);
 	}
 
 	if (await assertUserCanRunCommand(context.user, command, context.guild)) {
-		return command.execute(context);
+		return await command.execute(context);
 	}
-	return failPermissions(context);
+	return await failPermissions(context);
 }

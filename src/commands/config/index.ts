@@ -23,7 +23,7 @@ export const config: Command = {
 
 		const firstOption = options[0];
 		if (!firstOption) {
-			return reply(`Missing command structure. Expected ${subargsList}`);
+			return await reply(`Missing command structure. Expected ${subargsList}`);
 		}
 		const arg: string = resolveSubcommandNameFromOption(firstOption);
 		const argOptions = firstOption.options ?? [];
@@ -50,10 +50,10 @@ export const config: Command = {
 						2
 					)}`
 				);
-				return invokeCommand(command, subcommandContext);
+				return await invokeCommand(command, subcommandContext);
 			}
 		}
 
-		return reply(`I don't know what to do with that. I expected one of ${subargsList}`);
+		return await reply(`I don't know what to do with that. I expected one of ${subargsList}`);
 	}
 };

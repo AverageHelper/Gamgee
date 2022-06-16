@@ -42,7 +42,7 @@ export const blacklist: Subcommand = {
 
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
-			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
+			return await reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
 		const firstOption = options[0];
@@ -90,22 +90,22 @@ export const blacklist: Subcommand = {
 				push(", obviously)", replyMsg);
 			}
 
-			return replyPrivately(composed(replyMsg));
+			return await replyPrivately(composed(replyMsg));
 		}
 
 		await deleteInvocation();
 
 		const subject = await resolveUserFromOption(firstOption, guild);
 		if (!subject) {
-			return reply({ content: ":x: I don't know who that is.", ephemeral: true });
+			return await reply({ content: ":x: I don't know who that is.", ephemeral: true });
 		}
 
 		if (subject.id === user.id) {
-			return reply({ content: ":x: You can't blacklist yourself, silly!", ephemeral: true });
+			return await reply({ content: ":x: You can't blacklist yourself, silly!", ephemeral: true });
 		}
 
 		if (subject.id === guild.ownerId) {
-			return reply({
+			return await reply({
 				content: ":x: I can't blacklist the owner. That would be rude!",
 				ephemeral: true
 			});
@@ -114,7 +114,7 @@ export const blacklist: Subcommand = {
 		await blacklistUser(subject.id, queueChannel);
 		logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
-		return reply({
+		return await reply({
 			content: `:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`,
 			shouldMention: false,
 			ephemeral: true

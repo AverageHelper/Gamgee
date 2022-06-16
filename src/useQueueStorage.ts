@@ -43,7 +43,7 @@ export async function getQueueConfig(
 			blacklistedUsers: []
 		});
 
-	return useRepository(repo, async repo => {
+	return await useRepository(repo, async repo => {
 		const config = await repo.findOne({ where: { channelId } });
 		return config ?? defaultConfig();
 	});
@@ -130,7 +130,7 @@ export async function createEntry(
 	entry: Omit<QueueEntry, "channelId" | "guildId">,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry> {
-	return useTransaction(async transaction => {
+	return await useTransaction(async transaction => {
 		const guilds = transaction.getRepository(Guild);
 		const queueConfigs = transaction.getRepository(QueueConfig);
 
@@ -164,7 +164,7 @@ export async function createEntry(
 		// Add the entry
 		const queueEntries = transaction.getRepository(QueueEntry);
 		const queueEntry = new QueueEntry(queueChannel.id, queueChannel.guild.id, entry);
-		return queueEntries.save(queueEntry);
+		return await queueEntries.save(queueEntry);
 	});
 }
 
@@ -202,7 +202,7 @@ export async function fetchEntryFromMessage(
 	queueMessageId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry | null> {
-	return useRepository(QueueEntry, async repo => {
+	return await useRepository(QueueEntry, async repo => {
 		const doc = await repo.findOne({
 			where: {
 				channelId: queueChannel.id,
@@ -224,7 +224,7 @@ export async function fetchEntryFromMessage(
 export async function fetchAllEntries(
 	queueChannel: Discord.TextChannel
 ): Promise<Array<QueueEntry>> {
-	return useRepository(QueueEntry, repo =>
+	return await useRepository(QueueEntry, repo =>
 		repo.find({
 			where: {
 				channelId: queueChannel.id,
@@ -242,7 +242,7 @@ export async function fetchAllEntries(
  * @returns a promise that resolves with the number of entries in the queue.
  */
 export async function countAllEntries(queueChannel: Discord.TextChannel): Promise<number> {
-	return useRepository(QueueEntry, repo =>
+	return await useRepository(QueueEntry, repo =>
 		repo.count({
 			where: {
 				channelId: queueChannel.id,
@@ -264,7 +264,7 @@ export async function fetchAllEntriesFrom(
 	senderId: string,
 	queueChannel: Discord.TextChannel
 ): Promise<Array<QueueEntry>> {
-	return useRepository(QueueEntry, repo =>
+	return await useRepository(QueueEntry, repo =>
 		repo.find({
 			where: {
 				channelId: queueChannel.id,
@@ -314,7 +314,7 @@ export async function countAllEntriesFrom(
 	senderId: string,
 	queueChannel: Discord.TextChannel
 ): Promise<number> {
-	return useRepository(QueueEntry, repo =>
+	return await useRepository(QueueEntry, repo =>
 		repo.count({
 			where: {
 				channelId: queueChannel.id,

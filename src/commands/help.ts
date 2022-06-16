@@ -10,6 +10,6 @@ export const help: Command = {
 		const { allCommands } = await import("./index.js");
 
 		const descriptions = await describeAllCommands(context, allCommands);
-		return context.replyPrivately(`Commands:\n${descriptions}`);
+		return await context.replyPrivately(`Commands:\n${descriptions}`);
 	}
 };

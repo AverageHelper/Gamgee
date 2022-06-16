@@ -42,7 +42,7 @@ export const nowPlaying: Command = {
 
 		if (!queueChannel) {
 			logger.debug("There is no queue channel for this guild.");
-			return replyPrivately("There's no queue set up right now, so nothing is playing.");
+			return await replyPrivately("There's no queue set up right now, so nothing is playing.");
 		}
 
 		const allEntries = await fetchAllEntries(queueChannel);
@@ -50,7 +50,7 @@ export const nowPlaying: Command = {
 
 		if (!firstNotDone) {
 			logger.debug(`The song queue is currently empty.`);
-			return replyPrivately(
+			return await replyPrivately(
 				"There's probably nothing playing right now. (If there is, I can't hear it)"
 			);
 		}
@@ -75,6 +75,6 @@ export const nowPlaying: Command = {
 		push(firstNotDone.url, response);
 		// TODO: Also read out the song's title. Store this in the database as it comes in.
 
-		return replyPrivately(composed(response), true);
+		return await replyPrivately(composed(response), true);
 	}
 };

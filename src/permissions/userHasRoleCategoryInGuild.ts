@@ -36,5 +36,5 @@ export async function userHasRoleCategoryInGuild(
 	}
 
 	// Always true for user with a whitelisted role
-	return userHasOneOfRoles(user, knownAdminRoleIDs, guild);
+	return await userHasOneOfRoles(user, knownAdminRoleIDs, guild);
 }

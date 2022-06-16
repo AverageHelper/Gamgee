@@ -20,12 +20,12 @@ export const version: Command = {
 			// Discord lets bots link stuff in Markdown syntax, but it'll also embed by default. Use `<brackets>` to prevent the embed.
 			const repo = "https://github.com/AverageHelper/Gamgee";
 			const changelog = `${repo}/releases/tag/v${gamgeeVersion}`;
-			return reply(
+			return await reply(
 				`I'm currently running [Gamgee Core v${gamgeeVersion}](<${changelog}>)  ${celebration}`
 			);
 		}
 
 		// Normal messages don't do Markdown links  :sadge:
-		return reply(`I'm currently running Gamgee Core v${gamgeeVersion}.  ${celebration}`);
+		return await reply(`I'm currently running Gamgee Core v${gamgeeVersion}.  ${celebration}`);
 	}
 };

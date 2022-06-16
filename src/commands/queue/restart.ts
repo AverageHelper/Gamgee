@@ -13,7 +13,7 @@ export const restart: Subcommand = {
 		const queueChannel = await getQueueChannel(guild);
 
 		if (!queueChannel) {
-			return reply("No queue is set up. Maybe that's what you wanted...?");
+			return await reply("No queue is set up. Maybe that's what you wanted...?");
 		}
 
 		await prepareForLongRunningTasks();
@@ -21,10 +21,10 @@ export const restart: Subcommand = {
 		const toBeDeleted = (await fetchAllEntries(queueChannel)).map(entry => entry.queueMessageId);
 		const didDelete = await bulkDeleteMessagesWithIds(toBeDeleted, queueChannel);
 		if (!didDelete) {
-			return reply("Something went wrong. I couldn't get that queue cleared, sorry.");
+			return await reply("Something went wrong. I couldn't get that queue cleared, sorry.");
 		}
 		await clearEntries(queueChannel);
 
-		return reply("The queue has restarted.");
+		return await reply("The queue has restarted.");
 	}
 };

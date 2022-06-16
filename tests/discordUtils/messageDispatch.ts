@@ -28,7 +28,7 @@ async function waitForEventInCollection<T extends { id: string }>(
 	condition: (msg: T) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
 ): Promise<T | null> {
-	return new Promise(resolve => {
+	return await new Promise(resolve => {
 		const id = uuid();
 		const cache = eventCache<T>(key);
 
@@ -79,7 +79,7 @@ export async function waitForMessage(
 	condition: (msg: Discord.Message) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
-	return waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
+	return await waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
 }
 
 /**
@@ -94,5 +94,10 @@ export async function waitForMessageDeletion(
 	condition: (msg: Discord.Message) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
 ): Promise<Discord.Message | null> {
-	return waitForEventInCollection("messageDeleteWaiters", messageDeleteWaiters, condition, timeout);
+	return await waitForEventInCollection(
+		"messageDeleteWaiters",
+		messageDeleteWaiters,
+		condition,
+		timeout
+	);
 }

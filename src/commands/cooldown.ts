@@ -18,20 +18,20 @@ export const cooldown: Command = {
 			isQueueOpen(guild)
 		]);
 
-		if (!queueChannel) return replyPrivately("No queue is set up.");
-		if (!isOpen) return replyPrivately("The queue is not open.");
+		if (!queueChannel) return await replyPrivately("No queue is set up.");
+		if (!isOpen) return await replyPrivately("The queue is not open.");
 
 		const config = await getQueueConfig(queueChannel);
 
 		// If the user is blacklisted, they have no limit usage :P
 		if (config.blacklistedUsers?.some(u => u.id === user.id) === true) {
-			return replyPrivately("You can submit once you're removed from the blacklist... sorry");
+			return await replyPrivately("You can submit once you're removed from the blacklist... sorry");
 		}
 
 		// If there's no cooldown, the user may submit whenever!
 		const msgSubmitImmediately = "You can submit right now! :grinning:";
 		if (config.cooldownSeconds === null || config.cooldownSeconds <= 0) {
-			return replyPrivately(msgSubmitImmediately);
+			return await replyPrivately(msgSubmitImmediately);
 		}
 
 		// If the queue is open, display the user's limit usage
@@ -41,7 +41,7 @@ export const cooldown: Command = {
 		]);
 
 		if (!latestSubmission) {
-			return replyPrivately(msgSubmitImmediately);
+			return await replyPrivately(msgSubmitImmediately);
 		}
 
 		const userCanSubmitAgainLater =
@@ -55,7 +55,7 @@ export const cooldown: Command = {
 			const timeToWait = Math.max(0, config.cooldownSeconds - timeSinceLatest);
 
 			if (timeToWait <= 0) {
-				return replyPrivately(msgSubmitImmediately);
+				return await replyPrivately(msgSubmitImmediately);
 			}
 
 			const absolute = Math.round(

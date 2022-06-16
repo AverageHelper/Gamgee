@@ -20,5 +20,5 @@ export async function setConfigCommandPrefix(
 	storage: Storage | null,
 	value: string
 ): Promise<void> {
-	return setConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX, value);
+	return await setConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX, value);
 }

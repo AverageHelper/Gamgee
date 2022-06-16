@@ -173,7 +173,7 @@ export async function revokeSlashCommandsThenExit(client: Discord.Client): Promi
 	logger.info("Unregistered global commands");
 
 	const oAuthGuilds = await client.guilds.fetch();
-	const guilds = await Promise.all(oAuthGuilds.map(async g => g.fetch()));
+	const guilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
 	logger.info(`Unregistering commands in ${guilds.length} guild${pluralOf(guilds)}...`);
 	for (const guild of guilds) {
 		if (!testMode) {

@@ -24,7 +24,7 @@ export const stats: Command = {
 			isQueueOpen(guild)
 		]);
 		if (!queueChannel) {
-			return replyPrivately("No queue is set up.");
+			return await replyPrivately("No queue is set up.");
 		}
 
 		const config = await getQueueConfig(queueChannel);
