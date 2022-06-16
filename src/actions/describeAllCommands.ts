@@ -85,8 +85,9 @@ export async function describeAllCommands(
 				push(CODE, subDesc);
 				push(`${COMMAND_PREFIX}${command.name} ${sub.name}`, subDesc);
 
-				const options = "options" in sub ? sub.options ?? [] : [];
-				describeParameters(options, subDesc);
+				if ("options" in sub) {
+					describeParameters(sub.options ?? [], subDesc);
+				}
 
 				push(CODE, subDesc);
 

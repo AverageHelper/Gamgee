@@ -76,7 +76,7 @@ function replyMessage(
 
 async function sendDMReply(
 	source: Discord.Message,
-	options: string | Discord.MessageOptions | Discord.ReplyMessageOptions
+	options: string | Discord.ReplyMessageOptions
 ): Promise<Discord.Message | null> {
 	const user: Discord.User = source.author;
 	try {
@@ -116,7 +116,7 @@ async function sendDMReply(
 
 async function sendEphemeralReply(
 	source: Discord.CommandInteraction,
-	options: string | Discord.InteractionReplyOptions | Omit<Discord.ReplyMessageOptions, "flags"> // FIXME: flags
+	options: string | Discord.InteractionReplyOptions
 ): Promise<boolean> {
 	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
@@ -142,7 +142,7 @@ async function sendEphemeralReply(
  *
  * The current channel name is automatically prepended to the message content.
  *
- * @param message The message or interaction to which to reply.
+ * @param source The message or interaction to which to reply.
  * @param options The the message to send.
  * @param preferDMs If `source` is an interaction, then we'll reply via DMs anyway.
  *
@@ -151,7 +151,7 @@ async function sendEphemeralReply(
  */
 export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
-	options: string | Discord.MessageOptions | Omit<Discord.ReplyMessageOptions, "flags">, // FIXME: flags everywhere
+	options: string | Omit<Discord.MessageOptions, "reply" | "flags">,
 	preferDMs: boolean
 ): Promise<Discord.Message | boolean> {
 	let message: Discord.Message | null;
@@ -200,7 +200,7 @@ export async function replyPrivately(
  */
 export async function sendMessageInChannel(
 	channel: Discord.TextBasedChannel,
-	content: string | Omit<Discord.ReplyMessageOptions, "flags">
+	content: string | Discord.MessageOptions
 ): Promise<Discord.Message | null> {
 	try {
 		return await channel.send(content);

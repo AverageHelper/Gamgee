@@ -154,10 +154,10 @@ export const phrases: ResponseRepository = [
 	// Wurtz
 	"A long time ago- Actually, never, and also now, nothing is nowhere. When? Never. Makes sense, right? Like I said, it didn't happen. Nothing was never anywhere. That's why it's been everywhere. It's been so everywhere, you don't need a where. You don't even need a when. That's how \"every\" it gets.",
 	"How did this happen?",
+	"i'm gonna iron my shoes",
 	"It's so hard to remember what you're doing until it's done.",
 	"It's the people with the horses, and they made an empire, and then everyone else copied their horses.",
 	"just wanna do something reasonable",
-	"Oh nothing I was just shaaaaaving my pianOoo",
 	"The sun is a deadly laser",
 	"Weather update: it's raining",
 	"Woah",
@@ -252,12 +252,14 @@ export const phrases: ResponseRepository = [
 	":cloud_lightning:  I smite thee!",
 	"Like and subscribe",
 	"Lorem ipsum dolor sit amet...",
+	"Man, I gotta listen to more Zenith",
 	"My favorite type of music is the one with all of the instruments and sounds.",
 	["Nice question!", "Only one small issue:", "*I am inside your PC*"],
 	["Odds aren't good.", "I prefer evens"],
 	"Gonna go check out the vendor hall now k byee",
 	"Oh hai there!",
 	"One day I'm gonna run out of funny random stuff to say and you'll only have yourselves to blame!",
+	"One One was a racehorse. One Two was one too. One One won one race. One Two won one too.",
 	"Praise the bots!",
 	"Prose, maybe even poetry",
 	"Quite remarkable",
@@ -301,7 +303,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 197 of these
+]; // 199 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

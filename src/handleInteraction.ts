@@ -13,8 +13,7 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * Performs actions from a Discord command interaction.
  * The command is ignored if the interaction is from a bot.
  *
- * @param client The Discord client.
- * @param message The Discord message to handle.
+ * @param interaction The Discord interaction to handle.
  * @param storage Arbitrary persistent storage.
  */
 export async function handleInteraction(
@@ -73,22 +72,38 @@ export async function handleInteraction(
 			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
-				await interaction.deferReply({ ephemeral });
+				try {
+					await interaction.deferReply({ ephemeral });
+				} catch (error) {
+					logger.error(richErrorMessage("Failed to defer reply to interaction.", error));
+				}
 			},
 			replyPrivately: async (options, viaDM: boolean = false) => {
 				if (viaDM) {
 					const content = ":paperclip: Check your DMs";
 					if (interaction.deferred) {
-						await interaction.editReply(content);
+						try {
+							await interaction.editReply(content);
+						} catch (error) {
+							logger.error(richErrorMessage("Failed to edit reply to interaction.", error));
+						}
 					} else {
-						await interaction.reply({ content, ephemeral: true });
+						try {
+							await interaction.reply({ content, ephemeral: true });
+						} catch (error) {
+							logger.error(richErrorMessage("Failed to reply to interaction.", error));
+						}
 					}
 				}
 				if (interaction.deferred && !viaDM) {
-					if (typeof options === "string") {
-						await interaction.followUp({ ephemeral: true, content: options });
-					} else {
-						await interaction.followUp({ ephemeral: true, ...options });
+					try {
+						if (typeof options === "string") {
+							await interaction.followUp({ ephemeral: true, content: options });
+						} else {
+							await interaction.followUp({ ...options, ephemeral: true });
+						}
+					} catch (error) {
+						logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					}
 				} else {
 					const reply = await replyPrivately(interaction, options, viaDM);
@@ -106,19 +121,30 @@ export async function handleInteraction(
 						await interaction.followUp(options);
 					}
 				} else {
-					if (typeof options === "string") {
-						await interaction.reply(options);
-					} else if (options.shouldMention === undefined || options.shouldMention) {
-						await interaction.reply(options);
-					} else {
-						await interaction.reply({
-							...options,
-							allowedMentions: { users: [] }
-						});
+					try {
+						if (typeof options === "string") {
+							await interaction.reply(options);
+						} else if (
+							!("shouldMention" in options) ||
+							options.shouldMention === undefined ||
+							options.shouldMention
+						) {
+							// Doesn't say whether to mention, default to `true`
+							await interaction.reply(options);
+						} else {
+							// Really shouldn't mention
+							await interaction.reply({
+								...options,
+								allowedMentions: { users: [] }
+							});
+						}
+					} catch (error) {
+						logger.error(richErrorMessage("Failed to reply to interaction.", error));
 					}
 				}
 
 				if (typeof options !== "string" && "ephemeral" in options && options?.ephemeral === true) {
+					// FIXME: Not true if we errored out
 					logger.verbose(
 						`Sent ephemeral reply to User ${logUser(interaction.user)}: ${JSON.stringify(options)}`
 					);
@@ -127,13 +153,21 @@ export async function handleInteraction(
 			followUp: async options => {
 				if (
 					typeof options !== "string" &&
-					options.reply === false &&
+					(!("reply" in options) || options.reply === false || options.reply === undefined) &&
 					interaction.channel &&
 					interaction.channel.isText()
 				) {
-					return (await sendMessageInChannel(interaction.channel, options)) ?? false;
+					return (
+						(await sendMessageInChannel(interaction.channel, { ...options, reply: undefined })) ??
+						false
+					);
 				}
-				return (await interaction.followUp(options)) as Discord.Message;
+				try {
+					return (await interaction.followUp(options)) as Discord.Message;
+				} catch (error) {
+					logger.error(richErrorMessage("Failed to follow up on interaction.", error));
+					return false;
+				}
 			},
 			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {

@@ -23,18 +23,25 @@ export const ping: Command = {
 		// FIXME: Ping seems to report slower for messages vs interactions
 		// This is probably to do with the extra API work we do around message parsing. Best fix that
 		if (context.type === "message") {
-			testMessage = await context.message.reply(random);
+			testMessage = await context.message.reply({
+				content: random,
+				allowedMentions: { repliedUser: false }
+			});
 			responseTime = testMessage.createdTimestamp - context.message.createdTimestamp;
 		} else {
-			await context.interaction.reply(random);
+			await context.interaction.reply({
+				content: random,
+				allowedMentions: { repliedUser: false }
+			});
 			testMessage = (await context.interaction.fetchReply()) as Discord.Message;
 			responseTime = testMessage.createdTimestamp - context.interaction.createdTimestamp;
 		}
 
 		const apiLatency = Math.round(client.ws.ping);
-		await testMessage.edit(
-			`Pong! Sent response in \`${responseTime}ms\`. API latency is \`${apiLatency}ms\``
-		);
+		await testMessage.edit({
+			content: `Pong! Sent response in \`${responseTime}ms\`. API latency is \`${apiLatency}ms\``,
+			allowedMentions: { repliedUser: false }
+		});
 		logger.info(`Sent ping response in ${responseTime}ms. API latency is ${apiLatency}ms.`);
 	}
 };

@@ -1,18 +1,10 @@
 import type Discord from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
-import type {
-	BaseApplicationCommandData,
-	ChatInputApplicationCommandData
-} from "discord.js/typings";
 
 export * from "./CommandContext.js";
 
-interface BaseCommand {
-	name: string;
-	nameLocalizations?: BaseApplicationCommandData["nameLocalizations"];
+interface BaseCommand extends Discord.ChatInputApplicationCommandData {
 	aliases?: Array<string>;
-	description: string;
-	descriptionLocalizations?: ChatInputApplicationCommandData["descriptionLocalizations"];
 	options?: NonEmptyArray<Discord.ApplicationCommandOptionData | Subcommand>;
 	type?: "CHAT_INPUT";
 }

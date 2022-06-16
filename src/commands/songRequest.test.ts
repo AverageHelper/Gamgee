@@ -35,6 +35,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
+import type Discord from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
 import type Discord from "discord.js";
 import { sr as songRequest } from "./songRequest.js";

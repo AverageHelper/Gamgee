@@ -64,7 +64,10 @@ export const quo: Command = {
 		);
 		for (const command of namedSubcommands) {
 			if (command.name === arg) {
-				const subcommandContext = { ...context, options: argOptions };
+				const subcommandContext = {
+					...context,
+					options: argOptions.slice()
+				};
 				context.logger.debug(
 					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
 						context.options,
