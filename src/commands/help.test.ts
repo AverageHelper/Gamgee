@@ -12,14 +12,14 @@ describe("Help command", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			type: "message",
 			guild: {
 				id: "the-guild"
 			},
 			storage: null,
 			replyPrivately: mockReplyPrivately
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockAssertUserCanRunCommand.mockResolvedValue(true);
 	});

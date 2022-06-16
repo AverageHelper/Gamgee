@@ -31,14 +31,14 @@ describe("Queue Statistics", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			guild: "the-guild",
 			channel: undefined,
 			logger,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteInvocation
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockCount.mockResolvedValue(0);
 		mockPlaytimeRemaining.mockResolvedValue(0);

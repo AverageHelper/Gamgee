@@ -35,12 +35,12 @@ describe("Request Queue", () => {
 	let entry: QueueEntry;
 
 	beforeEach(() => {
-		queueChannel = ({
+		queueChannel = {
 			id: "queue-channel",
 			send: mockChannelSend
-		} as unknown) as Discord.TextChannel;
+		} as unknown as Discord.TextChannel;
 
-		message = ({
+		message = {
 			id: queueMessageId,
 			channel: {
 				id: "the-channel"
@@ -51,12 +51,12 @@ describe("Request Queue", () => {
 			guild: {
 				id: guildId
 			}
-		} as unknown) as Discord.Message;
+		} as unknown as Discord.Message;
 
-		entry = ({
+		entry = {
 			senderId: entrySenderId,
 			url: entryUrl
-		} as unknown) as QueueEntry;
+		} as unknown as QueueEntry;
 
 		forgetJobQueue(`${message.channel.id}_${message.id}`);
 

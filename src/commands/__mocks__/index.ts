@@ -7,9 +7,8 @@ interface MockCommand {
 
 export { invokeCommand } from "../../actions/invokeCommand.js";
 
-const { resolveAlias, allCommands: realAllCommands } = jest.requireActual<
-	typeof import("../index.js")
->("../index.js");
+const { resolveAlias, allCommands: realAllCommands } =
+	jest.requireActual<typeof import("../index.js")>("../index.js");
 
 export { resolveAlias };
 

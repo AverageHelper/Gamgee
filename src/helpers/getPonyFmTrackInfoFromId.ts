@@ -60,9 +60,9 @@ export interface PonyFmTrackAPIResponse {
 function isPonyFmTrackAPIResponse(resp: unknown): resp is PonyFmTrackAPIResponse {
 	return (
 		isObject(resp) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).title) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).duration) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).url)
+		isString((resp as unknown as PonyFmTrackAPIResponse).title) &&
+		isString((resp as unknown as PonyFmTrackAPIResponse).duration) &&
+		isString((resp as unknown as PonyFmTrackAPIResponse).url)
 	);
 }
 
@@ -71,7 +71,7 @@ export interface PonyFmTrackAPIError {
 }
 
 function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
-	return isObject(resp) && isString(((resp as unknown) as PonyFmTrackAPIError).message);
+	return isObject(resp) && isString((resp as unknown as PonyFmTrackAPIError).message);
 }
 
 /**

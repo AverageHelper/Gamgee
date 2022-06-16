@@ -34,7 +34,7 @@ describe("Manage the Queue Blacklist", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			type: "message",
 			guild: {
 				ownerId,
@@ -52,7 +52,7 @@ describe("Manage the Queue Blacklist", () => {
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteMessage
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: badUserId });

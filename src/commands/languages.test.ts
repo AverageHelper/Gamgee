@@ -14,11 +14,11 @@ describe("Language Statistics from GitHub", () => {
 	let context: CommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply
-		} as unknown) as CommandContext;
+		} as unknown as CommandContext;
 
 		mockGithubMetadata.mockResolvedValue({
 			languages: {

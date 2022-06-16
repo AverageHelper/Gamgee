@@ -29,16 +29,8 @@ export const blacklist: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const {
-			guild,
-			user,
-			options,
-			storage,
-			logger,
-			reply,
-			replyPrivately,
-			deleteInvocation
-		} = context;
+		const { guild, user, options, storage, logger, reply, replyPrivately, deleteInvocation } =
+			context;
 
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {

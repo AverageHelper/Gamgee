@@ -17,11 +17,11 @@ describe("Get Queue Limits", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			guild: "the-guild",
 			user: { id: "the-user" },
 			reply: mockReply
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
