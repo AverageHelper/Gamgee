@@ -26,7 +26,7 @@ export async function commandResponseInSameChannel(
 	expectToContain: string | undefined = undefined
 ): Promise<Discord.Message | null> {
 	const commandMsg = await sendCommand(command, channelId);
-	return waitForMessage(response => {
+	return await waitForMessage(response => {
 		return (
 			response.author.id === UUT_ID &&
 			response.channel.id === channelId &&

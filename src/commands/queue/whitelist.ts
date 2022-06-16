@@ -22,7 +22,7 @@ export const whitelist: Subcommand = {
 
 		const firstOption = options[0];
 		if (!firstOption) {
-			return reply({
+			return await reply({
 				content: ":x: You'll need to tell me who to whitelist. Try again, and mention someone.",
 				ephemeral: true
 			});
@@ -34,21 +34,21 @@ export const whitelist: Subcommand = {
 		]);
 
 		if (!subject) {
-			return reply({ content: ":x: I don't know who that is.", ephemeral: true });
+			return await reply({ content: ":x: I don't know who that is.", ephemeral: true });
 		}
 
 		if (subject.id === user.id) {
-			return reply({ content: ":x: You can't whitelist yourself, silly!", ephemeral: true });
+			return await reply({ content: ":x: You can't whitelist yourself, silly!", ephemeral: true });
 		}
 
 		if (!queueChannel) {
-			return reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
+			return await reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
 		await whitelistUser(subject.id, queueChannel);
 		logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
-		return reply({
+		return await reply({
 			content: `:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`,
 			shouldMention: false,
 			ephemeral: true

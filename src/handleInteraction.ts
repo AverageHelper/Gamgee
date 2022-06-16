@@ -178,6 +178,6 @@ export async function handleInteraction(
 			}
 		};
 
-		return invokeCommand(command, context);
+		return await invokeCommand(command, context);
 	}
 }

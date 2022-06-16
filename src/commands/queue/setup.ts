@@ -22,7 +22,7 @@ export const setup: Subcommand = {
 
 		const firstOption = options[0];
 		if (!firstOption) {
-			return reply({
+			return await reply({
 				content: `Please name a text channel to use for the queue!`,
 				ephemeral: true
 			});
@@ -30,7 +30,7 @@ export const setup: Subcommand = {
 
 		const newQueueChannel = resolveChannelFromOption(firstOption, guild);
 		if (!newQueueChannel) {
-			return reply({
+			return await reply({
 				content:
 					"That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
 				ephemeral: true
@@ -38,7 +38,7 @@ export const setup: Subcommand = {
 		}
 
 		if (!newQueueChannel.isText()) {
-			return reply({
+			return await reply({
 				content: "I can't queue in a voice channel. Please specify a text channel instead",
 				ephemeral: true
 			});
@@ -51,6 +51,9 @@ export const setup: Subcommand = {
 			setQueueChannel(newQueueChannel.id, guild),
 			newQueueChannel.send("This is a queue now. :smiley:")
 		]);
-		return reply({ content: `New queue set up in <#${newQueueChannel.id}>`, ephemeral: true });
+		return await reply({
+			content: `New queue set up in <#${newQueueChannel.id}>`,
+			ephemeral: true
+		});
 	}
 };

@@ -14,14 +14,14 @@ export const open: GuildedSubcommand = {
 		]);
 
 		if (!queueChannel) {
-			return reply({
+			return await reply({
 				content: "There's no queue to open. Have you set one up yet?",
 				ephemeral: true
 			});
 		}
 		const isAlreadyOpen = await isQueueOpen(guild);
 		if (isAlreadyOpen) {
-			return reply({ content: "The queue's already open! :smiley:", ephemeral: true });
+			return await reply({ content: "The queue's already open! :smiley:", ephemeral: true });
 		}
 
 		await setQueueOpen(true, guild);

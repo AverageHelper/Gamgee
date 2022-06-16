@@ -118,7 +118,7 @@ export const limit: Subcommand = {
 		const { type, guild, options, reply } = context;
 
 		const queueChannel = await getQueueChannel(guild);
-		if (!queueChannel) return reply("No queue is set up.");
+		if (!queueChannel) return await reply("No queue is set up.");
 
 		const config = await getQueueConfig(queueChannel);
 
@@ -151,14 +151,14 @@ export const limit: Subcommand = {
 
 		if (!keyOption) {
 			const { limits } = await import("../limits.js");
-			return limits.execute(context);
+			return await limits.execute(context);
 		}
 
 		const key: string = resolveStringFromOption(keyOption);
 
 		if (!isLimitKey(key)) {
 			const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-			return reply(`I'm not sure what ${that} is. Try one of ${limitsList}`);
+			return await reply(`I'm not sure what ${that} is. Try one of ${limitsList}`);
 		}
 
 		// Set limits on the queue
@@ -169,15 +169,15 @@ export const limit: Subcommand = {
 					// Read the current limit
 					const value = config.entryDurationSeconds;
 					if (value === null) {
-						return reply("There is no upper limit on entry duration.");
+						return await reply("There is no upper limit on entry duration.");
 					}
-					return reply(`Upper entry duration limit is **${durationString(value)}**`);
+					return await reply(`Upper entry duration limit is **${durationString(value)}**`);
 				}
 
 				// Set a new limit
 				let value = resolveIntegerFromOption(valueOption);
 				if (value !== null && Number.isNaN(value)) {
-					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ entryDurationSeconds: value }, queueChannel);
@@ -189,7 +189,7 @@ export const limit: Subcommand = {
 					push("set to ", response);
 					pushBold(durationString(value), response);
 				}
-				return reply(composed(response));
+				return await reply(composed(response));
 			}
 
 			case "entry-duration-min": {
@@ -198,15 +198,15 @@ export const limit: Subcommand = {
 					// Read the current limit
 					const value = config.entryDurationMinSeconds;
 					if (value === null) {
-						return reply("There is no lower limit on entry duration.");
+						return await reply("There is no lower limit on entry duration.");
 					}
-					return reply(`Entry duration lower limit is **${durationString(value)}**`);
+					return await reply(`Entry duration lower limit is **${durationString(value)}**`);
 				}
 
 				// Set a new limit
 				let value = resolveIntegerFromOption(valueOption);
 				if (value !== null && Number.isNaN(value)) {
-					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
@@ -218,7 +218,7 @@ export const limit: Subcommand = {
 					push("set to ", response);
 					pushBold(durationString(value), response);
 				}
-				return reply(composed(response));
+				return await reply(composed(response));
 			}
 
 			case "queue-duration": {
@@ -227,15 +227,15 @@ export const limit: Subcommand = {
 					// Read the current limit
 					const value = config.queueDurationSeconds;
 					if (value === null) {
-						return reply("There is no limit on the queue's total duration.");
+						return await reply("There is no limit on the queue's total duration.");
 					}
-					return reply(`Queue duration limit is **${durationString(value)}**`);
+					return await reply(`Queue duration limit is **${durationString(value)}**`);
 				}
 
 				// Set a new limit
 				let value = resolveIntegerFromOption(valueOption);
 				if (value !== null && Number.isNaN(value)) {
-					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ queueDurationSeconds: value }, queueChannel);
@@ -247,7 +247,7 @@ export const limit: Subcommand = {
 					push("set to ", response);
 					pushBold(durationString(value), response);
 				}
-				return reply(composed(response));
+				return await reply(composed(response));
 			}
 
 			case "cooldown": {
@@ -256,16 +256,16 @@ export const limit: Subcommand = {
 					// Read the current limit
 					const value = config.cooldownSeconds;
 					if (value === null) {
-						return reply("There is no submission cooldown time");
+						return await reply("There is no submission cooldown time");
 					}
-					return reply(`Submission cooldown is **${durationString(value)}**`);
+					return await reply(`Submission cooldown is **${durationString(value)}**`);
 				}
 
 				// Set a new limit
 				let value = resolveIntegerFromOption(valueOption);
 				if (value !== null && Number.isNaN(value)) {
 					value = config.cooldownSeconds;
-					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ cooldownSeconds: value }, queueChannel);
@@ -277,7 +277,7 @@ export const limit: Subcommand = {
 					push("set to ", response);
 					pushBold(durationString(value), response);
 				}
-				return reply(composed(response));
+				return await reply(composed(response));
 			}
 
 			case "count": {
@@ -286,16 +286,16 @@ export const limit: Subcommand = {
 					// Read the current limit
 					const value = config.submissionMaxQuantity;
 					if (value === null) {
-						return reply("There is no limit on the number of submissions per user.");
+						return await reply("There is no limit on the number of submissions per user.");
 					}
-					return reply(`Max submissions per user is **${value}**`);
+					return await reply(`Max submissions per user is **${value}**`);
 				}
 
 				// Set a new limit
 				let value = resolveIntegerFromOption(valueOption);
 				if (value !== null && Number.isNaN(value)) {
 					value = config.submissionMaxQuantity;
-					return reply("That doesn't look like an integer. Enter a number value in seconds.");
+					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
 				await updateQueueConfig({ submissionMaxQuantity: value }, queueChannel);
@@ -307,7 +307,7 @@ export const limit: Subcommand = {
 					push("set to ", response);
 					pushBold(`${value}`, response);
 				}
-				return reply(composed(response));
+				return await reply(composed(response));
 			}
 
 			default:

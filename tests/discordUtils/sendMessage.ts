@@ -24,7 +24,7 @@ export async function sendMessage(
 	const channel = await client.channels.fetch(channelId);
 	if (!channel || !channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
 
-	return channel.send(content);
+	return await channel.send(content);
 }
 
 /**
@@ -44,5 +44,5 @@ export async function sendCommand(
 	name: string,
 	channelId: Discord.Snowflake = TEST_CHANNEL_ID
 ): Promise<Discord.Message> {
-	return sendMessage(`${COMMAND_PREFIX}${name}`, channelId);
+	return await sendMessage(`${COMMAND_PREFIX}${name}`, channelId);
 }

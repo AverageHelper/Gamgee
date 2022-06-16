@@ -15,7 +15,6 @@ const mockBlacklistUser = blacklistUser as jest.Mock;
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
-import type Discord from "discord.js";
 import { blacklist } from "./blacklist.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 

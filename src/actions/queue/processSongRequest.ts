@@ -136,7 +136,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				)} is one of them.`
 			);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(request, "You're not allowed to submit songs. My apologies.");
+			return await reject_private(request, "You're not allowed to submit songs. My apologies.");
 		}
 
 		// ** If the user has used all their submissions, reject!
@@ -152,7 +152,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			pushBold(`${maxSubs}`, rejection);
 			push(" of your allotted submissions.", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(request, composed(rejection));
+			return await reject_private(request, composed(rejection));
 		}
 
 		// ** If the user is still under cooldown, reject!
@@ -184,7 +184,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			pushBold(durationString(cooldown - timeSinceLatest), rejection);
 			push(" before submitting again.", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_private(request, composed(rejection));
+			return await reject_private(request, composed(rejection));
 		}
 
 		const song = await songInfoPromise; // we need this info now
@@ -192,7 +192,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			logger.verbose("Could not find the requested song.");
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
 			// FIXME: This response is too generic. Present something more actionable based on why the song can't be found
-			return reject_public(
+			return await reject_public(
 				context,
 				`I can't find that song. ${SHRUGGIE}\nTry a link from a supported platform.`
 			);
@@ -218,7 +218,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			pushNewLine(rejection);
 			push("Try something a bit longer", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_public(context, composed(rejection));
+			return await reject_public(context, composed(rejection));
 		}
 
 		// ** If the song is too long, reject!
@@ -233,7 +233,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			pushNewLine(rejection);
 			push("Try something a bit shorter", rejection);
 			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
-			return reject_public(context, composed(rejection));
+			return await reject_public(context, composed(rejection));
 		}
 
 		const durationBefore = durationString(playtimeTotal, true);
@@ -293,6 +293,6 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		// Handle fetch errors
 	} catch (error) {
 		logger.error(richErrorMessage("Failed to process song request", error));
-		return reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
+		return await reject_public(context, "That query gave me an error. Try again maybe? :shrug:");
 	}
 }
