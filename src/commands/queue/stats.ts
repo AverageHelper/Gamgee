@@ -19,7 +19,7 @@ export const stats: Subcommand = {
 		const queueChannel = await getQueueChannel(guild);
 
 		if (!queueChannel) {
-			return reply(`No queue is set up. Would you like to start one?`);
+			return await reply(`No queue is set up. Would you like to start one?`);
 		}
 
 		// Get the current queue's statistics
@@ -54,7 +54,7 @@ export const stats: Subcommand = {
 			// TODO: Include the number of submitters who used up their count limit
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to generate queue statistics message.", error));
-			return replyPrivately(
+			return await replyPrivately(
 				"Something went wrong with setting up the statistics. Sorry :frowning:"
 			);
 		}

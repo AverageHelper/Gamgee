@@ -292,7 +292,7 @@ export async function handleCommand(
 			}
 		};
 
-		return invokeCommand(command, context);
+		return await invokeCommand(command, context);
 	}
 
 	// Some helpers for parsing intents

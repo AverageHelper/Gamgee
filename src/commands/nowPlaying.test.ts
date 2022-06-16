@@ -32,14 +32,14 @@ describe("Now-Playing", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			guild: "the guild",
 			logger,
 			user: { id: "the user" },
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteMessage
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetAllEntries.mockResolvedValue([]);
 		mockReplyWithMention.mockResolvedValue(undefined);

@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from "node-fetch-cjs";
 import { VideoError } from "../errors/index.js";
 import { isObject, isString } from "./guards.js";
 
@@ -60,9 +60,9 @@ export interface PonyFmTrackAPIResponse {
 function isPonyFmTrackAPIResponse(resp: unknown): resp is PonyFmTrackAPIResponse {
 	return (
 		isObject(resp) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).title) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).duration) &&
-		isString(((resp as unknown) as PonyFmTrackAPIResponse).url)
+		isString((resp as unknown as PonyFmTrackAPIResponse).title) &&
+		isString((resp as unknown as PonyFmTrackAPIResponse).duration) &&
+		isString((resp as unknown as PonyFmTrackAPIResponse).url)
 	);
 }
 
@@ -71,7 +71,7 @@ export interface PonyFmTrackAPIError {
 }
 
 function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
-	return isObject(resp) && isString(((resp as unknown) as PonyFmTrackAPIError).message);
+	return isObject(resp) && isString((resp as unknown as PonyFmTrackAPIError).message);
 }
 
 /**
@@ -85,14 +85,21 @@ function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
 export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
 	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`);
 	if (response.status === 200) {
-		const responseParsed = (await response.json()) as unknown;
-		if (!isPonyFmTrackAPIResponse(responseParsed)) {
-			throw new VideoError(`Malformed response from Pony.fm API`);
+		try {
+			const responseParsed = await response.json();
+			if (!isPonyFmTrackAPIResponse(responseParsed)) {
+				throw new VideoError(`Malformed response from Pony.fm API`);
+			}
+			return responseParsed;
+		} catch (error) {
+			if (error instanceof SyntaxError) {
+				throw new VideoError(`Malformed response from Pony.fm API`);
+			}
+			throw error;
 		}
-		return responseParsed;
 	}
 	if (response.status === 404) {
-		const responseParsed = (await response.json()) as unknown;
+		const responseParsed = await response.json();
 		if (!isPonyFmTrackAPIError(responseParsed)) {
 			throw new VideoError(
 				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`

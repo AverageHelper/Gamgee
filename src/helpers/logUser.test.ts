@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import { logUser } from "./logUser.js";
 
 describe("Log user ID", () => {
-	const user = ({} as unknown) as Discord.User;
+	const user = {} as unknown as Discord.User;
 
 	beforeEach(() => {
 		user.username = "BobJoe";

@@ -44,6 +44,6 @@ export const howto: GuildedCommand = {
 		}
 		push(".", msg);
 
-		return reply(composed(msg));
+		return await reply(composed(msg));
 	}
 };

@@ -25,17 +25,17 @@ export const get: Subcommand = {
 	async execute({ options, storage, reply }) {
 		const firstOption = options[0];
 		if (!firstOption) {
-			return reply({ content: listKeys(), ephemeral: true });
+			return await reply({ content: listKeys(), ephemeral: true });
 		}
 		const key: string = resolveStringFromOption(firstOption);
 
 		if (isConfigKey(key)) {
 			const value = await getConfigValue(storage, key);
-			return reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
+			return await reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
 		}
 
 		const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-		return reply({
+		return await reply({
 			content: `I'm not sure what ${that} is. Try one of ${listKeys()}`,
 			ephemeral: true
 		});

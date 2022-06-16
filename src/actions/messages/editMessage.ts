@@ -127,7 +127,8 @@ export function escapeUriInString(content: string): string {
 }
 
 export function positionsOfUriInText(str: string): NonEmptyArray<Range> | null {
-	const uri = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gu;
+	const uri =
+		/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gu;
 
 	let results: NonEmptyArray<Range> | null = null;
 	let match: RegExpExecArray | null = null;

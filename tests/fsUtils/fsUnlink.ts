@@ -7,7 +7,7 @@ import fs from "fs";
  * @param path The path of the filesystem item to unlink or remove.
  */
 export async function fsUnlink(path: fs.PathLike): Promise<void> {
-	return new Promise((resolve, reject) => {
+	return await new Promise((resolve, reject) => {
 		fs.unlink(path, error => {
 			if (error) {
 				if (error.code === "ENOENT") {

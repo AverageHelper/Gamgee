@@ -16,13 +16,13 @@ export const close: GuildedSubcommand = {
 		]);
 
 		if (!queueChannel) {
-			return reply({
+			return await reply({
 				content: "There's no queue to close. Have you set one up yet?",
 				ephemeral: true
 			});
 		}
 		if (!isQueueAlreadyOpen) {
-			return reply({
+			return await reply({
 				content: "The queue is already closed, silly! :stuck_out_tongue:",
 				ephemeral: true
 			});

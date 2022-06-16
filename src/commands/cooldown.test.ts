@@ -30,12 +30,12 @@ describe("User retrieving their own cooldown", () => {
 	beforeEach(() => {
 		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 24)); // 2021-03-14 11:24, date of first commit to Gamgee ^^
 
-		context = ({
+		context = {
 			guild: "the-guild",
 			user: { id: "the-user" },
 			deleteInvocation: mockDeleteInvocation,
 			replyPrivately: mockReplyPrivately
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"

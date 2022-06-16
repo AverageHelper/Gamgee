@@ -50,7 +50,7 @@ export const sr: GuildedCommand = {
 		const firstOption = options[0];
 		if (!firstOption) {
 			const { howto } = await import("./howto.js");
-			return howto.execute(context);
+			return await howto.execute(context);
 		}
 
 		if (channel?.id === queueChannel.id) {
@@ -63,7 +63,7 @@ export const sr: GuildedCommand = {
 
 		const isOpen = await isQueueOpen(guild);
 		if (!isOpen) {
-			return reply({
+			return await reply({
 				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
 				ephemeral: true
 			});
@@ -77,7 +77,9 @@ export const sr: GuildedCommand = {
 			songUrl = new URL(songUrlString);
 		} catch (error) {
 			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
-			return reply(`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?`);
+			return await reply(
+				`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?`
+			);
 		}
 
 		if (channel && context.type === "interaction") {

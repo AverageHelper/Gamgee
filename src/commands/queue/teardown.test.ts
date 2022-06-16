@@ -15,11 +15,11 @@ describe("Queue teardown", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			guild: "the guild",
 			logger,
 			reply: mockReply
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockSetQueueChannel.mockResolvedValue(undefined);
 	});

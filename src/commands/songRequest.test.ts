@@ -85,16 +85,16 @@ describe("Song request via URL", () => {
 		blacklistedUsers: []
 	});
 
-	const mockClient: Discord.Client<true> = ({
+	const mockClient: Discord.Client<true> = {
 		user: { id: botId }
-	} as unknown) as Discord.Client<true>;
+	} as unknown as Discord.Client<true>;
 
 	function mockMessage(senderId: string, content: string): Discord.Message {
-		const mockSenderMember: Discord.GuildMember = ({
+		const mockSenderMember: Discord.GuildMember = {
 			user: { id: senderId }
-		} as unknown) as Discord.GuildMember;
+		} as unknown as Discord.GuildMember;
 
-		return ({
+		return {
 			content,
 			author: {
 				bot: false,
@@ -123,12 +123,12 @@ describe("Song request via URL", () => {
 					)
 				}
 			}
-		} as unknown) as Discord.Message;
+		} as unknown as Discord.Message;
 	}
 
 	describe("Song request help", () => {
 		test("descibes how to submit a song", async () => {
-			const context = ({
+			const context = {
 				type: "message",
 				guild: "any-guild",
 				channel: "any-channel",
@@ -141,7 +141,7 @@ describe("Song request via URL", () => {
 				replyPrivately: mockReplyPrivately,
 				deleteInvocation: mockDeleteMessage,
 				followUp: mockFollowUp
-			} as unknown) as GuildedCommandContext;
+			} as unknown as GuildedCommandContext;
 
 			await songRequest.execute(context);
 			expect(mockReply).toHaveBeenCalledTimes(1);
@@ -170,7 +170,7 @@ describe("Song request via URL", () => {
 			return Promise.resolve();
 		});
 
-		const context1 = ({
+		const context1 = {
 			guild: mockMessage1.guild,
 			channel: mockMessage1.channel,
 			user: mockMessage1.author,
@@ -188,8 +188,8 @@ describe("Song request via URL", () => {
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteMessage,
 			followUp: mockFollowUp
-		} as unknown) as GuildedCommandContext;
-		const context2 = ({
+		} as unknown as GuildedCommandContext;
+		const context2 = {
 			...context1,
 			options: [
 				{
@@ -201,7 +201,7 @@ describe("Song request via URL", () => {
 			user: mockMessage2.author,
 			guild: mockMessage2.guild,
 			channel: mockMessage2.channel
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		// Request a song twice in quick succession
 		void songRequest.execute(context1);
@@ -234,7 +234,7 @@ describe("Song request via URL", () => {
 		await Promise.all([
 			mockMessages
 				.map(message => {
-					return ({
+					return {
 						options: message.content
 							.split(" ")
 							.slice(1)
@@ -252,7 +252,7 @@ describe("Song request via URL", () => {
 						reply: mockReply,
 						replyPrivately: mockReplyPrivately,
 						followUp: mockFollowUp
-					} as unknown) as GuildedCommandContext;
+					} as unknown as GuildedCommandContext;
 				})
 				.map(songRequest.execute)
 		]);

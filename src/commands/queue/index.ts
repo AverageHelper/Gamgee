@@ -46,7 +46,7 @@ export const quo: Command = {
 				pushCode(command.name, response);
 			});
 
-			return context.reply(composed(response));
+			return await context.reply(composed(response));
 		}
 
 		const arg: string = resolveSubcommandNameFromOption(firstOption);
@@ -75,7 +75,7 @@ export const quo: Command = {
 						2
 					)}`
 				);
-				return invokeCommand(command, subcommandContext);
+				return await invokeCommand(command, subcommandContext);
 			}
 		}
 
@@ -85,6 +85,6 @@ export const quo: Command = {
 			push(" - ", response);
 			pushCode(command.name, response);
 		});
-		return context.reply(composed(response));
+		return await context.reply(composed(response));
 	}
 };

@@ -30,7 +30,7 @@ describe("Removing from Queue Blacklist", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			user: { id: "test-user" },
 			guild: { ownerId },
 			options: [
@@ -43,7 +43,7 @@ describe("Removing from Queue Blacklist", () => {
 			logger,
 			reply: mockReply,
 			deleteInvocation: mockDeleteMessage
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: goodUserId });

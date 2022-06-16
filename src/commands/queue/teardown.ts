@@ -10,6 +10,6 @@ export const teardown: Subcommand = {
 	async execute({ guild, logger, reply }) {
 		logger.info(`Forgetting queue channel for guild ${guild.id}.`);
 		await setQueueChannel(null, guild);
-		return reply("Queue deleted.");
+		return await reply("Queue deleted.");
 	}
 };

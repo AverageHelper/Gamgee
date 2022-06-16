@@ -21,7 +21,10 @@ export const video: Command = {
 		const { logger, options, type, reply } = context;
 		const firstOption = options[0];
 		if (!firstOption) {
-			return reply({ content: "You're gonna have to add a song link to that.", ephemeral: true });
+			return await reply({
+				content: "You're gonna have to add a song link to that.",
+				ephemeral: true
+			});
 		}
 		const urlString: string = resolveStringFromOption(firstOption);
 
@@ -35,7 +38,7 @@ export const video: Command = {
 		try {
 			const video = await getVideoDetails(urlString);
 			if (video === null) {
-				return reply({
+				return await reply({
 					content: `I couldn't get a song from that. Try a link from a ${supportedPlatform}.`,
 					ephemeral: true
 				});
@@ -53,12 +56,12 @@ export const video: Command = {
 			push(": ", response);
 			push(`(${durationString(video.duration.seconds)})`, response);
 
-			return reply(composed(response));
+			return await reply(composed(response));
 
 			// Handle fetch errors
 		} catch (error) {
 			logger.error(richErrorMessage(`Failed to run query for URL: ${urlString}`, error));
-			return reply("That video query gave me an error.");
+			return await reply("That video query gave me an error.");
 		}
 	}
 };

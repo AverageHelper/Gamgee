@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2021",
-		"module": "ES2020",
+		"module": "ES2022",
 		"lib": ["ES2021"],
 		"moduleResolution": "node",
 		"allowSyntheticDefaultImports": true,
@@ -16,6 +16,7 @@
 		"useUnknownInCatchVariables": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
+		"importsNotUsedAsValues": "error",
 		"noPropertyAccessFromIndexSignature": true,
 		"noUncheckedIndexedAccess": true,
 		"typeRoots": ["./node_modules/@types", "./src"],

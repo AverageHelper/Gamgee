@@ -1,9 +1,11 @@
 /* Adapted from https://github.com/laurengarcia/url-metadata */
 
 import type { Fields } from "./lib/metadataFields.js";
+import type { RequestInit } from "node-fetch-cjs";
 import type { URL } from "url";
-import fetch from "node-fetch";
+import fetch from "node-fetch-cjs";
 import parse from "./lib/parse.js";
+import timeoutSignal from "timeout-signal";
 
 export interface Options {
 	userAgent?: string;
@@ -33,16 +35,15 @@ export default async function urlMetadata(url: URL, options?: Options): Promise<
 		...options
 	};
 
-	const requestOpts = {
+	const requestOpts: RequestInit = {
 		headers: {
 			"User-Agent": opts.userAgent,
 			From: opts.fromEmail
 		},
-		maxRedirects: opts.maxRedirects,
-		encoding: opts.decode ? null : "utf8",
-		timeout: opts.timeout
+		follow: opts.maxRedirects,
+		signal: timeoutSignal(opts.timeout)
 	};
-	const response = await fetch(url, requestOpts);
+	const response = await fetch(url.href, requestOpts);
 
 	if (response.status && response.status !== 200) {
 		throw new Error(`response code ${response.status}`);

@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import type {MigrationInterface, QueryRunner} from "typeorm";
 
 export class addQueueDurationLimit1650745980666 implements MigrationInterface {
     name = 'addQueueDurationLimit1650745980666'

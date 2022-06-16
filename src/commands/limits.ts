@@ -13,7 +13,7 @@ export const limits: Command = {
 	async execute({ guild, reply }) {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
-			return reply("No queue is set up.");
+			return await reply("No queue is set up.");
 		}
 
 		const config = await getQueueConfig(queueChannel);

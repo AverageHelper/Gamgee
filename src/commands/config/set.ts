@@ -32,13 +32,13 @@ export const set: Subcommand = {
 		const keyOption = options[0];
 		const valueOption = options[1];
 		if (!keyOption || !valueOption) {
-			return reply({ content: listKeys(), ephemeral: true });
+			return await reply({ content: listKeys(), ephemeral: true });
 		}
 		const key: string = resolveStringFromOption(keyOption);
 
 		if (!isConfigKey(key)) {
 			const that = key.length <= SAFE_PRINT_LENGTH ? `'${key}'` : "that";
-			return reply({
+			return await reply({
 				content: `I'm not sure what ${that} is. Try one of ${listKeys()}`,
 				ephemeral: true
 			});
@@ -46,12 +46,12 @@ export const set: Subcommand = {
 
 		const value = resolveStringFromOption(valueOption);
 		if (value === undefined || value === "") {
-			return reply({ content: "Expected a value to set.", ephemeral: true });
+			return await reply({ content: "Expected a value to set.", ephemeral: true });
 		}
 		if (!isConfigValue(value)) {
-			return reply({ content: "Invalid value type.", ephemeral: true });
+			return await reply({ content: "Invalid value type.", ephemeral: true });
 		}
 		await setConfigValue(storage, key, value);
-		return reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
+		return await reply({ content: `**${key}**: ${JSON.stringify(value)}`, ephemeral: true });
 	}
 };

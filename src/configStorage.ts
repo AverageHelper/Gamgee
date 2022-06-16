@@ -1,8 +1,7 @@
+import type { LocalStorage } from "node-persist";
 import type { Logger } from "./logger.js";
 import Discord from "discord.js";
 import storage from "node-persist";
-
-import type { LocalStorage } from "node-persist";
 
 export type Storage = LocalStorage;
 

@@ -14,7 +14,7 @@ export const languages: GlobalCommand = {
 		const repo = "Gamgee";
 
 		if (cachedMetadata === "waiting") {
-			return reply("working on it...");
+			return await reply("working on it...");
 		}
 
 		if (cachedMetadata === null) {
@@ -26,20 +26,20 @@ export const languages: GlobalCommand = {
 				cachedMetadata = await gitHubMetadata({ owner, repo });
 			} catch (error) {
 				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
-				return reply("Erm... I'm not sure :sweat_smile:");
+				return await reply("Erm... I'm not sure :sweat_smile:");
 			}
 		}
 
 		const languages = cachedMetadata.languages;
 		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 		if (languages === undefined) {
-			return reply("I'm really not sure. Ask my boss that.");
+			return await reply("I'm really not sure. Ask my boss that.");
 		}
 
 		const totalLanguages = Object.keys(languages).length;
 		if (totalLanguages > 3) {
 			// Lots of languages. Be vague.
-			return reply(
+			return await reply(
 				`I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique.`
 			);
 		}
@@ -58,10 +58,10 @@ export const languages: GlobalCommand = {
 
 		const last = stats.splice(-1)[0] ?? "a secret language only I know the meaning of";
 		if (totalLanguages > 2) {
-			return reply(`I'm made of ${stats.join(", ")}, and ${last}.`);
+			return await reply(`I'm made of ${stats.join(", ")}, and ${last}.`);
 		} else if (totalLanguages > 1) {
-			return reply(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
+			return await reply(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
 		}
-		return reply(`I'm made of ${last}. :blush:`);
+		return await reply(`I'm made of ${last}. :blush:`);
 	}
 };
