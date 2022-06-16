@@ -5,7 +5,7 @@ import { isString } from "../helpers/guards.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
-import fetch from "node-fetch";
+import fetch from "node-fetch-cjs";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
@@ -81,7 +81,7 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
  */
 export async function getSoundCloudTrack(
 	url: URL,
-	logger: Logger | null = useLogger()
+	logger: Logger | null = null
 ): Promise<VideoDetails> {
 	// Handle redirects, because our SoundCloud client is silly
 	// (*.app.goo.gl links come from the app, and redirect to the song page)
@@ -220,7 +220,7 @@ export async function getVideoDetails(
 			typeof urlOrString === "string" ? new URL(urlOrString.split(/ +/u)[0] ?? "") : urlOrString;
 		return await Promise.any([
 			getYouTubeVideo(url), //
-			getSoundCloudTrack(url),
+			getSoundCloudTrack(url, logger),
 			getBandcampTrack(url),
 			getPonyFmTrack(url)
 		]);

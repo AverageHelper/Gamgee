@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from "node-fetch-cjs";
 import { VideoError } from "../errors/index.js";
 import { isObject, isString } from "./guards.js";
 
@@ -85,11 +85,18 @@ function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
 export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
 	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`);
 	if (response.status === 200) {
-		const responseParsed = await response.json();
-		if (!isPonyFmTrackAPIResponse(responseParsed)) {
-			throw new VideoError(`Malformed response from Pony.fm API`);
+		try {
+			const responseParsed = await response.json();
+			if (!isPonyFmTrackAPIResponse(responseParsed)) {
+				throw new VideoError(`Malformed response from Pony.fm API`);
+			}
+			return responseParsed;
+		} catch (error) {
+			if (error instanceof SyntaxError) {
+				throw new VideoError(`Malformed response from Pony.fm API`);
+			}
+			throw error;
 		}
-		return responseParsed;
 	}
 	if (response.status === 404) {
 		const responseParsed = await response.json();
