@@ -1,5 +1,4 @@
 import type { Command } from "./Command.js";
-import Discord from "discord.js";
 
 export * from "./Command.js";
 
@@ -19,7 +18,7 @@ import { t } from "./type.js";
 import { version } from "./version.js";
 import { video } from "./video.js";
 
-export const allCommands = new Discord.Collection<string, Command>();
+export const allCommands = new Map<string, Command>();
 
 /**
  * Finds the name of the command referenced by the given alias.

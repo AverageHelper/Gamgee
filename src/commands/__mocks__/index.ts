@@ -1,5 +1,3 @@
-import Discord from "discord.js";
-
 interface MockCommand {
 	name: string;
 	execute: jest.Mock;
@@ -12,7 +10,7 @@ const { resolveAlias, allCommands: realAllCommands } =
 
 export { resolveAlias };
 
-export const allCommands = new Discord.Collection<string, MockCommand>();
+export const allCommands = new Map<string, MockCommand>();
 
 function addMock(commandName: string): void {
 	allCommands.set(commandName, {
