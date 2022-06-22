@@ -54,7 +54,7 @@ export const stats: Command = {
 		// Total submissions
 		const requestCountMsg = createPartialString(`${userSubmissionCount}`);
 		if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-			push(` of ${config.submissionMaxQuantity}`, requestCountMsg);
+			push(` (limit ${config.submissionMaxQuantity})`, requestCountMsg);
 		}
 		embed.addField("Total Submissions from You", composed(requestCountMsg));
 
