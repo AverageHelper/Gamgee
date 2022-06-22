@@ -10,7 +10,7 @@ import { logUser } from "../../helpers/logUser.js";
 import { MILLISECONDS_IN_SECOND, SECONDS_IN_MINUTE } from "../../constants/time.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
-import { setQueueOpen } from "../../useGuildStorage.js";
+import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
 import { useLogger } from "../../logger.js";
 import {
@@ -116,7 +116,8 @@ async function acceptSongRequest({
  */
 export async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;
-	const senderId = context.user.id;
+	const sender = context.user;
+	const senderId = sender.id;
 
 	const songInfoPromise = getVideoDetails(songUrl); // start this and do other things
 
@@ -129,20 +130,20 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		]);
 
 		// ** If the user is blacklisted, reject!
-		if (config.blacklistedUsers?.some(user => user.id === context.user.id) === true) {
+		if (config.blacklistedUsers?.some(user => user.id === senderId) === true) {
 			logger.verbose(
 				`${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
-					context.user
+					sender
 				)} is one of them.`
 			);
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_private(request, "You're not allowed to submit songs. My apologies.");
 		}
 
 		// ** If the user has used all their submissions, reject!
 		const maxSubs = config.submissionMaxQuantity;
 		logger.verbose(
-			`User ${logUser(context.user)} has submitted ${userSubmissionCount} request${
+			`User ${logUser(sender)} has submitted ${userSubmissionCount} request${
 				userSubmissionCount === 1 ? "" : "s"
 			} before this one`
 		);
@@ -151,7 +152,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			push("You have used all ", rejection);
 			pushBold(`${maxSubs}`, rejection);
 			push(" of your allotted submissions.", rejection);
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_private(request, composed(rejection));
 		}
 
@@ -162,13 +163,11 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
 		if (timeSinceLatest === null) {
 			logger.verbose(
-				`This is the first song request that I've seen from user ${logUser(context.user)} tonight.`
+				`This is the first song request that I've seen from user ${logUser(sender)} tonight.`
 			);
 		} else {
 			logger.verbose(
-				`User ${logUser(context.user)} last submitted a request ${durationString(
-					timeSinceLatest
-				)} ago.`
+				`User ${logUser(sender)} last submitted a request ${durationString(timeSinceLatest)} ago.`
 			);
 		}
 		if (
@@ -183,14 +182,20 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			push(". You must wait ", rejection);
 			pushBold(durationString(cooldown - timeSinceLatest), rejection);
 			push(" before submitting again.", rejection);
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_private(request, composed(rejection));
+		}
+
+		// ** If, by the time we got here, the queue has closed, reject!
+		const isOpen = await isQueueOpen(queueChannel.guild);
+		if (!isOpen) {
+			return await reject_private(request, "The queue is not open.");
 		}
 
 		const song = await songInfoPromise; // we need this info now
 		if (song === null) {
 			logger.verbose("Could not find the requested song.");
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			// FIXME: This response is too generic. Present something more actionable based on why the song can't be found
 			return await reject_public(
 				context,
@@ -201,9 +206,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const url = song.url;
 		const seconds = song.duration.seconds;
 		logger.verbose(
-			`User ${logUser(context.user)} wants to submit a song that is ${durationString(
-				seconds
-			)} long.`
+			`User ${logUser(sender)} wants to submit a song that is ${durationString(seconds)} long.`
 		);
 
 		// ** If the song is too short, reject!
@@ -217,7 +220,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			push(" long.", rejection);
 			pushNewLine(rejection);
 			push("Try something a bit longer", rejection);
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_public(context, composed(rejection));
 		}
 
@@ -232,8 +235,14 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			push(" long.", rejection);
 			pushNewLine(rejection);
 			push("Try something a bit shorter", rejection);
-			logger.verbose(`Rejected request from user ${logUser(context.user)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_public(context, composed(rejection));
+		}
+
+		// ** If, by the time we got here, the queue has closed, reject!
+		const isStillOpen = await isQueueOpen(queueChannel.guild);
+		if (!isStillOpen) {
+			return await reject_private(request, "The queue is not open.");
 		}
 
 		const durationBefore = durationString(playtimeTotal, true);
