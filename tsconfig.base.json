@@ -6,7 +6,7 @@
 		"moduleResolution": "node",
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
-		"allowJs": false,
+		"allowJs": true,
 		"declaration": false,
 		"removeComments": true,
 		"sourceMap": true,
