@@ -83,6 +83,10 @@ export async function getSoundCloudTrack(
 	url: URL,
 	logger: Logger | null = null
 ): Promise<VideoDetails> {
+	// TRY:
+	// 1. Use an OpenGraph parser like https://iplocation.io/open-graph-checker
+	// 2. Use og:url in the SoundCloud API client to get duration, use og:title for title
+
 	// Handle redirects, because our SoundCloud client is silly
 	// (*.app.goo.gl links come from the app, and redirect to the song page)
 	let parsedUrl: URL;
