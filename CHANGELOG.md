@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated discord.js to version 13.8.1
 - Use native [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) instead of `Discord.Collection` when we don't need the latter's features
+- `/version` links to the changelog instead of our GitHub [Releases](https://github.com/AverageHelper/Gamgee/releases) page
 
 ### Removed
 - Unused module type definitions
