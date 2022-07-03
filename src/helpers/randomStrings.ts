@@ -1,6 +1,6 @@
-import { useLogger } from "../logger.js";
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import { randomElementOfArray } from "./randomElementOfArray.js";
+import { useLogger } from "../logger.js";
 import {
 	celebratoryEmoji,
 	greetings,
@@ -116,7 +116,7 @@ export function randomHug(): Response {
 	return randomResponseFromArray("hugs", hugs);
 }
 
-const lastResponses = new Discord.Collection<string, Response>();
+const lastResponses = new Map<string, Response>();
 
 /**
  * Returns a random value from the provided `array`, making sure that the value

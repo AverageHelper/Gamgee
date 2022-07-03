@@ -1,11 +1,11 @@
 import type { LocalStorage } from "node-persist";
 import type { Logger } from "./logger.js";
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import storage from "node-persist";
 
 export type Storage = LocalStorage;
 
-const localStorageScopes = new Discord.Collection<string, LocalStorage>();
+const localStorageScopes = new Map<string, LocalStorage>();
 
 /**
  * Initializes and returns the persistent storage container for the given guild.

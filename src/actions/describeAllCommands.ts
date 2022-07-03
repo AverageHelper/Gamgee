@@ -30,7 +30,7 @@ const OPT = "?";
  */
 export async function describeAllCommands(
 	context: CommandContext,
-	commands: Discord.Collection<string, Command>
+	commands: Map<string, Command>
 ): Promise<string> {
 	const COMMAND_PREFIX =
 		context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
