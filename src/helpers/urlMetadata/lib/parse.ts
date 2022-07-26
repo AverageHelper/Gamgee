@@ -1,6 +1,6 @@
 import type { Fields } from "./metadataFields.js";
 import type { Options } from "../index.js";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import MetadataFields from "./metadataFields.js";
 import extractMetaTags from "./extractMetaTags.js";
 import extractJsonLd from "./extractJsonLd.js";
@@ -8,7 +8,7 @@ import mapSources from "./mapSources.js";
 
 export default function parse(url: string, body: string, options: Options): Fields {
 	// FIXME: Do we really need to load the page? Can't we just parse the first HTML page we get?
-	const $ = cheerio.load(body);
+	const $ = load(body);
 	const scrapedMetaTags = extractMetaTags($);
 	const scrapedJsonLd = extractJsonLd($);
 	const metadata = new MetadataFields(options)

@@ -70,10 +70,12 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 function addResult(result: FetchResult, embed: MessageEmbed): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
-	embed.addField(
+	embed.addFields({
 		name,
-		`${result.error ? FAILURE : SUCCESS} ${result.error?.message ?? "Success"} (${runTime}ms)`
-	);
+		value: `${result.error ? FAILURE : SUCCESS} ${
+			result.error?.message ?? "Success"
+		} (${runTime}ms)`
+	});
 }
 
 let isTesting = false;

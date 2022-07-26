@@ -46,11 +46,15 @@ export const stats: Subcommand = {
 			.setDescription(`<#${queueChannel.id}>`);
 
 		try {
-			embed.addField("Total Entries", `${count}`);
-			embed.addField("Average Song Playtime", formattedPlaytimeAverage);
-			embed.addField("Total Playtime", formattedPlaytimeTotal);
-			embed.addField("Played", `${formattedPlaytimePlayed}`, true);
-			embed.addField("Remaining Playtime", formattedPlaytimeRemaining, true);
+			embed.addFields({ name: "Total Entries", value: `${count}` });
+			embed.addFields({ name: "Average Song Playtime", value: formattedPlaytimeAverage });
+			embed.addFields({ name: "Total Playtime", value: formattedPlaytimeTotal });
+			embed.addFields({ name: "Played", value: `${formattedPlaytimePlayed}`, inline: true });
+			embed.addFields({
+				name: "Remaining Playtime",
+				value: formattedPlaytimeRemaining,
+				inline: true
+			});
 			// TODO: Include the number of submitters who used up their count limit
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to generate queue statistics message.", error));

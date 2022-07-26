@@ -65,7 +65,7 @@ export const limits: Command = {
 					assertUnreachable(key.value);
 			}
 
-			embed.addField(`${key.name}:\t${value}`, key.description);
+			embed.addFields({ name: `${key.name}:\t${value}`, value: key.description });
 		});
 
 		await reply({ embeds: [embed], ephemeral: true });
