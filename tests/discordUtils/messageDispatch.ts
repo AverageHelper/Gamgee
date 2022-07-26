@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import type Discord from "discord.js";
 import { LimitedQueue } from "../../src/helpers/LimitedQueue.js";
 import { messageWaiters, messageDeleteWaiters } from "./testerClient.js";
 import { useTestLogger } from "../testUtils/logger.js";
@@ -11,7 +11,7 @@ function uuid(): number {
 	return Date.now();
 }
 
-const caches = new Discord.Collection<string, LimitedQueue<unknown>>();
+const caches = new Map<string, LimitedQueue<unknown>>();
 
 function eventCache<T>(key: string): LimitedQueue<T> {
 	let cache = caches.get(key) as LimitedQueue<T> | undefined;

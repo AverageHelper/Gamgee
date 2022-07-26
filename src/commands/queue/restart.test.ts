@@ -28,12 +28,12 @@ describe("Clear queue contents", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			logger,
 			guild: "the guild",
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetAllEntries.mockResolvedValue([]);
 		mockQueueClear.mockResolvedValue(undefined);
@@ -68,9 +68,9 @@ describe("Clear queue contents", () => {
 			mockGetAllEntries.mockResolvedValue(queueEntries);
 			context = {
 				...context,
-				channel: ({
+				channel: {
 					id: channelId
-				} as unknown) as Discord.TextChannel
+				} as unknown as Discord.TextChannel
 			};
 
 			await expect(restart.execute(context)).resolves.toBeUndefined();

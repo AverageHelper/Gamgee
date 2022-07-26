@@ -81,14 +81,18 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
  */
 export async function getSoundCloudTrack(
 	url: URL,
-	logger: Logger | null = useLogger()
+	logger: Logger | null = null
 ): Promise<VideoDetails> {
+	// TRY:
+	// 1. Use an OpenGraph parser like https://iplocation.io/open-graph-checker
+	// 2. Use og:url in the SoundCloud API client to get duration, use og:title for title
+
 	// Handle redirects, because our SoundCloud client is silly
 	// (*.app.goo.gl links come from the app, and redirect to the song page)
 	let parsedUrl: URL;
 	try {
 		// FIXME: This makes the function take twice as long to run
-		const response = await fetch(url, { redirect: "follow" });
+		const response = await fetch(url.href, { redirect: "follow" });
 		parsedUrl = new URL(response.url);
 	} catch (error) {
 		logger?.error(
@@ -220,7 +224,7 @@ export async function getVideoDetails(
 			typeof urlOrString === "string" ? new URL(urlOrString.split(/ +/u)[0] ?? "") : urlOrString;
 		return await Promise.any([
 			getYouTubeVideo(url), //
-			getSoundCloudTrack(url),
+			getSoundCloudTrack(url, logger),
 			getBandcampTrack(url),
 			getPonyFmTrack(url)
 		]);

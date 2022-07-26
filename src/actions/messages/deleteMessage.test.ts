@@ -8,12 +8,12 @@ describe("Bulk Message Delete", () => {
 	let channel: Discord.TextChannel;
 
 	beforeEach(() => {
-		channel = ({
+		channel = {
 			bulkDelete: mockBulkDelete,
 			messages: {
 				delete: mockSingleDelete
 			}
-		} as unknown) as Discord.TextChannel;
+		} as unknown as Discord.TextChannel;
 
 		mockBulkDelete.mockImplementation((ids: Array<string>) => {
 			// Discord balks when we try <2 || >100 IDs

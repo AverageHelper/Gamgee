@@ -17,15 +17,15 @@ describe("Command handler", () => {
 	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
 
-	const mockClient: Discord.Client<true> = ({
+	const mockClient: Discord.Client<true> = {
 		user: { id: botId },
 		isReady: () => true
-	} as unknown) as Discord.Client<true>;
-	const mockSenderMember: Discord.GuildMember = ({
+	} as unknown as Discord.Client<true>;
+	const mockSenderMember: Discord.GuildMember = {
 		user: { id: "another-user" }
-	} as unknown) as Discord.GuildMember;
+	} as unknown as Discord.GuildMember;
 
-	const mockMessage: Discord.Message = ({
+	const mockMessage: Discord.Message = {
 		content: "",
 		author: {
 			bot: false,
@@ -52,7 +52,7 @@ describe("Command handler", () => {
 				)
 			}
 		}
-	} as unknown) as Discord.Message;
+	} as unknown as Discord.Message;
 
 	beforeEach(() => {
 		mockMessage.content = "Some words";

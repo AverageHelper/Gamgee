@@ -25,20 +25,20 @@ describe("Invoke Command", () => {
 	let context: CommandContext;
 
 	beforeEach(() => {
-		command = ({
+		command = {
 			name: "test",
 			description: "A sample command",
 			requiresGuild: true,
 			execute: mockExecute
-		} as unknown) as GuildedCommand;
+		} as unknown as GuildedCommand;
 
-		context = ({
+		context = {
 			user: {
 				id: callerId
 			},
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately
-		} as unknown) as CommandContext;
+		} as unknown as CommandContext;
 
 		mockUserHasRoleInGuild.mockResolvedValue(false);
 
@@ -47,8 +47,8 @@ describe("Invoke Command", () => {
 	});
 
 	describe("Guild Guards", () => {
-		test("executes if the command does not require a guild", async () => {
-			((command as unknown) as GlobalCommand).requiresGuild = false;
+		test("always executes if the command does not require a guild", async () => {
+			(command as unknown as GlobalCommand).requiresGuild = false;
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 			expect(mockExecute).toHaveBeenCalledTimes(1);
 			expect(mockExecute).toHaveBeenCalledWith(context);
@@ -65,10 +65,10 @@ describe("Invoke Command", () => {
 			command.requiresGuild = true;
 			context = {
 				...context,
-				guild: ({
+				guild: {
 					id: "the-guild",
 					ownerId: callerId
-				} as unknown) as Discord.Guild
+				} as unknown as Discord.Guild
 			};
 		});
 

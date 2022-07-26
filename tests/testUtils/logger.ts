@@ -1,10 +1,9 @@
-import Discord from "discord.js";
 import winston from "winston";
 
 export type Logger = winston.Logger;
 export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error";
 
-const loggers = new Discord.Collection<LogLevel, Logger>();
+const loggers = new Map<LogLevel, Logger>();
 
 /**
  * Sets up and returns the default test-time logger.

@@ -10,7 +10,7 @@ This project started out as a simple Discord bot to play around with APIs and th
 
 ## Prerequisites
 
-This project requires [NodeJS](https://nodejs.org/) (version 16.9 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
+This project requires [NodeJS](https://nodejs.org/) (version 16.10 or later), [NPM](https://npmjs.org/), and a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 To make sure you have them available on your machine,
 try running the following command:
 
@@ -35,7 +35,7 @@ $ cd Gamgee
   - [Clone the Repo](#clone-the-repo)
   - [Table of contents](#table-of-contents)
   - [Usage](#usage)
-    - [Get a Token](#get-a-token)
+    - [Get Your Own Bot Token](#get-your-own-bot-token)
     - [Register Slash Commands](#register-slash-commands)
     - [Command Permissions](#command-permissions)
     - [Run the bot](#run-the-bot)
@@ -61,7 +61,11 @@ $ cd Gamgee
 
 ## Usage
 
-### Get a Token
+You might have arrived here about a bot already running on Gamgee. Some friends of mine I know run [an instance](https://twitter.com/oddmusicpony), for example.
+
+You could add that bot to your own server if you'd like (coming soon™), or you can run you own instance:
+
+### Get Your Own Bot Token
 
 You'll need a token for a Discord bot account. See [this awesome tutorial on how to get one](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 

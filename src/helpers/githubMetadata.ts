@@ -1,8 +1,8 @@
 import type { RequestInit } from "node-fetch";
+import fetch from "node-fetch";
+import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
 import { URL } from "url";
 import { useLogger } from "../logger.js";
-import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
-import fetch from "node-fetch";
 
 export interface GitHubMetadata {
 	name: string;
@@ -57,12 +57,12 @@ function isRepoMetadata(tbd: unknown): tbd is RepoMetadata {
 		"html_url" in tbd &&
 		"description" in tbd &&
 		"languages_url" in tbd &&
-		isString(((tbd as unknown) as GitHubMetadata).name) &&
-		isString(((tbd as unknown) as GitHubMetadata).full_name) &&
-		isBoolean(((tbd as unknown) as GitHubMetadata).private) &&
-		isUrlString(((tbd as unknown) as GitHubMetadata).html_url) &&
-		isString(((tbd as unknown) as GitHubMetadata).description) &&
-		isUrlString(((tbd as unknown) as GitHubMetadata).languages_url)
+		isString((tbd as unknown as GitHubMetadata).name) &&
+		isString((tbd as unknown as GitHubMetadata).full_name) &&
+		isBoolean((tbd as unknown as GitHubMetadata).private) &&
+		isUrlString((tbd as unknown as GitHubMetadata).html_url) &&
+		isString((tbd as unknown as GitHubMetadata).description) &&
+		isUrlString((tbd as unknown as GitHubMetadata).languages_url)
 	);
 }
 

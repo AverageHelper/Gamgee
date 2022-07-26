@@ -206,7 +206,6 @@ export async function prepareSlashCommandsThenExit(client: Discord.Client<true>)
 		)} prepared. Discord will take some time to sync commands to clients.`
 	);
 
-	// eslint-disable-next-line unicorn/no-process-exit
 	process.exit(0);
 }
 
@@ -236,6 +235,5 @@ export async function revokeSlashCommandsThenExit(client: Discord.Client<true>):
 		logger.info(`Unregistered commands in guild ${guild.id}`);
 	}
 
-	// eslint-disable-next-line unicorn/no-process-exit
 	process.exit(0);
 }

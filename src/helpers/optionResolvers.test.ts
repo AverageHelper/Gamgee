@@ -8,11 +8,11 @@ describe("Option Resolver", () => {
 	let option: Discord.CommandInteractionOption;
 
 	beforeEach(() => {
-		guild = ({
+		guild = {
 			channels: {
 				resolve: mockResolveChannel
 			}
-		} as unknown) as Discord.Guild;
+		} as unknown as Discord.Guild;
 		option = {
 			name: "option",
 			type: "STRING"

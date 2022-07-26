@@ -20,13 +20,13 @@ describe("Open the Queue", () => {
 	let context: GuildedCommandContext;
 
 	beforeEach(() => {
-		context = ({
+		context = {
 			guild: "the-guild",
 			channel: undefined,
 			reply: mockReply,
 			deleteInvocation: mockDeleteInvocation,
 			followUp: mockFollowUp
-		} as unknown) as GuildedCommandContext;
+		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel",

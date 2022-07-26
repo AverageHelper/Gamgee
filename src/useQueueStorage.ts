@@ -481,7 +481,7 @@ export async function blacklistUser(
 		const users = transaction.getRepository(User);
 
 		// Add the user to the blacklist
-		let newUser = await users.findOne(userId);
+		let newUser = await users.findOneBy({ id: userId });
 
 		if (!newUser) {
 			newUser = new User(userId);

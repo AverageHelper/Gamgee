@@ -17,7 +17,7 @@ import {
 	revokeSlashCommandsThenExit
 } from "./actions/prepareSlashCommands.js";
 
-const args = yargs(hideBin(process.argv))
+const args = await yargs(hideBin(process.argv))
 	.option("deploy-commands", {
 		alias: "c",
 		description: "Upload Discord commands, then exit",

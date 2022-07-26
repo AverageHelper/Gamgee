@@ -72,6 +72,9 @@ export const phrases: ResponseRepository = [
 	"Hey, get out of my sandwich",
 	"I like trains",
 
+	// Deltarune
+	"That's a [BIG SHOT] move right there",
+
 	// German
 	"Sprechen Sie Deutsch?", // Do you speak German?
 	"Zu wenig Ponys", // "Not enough ponies"
@@ -223,7 +226,7 @@ export const phrases: ResponseRepository = [
 	["I am what I am", SHRUGGIE],
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
 	"I can't even right now.",
-	"I don't like this can we change the topic please ty",
+	"I don't like this can we change the topic plz ty",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
@@ -241,6 +244,7 @@ export const phrases: ResponseRepository = [
 	"If you can read this message, then you have read this message",
 	"If you see a line of text that is longer than a few words, chances are it wasn't written by my original developer. It's a hack! :D",
 	"I'll give you a proper response when you tell me my purpose in life",
+	"I'll have two number 9s, a number 9 large, a number 6 with extra dip, a number 7, two number 45s, one with cheese, and a large soda.",
 	"I've never seen an eclipse.",
 	"I'm processing your message. I should be ready in... a few years ^^",
 	["I'm so hungry, I could eat a...", "*nevermind*", ">.>", "<.<"],
@@ -267,7 +271,7 @@ export const phrases: ResponseRepository = [
 	"Second star to the right, and straight on until closing time",
 	"So anyways, I started blasting",
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
-	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||",
+	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||", // TODO: Randomize the spoiler?
 	"Something smells fishy...",
 	"Sponsored by",
 	"spoon",
@@ -303,7 +307,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 199 of these
+]; // 201 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

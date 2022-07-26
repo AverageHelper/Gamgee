@@ -28,16 +28,8 @@ export const blacklist: Subcommand = {
 	type: "SUB_COMMAND",
 	requiresGuild: true,
 	async execute(context) {
-		const {
-			guild,
-			user,
-			options,
-			storage,
-			logger,
-			reply,
-			replyPrivately,
-			deleteInvocation
-		} = context;
+		const { guild, user, options, storage, logger, reply, replyPrivately, deleteInvocation } =
+			context;
 
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
