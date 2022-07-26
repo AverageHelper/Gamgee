@@ -6,7 +6,13 @@ import { fetchAllEntries } from "../useQueueStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 
-const uncertainties = ["There's a good chance", "I'm like 85% sure", "Very likely,", "I think"];
+const uncertainties = [
+	"There's a good chance",
+	"I'm like 85% sure",
+	"Very likely,",
+	"I think",
+	"The DJ told me"
+];
 let lastUncertainty: string | null = null;
 
 function randomUncertainty(): string {
@@ -18,7 +24,14 @@ function randomUncertainty(): string {
 	return random;
 }
 
-const current = ["it's", "they're playing", "you're hearing", "this is"];
+const current = [
+	"it's",
+	"they're playing",
+	"you're hearing",
+	"this is",
+	"we're hearing",
+	"they're playing"
+];
 let lastCurrent: string | null = null;
 
 function randomCurrent(): string {

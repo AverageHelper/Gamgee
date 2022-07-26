@@ -35,7 +35,7 @@ $ cd Gamgee
   - [Clone the Repo](#clone-the-repo)
   - [Table of contents](#table-of-contents)
   - [Usage](#usage)
-    - [Get a Token](#get-a-token)
+    - [Get Your Own Bot Token](#get-your-own-bot-token)
     - [Register Slash Commands](#register-slash-commands)
     - [Command Permissions](#command-permissions)
     - [Run the bot](#run-the-bot)
@@ -61,7 +61,11 @@ $ cd Gamgee
 
 ## Usage
 
-### Get a Token
+You might have arrived here about a bot already running on Gamgee. Some friends of mine I know run [an instance](https://twitter.com/oddmusicpony), for example.
+
+You could add that bot to your own server if you'd like (coming soon™), or you can run you own instance:
+
+### Get Your Own Bot Token
 
 You'll need a token for a Discord bot account. See [this awesome tutorial on how to get one](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
