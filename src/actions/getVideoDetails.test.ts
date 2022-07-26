@@ -47,7 +47,7 @@ describe("Video details", () => {
 
 	test("returns infinite duration for a live stream", async () => {
 		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
-		const url = "https://www.youtube.com/watch?v=CmoUkFbk5VM";
+		const url = "https://www.youtube.com/watch?v=pNsWAeCCWLs";
 		const details = await getVideoDetails(url, null);
 		expect(details).toHaveProperty("url", url);
 		expect(details?.duration.seconds).toBeDefined();
