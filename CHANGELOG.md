@@ -5,9 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Nothing, yet!
+- Use native `Map` instead of `Discord.Collection`, just for funzies.
 
-## [1.6.6]
+## [1.6.6] - 2022-07-26
 ### Added
 - Added a robust [CHANGELOG.md](CHANGELOG.md) based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s example.
 

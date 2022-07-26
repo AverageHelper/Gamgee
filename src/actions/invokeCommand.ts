@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, GuildedCommand, Subcommand } from "../commands/index.js";
-import { Collection, Permissions } from "discord.js";
+import { Permissions } from "discord.js";
 import { isGuildedCommandContext } from "../commands/index.js";
 import { useLogger } from "../logger.js";
 import { userHasPermissionInChannel, userHasRoleInGuild } from "../userHasOneOfRoles.js";
@@ -25,6 +25,17 @@ function neverFallthrough(val: never): never {
 	throw new TypeError(`Unexpected case: ${JSON.stringify(val)}`);
 }
 
+/** Returns the first element (if any) that matches the given predicate. */
+function firstMatch<K, V>(
+	collection: Map<K, V>,
+	predicate: (value: V, key: K, collection: Map<K, V>) => boolean
+): V | null {
+	for (const [key, value] of collection) {
+		if (predicate(value, key, collection)) return value;
+	}
+	return null;
+}
+
 /**
  * Assesses whether the calling guild member is allowed to run the given command.
  *
@@ -45,14 +56,14 @@ export async function assertUserCanRunCommand(
 	const client = guild.client;
 
 	// TODO: Cache this for each command on startup
-	const guildCommands = await guild.commands
+	const guildCommands: Map<string, Discord.ApplicationCommand> = await guild.commands
 		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 		.fetch({ command: client.user?.id } as Discord.FetchGuildApplicationCommandFetchOptions) // FIXME: wating on v14 for this call to work
 		.catch((error: unknown) => {
 			logger.error(richErrorMessage(`Failed to fetch commands for guild ${guildId}`, error));
-			return new Collection<string, Discord.ApplicationCommand>();
+			return new Map<string, Discord.ApplicationCommand>();
 		});
-	const guildCommand = guildCommands.find(cmd => cmd.name === command.name) ?? null;
+	const guildCommand = firstMatch(guildCommands, cmd => cmd.name === command.name);
 
 	const defaultPermissions =
 		command.defaultMemberPermissions !== undefined

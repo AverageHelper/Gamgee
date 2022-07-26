@@ -23,7 +23,7 @@ const client = new Discord.Client({
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageWaiters = new Discord.Collection<number, (msg: Discord.Message) => boolean>();
+export const messageWaiters = new Map<number, (msg: Discord.Message) => boolean>();
 
 client.on("messageCreate", useDispatchLoop(messageWaiters));
 
@@ -36,7 +36,7 @@ client.on("messageCreate", useDispatchLoop(messageWaiters));
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageDeleteWaiters = new Discord.Collection<
+export const messageDeleteWaiters = new Map<
 	number,
 	(msg: Discord.Message | Discord.PartialMessage) => boolean
 >();
