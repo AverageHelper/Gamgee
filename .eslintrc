@@ -48,7 +48,8 @@
 		"@typescript-eslint/dot-notation": "off",
 		"new-cap": "off", // Many decorators do not follow normal function conventions
 		"unicorn/catch-error-name": ["warn", { "name": "error" }],
-		"unicorn/import-index": ["error", { "ignoreImports": true }]
+		"unicorn/import-index": ["error", { "ignoreImports": true }],
+		"unicorn/no-process-exit": "off" // we are a CLI app lol
 	},
 
 	"overrides": [
