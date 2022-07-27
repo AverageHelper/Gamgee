@@ -2,7 +2,6 @@ jest.mock("../../actions/messages");
 jest.mock("../../actions/queue/useQueue");
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
-jest.mock("../../permissions");
 
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;

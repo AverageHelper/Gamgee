@@ -1,5 +1,4 @@
 jest.mock("../useGuildStorage");
-jest.mock("../permissions");
 
 import type Discord from "discord.js";
 import type { CommandContext, GlobalCommand, GuildedCommand } from "../commands/index.js";
@@ -9,6 +8,7 @@ import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 const mockGetQueueAdminRoles = getQueueAdminRoles as jest.Mock;
 const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
 
+jest.mock("../userHasOneOfRoles.js");
 import { userHasRoleInGuild } from "../userHasOneOfRoles.js";
 const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock;
 

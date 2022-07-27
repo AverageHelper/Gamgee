@@ -1,7 +1,6 @@
 jest.mock("../actions/queue/useQueue");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../useQueueStorage");
-jest.mock("../permissions");
 
 import { fetchAllEntries } from "../useQueueStorage.js";
 const mockGetAllEntries = fetchAllEntries as jest.Mock;

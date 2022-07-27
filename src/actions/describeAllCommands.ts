@@ -3,7 +3,7 @@ import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
 import { getConfigCommandPrefix } from "./config/getConfigValue.js";
-import { isGuildedCommandContext } from "../commands/index.js";
+import { isGuildedCommandContext } from "../commands/CommandContext.js";
 import {
 	createPartialString,
 	composed,

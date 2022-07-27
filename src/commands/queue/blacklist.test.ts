@@ -1,7 +1,6 @@
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useQueueStorage");
 jest.mock("../../helpers/getUserFromMention");
-jest.mock("../../permissions");
 
 import { getUserFromMention } from "../../helpers/getUserFromMention.js";
 const mockGetUserFromMention = getUserFromMention as jest.Mock;
