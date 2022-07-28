@@ -16,7 +16,7 @@ export const config: Command = {
 	name: "config",
 	description: "Read and modify config options.",
 	options: namedSubcommands,
-	defaultMemberPermissions: ["ADMINISTRATOR"],
+	defaultMemberPermissions: ["Administrator"],
 	requiresGuild: true,
 	async execute(context) {
 		const { options, reply } = context;

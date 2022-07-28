@@ -6,6 +6,7 @@ import { fetchEntryFromMessage } from "./useQueueStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getQueueChannel } from "./actions/queue/getQueueChannel.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
+import { InteractionType } from "discord.js";
 import { isQueueOpen } from "./useGuildStorage.js";
 import { logUser } from "./helpers/logUser.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
@@ -25,7 +26,10 @@ import {
  * @param logger The logger to talk to about what's going on.
  */
 export async function handleMessageComponent(
-	interaction: Discord.MessageComponentInteraction,
+	interaction:
+		| Discord.ButtonInteraction
+		| Discord.ModalSubmitInteraction
+		| Discord.SelectMenuInteraction,
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -135,7 +139,7 @@ export async function handleMessageComponent(
 		}
 
 		// Handle modal submit
-	} else if (interaction.isModalSubmit()) {
+	} else if (interaction.type === InteractionType.ModalSubmit) {
 		logger.debug(interaction);
 	}
 }

@@ -14,6 +14,7 @@ const mockBlacklistUser = blacklistUser as jest.Mock;
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { blacklist } from "./blacklist.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
@@ -44,7 +45,7 @@ describe("Manage the Queue Blacklist", () => {
 				{
 					name: "user",
 					value: `<@${badUserId}>`,
-					type: "STRING"
+					type: ApplicationCommandOptionType.String
 				}
 			],
 			logger,
@@ -134,7 +135,7 @@ describe("Manage the Queue Blacklist", () => {
 		});
 
 		test("does nothing against a user not known to the guild", async () => {
-			mockGetUserFromMention.mockResolvedValue(undefined);
+			mockGetUserFromMention.mockResolvedValue(null);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();

@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, GuildedCommand, Subcommand } from "../commands/index.js";
-import { Permissions } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandPermissionType } from "discord.js";
 import { isGuildedCommandContext } from "../commands/index.js";
 import { useLogger } from "../logger.js";
 import { userHasPermissionInChannel, userHasRoleInGuild } from "../userHasOneOfRoles.js";
@@ -53,22 +53,17 @@ export async function assertUserCanRunCommand(
 	// Gather permission details
 	const guild = channel.guild;
 	const guildId = guild.id;
-	const client = guild.client;
 
 	// TODO: Cache this for each command on startup
 	const guildCommands: Map<string, Discord.ApplicationCommand> = await guild.commands
-		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-		.fetch({ command: client.user?.id } as Discord.FetchGuildApplicationCommandFetchOptions) // FIXME: wating on v14 for this call to work
+		.fetch()
 		.catch((error: unknown) => {
 			logger.error(richErrorMessage(`Failed to fetch commands for guild ${guildId}`, error));
 			return new Map<string, Discord.ApplicationCommand>();
 		});
 	const guildCommand = firstMatch(guildCommands, cmd => cmd.name === command.name);
 
-	const defaultPermissions =
-		command.defaultMemberPermissions !== undefined
-			? new Permissions(command.defaultMemberPermissions)
-			: null;
+	const defaultPermissions = command.defaultMemberPermissions ?? null;
 	// TODO: Cache this for each command on startup
 	const permissions = await guildCommand?.permissions //
 		.fetch({})
@@ -89,7 +84,7 @@ export async function assertUserCanRunCommand(
 		return true;
 	}
 
-	if (permissions?.length === 0 || defaultPermissions?.toArray().length === 0) {
+	if (permissions?.length === 0 || defaultPermissions?.length === 0) {
 		// Empty permissions configured, assume no access
 		logger.debug(`Command '${command.name}' is configured to block any access.`);
 		return false;
@@ -111,7 +106,8 @@ export async function assertUserCanRunCommand(
 			}`
 		);
 		switch (access.type) {
-			case "ROLE": {
+			case ApplicationCommandPermissionType.Role: {
+				// Assert user role membership
 				const userHasRole = await userHasRoleInGuild(member, access.id, guild);
 				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${access.id}`);
 				if (access.permission && userHasRole) {
@@ -121,7 +117,8 @@ export async function assertUserCanRunCommand(
 				break;
 			}
 
-			case "USER": {
+			case ApplicationCommandPermissionType.User: {
+				// Assert user identity
 				const userHasId = member.user.id === access.id;
 				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${access.id}`);
 				if (access.permission && userHasId) {
@@ -129,6 +126,13 @@ export async function assertUserCanRunCommand(
 					return true;
 				}
 				break;
+			}
+
+			case ApplicationCommandPermissionType.Channel: {
+				// TODO: What, do we assert here?
+				logger.debug(`\tSomething to do with a channel, I think...`);
+				logger.debug("\tProceeding...");
+				return true;
 			}
 
 			default:
@@ -169,7 +173,7 @@ export async function invokeCommand(command: Invocable, context: CommandContext)
 
 	if (
 		context.channel &&
-		command.type !== "SUB_COMMAND" &&
+		command.type !== ApplicationCommandOptionType.Subcommand &&
 		(await assertUserCanRunCommand(context.member, command, context.channel))
 	) {
 		return await command.execute(context);

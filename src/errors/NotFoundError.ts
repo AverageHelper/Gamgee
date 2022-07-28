@@ -1,11 +1,11 @@
-import type { URL } from "url";
+import type { URL } from "node:url";
 import { VideoError } from "./VideoError.js";
 
 export class NotFoundError extends VideoError {
 	readonly code = "404";
 
 	constructor(url: URL) {
-		super(`No video found at ${url.toString()}`);
+		super(`No video found at ${url.href}`);
 		this.name = "NotFoundError";
 	}
 }

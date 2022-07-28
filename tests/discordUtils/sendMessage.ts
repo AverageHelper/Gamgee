@@ -22,7 +22,8 @@ export async function sendMessage(
 ): Promise<Discord.Message> {
 	const client = await testerClient();
 	const channel = await client.channels.fetch(channelId);
-	if (!channel || !channel.isText()) throw new Error(`Channel ${channelId} is not a text channel.`);
+	if (!channel || !channel.isTextBased())
+		throw new Error(`Channel ${channelId} is not a text channel.`);
 
 	return await channel.send(content);
 }
@@ -32,7 +33,7 @@ export async function sendMessage(
  * The command prefix for the bot unit under test (UUT) is automatically
  * prepended.
  *
- * @param content The content of the command to send, with the prefix omitted.
+ * @param name The name of the command to send, with the prefix omitted.
  * @param channelId The ID of the channel in which to send the command.
  *
  * @throws an error if the provided channel is not a text channel, or

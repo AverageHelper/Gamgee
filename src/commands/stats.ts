@@ -1,9 +1,9 @@
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
+import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { MessageEmbed } from "discord.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	averageSubmissionPlaytimeForUser,
@@ -30,7 +30,7 @@ export const stats: Command = {
 		const config = await getQueueConfig(queueChannel);
 
 		// If the queue is open, display the user's limit usage
-		const embed = new MessageEmbed() //
+		const embed = new EmbedBuilder() //
 			.setTitle("Personal Statistics");
 
 		const userIsBlacklisted = config.blacklistedUsers?.some(u => u.id === user.id) === true;
@@ -81,7 +81,7 @@ export const stats: Command = {
 			// TODO: ETA to user's next submission would be nice here
 		}
 
-		if (embed.fields.length > 0) {
+		if ((embed.data.fields ?? []).length > 0) {
 			await replyPrivately({ embeds: [embed] });
 		} else {
 			await replyPrivately("The queue is empty. You have no stats lol");

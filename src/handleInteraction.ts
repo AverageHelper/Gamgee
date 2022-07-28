@@ -2,9 +2,10 @@ import type Discord from "discord.js";
 import type { CommandContext } from "./commands/index.js";
 import type { Logger } from "./logger.js";
 import type { Storage } from "./configStorage.js";
-import { invokeCommand } from "./actions/invokeCommand.js";
 import { allCommands } from "./commands/index.js";
+import { ChannelType } from "discord.js";
 import { getEnv } from "./helpers/environment.js";
+import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { replyPrivately, sendMessageInChannel } from "./actions/messages/index.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
@@ -53,7 +54,7 @@ export async function handleInteraction(
 		}
 
 		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
-		if (interaction.channel?.type === "DM" && interaction.channel.partial) {
+		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
 			channel = await interaction.channel.fetch();
 		} else {
 			channel = interaction.channel;
@@ -155,7 +156,7 @@ export async function handleInteraction(
 					typeof options !== "string" &&
 					(!("reply" in options) || options.reply === false || options.reply === undefined) &&
 					interaction.channel &&
-					interaction.channel.isText()
+					interaction.channel.isTextBased()
 				) {
 					return (
 						(await sendMessageInChannel(interaction.channel, { ...options, reply: undefined })) ??
@@ -163,7 +164,7 @@ export async function handleInteraction(
 					);
 				}
 				try {
-					return (await interaction.followUp(options)) as Discord.Message;
+					return await interaction.followUp(options);
 				} catch (error) {
 					logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					return false;

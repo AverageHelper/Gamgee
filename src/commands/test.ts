@@ -1,6 +1,6 @@
 import type { Command } from "./Command.js";
-import { MessageEmbed } from "discord.js";
-import { URL } from "url";
+import { EmbedBuilder } from "discord.js";
+import { URL } from "node:url";
 import {
 	getBandcampTrack,
 	getPonyFmTrack,
@@ -67,7 +67,7 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	return result;
 }
 
-function addResult(result: FetchResult, embed: MessageEmbed): void {
+function addResult(result: FetchResult, embed: EmbedBuilder): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
 	embed.addFields({
@@ -99,7 +99,7 @@ export const test: Command = {
 			);
 
 			// Prepare response
-			const embed = new MessageEmbed();
+			const embed = new EmbedBuilder();
 			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
 			const supportedPlatformsList =
 				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";

@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
 import { getConfigCommandPrefix } from "./config/getConfigValue.js";
 import { isGuildedCommandContext } from "../commands/CommandContext.js";
@@ -75,7 +76,7 @@ export async function describeAllCommands(
 
 		// Describe all subcommands
 		command.options
-			?.filter(optn => optn.type === "SUB_COMMAND")
+			?.filter(optn => optn.type === ApplicationCommandOptionType.Subcommand)
 			?.forEach(sub => {
 				// Describe the subcommand
 				const subDesc = createPartialString();
@@ -114,7 +115,7 @@ function describeParameters(
 	cmdDesc: PartialString
 ): void {
 	options
-		?.filter(optn => optn.type !== "SUB_COMMAND")
+		?.filter(optn => optn.type !== ApplicationCommandOptionType.Subcommand)
 		?.forEach(o => {
 			const option = o as Discord.ApplicationCommandChoicesData;
 
@@ -134,7 +135,7 @@ function describeParameters(
 
 			if (option.choices) {
 				// specific value
-				const choiceValues = option.choices.map(ch => ch.value.toString());
+				const choiceValues = option.choices.map(ch => `${ch.value}`);
 				push(choiceValues.join(SEP) ?? "", subDesc);
 			} else {
 				// arbitrary value

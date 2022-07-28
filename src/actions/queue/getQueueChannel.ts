@@ -1,5 +1,6 @@
 import type { CommandContext } from "../../commands/index.js";
 import type Discord from "discord.js";
+import { ChannelType } from "discord.js";
 import { getQueueChannelId } from "../../useGuildStorage.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
@@ -14,7 +15,7 @@ async function getQueueChannelFromCommand(
 	const queueChannelId = await getQueueChannelId(context.guild);
 	if (queueChannelId === null || !queueChannelId) return null;
 
-	let queueChannel: Discord.AnyChannel | null;
+	let queueChannel: Discord.Channel | null;
 	try {
 		queueChannel = await context.client.channels.fetch(queueChannelId);
 	} catch (error) {
@@ -25,9 +26,9 @@ async function getQueueChannelFromCommand(
 		return null;
 	}
 
-	if (!queueChannel || queueChannel.type !== "GUILD_TEXT") return null;
+	if (!queueChannel || queueChannel.type !== ChannelType.GuildText) return null;
 
-	if (!queueChannel.isText()) {
+	if (!queueChannel.isTextBased()) {
 		logger.error("The configured channel is not a text channel.");
 		await context.reply(
 			"The configured channel is not a text channel. Have an administrator set up the queue again."
@@ -44,7 +45,7 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
 		return null;
 	}
 
-	let queueChannel: Discord.AnyChannel | null;
+	let queueChannel: Discord.Channel | null;
 	try {
 		queueChannel = await guild.client.channels.fetch(queueChannelId);
 	} catch (error) {
@@ -52,9 +53,9 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
 		return null;
 	}
 
-	if (!queueChannel || queueChannel.type !== "GUILD_TEXT") return null;
+	if (!queueChannel || queueChannel.type !== ChannelType.GuildText) return null;
 
-	if (!queueChannel.isText()) {
+	if (!queueChannel.isTextBased()) {
 		logger.error("The configured channel is not a text channel.");
 		return null;
 	}

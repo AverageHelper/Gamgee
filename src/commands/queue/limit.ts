@@ -1,4 +1,4 @@
-import type { CommandInteractionOption, ModalActionRowComponent } from "discord.js";
+import type { CommandInteractionOption } from "discord.js";
 import type { QueueConfig } from "../../database/model/QueueConfig.js";
 import type { Subcommand } from "../Command.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
@@ -6,8 +6,14 @@ import { composed, createPartialString, push, pushBold } from "../../helpers/com
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
-import { MessageActionRow, Modal, TextInputComponent } from "discord.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import {
+	ActionRowBuilder,
+	ApplicationCommandOptionType,
+	ModalBuilder,
+	TextInputBuilder,
+	TextInputStyle
+} from "discord.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
@@ -102,17 +108,17 @@ export const limit: Subcommand = {
 		{
 			name: "key",
 			description: "The name of the limit.",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			choices: allLimits
 		},
 		{
 			name: "value",
 			description: "The new value to set for the key.",
-			type: "INTEGER",
+			type: ApplicationCommandOptionType.Integer,
 			minValue: -1
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	async execute(context) {
 		const { type, guild, options, reply } = context;
@@ -123,22 +129,22 @@ export const limit: Subcommand = {
 		const config = await getQueueConfig(queueChannel);
 
 		if (type === "interaction" && allLimits.length < MAX_INPUT_FIELDS_IN_MODAL) {
-			const modal = new Modal() //
+			const modal = new ModalBuilder() //
 				.setCustomId("queue-limit-config")
 				.setTitle("Queue Limits");
 
 			allLimits.forEach(meta => {
 				const value = queueLimitValueForMeta(config, meta);
-				const input = new TextInputComponent()
+				const input = new TextInputBuilder()
 					.setCustomId(meta.value)
 					.setLabel(meta.name)
 					.setPlaceholder(`e.g.: ${meta.example}`)
 					.setValue(`${value ?? ""}`)
-					.setStyle("SHORT")
+					.setStyle(TextInputStyle.Short)
 					.setRequired(false)
 					.setMinLength(1)
 					.setMaxLength(17); // <= 1 tril w/o commas, <= 10 quad w/ commas; should be enough
-				const row = new MessageActionRow<ModalActionRowComponent>() //
+				const row = new ActionRowBuilder<TextInputBuilder>() //
 					.addComponents(input);
 				modal.addComponents(row);
 			});

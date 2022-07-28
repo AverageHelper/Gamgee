@@ -33,7 +33,7 @@ export const ping: Command = {
 				content: random,
 				allowedMentions: { repliedUser: false }
 			});
-			testMessage = (await context.interaction.fetchReply()) as Discord.Message;
+			testMessage = await context.interaction.fetchReply();
 			responseTime = testMessage.createdTimestamp - context.interaction.createdTimestamp;
 		}
 

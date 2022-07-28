@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import type { ApplicationCommandType, ApplicationCommandOptionType } from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
 
 export * from "./CommandContext.js";
@@ -6,7 +7,7 @@ export * from "./CommandContext.js";
 interface BaseCommand extends Discord.ChatInputApplicationCommandData {
 	aliases?: Array<string>;
 	options?: NonEmptyArray<Discord.ApplicationCommandOptionData | Subcommand>;
-	type?: "CHAT_INPUT";
+	type?: ApplicationCommandType.ChatInput;
 }
 
 export interface GlobalCommand extends BaseCommand {
@@ -51,7 +52,7 @@ export interface GuildedCommand extends BaseCommand {
 	 *
 	 * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions
 	 */
-	defaultMemberPermissions?: Discord.BitFieldResolvable<Discord.PermissionString, bigint>;
+	defaultMemberPermissions?: ReadonlyArray<keyof Discord.PermissionFlags>;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -68,7 +69,7 @@ export interface GuildedCommand extends BaseCommand {
 export type Command = GlobalCommand | GuildedCommand;
 
 interface BaseSubcommand extends Discord.ApplicationCommandSubCommandData {
-	type: "SUB_COMMAND";
+	type: ApplicationCommandOptionType.Subcommand;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {

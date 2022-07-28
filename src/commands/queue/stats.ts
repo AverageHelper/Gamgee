@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { countAllEntries } from "../../useQueueStorage.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-import { MessageEmbed } from "discord.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import {
 	playtimeAverageInQueue,
@@ -13,7 +13,7 @@ import {
 export const stats: Subcommand = {
 	name: "stats",
 	description: "Print statistics on the current queue.",
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
 		const queueChannel = await getQueueChannel(guild);
@@ -41,7 +41,7 @@ export const stats: Subcommand = {
 			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`
 		);
 
-		const embed = new MessageEmbed() //
+		const embed = new EmbedBuilder() //
 			.setTitle("Queue Statistics")
 			.setDescription(`<#${queueChannel.id}>`);
 

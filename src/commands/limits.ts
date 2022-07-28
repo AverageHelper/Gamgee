@@ -2,9 +2,9 @@ import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
 import { assertUnreachable } from "../helpers/assertUnreachable.js";
 import { durationString } from "../helpers/durationString.js";
+import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getQueueConfig } from "../useQueueStorage.js";
-import { MessageEmbed } from "discord.js";
 
 export const limits: Command = {
 	name: "limits",
@@ -19,7 +19,7 @@ export const limits: Command = {
 		const config = await getQueueConfig(queueChannel);
 
 		// Read out the existing limits
-		const embed = new MessageEmbed() //
+		const embed = new EmbedBuilder() //
 			.setTitle("Queue Limits")
 			.setDescription("Use `/cooldown` to see your cooldown time");
 
@@ -56,7 +56,7 @@ export const limits: Command = {
 					break;
 				case "count":
 					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-						value = config.submissionMaxQuantity.toString();
+						value = `${config.submissionMaxQuantity}`;
 					} else {
 						value = "infinite";
 					}

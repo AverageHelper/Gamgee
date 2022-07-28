@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
 import { allCommands } from "../commands/index.js";
-import { Permissions } from "discord.js";
+import { ApplicationCommandType } from "discord.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 import { useLogger } from "../logger.js";
@@ -64,12 +64,9 @@ async function preparePrivilegedCommands(
 				);
 
 				// Prepare command payload
-				const payload: Discord.ApplicationCommandDataResolvable & {
-					default_member_permissions?: `${bigint}`; // TODO: Remove this augmentation
-					dm_permission?: boolean;
-				} = {
+				const payload: Discord.ApplicationCommandData = {
 					description: cmd.description,
-					type: "CHAT_INPUT",
+					type: ApplicationCommandType.ChatInput,
 					name: cmd.name // TODO: Repeat this for command aliases
 				};
 				if (cmd.nameLocalizations !== undefined) {
@@ -81,12 +78,8 @@ async function preparePrivilegedCommands(
 				if (cmd.options !== undefined) {
 					payload.options = cmd.options;
 				}
-
-				// Resolve default member permissions bitfield
 				if (cmd.defaultMemberPermissions !== undefined) {
-					payload.default_member_permissions = `${
-						new Permissions(cmd.defaultMemberPermissions).bitfield
-					}`;
+					payload.defaultMemberPermissions = cmd.defaultMemberPermissions;
 				}
 
 				// Deploy command

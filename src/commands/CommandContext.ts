@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
+import { ChannelType } from "discord.js";
 
 export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 
@@ -122,5 +123,5 @@ export type GuildedCommandContext = CommandContext & {
 };
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
-	return tbd.guild !== null && tbd.member !== null && tbd.channel?.type !== "DM";
+	return tbd.guild !== null && tbd.member !== null && tbd.channel?.type !== ChannelType.DM;
 }

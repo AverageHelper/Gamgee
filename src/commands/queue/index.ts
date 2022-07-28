@@ -35,7 +35,7 @@ export const quo: Command = {
 	description: "Administrative commands to manage the song queue.",
 	options: namedSubcommands,
 	requiresGuild: true,
-	defaultMemberPermissions: ["MANAGE_EVENTS"],
+	defaultMemberPermissions: ["ManageEvents"],
 	async execute(context) {
 		const firstOption = context.options[0];
 		if (!firstOption) {

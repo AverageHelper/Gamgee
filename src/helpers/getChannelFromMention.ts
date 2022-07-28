@@ -7,18 +7,18 @@ const logger = useLogger();
 /**
  * Get a Discord channel from a mention string.
  *
- * @param client The Discord client.
+ * @param guild The guild in which the channel lives.
  * @param mention The mention string, in the form `<#[0-9]>`.
- * @returns A Discord channel, or `undefined` if the user cannot be determined from the providedd `mention` string.
+ * @returns A Discord channel, or `null` if the user cannot be determined from the provided `mention` string.
  */
 export function getChannelFromMention(
-	guild: Discord.Guild | null,
+	guild: Discord.Guild,
 	mention: string
-): Discord.GuildChannel | Discord.ThreadChannel | undefined {
+): Discord.GuildBasedChannel | null {
 	const channelId = getChannelIdFromMention(mention);
-	if (channelId === null) return undefined;
+	if (channelId === null) return null;
 
-	const channel = guild?.channels.resolve(channelId) ?? undefined;
+	const channel = guild.channels.resolve(channelId);
 
 	if (channel) {
 		logger.debug(`Found channel ${channel.name}`);

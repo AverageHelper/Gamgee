@@ -1,11 +1,11 @@
-import type { URL } from "url";
+import type { URL } from "node:url";
 import { VideoError } from "./VideoError.js";
 
 export class InvalidPonyFmUrlError extends VideoError {
 	readonly code = "422";
 
 	constructor(url: URL) {
-		super(`This URL isn't a valid Pony.fm song URL: ${url.toString()}`);
+		super(`This URL isn't a valid Pony.fm song URL: ${url.href}`);
 		this.name = "InvalidPonyFmUrlError";
 	}
 }

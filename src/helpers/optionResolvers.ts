@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { getChannelFromMention } from "./getChannelFromMention.js";
 import { getUserFromMention } from "./getUserFromMention.js";
 
@@ -6,42 +7,44 @@ export async function resolveUserFromOption(
 	option: Discord.CommandInteractionOption,
 	guild: Discord.Guild
 ): Promise<Discord.User | null> {
-	if (option.type === "USER") {
+	if (option.type === ApplicationCommandOptionType.User) {
 		return option.user ?? null;
 	}
 
 	const userMention = option.value as string | undefined;
 	if (userMention === undefined) return null;
-	return (await getUserFromMention(guild, userMention)) ?? null;
+	return await getUserFromMention(guild, userMention);
 }
 
 export function resolveChannelFromOption(
-	option: Discord.CommandInteractionOption,
+	option: Discord.CommandInteractionOption<"cached">,
 	guild: Discord.Guild
-): Discord.GuildChannel | Discord.ThreadChannel | null {
-	if (option.type === "CHANNEL") {
-		const channel = (option.channel as Discord.Channel | undefined) ?? null;
+): Discord.GuildBasedChannel | null {
+	if (option.type === ApplicationCommandOptionType.Channel) {
+		const channel = option.channel;
 		if (!channel) return null;
 
-		// Guild channels aren't DMs or group DMs. Their type is also known.
-		switch (channel.type) {
-			case "DM":
-			case "GROUP_DM":
-			case "UNKNOWN":
-				return null;
+		// Guild channels aren't DMs.
+		if (channel.isDMBased()) return null;
 
-			default:
-				return channel as Discord.GuildChannel | null;
-		}
+		return channel;
 	}
 
-	const channelMention = option.value as string | undefined;
-	if (channelMention === undefined) return null;
-	return getChannelFromMention(guild, channelMention) ?? null;
+	let channelMention: string;
+	if (option.value === undefined) {
+		return null;
+	} else if (typeof option.value === "string") {
+		channelMention = option.value;
+	} else if (typeof option.value === "boolean") {
+		channelMention = option.value ? "true" : "false";
+	} else {
+		channelMention = `${option.value}`;
+	}
+	return getChannelFromMention(guild, channelMention);
 }
 
 export function resolveStringFromOption(option: Discord.CommandInteractionOption): string {
-	if (option.type === "STRING") {
+	if (option.type === ApplicationCommandOptionType.String) {
 		return option.value as string;
 	}
 
@@ -49,13 +52,14 @@ export function resolveStringFromOption(option: Discord.CommandInteractionOption
 }
 
 export function resolveIntegerFromOption(option: Discord.CommandInteractionOption): number | null {
-	if (option.type === "INTEGER") {
+	if (option.type === ApplicationCommandOptionType.Integer) {
 		return (option.value as number | undefined) ?? null;
 	}
 
 	const value = resolveStringFromOption(option);
 	if (value === "null") return null;
 
+	// TODO: Should we just fail if the value isn't an integer?
 	return Number.parseInt(value, 10);
 }
 

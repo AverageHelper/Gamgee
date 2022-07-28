@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
-import type { URL } from "url";
+import type { URL } from "node:url";
 import { deleteMessage } from "../../actions/messages/index.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getVideoDetails } from "../getVideoDetails.js";

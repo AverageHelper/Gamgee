@@ -1,4 +1,4 @@
-import { URL } from "url";
+import { URL } from "node:url";
 
 export function isNotNull<T>(tbd: T | null): tbd is T {
 	return tbd !== null;
