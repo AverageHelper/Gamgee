@@ -6,7 +6,6 @@ import { fetchEntryFromMessage } from "./useQueueStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getQueueChannel } from "./actions/queue/getQueueChannel.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
-import { InteractionType } from "discord.js";
 import { isQueueOpen } from "./useGuildStorage.js";
 import { logUser } from "./helpers/logUser.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
@@ -139,7 +138,7 @@ export async function handleMessageComponent(
 		}
 
 		// Handle modal submit
-	} else if (interaction.type === InteractionType.ModalSubmit) {
+	} else if (interaction.isModalSubmit()) {
 		logger.debug(interaction);
 	}
 }

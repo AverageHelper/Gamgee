@@ -1,6 +1,6 @@
 import "source-map-support/register.js";
 import "reflect-metadata";
-import { Client, GatewayIntentBits, InteractionType, MessageType, Partials } from "discord.js";
+import { Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
@@ -83,12 +83,9 @@ try {
 
 			client.on("interactionCreate", async interaction => {
 				const storage = await useStorage(interaction.guild, logger);
-				if (interaction.type === InteractionType.ApplicationCommand) {
+				if (interaction.isCommand()) {
 					await handleInteraction(interaction, storage, logger);
-				} else if (
-					interaction.type === InteractionType.MessageComponent ||
-					interaction.type === InteractionType.ModalSubmit
-				) {
+				} else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
 					await handleMessageComponent(interaction, logger);
 				}
 			});
