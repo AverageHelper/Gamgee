@@ -1,5 +1,6 @@
 import "source-map-support/register.js";
 import "reflect-metadata";
+import { Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
@@ -10,7 +11,6 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { useLogger } from "./logger.js";
 import { useStorage } from "./configStorage.js";
 import { version as gamgeeVersion } from "./version.js";
-import Discord from "discord.js";
 import yargs from "yargs";
 import {
 	prepareSlashCommandsThenExit,
@@ -42,17 +42,17 @@ const logger = useLogger();
 // ** Setup Discord Client **
 
 try {
-	const client = new Discord.Client({
+	const client = new Client({
 		intents: [
-			"GUILDS",
-			"GUILD_MESSAGES",
-			"GUILD_MESSAGE_REACTIONS",
-			"DIRECT_MESSAGES",
-			"GUILD_MESSAGE_TYPING"
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.GuildMessageTyping
 		],
-		partials: ["REACTION", "CHANNEL", "MESSAGE"],
+		partials: [Partials.Reaction, Partials.Channel, Partials.Message],
 		allowedMentions: {
-			parse: ["roles", "users"], // disallow @everyone pings
+			parse: ["roles", "users"], // disallows @everyone pings
 			repliedUser: true
 		}
 	});
@@ -69,7 +69,7 @@ try {
 			logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 			client.on("messageCreate", async msg => {
-				const allowedMsgTypes: Array<Discord.MessageType> = ["DEFAULT", "REPLY"];
+				const allowedMsgTypes = [MessageType.Default, MessageType.Reply];
 				if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user.id) return;
 				try {
 					const message = await msg.fetch();
@@ -85,7 +85,7 @@ try {
 				const storage = await useStorage(interaction.guild, logger);
 				if (interaction.isCommand()) {
 					await handleInteraction(interaction, storage, logger);
-				} else if (interaction.isMessageComponent()) {
+				} else if (interaction.isButton()) {
 					await handleMessageComponent(interaction, logger);
 				}
 			});

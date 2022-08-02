@@ -1,4 +1,5 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { logUser } from "../../helpers/logUser.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
@@ -11,11 +12,11 @@ export const whitelist: Subcommand = {
 		{
 			name: "user",
 			description: "The user to allow to request songs.",
-			type: "USER",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ user, guild, options, logger, reply, deleteInvocation }) {

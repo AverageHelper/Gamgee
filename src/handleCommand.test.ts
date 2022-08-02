@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { defaultValueForConfigKey } from "./constants/config/defaultValueForConfigKey.js";
 
 jest.mock("./commands");
@@ -72,7 +73,7 @@ describe("Command handler", () => {
 			expect(options).toBeArrayOfSize(1);
 			expect(options[0]).toStrictEqual({
 				name: url,
-				type: "STRING",
+				type: ApplicationCommandOptionType.String,
 				value: url,
 				options: []
 			});
@@ -85,7 +86,7 @@ describe("Command handler", () => {
 			expect(options).toBeArrayOfSize(1);
 			expect(options[0]).toStrictEqual({
 				name: subcommand,
-				type: "SUB_COMMAND",
+				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
 				options: expect.toBeArrayOfSize(1) as Array<unknown>
 			});
@@ -93,7 +94,7 @@ describe("Command handler", () => {
 			expect(options[0]?.options).toStrictEqual([
 				{
 					name: key,
-					type: "STRING",
+					type: ApplicationCommandOptionType.String,
 					value: key,
 					options: []
 				}
@@ -108,7 +109,7 @@ describe("Command handler", () => {
 			expect(options).toBeArrayOfSize(1);
 			expect(options[0]).toStrictEqual({
 				name: subcommand,
-				type: "SUB_COMMAND",
+				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
 				options: expect.toBeArrayOfSize(2) as Array<unknown>
 			});
@@ -116,13 +117,13 @@ describe("Command handler", () => {
 			expect(options[0]?.options).toStrictEqual([
 				{
 					name: key,
-					type: "STRING",
+					type: ApplicationCommandOptionType.String,
 					value: key,
 					options: expect.toBeArrayOfSize(0) as Array<unknown>
 				},
 				{
 					name: value,
-					type: "STRING",
+					type: ApplicationCommandOptionType.String,
 					value: value,
 					options: expect.toBeArrayOfSize(0) as Array<unknown>
 				}
@@ -194,7 +195,7 @@ describe("Command handler", () => {
 						command
 							.split(/ +/u)
 							.slice(1)
-							.map(s => ({ name: s, type: "STRING" }))
+							.map(s => ({ name: s, type: ApplicationCommandOptionType.String }))
 					],
 					["storage", null]
 				])

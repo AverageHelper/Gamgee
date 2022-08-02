@@ -63,7 +63,6 @@ describe("Command as admin", () => {
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
 				);
-				// expect(cmdMessage.deleted).toBeTrue(); // FIXME: This should work tho
 				expect(response?.content).toContain("name a text channel");
 			});
 

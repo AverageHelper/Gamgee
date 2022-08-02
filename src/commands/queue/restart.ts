@@ -1,4 +1,5 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
@@ -6,7 +7,7 @@ import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 export const restart: Subcommand = {
 	name: "restart",
 	description: "Empty the queue and start a fresh queue session.",
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "queue-admin"],
 	async execute({ guild, prepareForLongRunningTasks, reply }) {

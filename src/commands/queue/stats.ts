@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { countAllEntries } from "../../useQueueStorage.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-import { MessageEmbed } from "discord.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import {
 	playtimeAverageInQueue,
@@ -13,7 +13,7 @@ import {
 export const stats: Subcommand = {
 	name: "stats",
 	description: "Print statistics on the current queue.",
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
 		const queueChannel = await getQueueChannel(guild);
@@ -41,16 +41,20 @@ export const stats: Subcommand = {
 			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`
 		);
 
-		const embed = new MessageEmbed() //
+		const embed = new EmbedBuilder() //
 			.setTitle("Queue Statistics")
 			.setDescription(`<#${queueChannel.id}>`);
 
 		try {
-			embed.addField("Total Entries", `${count}`);
-			embed.addField("Average Song Playtime", formattedPlaytimeAverage);
-			embed.addField("Total Playtime", formattedPlaytimeTotal);
-			embed.addField("Played", `${formattedPlaytimePlayed}`, true);
-			embed.addField("Remaining Playtime", formattedPlaytimeRemaining, true);
+			embed.addFields({ name: "Total Entries", value: `${count}` });
+			embed.addFields({ name: "Average Song Playtime", value: formattedPlaytimeAverage });
+			embed.addFields({ name: "Total Playtime", value: formattedPlaytimeTotal });
+			embed.addFields({ name: "Played", value: formattedPlaytimePlayed, inline: true });
+			embed.addFields({
+				name: "Remaining Playtime",
+				value: formattedPlaytimeRemaining,
+				inline: true
+			});
 			// TODO: Include the number of submitters who used up their count limit
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to generate queue statistics message.", error));

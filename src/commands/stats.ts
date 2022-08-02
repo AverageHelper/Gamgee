@@ -1,9 +1,9 @@
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
+import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { MessageEmbed } from "discord.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	averageSubmissionPlaytimeForUser,
@@ -30,12 +30,12 @@ export const stats: Command = {
 		const config = await getQueueConfig(queueChannel);
 
 		// If the queue is open, display the user's limit usage
-		const embed = new MessageEmbed() //
+		const embed = new EmbedBuilder() //
 			.setTitle("Personal Statistics");
 
 		const userIsBlacklisted = config.blacklistedUsers?.some(u => u.id === user.id) === true;
 		if (userIsBlacklisted) {
-			embed.addField("Blacklisted", ":skull_crossbones:");
+			embed.addFields({ name: "Blacklisted", value: ":skull_crossbones:" });
 		}
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
@@ -49,14 +49,14 @@ export const stats: Command = {
 		if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
 			push(` (limit ${durationString(config.entryDurationSeconds)})`, durationMsg);
 		}
-		embed.addField("Average Length of Your Submissions", composed(durationMsg));
+		embed.addFields({ name: "Average Length of Your Submissions", value: composed(durationMsg) });
 
 		// Total submissions
 		const requestCountMsg = createPartialString(`${userSubmissionCount}`);
 		if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
 			push(` (limit ${config.submissionMaxQuantity})`, requestCountMsg);
 		}
-		embed.addField("Total Submissions from You", composed(requestCountMsg));
+		embed.addFields({ name: "Total Submissions from You", value: composed(requestCountMsg) });
 
 		// Remaining wait time (if applicable)
 		const userCanSubmitAgainLater =
@@ -76,12 +76,12 @@ export const stats: Command = {
 					? Math.max(0, config.cooldownSeconds - timeSinceLatest)
 					: 0;
 			const value = durationString(timeToWait);
-			embed.addField("Time Remaining on Cooldown", value);
+			embed.addFields({ name: "Time Remaining on Cooldown", value });
 
 			// TODO: ETA to user's next submission would be nice here
 		}
 
-		if (embed.fields.length > 0) {
+		if ((embed.data.fields ?? []).length > 0) {
 			await replyPrivately({ embeds: [embed] });
 		} else {
 			await replyPrivately("The queue is empty. You have no stats lol");

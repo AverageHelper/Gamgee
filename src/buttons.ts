@@ -1,46 +1,55 @@
-import type Discord from "discord.js";
-import type { URL } from "url";
+import type { ComponentEmojiResolvable } from "discord.js";
+import type { URL } from "node:url";
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	MessageActionRowComponentBuilder
+} from "discord.js";
 
 export interface MessageButton {
 	id: string;
 	label: string;
-	style: "PRIMARY" | "SECONDARY" | "SUCCESS" | "DANGER";
-	emoji?: Discord.EmojiIdentifierResolvable;
+	style: ButtonStyle;
+	emoji?: ComponentEmojiResolvable;
 	url?: URL;
 }
 
 export const DONE_BUTTON: MessageButton = {
 	id: "DONE",
 	label: "Done",
-	style: "SUCCESS"
+	style: ButtonStyle.Success
 };
 
 export const DELETE_BUTTON: MessageButton = {
 	id: "DELETE",
 	label: "Reject",
-	style: "DANGER"
+	style: ButtonStyle.Danger
 };
 
 export const RESTORE_BUTTON: MessageButton = {
 	id: "RESTORE",
 	label: "Restore",
-	style: "SECONDARY"
+	style: ButtonStyle.Secondary
 };
 
 export function actionRow(
 	buttons: NonEmptyArray<MessageButton>
-): Discord.MessageActionRowOptions & {
-	type: "ACTION_ROW" | "BUTTON" | "SELECT_MENU" | "TEXT_INPUT";
-} {
-	return {
-		type: "ACTION_ROW",
-		components: buttons.map<Discord.MessageActionRowComponentResolvable>(btn => ({
-			type: "BUTTON",
-			style: btn.style,
-			label: btn.label,
-			emoji: btn.emoji,
-			url: btn.url?.toString() ?? "",
-			customId: btn.id
-		}))
-	};
+): ActionRowBuilder<MessageActionRowComponentBuilder> {
+	return new ActionRowBuilder<MessageActionRowComponentBuilder>() //
+		.setComponents(
+			buttons.map(btn => {
+				const result = new ButtonBuilder()
+					.setStyle(btn.style)
+					.setLabel(btn.label)
+					.setCustomId(btn.id);
+				if (btn.emoji !== undefined) {
+					result.setEmoji(btn.emoji);
+				}
+				if (btn.url) {
+					result.setURL(btn.url.href);
+				}
+				return result;
+			})
+		);
 }

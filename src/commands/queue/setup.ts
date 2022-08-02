@@ -1,6 +1,7 @@
 import type { Subcommand } from "../Command.js";
-import { setQueueChannel } from "../../useGuildStorage.js";
+import { ApplicationCommandOptionType, ChannelType } from "discord.js";
 import { resolveChannelFromOption } from "../../helpers/optionResolvers.js";
+import { setQueueChannel } from "../../useGuildStorage.js";
 
 export const setup: Subcommand = {
 	name: "setup",
@@ -9,11 +10,12 @@ export const setup: Subcommand = {
 		{
 			name: "channel",
 			description: "The channel to use as the 'queue' channel for the server",
-			type: "CHANNEL",
+			type: ApplicationCommandOptionType.Channel,
+			channelTypes: [ChannelType.GuildText],
 			required: true
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "admin"],
 	async execute({ guild, options, logger, prepareForLongRunningTasks, reply, deleteInvocation }) {
@@ -36,7 +38,7 @@ export const setup: Subcommand = {
 			});
 		}
 
-		if (!newQueueChannel.isText()) {
+		if (!newQueueChannel.isTextBased()) {
 			return await reply({
 				content: "I can't queue in a voice channel. Please specify a text channel instead",
 				ephemeral: true

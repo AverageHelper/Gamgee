@@ -1,12 +1,13 @@
 import type Discord from "discord.js";
 import type { GuildedCommand } from "./Command.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
-import { URL } from "url";
+import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
 
 export const sr: GuildedCommand = {
@@ -16,7 +17,7 @@ export const sr: GuildedCommand = {
 		{
 			name: "url",
 			description: "A track link from a supported platform",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true
 		}
 	],
@@ -37,7 +38,7 @@ export const sr: GuildedCommand = {
 
 		const MENTION_SENDER = `<@!${user.id}>`;
 
-		logger.debug(`Got song request message at ${createdTimestamp.toString()}`);
+		logger.debug(`Got song request message at ${createdTimestamp}`);
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			await context.followUp({
@@ -89,7 +90,7 @@ export const sr: GuildedCommand = {
 			await prepareForLongRunningTasks(true);
 
 			publicPreemptiveResponse = await sendMessageInChannel(channel, {
-				content: `${MENTION_SENDER}\n?sr ${songUrl.toString()}`,
+				content: `${MENTION_SENDER}\n?sr ${songUrl.href}`,
 				allowedMentions: { users: [], repliedUser: false }
 			});
 		}

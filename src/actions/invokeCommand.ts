@@ -1,8 +1,12 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands/index.js";
 import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
+import { ApplicationCommandPermissionType } from "discord.js";
 import { useLogger } from "../logger.js";
-import { userHasRoleInGuild } from "../permissions/index.js";
+import {
+	userHasPermissionInChannel,
+	userHasRoleInGuild
+} from "../permissions/userHasOneOfRoles.js";
 
 const logger = useLogger();
 
@@ -23,12 +27,21 @@ function neverFallthrough(val: never): never {
 	throw new TypeError(`Unexpected case: ${JSON.stringify(val)}`);
 }
 
+/**
+ * Assesses whether the calling guild member is allowed to run the given command.
+ *
+ * @param member The calling guild member.
+ * @param command The command the user wants to run.
+ * @param channel The channel in which the command is being run.
+ *
+ * @returns `true` if the user may be permitted to run the command. `false` otherwise.
+ */
 export async function assertUserCanRunCommand(
-	user: Discord.User,
+	member: Discord.GuildMember,
 	command: Invocable,
-	guild: Discord.Guild | null
+	channel: Discord.GuildTextBasedChannel | null
 ): Promise<boolean> {
-	if (command.requiresGuild && !guild) {
+	if (command.requiresGuild && !channel) {
 		logger.debug(`Command '${command.name}' reqires a guild, but we don't have one right now.`);
 		return false;
 	}
@@ -40,6 +53,7 @@ export async function assertUserCanRunCommand(
 		return true;
 	}
 
+	const guild = channel?.guild;
 	const permissions: Array<CommandPermission> = guild
 		? Array.isArray(command.permissions)
 			? await resolvePermissions(command.permissions, guild)
@@ -51,29 +65,50 @@ export async function assertUserCanRunCommand(
 	);
 
 	let idx = 0;
-	for (const permission of permissions) {
+	for (const access of permissions) {
 		idx += 1;
-		logger.debug(
-			`\tCase ${idx}: User must${
-				permission.permission ? "" : " not"
-			} have ${permission.type.toLowerCase()} ID: ${permission.id}`
-		);
-		switch (permission.type) {
-			case "ROLE": {
+		switch (access.type) {
+			case ApplicationCommandPermissionType.Role: {
+				logger.debug(
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have ROLE ID: ${access.id}`
+				);
 				const userHasRole =
-					guild !== null && (await userHasRoleInGuild(user, permission.id, guild));
-				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${permission.id}`);
-				if (permission.permission && userHasRole) {
+					guild !== undefined && (await userHasRoleInGuild(member, access.id, guild));
+				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${access.id}`);
+				if (access.permission && userHasRole) {
 					logger.debug("\tProceeding...");
 					return true;
 				}
 				break;
 			}
 
-			case "USER": {
-				const userHasId = user.id === permission.id;
-				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${permission.id}`);
-				if (permission.permission && userHasId) {
+			case ApplicationCommandPermissionType.User: {
+				logger.debug(
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have USER ID: ${access.id}`
+				);
+				const userHasId = member.id === access.id;
+				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${access.id}`);
+				if (access.permission && userHasId) {
+					logger.debug("\tProceeding...");
+					return true;
+				}
+				break;
+			}
+
+			case ApplicationCommandPermissionType.Channel: {
+				logger.debug(
+					`\tCase ${idx}: User must${
+						access.permission ? "" : " not"
+					} have 'ReadMessageHistory' access in CHANNEL ID: ${access.id}`
+				);
+				const userCanSeeChannel =
+					channel !== null && userHasPermissionInChannel(member, "ReadMessageHistory", access.id);
+				logger.debug(
+					`\tUser ${
+						userCanSeeChannel ? "has" : "does not have"
+					} permission to read messages in channel ${access.id}`
+				);
+				if (access.permission && channel) {
 					logger.debug("\tProceeding...");
 					return true;
 				}
@@ -81,7 +116,7 @@ export async function assertUserCanRunCommand(
 			}
 
 			default:
-				return neverFallthrough(permission.type);
+				return neverFallthrough(access.type);
 		}
 	}
 
@@ -111,7 +146,7 @@ export async function invokeCommand(command: Invocable, context: CommandContext)
 		return await failNoGuild(context);
 	}
 
-	if (await assertUserCanRunCommand(context.user, command, context.guild)) {
+	if (await assertUserCanRunCommand(context.member, command, context.channel)) {
 		return await command.execute(context);
 	}
 	return await failPermissions(context);

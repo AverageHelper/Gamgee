@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { getVideoDetails } from "../actions/getVideoDetails.js";
@@ -12,7 +13,7 @@ export const video: Command = {
 		{
 			name: "url",
 			description: "A track link from a supported platform",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true
 		}
 	],

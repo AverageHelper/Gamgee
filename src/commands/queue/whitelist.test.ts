@@ -12,6 +12,7 @@ import { whitelistUser } from "../../useQueueStorage.js";
 const mockWhitelistUser = whitelistUser as jest.Mock;
 
 import type { GuildedCommandContext } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import { whitelist } from "./whitelist.js";
 
@@ -37,7 +38,7 @@ describe("Removing from Queue Blacklist", () => {
 				{
 					name: "user",
 					value: `<@${goodUserId}>`,
-					type: "STRING"
+					type: ApplicationCommandOptionType.String
 				}
 			],
 			logger,
@@ -88,7 +89,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing for a user not known to the guild", async () => {
-		mockGetUserFromMention.mockResolvedValue(undefined);
+		mockGetUserFromMention.mockResolvedValue(null);
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockWhitelistUser).not.toHaveBeenCalled();

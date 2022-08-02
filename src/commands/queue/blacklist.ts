@@ -1,4 +1,5 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
 import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
@@ -21,11 +22,11 @@ export const blacklist: Subcommand = {
 		{
 			name: "user",
 			description: "Block the user from making song requests",
-			type: "USER",
+			type: ApplicationCommandOptionType.User,
 			required: false
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {

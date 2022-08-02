@@ -1,6 +1,6 @@
 import type { Command } from "./Command.js";
-import { MessageEmbed } from "discord.js";
-import { URL } from "url";
+import { EmbedBuilder } from "discord.js";
+import { URL } from "node:url";
 import {
 	getBandcampTrack,
 	getPonyFmTrack,
@@ -67,13 +67,15 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	return result;
 }
 
-function addResult(result: FetchResult, embed: MessageEmbed): void {
+function addResult(result: FetchResult, embed: EmbedBuilder): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
-	embed.addField(
+	embed.addFields({
 		name,
-		`${result.error ? FAILURE : SUCCESS} ${result.error?.message ?? "Success"} (${runTime}ms)`
-	);
+		value: `${result.error ? FAILURE : SUCCESS} ${
+			result.error?.message ?? "Success"
+		} (${runTime}ms)`
+	});
 }
 
 let isTesting = false;
@@ -97,7 +99,7 @@ export const test: Command = {
 			);
 
 			// Prepare response
-			const embed = new MessageEmbed();
+			const embed = new EmbedBuilder();
 			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
 			const supportedPlatformsList =
 				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
@@ -112,7 +114,7 @@ export const test: Command = {
 				? ":sweat: Erm, something went wrong. Best look into this:"
 				: "I ran the numbers, and it looks like we're all good! :grin:";
 
-			await replyPrivately({ content, embeds: [embed], ephemeral: true });
+			await replyPrivately({ content, embeds: [embed] });
 		} finally {
 			// eslint-disable-next-line require-atomic-updates
 			isTesting = false;

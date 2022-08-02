@@ -1,11 +1,12 @@
 import type { GuildedSubcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 
 export const close: GuildedSubcommand = {
 	name: "close",
 	description: "Stop accepting song requests to the queue.",
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {

@@ -1,5 +1,4 @@
-import type Discord from "discord.js";
-import { LimitedQueue } from "../../src/helpers/LimitedQueue.js";
+import type { Message } from "discord.js";
 import { messageWaiters, messageDeleteWaiters } from "./testerClient.js";
 import { useTestLogger } from "../testUtils/logger.js";
 
@@ -7,30 +6,53 @@ const logger = useTestLogger();
 
 const DEFAULT_TIMEOUT = 10000;
 
-function uuid(): number {
+async function uuid(): Promise<number> {
+	await new Promise(resolve => setTimeout(resolve, 3)); // ensure Date.now() is a new value
 	return Date.now();
 }
 
-const caches = new Map<string, LimitedQueue<unknown>>();
+const caches = new Map<string, Array<Message>>();
 
-function eventCache<T>(key: string): LimitedQueue<T> {
-	let cache = caches.get(key) as LimitedQueue<T> | undefined;
+function eventCache(key: string): Array<Message> {
+	let cache = caches.get(key);
 	if (!cache) {
-		cache = new LimitedQueue<T>(5);
+		cache = new Array<Message>();
 		caches.set(key, cache);
 	}
 	return cache;
 }
 
-async function waitForEventInCollection<T extends { id: string }>(
+/**
+ * Removes and returns the first element (if any) of an array that matches a given predicate.
+ */
+function removeFirstWhere<T>(
+	array: Array<T>,
+	predicate: (el: T, index: number, array: ReadonlyArray<T>) => boolean
+): T | undefined {
+	for (let index = 0; index < array.length; index++) {
+		const element = array[index];
+		if (element === undefined) return undefined;
+
+		if (predicate(element, index, array)) {
+			if (index < 0) return undefined;
+			return array.splice(index, 1)[0];
+		}
+	}
+
+	return undefined;
+}
+
+const QUEUE_LIMIT = 5;
+
+async function waitForEventInCollection(
 	key: string,
-	waiterPool: Discord.Collection<number, (msg: T) => boolean>,
-	condition: (msg: T) => boolean = (): boolean => true,
+	waiterPool: Map<number, (msg: Message) => boolean>,
+	condition: (msg: Message) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
-): Promise<T | null> {
+): Promise<Message | null> {
+	const id = await uuid();
 	return await new Promise(resolve => {
-		const id = uuid();
-		const cache = eventCache<T>(key);
+		const cache = eventCache(key);
 
 		const timer = setTimeout(() => {
 			// Remove self from the waters list
@@ -41,8 +63,11 @@ async function waitForEventInCollection<T extends { id: string }>(
 			logger.debug(`Waiter ${id} was already removed. (Should rarely see this)`);
 		}, timeout);
 
-		function newMessage(newMessage: T): boolean {
+		function newMessage(newMessage: Message): boolean {
 			cache.push(newMessage);
+			if (cache.length > QUEUE_LIMIT) {
+				cache.shift(); // keep us below 5 items
+			}
 
 			let shouldHandle = false;
 			for (const message of cache) {
@@ -52,7 +77,7 @@ async function waitForEventInCollection<T extends { id: string }>(
 						`Waiter ${id} received message ${message.id} and should handle it. Removing from loop...`
 					);
 					clearTimeout(timer);
-					cache.removeFirstWhere(msg => msg.id === message.id);
+					removeFirstWhere(cache, msg => msg.id === message.id);
 					resolve(message);
 				} else {
 					logger.debug(
@@ -76,9 +101,9 @@ async function waitForEventInCollection<T extends { id: string }>(
  * depending on whether a message arrives before the `timeout`.
  */
 export async function waitForMessage(
-	condition: (msg: Discord.Message) => boolean = (): boolean => true,
+	condition: (msg: Message) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
-): Promise<Discord.Message | null> {
+): Promise<Message | null> {
 	return await waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
 }
 
@@ -91,9 +116,9 @@ export async function waitForMessage(
  * depending on whether a message was deleted before the `timeout`.
  */
 export async function waitForMessageDeletion(
-	condition: (msg: Discord.Message) => boolean = (): boolean => true,
+	condition: (msg: Message) => boolean = (): boolean => true,
 	timeout: number = DEFAULT_TIMEOUT
-): Promise<Discord.Message | null> {
+): Promise<Message | null> {
 	return await waitForEventInCollection(
 		"messageDeleteWaiters",
 		messageDeleteWaiters,

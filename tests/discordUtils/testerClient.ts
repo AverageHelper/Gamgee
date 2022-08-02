@@ -1,16 +1,17 @@
-import Discord from "discord.js";
+import type { Message, PartialMessage } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment.js";
 import { timeoutSeconds } from "../../src/helpers/timeoutSeconds.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
 
 let isClientLoggedIn = false;
-const client = new Discord.Client({
+const client = new Client({
 	intents: [
-		"GUILDS",
-		"GUILD_MESSAGES",
-		"GUILD_MESSAGE_REACTIONS",
-		"DIRECT_MESSAGES",
-		"GUILD_MESSAGE_TYPING"
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.GuildMessageTyping
 	]
 });
 
@@ -23,7 +24,7 @@ const client = new Discord.Client({
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageWaiters = new Discord.Collection<number, (msg: Discord.Message) => boolean>();
+export const messageWaiters = new Map<number, (msg: Message) => boolean>();
 
 client.on("messageCreate", useDispatchLoop(messageWaiters));
 
@@ -36,10 +37,7 @@ client.on("messageCreate", useDispatchLoop(messageWaiters));
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageDeleteWaiters = new Discord.Collection<
-	number,
-	(msg: Discord.Message | Discord.PartialMessage) => boolean
->();
+export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessage) => boolean>();
 
 client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 
@@ -49,7 +47,7 @@ client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
  *
  * @returns the logged-in Discord client for the tester bot.
  */
-export async function testerClient(): Promise<Discord.Client> {
+export async function testerClient(): Promise<Client> {
 	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
 	if (!isClientLoggedIn) {
 		isClientLoggedIn = true;
