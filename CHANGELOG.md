@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Nothing, yet!
 
-## [1.6.6]
+## [1.6.6] - 2022-07-26
 ### Added
 - Added a robust [CHANGELOG.md](CHANGELOG.md) based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s example.
 
