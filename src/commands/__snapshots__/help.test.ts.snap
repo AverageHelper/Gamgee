@@ -38,7 +38,7 @@ exports[`Help command describes all commands 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit <count | cooldown | entry-duration-min | entry-duration | queue-duration> [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?sr [url]\` - Submit a song to the queue.
