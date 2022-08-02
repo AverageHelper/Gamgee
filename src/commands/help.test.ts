@@ -17,6 +17,9 @@ describe("Help command", () => {
 			guild: {
 				id: "the-guild"
 			},
+			channel: {
+				id: "the-channel"
+			},
 			storage: null,
 			replyPrivately: mockReplyPrivately
 		} as unknown as GuildedCommandContext;
