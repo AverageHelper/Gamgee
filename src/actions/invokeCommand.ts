@@ -90,6 +90,14 @@ export async function assertUserCanRunCommand(
 		return false;
 	}
 
+	if ((permissions?.length ?? 0) === 0) {
+		logger.debug(
+			`Command '${command.name}' has ${
+				defaultPermissions?.length ?? 0
+			} default permissions to satisfy.`
+		);
+	}
+
 	logger.debug(
 		`Command '${command.name}' requires that callers satisfy 1 of ${
 			permissions?.length ?? "null"
@@ -100,14 +108,12 @@ export async function assertUserCanRunCommand(
 	let idx = 0;
 	for (const access of permissions ?? []) {
 		idx += 1;
-		logger.debug(
-			`\tCase ${idx}: User must${access.permission ? "" : " not"} have ${access.type} ID: ${
-				access.id
-			}`
-		);
 		switch (access.type) {
 			case ApplicationCommandPermissionType.Role: {
 				// Assert user role membership
+				logger.debug(
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have ROLE ID: ${access.id}`
+				);
 				const userHasRole = await userHasRoleInGuild(member, access.id, guild);
 				logger.debug(`\tUser ${userHasRole ? "has" : "does not have"} role ${access.id}`);
 				if (access.permission && userHasRole) {
@@ -119,6 +125,9 @@ export async function assertUserCanRunCommand(
 
 			case ApplicationCommandPermissionType.User: {
 				// Assert user identity
+				logger.debug(
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have USER ID: ${access.id}`
+				);
 				const userHasId = member.user.id === access.id;
 				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${access.id}`);
 				if (access.permission && userHasId) {
@@ -130,6 +139,9 @@ export async function assertUserCanRunCommand(
 
 			case ApplicationCommandPermissionType.Channel: {
 				// TODO: What, do we assert here?
+				logger.debug(
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have CHANNEL ID: ${access.id}`
+				);
 				logger.debug(`\tSomething to do with a channel, I think...`);
 				logger.debug("\tProceeding...");
 				return true;
