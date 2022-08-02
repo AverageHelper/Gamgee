@@ -27,6 +27,7 @@ const OPT = "?";
 /**
  * Constructs a string that describes the available commands.
  *
+ * @param context The context of the request. Determines which commands get printed.
  * @param commands The collection of available commands.
  * @returns a string describing all commands.
  */
