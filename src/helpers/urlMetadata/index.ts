@@ -2,7 +2,7 @@
 
 import type { Fields } from "./lib/metadataFields.js";
 import type { RequestInit } from "node-fetch";
-import type { URL } from "url";
+import type { URL } from "node:url";
 import fetch from "node-fetch";
 import parse from "./lib/parse.js";
 import timeoutSignal from "timeout-signal";

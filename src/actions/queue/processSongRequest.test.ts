@@ -47,7 +47,7 @@ import type { CommandContext } from "../../commands/CommandContext.js";
 import type { QueueConfig, QueueEntry } from "../../database/model/index.js";
 import type { SongRequest } from "./processSongRequest.js";
 import { processSongRequest } from "./processSongRequest.js";
-import { URL } from "url";
+import { URL } from "node:url";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 describe("Song request pipeline", () => {
