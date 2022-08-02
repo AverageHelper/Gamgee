@@ -46,8 +46,8 @@ describe("Video details", () => {
 	);
 
 	test("returns infinite duration for a live stream", async () => {
-		// 24/7 Brony Chill Music Radio - Beats to Study Friendship to
-		const url = "https://www.youtube.com/watch?v=pNsWAeCCWLs";
+		// lofi hip hop radio - beats to relax/study to
+		const url = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
 		const details = await getVideoDetails(url, null);
 		expect(details).toHaveProperty("url", url);
 		expect(details?.duration.seconds).toBeDefined();
