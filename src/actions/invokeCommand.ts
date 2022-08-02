@@ -1,7 +1,7 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands/index.js";
-import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
 import { ApplicationCommandPermissionType } from "discord.js";
+import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
 import { useLogger } from "../logger.js";
 import {
 	userHasPermissionInChannel,
