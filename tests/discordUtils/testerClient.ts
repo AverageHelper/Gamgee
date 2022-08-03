@@ -1,19 +1,15 @@
 import type { Message, PartialMessage } from "discord.js";
 import { Client, GatewayIntentBits } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment.js";
-import { timeoutSeconds } from "../../src/helpers/timeoutSeconds.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
 
-let isClientLoggedIn = false;
-const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.GuildMessageTyping
-	]
-});
+const intents = [
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.GuildMessageReactions,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.GuildMessageTyping
+];
 
 /**
  * A collection of functions that expect a message to arrive within a
@@ -26,8 +22,6 @@ const client = new Client({
  */
 export const messageWaiters = new Map<number, (msg: Message) => boolean>();
 
-client.on("messageCreate", useDispatchLoop(messageWaiters));
-
 /**
  * A collection of functions that expect a message be deleted within a
  * predefined timeout. When a message arrives in any channel accessible
@@ -39,29 +33,39 @@ client.on("messageCreate", useDispatchLoop(messageWaiters));
  */
 export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessage) => boolean>();
 
-client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
-
 /**
  * Prepares the tester bot's Discord client. If the client is not logged in,
  * then we log it in before we return.
  *
+ * @param cb A callback function that receives a logged-in Discord
+ * client. After the function resolves or throws, the client automatically
+ * logs out.
+ *
  * @returns the logged-in Discord client for the tester bot.
  */
-export async function testerClient(): Promise<Client> {
-	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
-	if (!isClientLoggedIn) {
-		isClientLoggedIn = true;
-		await client.login(TESTER_TOKEN);
-	}
-	return client;
-}
+export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T>): Promise<T> {
+	const UUT_ID = requireEnv("BOT_TEST_ID");
+	const client = new Client({
+		intents,
+		allowedMentions: {
+			repliedUser: true,
+			parse: ["roles", "users"],
+			users: [UUT_ID]
+		}
+	});
+	client.on("messageCreate", useDispatchLoop(messageWaiters));
+	client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 
-/**
- * Logs out of the tester bot's Discord client.
- */
-export async function logOut(): Promise<void> {
-	if (isClientLoggedIn) {
+	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
+	await client.login(TESTER_TOKEN);
+	// client is a `Client<true>` value after login
+
+	try {
+		const result = await cb(client);
 		client.destroy();
-		await timeoutSeconds(1); // die after 1s
+		return result;
+	} catch (error) {
+		client.destroy();
+		throw error;
 	}
 }

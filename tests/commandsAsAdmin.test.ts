@@ -5,7 +5,9 @@ import {
 	commandResponseInSameChannel,
 	sendCommand,
 	waitForMessage,
-	sendMessage
+	sendMessageWithDefaultClient,
+	sendCommandWithDefaultClient,
+	useTesterClient
 } from "./discordUtils/index.js";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
@@ -18,7 +20,7 @@ describe("Command as admin", () => {
 	const NO_QUEUE = "no queue";
 
 	beforeEach(async () => {
-		await sendMessage(`**'${expect.getState().currentTestName}'**`);
+		await sendMessageWithDefaultClient(`**'${expect.getState().currentTestName}'**`);
 
 		await setIsQueueCreator(true);
 		await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
@@ -30,8 +32,8 @@ describe("Command as admin", () => {
 
 	describe("unknown input", () => {
 		test("does nothing", async () => {
-			const response = await commandResponseInSameChannel("dunno what this does");
-			expect(response).toBeNull();
+			const content = await commandResponseInSameChannel("dunno what this does");
+			expect(content).toBeNull();
 		});
 	});
 
@@ -40,30 +42,32 @@ describe("Command as admin", () => {
 			const NO_QUEUE = "no queue";
 
 			test("url request does nothing", async () => {
-				const response = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
-				expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+				const content = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
+				expect(content?.toLowerCase()).toContain(NO_QUEUE);
 			});
 		});
 
 		describe("no queue yet", () => {
 			beforeEach(async () => {
-				await sendMessage(`**Setup**`);
+				await sendMessageWithDefaultClient(`**Setup**`);
 				await setIsQueueCreator(true);
 				await setIsQueueAdmin(true);
 
 				await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
 
 				await setIsQueueCreator(false);
-				await sendMessage(`**Run**`);
+				await sendMessageWithDefaultClient(`**Run**`);
 			});
 
 			test("fails to set up a queue without a channel mention", async () => {
 				await setIsQueueCreator(true);
-				const cmdMessage = await sendCommand(`${QUEUE_COMMAND} setup`);
-				const response = await waitForMessage(
-					msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
-				);
-				expect(response?.content).toContain("name a text channel");
+				await useTesterClient(async client => {
+					const cmdMessage = await sendCommand(client, `${QUEUE_COMMAND} setup`);
+					const response = await waitForMessage(
+						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
+					);
+					expect(response?.content).toContain("name a text channel");
+				});
 			});
 
 			test.each`
@@ -72,8 +76,8 @@ describe("Command as admin", () => {
 				${"cooldown"}
 				${"count"}
 			`("fails to set $key limits on the queue", async ({ key }: { key: string }) => {
-				const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key} 3`);
-				expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+				const content = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+				expect(content?.toLowerCase()).toContain(NO_QUEUE);
 			});
 
 			test.each`
@@ -84,14 +88,14 @@ describe("Command as admin", () => {
 			`(
 				"allows the tester to get the queue's global $key limit",
 				async ({ key }: { key: string }) => {
-					const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key}`);
-					expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+					const content = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key}`);
+					expect(content?.toLowerCase()).toContain(NO_QUEUE);
 				}
 			);
 
 			test("allows the tester to set up a queue", async () => {
 				await setIsQueueCreator(true);
-				await sendCommand(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+				await sendCommandWithDefaultClient(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
 				);
@@ -105,22 +109,22 @@ describe("Command as admin", () => {
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
 		test("asks for a song link", async () => {
-			const response = await commandResponseInSameChannel("video", undefined, needSongLink);
-			expect(response?.content).toBe(needSongLink);
+			const content = await commandResponseInSameChannel("video", undefined, needSongLink);
+			expect(content).toBe(needSongLink);
 		});
 
 		test("returns the title and duration of a song with normal spacing", async () => {
-			const response = await commandResponseInSameChannel(`video ${url}`, undefined, info);
-			expect(response?.content).toBe(info);
+			const content = await commandResponseInSameChannel(`video ${url}`, undefined, info);
+			expect(content).toBe(info);
 		});
 
 		test("returns the title and duration of a song with suboptimal spacing", async () => {
-			const response = await commandResponseInSameChannel(
+			const content = await commandResponseInSameChannel(
 				`video             ${url}`,
 				undefined,
 				info
 			);
-			expect(response?.content).toBe(info);
+			expect(content).toBe(info);
 		});
 	});
 });
