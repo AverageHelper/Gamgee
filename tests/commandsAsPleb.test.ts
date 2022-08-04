@@ -2,7 +2,7 @@ import { requireEnv } from "../src/helpers/environment.js";
 import {
 	setIsQueueAdmin,
 	setIsQueueCreator,
-	commandResponseInSameChannel,
+	commandResponseInTestChannel,
 	sendMessageWithDefaultClient
 } from "./discordUtils/index.js";
 
@@ -17,7 +17,7 @@ describe("Command as pleb", () => {
 		await sendMessageWithDefaultClient(`**'${expect.getState().currentTestName}'**`);
 
 		await setIsQueueCreator(true);
-		await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
+		await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
 
 		// Remove the Queue Admin role from the tester bot
 		await setIsQueueAdmin(false);
@@ -26,7 +26,7 @@ describe("Command as pleb", () => {
 
 	describe("unknown input", () => {
 		test("does nothing", async () => {
-			const content = await commandResponseInSameChannel("dunno what this does");
+			const content = await commandResponseInTestChannel("dunno what this does");
 			expect(content).toBeNull();
 		});
 	});
@@ -34,7 +34,7 @@ describe("Command as pleb", () => {
 	describe("queue", () => {
 		describe("when the queue is not set up", () => {
 			test("url request does nothing", async () => {
-				const content = await commandResponseInSameChannel(`sr ${url}`, undefined, "no queue");
+				const content = await commandResponseInTestChannel(`sr ${url}`, "no queue");
 				expect(content?.toLowerCase()).toContain("no queue");
 			});
 		});
@@ -48,16 +48,15 @@ describe("Command as pleb", () => {
 				await sendMessageWithDefaultClient(`**Setup**`);
 				await setIsQueueCreator(true);
 				await setIsQueueAdmin(true);
-				await commandResponseInSameChannel(
+				await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
-					undefined,
 					"set up"
 				);
 
 				if (isOpen) {
-					await commandResponseInSameChannel(`${QUEUE_COMMAND} open`);
+					await commandResponseInTestChannel(`${QUEUE_COMMAND} open`);
 				} else {
-					await commandResponseInSameChannel(`${QUEUE_COMMAND} close`);
+					await commandResponseInTestChannel(`${QUEUE_COMMAND} close`);
 				}
 
 				await setIsQueueCreator(false);
@@ -67,31 +66,19 @@ describe("Command as pleb", () => {
 
 			if (isOpen) {
 				test("accepts a song request", async () => {
-					const content = await commandResponseInSameChannel(
-						`sr ${url}`,
-						undefined,
-						"Submission Accepted!"
-					);
+					const content = await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 
 					// TODO: Check that the request appears in the queue as well
 					expect(content).toContain(`Submission Accepted!`);
 				});
 
 				test("`sr` alone provides info on how to use the request command", async () => {
-					const content = await commandResponseInSameChannel(
-						"sr",
-						undefined,
-						"To submit a song, type"
-					);
+					const content = await commandResponseInTestChannel("sr", "To submit a song, type");
 					expect(content).toContain("To submit a song, type");
 				});
 			} else {
 				test("url request tells the user the queue is not open", async () => {
-					const content = await commandResponseInSameChannel(
-						`sr ${url}`,
-						undefined,
-						"queue is not open"
-					);
+					const content = await commandResponseInTestChannel(`sr ${url}`, "queue is not open");
 					expect(content).toContain("queue is not open");
 				});
 			}
@@ -103,21 +90,17 @@ describe("Command as pleb", () => {
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
 		test("asks for a song link", async () => {
-			const content = await commandResponseInSameChannel("video", undefined, needSongLink);
+			const content = await commandResponseInTestChannel("video", needSongLink);
 			expect(content).toContain(needSongLink);
 		});
 
 		test("returns the title and duration of a song with normal spacing", async () => {
-			const content = await commandResponseInSameChannel(`video ${url}`, undefined, info);
+			const content = await commandResponseInTestChannel(`video ${url}`, info);
 			expect(content).toContain(info);
 		});
 
 		test("returns the title and duration of a song with suboptimal spacing", async () => {
-			const content = await commandResponseInSameChannel(
-				`video             ${url}`,
-				undefined,
-				info
-			);
+			const content = await commandResponseInTestChannel(`video             ${url}`, info);
 			expect(content).toContain(info);
 		});
 	});
