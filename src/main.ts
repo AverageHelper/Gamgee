@@ -119,7 +119,7 @@ try {
 	});
 
 	// Log in
-	void client.login(requireEnv("DISCORD_TOKEN"));
+	await client.login(requireEnv("DISCORD_TOKEN"));
 
 	// Handle top-level errors
 } catch (error) {
