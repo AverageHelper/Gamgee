@@ -1,15 +1,7 @@
 import type { Message, PartialMessage } from "discord.js";
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
-
-const intents = [
-	GatewayIntentBits.Guilds,
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.GuildMessageReactions,
-	GatewayIntentBits.DirectMessages,
-	GatewayIntentBits.GuildMessageTyping
-];
 
 /**
  * A collection of functions that expect a message to arrive within a
@@ -44,28 +36,39 @@ export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessa
  * @returns the logged-in Discord client for the tester bot.
  */
 export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T>): Promise<T> {
-	const UUT_ID = requireEnv("BOT_TEST_ID");
 	const client = new Client({
-		intents,
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.GuildMessageTyping
+		],
+		partials: [Partials.Reaction, Partials.Channel, Partials.Message],
 		allowedMentions: {
-			repliedUser: true,
 			parse: ["roles", "users"],
-			users: [UUT_ID]
+			repliedUser: true,
+			users: [requireEnv("BOT_TEST_ID")]
 		}
 	});
-	client.on("messageCreate", useDispatchLoop(messageWaiters));
-	client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 
-	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
-	await client.login(TESTER_TOKEN);
-	// client is a `Client<true>` value after login
+	const result = new Promise<T>((resolve, reject) => {
+		client.on("ready", async client => {
+			client.on("messageCreate", useDispatchLoop(messageWaiters));
+			client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
 
-	try {
-		const result = await cb(client);
-		client.destroy();
-		return result;
-	} catch (error) {
-		client.destroy();
-		throw error;
-	}
+			try {
+				const result = await cb(client);
+				client.destroy();
+				return resolve(result);
+			} catch (error) {
+				client.destroy();
+				return reject(error);
+			}
+		});
+	});
+
+	await client.login(requireEnv("CORDE_TEST_TOKEN"));
+
+	return await result;
 }
