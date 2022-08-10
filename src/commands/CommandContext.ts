@@ -91,7 +91,10 @@ interface BaseCommandContext {
 	) => Promise<Discord.Message | boolean>;
 }
 
-interface MessageCommandContext extends BaseCommandContext {
+/**
+ * Information relevant to a message command invocation.
+ */
+export interface MessageCommandContext extends BaseCommandContext {
 	readonly type: "message";
 
 	/** The message that contains the command invocation. */
@@ -101,7 +104,10 @@ interface MessageCommandContext extends BaseCommandContext {
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 }
 
-interface InteractionCommandContext extends BaseCommandContext {
+/**
+ * Information relevant to a slash-command invocation.
+ */
+export interface InteractionCommandContext extends BaseCommandContext {
 	readonly type: "interaction";
 
 	/** The interaction that represents the command invocation. */

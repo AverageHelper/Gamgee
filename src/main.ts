@@ -109,6 +109,8 @@ try {
 				name: "Source: github.com/AverageHelper/Gamgee",
 				url: "https://github.com/AverageHelper/Gamgee"
 			});
+
+			// TODO: Verify that the deployed command list is up-to-date
 		}
 
 		if (getEnv("NODE_ENV") === "test") {

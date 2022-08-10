@@ -29,22 +29,45 @@ async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Commands cleared for guild ${guild.id}`);
 }
 
+function discordCommandPayloadFromCommand(cmd: Command): Discord.ApplicationCommandDataResolvable {
+	logger.verbose(`\t'/${cmd.name}'  (requires guild, any privilege)`);
+
+	const payload: Discord.ApplicationCommandData = {
+		description: cmd.description,
+		type: cmd.type ?? ApplicationCommandType.ChatInput,
+		name: cmd.name // TODO: Repeat for command aliases
+	};
+	if (cmd.nameLocalizations) {
+		logger.verbose("\t\tits name is localized");
+		payload.nameLocalizations = cmd.nameLocalizations;
+	}
+	if (cmd.descriptionLocalizations) {
+		logger.verbose("\t\tits description is localized");
+		payload.descriptionLocalizations = cmd.descriptionLocalizations;
+	}
+	if (cmd.options) {
+		payload.options = cmd.options;
+	}
+	// TODO: Set defaultMemberPermissions and dmPermission
+
+	return payload;
+}
+
 async function prepareUnprivilegedCommands(
 	unprivilegedCommands: Array<GuildedCommand>,
 	guild: Discord.Guild
 ): Promise<number> {
 	logger.verbose(
-		`Creating ${unprivilegedCommands.length} command${pluralOf(unprivilegedCommands)}:`
+		`Creating ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}:`
 	);
-	unprivilegedCommands.forEach(command => {
-		logger.verbose(`\t'/${command.name}'  (requires guild, any privilege)`);
-	});
+
+	const payloads = unprivilegedCommands.map(discordCommandPayloadFromCommand);
 
 	if (!testMode) {
-		await guild.commands.set(unprivilegedCommands);
+		await guild.commands.set(payloads);
 	}
 
-	return unprivilegedCommands.length;
+	return payloads.length;
 }
 
 async function preparePrivilegedCommands(
@@ -53,7 +76,9 @@ async function preparePrivilegedCommands(
 ): Promise<number> {
 	// See https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions for the new way to do this
 
-	logger.verbose(`Creating ${privilegedCommands.length} command${pluralOf(privilegedCommands)}...`);
+	logger.verbose(
+		`Creating ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
+	);
 	const results = await Promise.allSettled(
 		privilegedCommands.map(async cmd => {
 			try {
@@ -65,21 +90,7 @@ async function preparePrivilegedCommands(
 					: "any privilege";
 				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
 
-				const payload: Discord.ApplicationCommandData = {
-					description: cmd.description,
-					type: cmd.type ?? ApplicationCommandType.ChatInput,
-					name: cmd.name // TODO: Repeat for command aliases
-				};
-				if (cmd.nameLocalizations) {
-					payload.nameLocalizations = cmd.nameLocalizations;
-				}
-				if (cmd.descriptionLocalizations) {
-					payload.descriptionLocalizations = cmd.descriptionLocalizations;
-				}
-				if (cmd.options) {
-					payload.options = cmd.options;
-				}
-				// TODO: Set defaultMemberPermissions and dmPermission
+				const payload = discordCommandPayloadFromCommand(cmd);
 
 				if (!testMode) {
 					appCommand = await guild.commands.create(payload);

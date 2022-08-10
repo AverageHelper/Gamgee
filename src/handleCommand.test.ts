@@ -175,6 +175,7 @@ describe("Command handler", () => {
 			${"quo"}
 			${"sr"}
 			${"t"}
+			${"userinfo"}
 			${"test"}
 			${"version"}
 			${"video"}
@@ -214,6 +215,7 @@ describe("Command handler", () => {
 			${"quo"}
 			${"sr"}
 			${"t"}
+			${"userinfo"}
 			${"test"}
 			${"version"}
 			${"video"}
