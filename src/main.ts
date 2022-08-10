@@ -47,6 +47,7 @@ try {
 		intents: [
 			GatewayIntentBits.Guilds,
 			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.MessageContent,
 			GatewayIntentBits.GuildMessageReactions,
 			GatewayIntentBits.DirectMessages,
 			GatewayIntentBits.GuildMessageTyping

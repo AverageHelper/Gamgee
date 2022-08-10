@@ -40,6 +40,7 @@ export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T
 		intents: [
 			GatewayIntentBits.Guilds,
 			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.MessageContent,
 			GatewayIntentBits.GuildMessageReactions,
 			GatewayIntentBits.DirectMessages,
 			GatewayIntentBits.GuildMessageTyping
