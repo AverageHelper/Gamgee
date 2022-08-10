@@ -10,6 +10,14 @@ import {
 
 export const howto: GuildedCommand = {
 	name: "howto",
+	nameLocalizations: {
+		de: "wieman",
+		"en-GB": "howto",
+		"en-US": "howto",
+		"es-ES": "cómo",
+		fr: "comment",
+		"pt-BR": "como"
+	},
 	description: "Print instructions for using the common queue commands.",
 	requiresGuild: true,
 	async execute({ storage, type, reply }) {

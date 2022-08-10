@@ -9,6 +9,14 @@ import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 export const cooldown: Command = {
 	name: "cooldown",
 	description: "Find out when you can submit again.",
+	descriptionLocalizations: {
+		de: "Finden Sie heraus, wann Sie wieder einreichen können.",
+		"en-GB": "Find out when you can submit again.",
+		"en-US": "Find out when you can submit again.",
+		"es-ES": "Averigüe cuándo puede enviar de nuevo.",
+		fr: "Découvrez quand vous pourrez soumettre à nouveau.",
+		"pt-BR": "Descubra quando você pode enviar novamente."
+	},
 	requiresGuild: true,
 	async execute({ user, guild, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();

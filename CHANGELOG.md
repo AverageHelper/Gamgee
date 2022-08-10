@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Naive German, French, Spanish, and Portuguese translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
+
+### Changed
 - Updated discord.js to version 14.1.2
-- Make [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
+- Made [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
 
 ## [1.6.6] - 2022-07-26
 ### Added

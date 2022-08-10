@@ -13,10 +13,26 @@ import { useJobQueue } from "@averagehelper/job-queue";
 export const sr: GuildedCommand = {
 	name: "sr",
 	description: "Submit a song to the queue.",
+	descriptionLocalizations: {
+		de: "Senden Sie einen Song an die Warteschlange.",
+		"en-GB": "Submit a song to the queue.",
+		"en-US": "Submit a song to the queue.",
+		"es-ES": "Envía una canción a la cola.",
+		fr: "Soumettre une chanson à la file d'attente.",
+		"pt-BR": "Envie uma música para a fila."
+	},
 	options: [
 		{
 			name: "url",
-			description: "A track link from a supported platform",
+			description: "A song link from a supported platform",
+			descriptionLocalizations: {
+				de: "Ein Link zu einem Lied von einer unterstützten Plattform",
+				"en-GB": "A song link from a supported platform",
+				"en-US": "A song link from a supported platform",
+				"es-ES": "Un enlace de canción desde una plataforma compatible",
+				fr: "Un lien de chanson à partir d'une plate-forme prise en charge",
+				"pt-BR": "Um link de música de uma plataforma suportada"
+			},
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
