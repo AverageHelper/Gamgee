@@ -16,6 +16,7 @@ export const howto: GuildedCommand = {
 		"en-US": "howto",
 		"es-ES": "cómo",
 		fr: "comment",
+		hu: "hogyankell",
 		"pt-BR": "como"
 	},
 	description: "Print instructions for using the common queue commands.",

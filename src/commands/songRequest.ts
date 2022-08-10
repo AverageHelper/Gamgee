@@ -19,6 +19,7 @@ export const sr: GuildedCommand = {
 		"en-US": "Submit a song to the queue.",
 		"es-ES": "Envía una canción a la cola.",
 		fr: "Soumettre une chanson à la file d'attente.",
+		hu: "Adjon fel egy dalt a sorba.",
 		"pt-BR": "Envie uma música para a fila."
 	},
 	options: [
@@ -31,6 +32,7 @@ export const sr: GuildedCommand = {
 				"en-US": "A song link from a supported platform",
 				"es-ES": "Un enlace de canción desde una plataforma compatible",
 				fr: "Un lien de chanson à partir d'une plate-forme prise en charge",
+				hu: "Dal linkje egy támogatott platformról",
 				"pt-BR": "Um link de música de uma plataforma suportada"
 			},
 			type: ApplicationCommandOptionType.String,

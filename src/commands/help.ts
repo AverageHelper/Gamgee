@@ -9,6 +9,7 @@ export const help: Command = {
 		"en-US": "help",
 		"es-ES": "ayuda",
 		fr: "aider",
+		hu: "segítség",
 		"pt-BR": "ajuda"
 	},
 	description: "Print a handy help message.",
@@ -18,6 +19,7 @@ export const help: Command = {
 		"en-US": "Print a handy help message.",
 		"es-ES": "Imprime un mensaje de ayuda útil.",
 		fr: "Imprimez un message d'aide utile.",
+		hu: "Nyomtasson ki egy hasznos súgóüzenetet.",
 		"pt-BR": "Imprima uma mensagem de ajuda útil."
 	},
 	requiresGuild: false,

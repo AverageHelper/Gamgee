@@ -15,6 +15,7 @@ export const cooldown: Command = {
 		"en-US": "Find out when you can submit again.",
 		"es-ES": "Averigüe cuándo puede enviar de nuevo.",
 		fr: "Découvrez quand vous pourrez soumettre à nouveau.",
+		hu: "Tudja meg, mikor küldheti be újra.",
 		"pt-BR": "Descubra quando você pode enviar novamente."
 	},
 	requiresGuild: true,
