@@ -50,7 +50,7 @@
 		"dotenv": "16.0.1",
 		"humanize-duration": "3.27.2",
 		"lodash": "4.17.21",
-		"node-fetch": "3.2.6",
+		"node-fetch": "3.2.10",
 		"node-persist": "3.1.0",
 		"reflect-metadata": "0.1.13",
 		"soundcloud-scraper": "5.0.3",
