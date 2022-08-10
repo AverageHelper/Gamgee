@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Naive German, French, Spanish, and Portuguese translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
+- Added naive German, French, Spanish, and Portuguese translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
+- Added the URL to this repository to the bot's profile. (For some reason, links inside of the bot description are unreliable, and seem to cause the description to go away after a while.)
 
 ### Changed
 - Updated discord.js to version 14.1.2

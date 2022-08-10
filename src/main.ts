@@ -1,6 +1,6 @@
 import "source-map-support/register.js";
 import "reflect-metadata";
-import { Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
+import { ActivityType, Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
@@ -17,7 +17,7 @@ import {
 	revokeSlashCommandsThenExit
 } from "./actions/prepareSlashCommands.js";
 
-const args = await yargs(hideBin(process.argv))
+const args = yargs(hideBin(process.argv))
 	.option("deploy-commands", {
 		alias: "c",
 		description: "Upload Discord commands, then exit",
@@ -33,7 +33,8 @@ const args = await yargs(hideBin(process.argv))
 	.version(gamgeeVersion)
 	.help()
 	.alias("help", "h")
-	.alias("version", "v").argv;
+	.alias("version", "v")
+	.parseSync();
 
 const shouldStartNormally = !args["deploy-commands"] && !args["revoke-commands"];
 
@@ -68,6 +69,7 @@ try {
 			logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
 			logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
+			// Register interaction listeners
 			client.on("messageCreate", async msg => {
 				const allowedMsgTypes = [MessageType.Default, MessageType.Reply];
 				if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user.id) return;
@@ -97,6 +99,15 @@ try {
 				} catch (error) {
 					logger.error(richErrorMessage("Failed to handle reaction add.", error));
 				}
+			});
+
+			// Shout out our source code.
+			// This looks like crap, but it's the only way to show a custom
+			// multiline string on the bot's user profile.
+			client.user.setActivity({
+				type: ActivityType.Playing,
+				name: "Source: github.com/AverageHelper/Gamgee",
+				url: "https://github.com/AverageHelper/Gamgee"
 			});
 		}
 
