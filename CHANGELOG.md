@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Updated discord.js to version 14.1.2
+- Make [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
 
 ## [1.6.6] - 2022-07-26
 ### Added
