@@ -1,4 +1,7 @@
 {
+	"meta": {
+		"code": "de"
+	},
 	"commands": {
 		"cooldown": {
 			"name": "cooldown",

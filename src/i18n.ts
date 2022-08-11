@@ -1,3 +1,6 @@
+// **
+// Import and install language files here
+// **
 import de from "./locales/de.json";
 import enGB from "./locales/en-GB.json";
 import enUS from "./locales/en-US.json";
@@ -18,9 +21,11 @@ const messages = {
 
 export type SupportedLocale = keyof typeof messages;
 
+export const locales = Object.keys(messages) as ReadonlyArray<SupportedLocale>;
+
 /** Returns `true` if the given string matches a supported locale code. */
-export function isSupportedLocale(tbd: string | null): tbd is SupportedLocale {
-	return tbd !== null && Object.keys(messages).includes(tbd);
+export function isSupportedLocale(tbd: unknown): tbd is SupportedLocale {
+	return locales.includes(tbd as SupportedLocale);
 }
 
 const DEFAULT_LOCALE = "en-US";

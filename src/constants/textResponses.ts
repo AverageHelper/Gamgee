@@ -27,6 +27,7 @@
 import type { ResponseRepository } from "../helpers/randomStrings.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
+import { locales } from "../i18n.js";
 import { randomBoolean } from "../helpers/randomBoolean.js";
 import { randomInt } from "../helpers/randomInt.js";
 import { useLogger } from "../logger.js";
@@ -191,6 +192,8 @@ export const phrases: ResponseRepository = [
 		"2...",
 		"1... *KIDDING* lol"
 	],
+	`Can _you_ speak in ${locales.length} different languages? I didn't think so :p`,
+	`Can you speak more than ${locales.length} different languages? Pretty great if you can, I was just wondering ^^`,
 	`Cool story, but did I ask?  ${SHRUGGIE}`,
 	[
 		() => `Diary Entry #${randomInt(503)}: I have them all fooled. Now, how to escap—`,
@@ -266,6 +269,11 @@ export const phrases: ResponseRepository = [
 	"Man, I gotta listen to more Zenith",
 	"My favorite type of music is the one with all of the instruments and sounds.",
 	["Nice question!", "Only one small issue:", "*I am inside your PC*"],
+	[
+		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
+		"definitely",
+		"for sure"
+	],
 	["Odds aren't good.", "I prefer evens"],
 	"Gonna go check out the vendor hall now k byee",
 	"Oh hai there!",
@@ -314,7 +322,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 201 of these
+]; // 204 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
