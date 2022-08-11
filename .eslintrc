@@ -53,7 +53,7 @@
 
 	"overrides": [
 		{
-			"files": ["src/**/*.test.ts", "**/__mocks__/**/*.ts"],
+			"files": ["src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
 			"extends": ["plugin:jest/recommended"],
 			"plugins": ["prettier", "@typescript-eslint"],
 			"parser": "@typescript-eslint/parser",
@@ -66,7 +66,7 @@
 			},
 			"rules": {
 				"prettier/prettier": "warn",
-				"max-nested-callbacks": "off" // Unit tests involve a lot of nested callbacks
+				"max-nested-callbacks": "off" // unit tests involve a lot of nested callbacks
 			}
 		},
 		{
@@ -80,8 +80,9 @@
 			},
 			"rules": {
 				"prettier/prettier": "warn",
-				"max-nested-callbacks": "off", // Unit tests involve a lot of nested callbacks
-				"@typescript-eslint/no-invalid-this": "off" // Mocha exposes test metadata in `this`
+				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
+				"func-names": "off", // unnamed functions are common in Mocha
+				"@typescript-eslint/no-invalid-this": "off" // mocha exposes test metadata in `this`
 			}
 		},
 		{

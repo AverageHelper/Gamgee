@@ -47,7 +47,7 @@ export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T
 		],
 		partials: [Partials.Reaction, Partials.Channel, Partials.Message],
 		allowedMentions: {
-			parse: ["roles", "users"],
+			parse: ["roles"],
 			repliedUser: true,
 			users: [requireEnv("BOT_TEST_ID")]
 		}

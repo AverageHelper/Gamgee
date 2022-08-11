@@ -16,12 +16,13 @@ const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 const QUEUE_COMMAND = "quo";
 
-describe("Command as admin", () => {
+describe("Command as admin", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 	const NO_QUEUE = "no queue";
 
-	beforeEach(async function beforeEach() {
-		await sendMessageWithDefaultClient(`**'${this.currentTest?.title ?? "null"}'**`);
+	beforeEach(async function () {
+		const title = this.test?.titlePath().join(" - ");
+		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
@@ -31,25 +32,25 @@ describe("Command as admin", () => {
 		await setIsQueueAdmin(true);
 	});
 
-	describe("unknown input", () => {
-		test("does nothing", async () => {
+	describe("unknown input", function () {
+		it("does nothing", async function () {
 			const content = await commandResponseInTestChannel("dunno what this does");
 			expect(content).to.be.null;
 		});
 	});
 
-	describe("queue", () => {
-		describe("when the queue is not set up", () => {
+	describe("queue", function () {
+		describe("when the queue is not set up", function () {
 			const NO_QUEUE = "no queue";
 
-			test("url request does nothing", async () => {
+			it("url request does nothing", async function () {
 				const content = await commandResponseInTestChannel(`sr ${url}`, NO_QUEUE);
 				expect(content?.toLowerCase()).to.contain(NO_QUEUE);
 			});
 		});
 
-		describe("no queue yet", () => {
-			beforeEach(async () => {
+		describe("no queue yet", function () {
+			beforeEach(async function () {
 				await sendMessageWithDefaultClient(`**Setup**`);
 				await setIsQueueCreator(true);
 				await setIsQueueAdmin(true);
@@ -60,7 +61,7 @@ describe("Command as admin", () => {
 				await sendMessageWithDefaultClient(`**Run**`);
 			});
 
-			test("fails to set up a queue without a channel mention", async () => {
+			it("fails to set up a queue without a channel mention", async function () {
 				await setIsQueueCreator(true);
 				await useTesterClient(async client => {
 					const cmdMessage = await sendCommand(client, `${QUEUE_COMMAND} setup`);
@@ -71,29 +72,35 @@ describe("Command as admin", () => {
 				});
 			});
 
-			[
-				"entry-duration", //
-				"cooldown",
-				"count"
-			].forEach(key => {
-				test(`fails to set ${key} limits on the queue`, async () => {
-					const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
-					expect(content?.toLowerCase()).to.contain(NO_QUEUE);
-				});
-			});
+			{
+				const keys = [
+					"entry-duration", //
+					"cooldown",
+					"count"
+				];
+				for (const key of keys) {
+					it(`fails to set ${key} limits on the queue`, async function () {
+						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+					});
+				}
+			}
 
-			[
-				"entry-duration", //
-				"cooldown",
-				"count"
-			].forEach(key => {
-				test(`allows the tester to get the queue's global ${key} limit`, async () => {
-					const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key}`);
-					expect(content?.toLowerCase()).to.contain(NO_QUEUE);
-				});
-			});
+			{
+				const keys = [
+					"entry-duration", //
+					"cooldown",
+					"count"
+				];
+				for (const key of keys) {
+					it(`allows the tester to get the queue's global ${key} limit`, async function () {
+						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key}`);
+						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+					});
+				}
+			}
 
-			test("allows the tester to set up a queue", async () => {
+			it("allows the tester to set up a queue", async function () {
 				await setIsQueueCreator(true);
 				await sendCommandWithDefaultClient(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
 				const response = await waitForMessage(
@@ -104,21 +111,21 @@ describe("Command as admin", () => {
 		});
 	});
 
-	describe("video", () => {
+	describe("video", function () {
 		const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
-		test("asks for a song link", async () => {
+		it("asks for a song link", async function () {
 			const content = await commandResponseInTestChannel("video", needSongLink);
 			expect(content).to.be.string(needSongLink);
 		});
 
-		test("returns the title and duration of a song with normal spacing", async () => {
+		it("returns the title and duration of a song with normal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video ${url}`, info);
 			expect(content).to.be.string(info);
 		});
 
-		test("returns the title and duration of a song with suboptimal spacing", async () => {
+		it("returns the title and duration of a song with suboptimal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
 			expect(content).to.be.string(info);
 		});
