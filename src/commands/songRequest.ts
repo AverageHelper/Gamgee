@@ -19,16 +19,9 @@ export const sr: GuildedCommand = {
 	options: [
 		{
 			name: "url",
+			nameLocalizations: localizations("commands.sr.options.url.name"),
 			description: "A song link from a supported platform",
-			descriptionLocalizations: {
-				de: "Ein Link zu einem Lied von einer unterstützten Plattform",
-				"en-GB": "A song link from a supported platform",
-				"en-US": "A song link from a supported platform",
-				"es-ES": "Un enlace de canción desde una plataforma compatible",
-				fr: "Un lien de chanson à partir d'une plate-forme prise en charge",
-				hu: "Dal linkje egy támogatott platformról",
-				"pt-BR": "Um link de música de uma plataforma suportada"
-			},
+			descriptionLocalizations: localizations("commands.sr.options.url.description"),
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}

@@ -1,8 +1,29 @@
 {
 	"commands": {
+		"cooldown": {
+			"name": "cooldown",
+			"description": "Tudja meg, mikor küldheti be újra."
+		},
+		"help": {
+			"name": "segítség",
+			"description": "Nyomtasson ki egy hasznos súgóüzenetet."
+		},
+		"howto": {
+			"name": "hogyankell"
+		},
 		"sr": {
 			"name": "sr",
-			"description": "Adjon fel egy dalt a sorba."
+			"description": "Adjon fel egy dalt a sorba.",
+			"options": {
+				"url": {
+					"name": "url",
+					"description": "Dal linkje egy támogatott platformról"
+				}
+			}
+		},
+		"userinfo": {
+			"name": "felhasználóiadatok",
+			"description": "Néhány információt visszaad rólad."
 		}
 	}
 }

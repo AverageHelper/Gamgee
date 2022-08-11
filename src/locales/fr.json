@@ -1,8 +1,29 @@
 {
 	"commands": {
+		"cooldown": {
+			"name": "cooldown",
+			"description": "Découvrez quand vous pourrez soumettre à nouveau."
+		},
+		"help": {
+			"name": "aider",
+			"description": "Imprimez un message d'aide utile."
+		},
+		"howto": {
+			"name": "comment"
+		},
 		"sr": {
 			"name": "sr",
-			"description": "Soumettre une chanson à la file d'attente."
+			"description": "Soumettre une chanson à la file d'attente.",
+			"options": {
+				"url": {
+					"name": "url",
+					"description": "Un lien de chanson à partir d'une plate-forme prise en charge"
+				}
+			}
+		},
+		"userinfo": {
+			"name": "utilinfo",
+			"description": "Retourne quelques informations sur vous."
 		}
 	}
 }

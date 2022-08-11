@@ -1,27 +1,12 @@
 import type { Command } from "./Command.js";
 import { describeAllCommands } from "../actions/describeAllCommands.js";
+import { localizations } from "../i18n.js";
 
 export const help: Command = {
 	name: "help",
-	nameLocalizations: {
-		de: "hilfe",
-		"en-GB": "help",
-		"en-US": "help",
-		"es-ES": "ayuda",
-		fr: "aider",
-		hu: "segítség",
-		"pt-BR": "ajuda"
-	},
+	nameLocalizations: localizations("commands.help.name"),
 	description: "Print a handy help message.",
-	descriptionLocalizations: {
-		de: "Drucken Sie eine nützliche Hilfenachricht.",
-		"en-GB": "Print a useful help message.",
-		"en-US": "Print a handy help message.",
-		"es-ES": "Imprime un mensaje de ayuda útil.",
-		fr: "Imprimez un message d'aide utile.",
-		hu: "Nyomtasson ki egy hasznos súgóüzenetet.",
-		"pt-BR": "Imprima uma mensagem de ajuda útil."
-	},
+	descriptionLocalizations: localizations("commands.help.description"),
 	requiresGuild: false,
 	async execute(context) {
 		// Dynamic import here, b/c ./index depends on us to resolve

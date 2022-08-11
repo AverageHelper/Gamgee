@@ -1,8 +1,29 @@
 {
 	"commands": {
+		"cooldown": {
+			"name": "cooldown",
+			"description": "Find out when you can submit again."
+		},
+		"help": {
+			"name": "help",
+			"description": "Print a handy help message."
+		},
+		"howto": {
+			"name": "howto"
+		},
 		"sr": {
 			"name": "sr",
-			"description": "Submit a song to the queue."
+			"description": "Submit a song to the queue.",
+			"options": {
+				"url": {
+					"name": "url",
+					"description": "A song link from a supported platform"
+				}
+			}
+		},
+		"userinfo": {
+			"name": "userinfo",
+			"description": "Returns some information about you."
 		}
 	},
 	"test": {
