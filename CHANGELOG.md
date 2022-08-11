@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Nothing, yet!
+
+## [1.7.0] - 2022-08-10
 ### Added
 - Added naive French, German, Hungarian, Portuguese, and Spanish translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
 	- Slash command localizations are in open beta (according to [this message](https://discord.com/channels/613425648685547541/697138785317814292/956670963104239666) in the Discord Developers server). Use the [feature/web-slash-command-localization](https://discord.com/__development/link?s=BfVH8Z8qL1z5eLXlAUJT5uqob9jkwn937VrnvSL5kXg%3D.eyJ0YXJnZXRCdWlsZE92ZXJyaWRlIjp7ImRpc2NvcmRfd2ViIjp7InR5cGUiOiJicmFuY2giLCJpZCI6ImZlYXR1cmUvd2ViLXNsYXNoLWNvbW1hbmQtbG9jYWxpemF0aW9uIn19LCJyZWxlYXNlQ2hhbm5lbCI6bnVsbCwidmFsaWRGb3JVc2VySWRzIjpbXSwiYWxsb3dMb2dnZWRPdXQiOmZhbHNlLCJleHBpcmVzQXQiOiJXZWQsIDMxIEF1ZyAyMDIyIDE3OjU2OjQ2IEdNVCJ9) build override to see command localizations on your desktop client.
@@ -308,7 +311,8 @@ Please note:
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...v1.7.0
 [1.6.6]: https://github.com/AverageHelper/Gamgee/compare/v1.6.5...v1.6.6
 [1.6.5]: https://github.com/AverageHelper/Gamgee/compare/v1.6.4...v1.6.5
 [1.6.4]: https://github.com/AverageHelper/Gamgee/compare/v1.6.3...v1.6.4
