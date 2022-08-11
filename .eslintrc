@@ -55,11 +55,9 @@
 		{
 			"files": ["src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
 			"extends": ["plugin:jest/recommended"],
-			"plugins": ["prettier", "@typescript-eslint"],
-			"parser": "@typescript-eslint/parser",
+			"plugins": ["jest"],
 			"parserOptions": {
-				"project": "./tsconfig.test.json",
-				"tsconfigRootDir": "."
+				"project": "./tsconfig.test.json"
 			},
 			"env": {
 				"jest": true
@@ -72,11 +70,9 @@
 		{
 			"files": ["tests/**/*.ts"],
 			"extends": ["plugin:mocha/recommended"],
-			"plugins": ["prettier", "@typescript-eslint", "mocha"],
-			"parser": "@typescript-eslint/parser",
+			"plugins": ["mocha"],
 			"parserOptions": {
-				"project": "./tsconfig.e2e.json",
-				"tsconfigRootDir": "."
+				"project": "./tsconfig.e2e.json"
 			},
 			"rules": {
 				"prettier/prettier": "warn",
