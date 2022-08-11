@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Nothing, yet!
+### Changed
+- Gamgee now speaks over 7 languages, and knows it. (More, if you count JavaScript!)
+- Moved I18N calls into a single file that can be imported from anywhere in the codebase.
+- Locales are now stored in [/src/locales/](/src/locales/). Feel free to contribute there!
+- Added two functions to retrieve localized text in bulk (for Discord command registration) or for a single locale (for command responses).
 
 ## [1.7.0] - 2022-08-10
 ### Added
