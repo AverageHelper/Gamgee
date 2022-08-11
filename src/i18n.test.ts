@@ -7,31 +7,30 @@ describe("i18n", () => {
 			expect(t("commands.sr.name", "en-US")).toBe("sr");
 		});
 
-		test("throws on empty string", () => {
-			expect(() => t("", "en-US")).toThrow(TypeError);
-		});
-
 		test("defaults to the value in en-US if there's no string for the given locale", () => {
 			const value: string = t("test.something.only.english.would.have", "de");
 			expect(value).toBe(enUS.test.something.only.english.would.have);
 		});
 
-		test("defaults to the keypath for a partial path", () => {
-			const keypath = "test.something.only.english";
-			const value: string = t(keypath, "en-US");
-			expect(value).toBe(keypath);
+		test("returns undefined on empty string", () => {
+			expect(t("", "en-US")).toBeUndefined();
 		});
 
-		test("defaults to the keypath if en-US is stumped", () => {
+		test("returns undefined for a partial path", () => {
+			const value: undefined = t("test.something.only.english", "en-US");
+			expect(value).toBeUndefined();
+		});
+
+		test("returns undefined if en-US is stumped", () => {
 			const keypath = "nothing.should.have.this.string";
-			expect(t(keypath, "de")).toBe(keypath);
-			expect(t(keypath, "en-US")).toBe(keypath);
+			expect(t(keypath, "de")).toBeUndefined();
+			expect(t(keypath, "en-US")).toBeUndefined();
 		});
 
-		test("defaults to the keypath if the key is malformed", () => {
+		test("returns undefined if the key is malformed", () => {
 			const keypath = "nothing should have this string";
-			expect(t(keypath, "de")).toBe(keypath);
-			expect(t(keypath, "en-US")).toBe(keypath);
+			expect(t(keypath, "de")).toBeUndefined();
+			expect(t(keypath, "en-US")).toBeUndefined();
 		});
 	});
 
@@ -55,6 +54,11 @@ describe("i18n", () => {
 				hu: "Adjon fel egy dalt a sorba.",
 				"pt-BR": "Envie uma música para a fila."
 			});
+		});
+
+		test("returns undefined for incorrect key-paths", () => {
+			expect(localizations("")).toBeUndefined();
+			expect(localizations("commands.sr")).toBeUndefined();
 		});
 	});
 });

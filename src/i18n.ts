@@ -42,8 +42,7 @@ function split<S extends string, D extends string>(string: S, separator: D): Spl
 const get = <BaseType, Path extends string | ReadonlyArray<string>>(
 	object: BaseType,
 	path: Path
-): Get<BaseType, Path, { strict: true }> =>
-	_get(object, path) as Get<BaseType, Path, { strict: true }>;
+): Get<BaseType, Path> => _get(object, path) as Get<BaseType, Path>;
 
 const DOT = ".";
 
@@ -55,20 +54,14 @@ const DOT = ".";
  *
  * Returns `keypath` if no matching translation exists.
  */
-export function t(keypath: "", locale: SupportedLocale): never; // disallow empty string, since i18n-ally doesn't catch it
+export function t<K extends string>(
+	keypath: K,
+	locale: SupportedLocale
+): Get<MessageSchema, K> extends string ? Get<MessageSchema, K> : undefined;
 
-/**
- * Returns the given `locale`'s translation for the given `keypath`.
- *
- * If the given `locale` does not contain a matching translation,
- * but the default locale does, then that translation is returned.
- *
- * Returns `keypath` if no matching translation exists.
- */
-export function t<K extends string>(keypath: K, locale: SupportedLocale): string;
-
-export function t<K extends string>(keypath: K, locale: SupportedLocale): string {
-	if (keypath === "") throw new TypeError("keypath must not be empty");
+// FIXME: We shouldn't need to overload this
+export function t<K extends string>(keypath: K, locale: SupportedLocale): string | undefined {
+	if (keypath === "") return undefined;
 
 	const result = get<MessageSchema, Split<K, typeof DOT>>(
 		messages[locale] as MessageSchema,
@@ -82,7 +75,7 @@ export function t<K extends string>(keypath: K, locale: SupportedLocale): string
 		return t(keypath, DEFAULT_LOCALE);
 	}
 
-	return keypath; // we're stumped, return what we were given
+	return undefined; // we're stumped, return nothing
 }
 
 /**
@@ -91,12 +84,9 @@ export function t<K extends string>(keypath: K, locale: SupportedLocale): string
  */
 export function localizations<K extends string>(
 	keypath: K
-): Partial<Record<SupportedLocale, string>> | undefined;
+): Get<MessageSchema, K> extends string ? Partial<Record<SupportedLocale, string>> : undefined;
 
-/**
- * Returns an object with every translation we have for the given `keypath`,
- * or `undefined` if no translations exist.
- */
+// FIXME: We shouldn't need to overload this
 export function localizations<K extends string>(
 	keypath: K
 ): Partial<Record<SupportedLocale, string>> | undefined {
@@ -105,11 +95,10 @@ export function localizations<K extends string>(
 
 	Object.keys(messages).forEach(locale => {
 		if (!isSupportedLocale(locale)) return;
-		try {
-			const translation = t(keypath, locale);
+		const translation = t(keypath, locale);
+		if (translation !== undefined) {
+			// only add the translation if there is one to add
 			result[locale] = translation;
-		} catch {
-			// didn't find a translation at all
 		}
 	});
 
