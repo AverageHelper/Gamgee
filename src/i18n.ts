@@ -9,7 +9,7 @@ import fr from "./locales/fr.json";
 import hu from "./locales/hu.json";
 import ptBR from "./locales/pt-BR.json";
 
-const messages = {
+const vocabulary = {
 	de,
 	"en-GB": enGB,
 	"en-US": enUS,
@@ -19,22 +19,34 @@ const messages = {
 	"pt-BR": ptBR
 } as const;
 
-export type SupportedLocale = keyof typeof messages;
+const DEFAULT_LOCALE = "en-US";
 
-export const locales = Object.keys(messages) as ReadonlyArray<SupportedLocale>;
+export type SupportedLocale = keyof typeof vocabulary;
+
+export const locales = Object.keys(vocabulary) as ReadonlyArray<SupportedLocale>;
 
 /** Returns `true` if the given string matches a supported locale code. */
 export function isSupportedLocale(tbd: unknown): tbd is SupportedLocale {
 	return locales.includes(tbd as SupportedLocale);
 }
 
-const DEFAULT_LOCALE = "en-US";
-
 // TODO: Validate that all of our strings files match the master schema
 // TypeScript ensures here that DEFAULT_LOCALE is a valid locale:
-type MessageSchema = typeof messages[typeof DEFAULT_LOCALE];
+type MessageSchema = typeof vocabulary[typeof DEFAULT_LOCALE];
 
 // ** I18N Utilities **
+
+interface RecursiveStringRecord extends Record<string, string | RecursiveStringRecord> {}
+
+// for testing i18n over generic vocabularies
+type Vocabulary = {
+	[DEFAULT_LOCALE]: RecursiveStringRecord;
+} & {
+	[P in Exclude<SupportedLocale, typeof DEFAULT_LOCALE>]?: RecursiveStringRecord;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _: Vocabulary = vocabulary; // ensures our language types are formatted right
 
 import type { Get, Join, Split } from "type-fest";
 import _get from "lodash/get";
@@ -64,20 +76,38 @@ export function t<K extends string>(
 	locale: SupportedLocale
 ): Get<MessageSchema, K> extends string ? Get<MessageSchema, K> : undefined;
 
+/**
+ * Returns the given `locale`'s translation for the given `keypath`.
+ *
+ * If the given `locale` does not contain a matching translation,
+ * but the default locale does, then that translation is returned.
+ *
+ * Returns `keypath` if no matching translation exists.
+ */
+export function t<K extends string, V extends Vocabulary>(
+	keypath: K,
+	locale: SupportedLocale,
+	messages: V
+): Get<V[typeof DEFAULT_LOCALE], K> extends string ? Get<V[typeof DEFAULT_LOCALE], K> : undefined;
+
 // FIXME: We shouldn't need to overload this
-export function t<K extends string>(keypath: K, locale: SupportedLocale): string | undefined {
+export function t<K extends string>(
+	keypath: K,
+	locale: SupportedLocale,
+	data = vocabulary
+): string | undefined {
 	if (keypath === "") return undefined;
 
 	const result = get<MessageSchema, Split<K, typeof DOT>>(
-		messages[locale] as MessageSchema,
+		data[locale] as MessageSchema,
 		split(keypath, DOT)
 	);
 
-	if (isString(result)) return result; // found a result in the given locale!
+	if (isString(result) && result !== "") return result; // found a result in the given locale!
 
 	if (locale !== DEFAULT_LOCALE) {
 		// recurse, try the default locale:
-		return t(keypath, DEFAULT_LOCALE);
+		return t(keypath, DEFAULT_LOCALE, data);
 	}
 
 	return undefined; // we're stumped, return nothing
@@ -98,8 +128,7 @@ export function localizations<K extends string>(
 	// Get all localizations for the given keypath
 	const result: Partial<Record<SupportedLocale, string>> = {};
 
-	Object.keys(messages).forEach(locale => {
-		if (!isSupportedLocale(locale)) return;
+	locales.forEach(locale => {
 		const translation = t(keypath, locale);
 		if (translation !== undefined) {
 			// only add the translation if there is one to add
@@ -142,8 +171,8 @@ const partial: Path<typeof p0, typeof p1> = `${p0}.${p1}`;
 const path: Path<Path<typeof p0, typeof p1>, typeof p2> = given;
 const alsoPath: Join<typeof p, typeof DOT> = given;
 
-const commands: MessageSchema[typeof p0] = messages["en-US"][p0];
-const sr: MessageSchema[typeof p0][typeof p1] = messages["en-US"][p0][p1];
+const commands: MessageSchema[typeof p0] = vocabulary["en-US"][p0];
+const sr: MessageSchema[typeof p0][typeof p1] = vocabulary["en-US"][p0][p1];
 const name: MessageSchema[typeof p0][typeof p1][typeof p2] = t(given, "en-US");
 
 type IsKeyPath<O, K extends string> = Get<O, K> extends string ? true : false;
