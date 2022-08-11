@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated discord.js to version 14.1.2
 - Made [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
+- Migrated our integration tests from Jest to Mocha, because [`discord.js` now depends on `undici` instead of `node-fetch`](https://github.com/discordjs/discord.js/pull/7747), and [`undici` historically hasn't played well with Jest's runner](https://github.com/nodejs/undici/issues/318), and I guess [still doesn't](https://github.com/facebook/jest/issues/2549), and the [other](https://github.com/facebook/jest/issues/2549#issuecomment-983717728) [workarounds](https://github.com/facebook/jest/issues/2549#issuecomment-1098071474) [I](https://github.com/kayahr/jest-environment-node-single-context) [tried](https://github.com/nicolo-ribaudo/jest-light-runner) don't play well with ESM or the [`references`](https://www.typescriptlang.org/tsconfig#references) tsconfig option. Mocha works just fine, tho!
 
 ## [1.6.6] - 2022-07-26
 ### Added

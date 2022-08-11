@@ -15,7 +15,7 @@ describe("Command as pleb", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 
 	beforeEach(async function () {
-		const title = this.test?.titlePath().join(" - ");
+		const title = this.test?.fullTitle();
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);

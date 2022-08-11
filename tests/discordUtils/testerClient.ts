@@ -1,6 +1,7 @@
 import type { Message, PartialMessage } from "discord.js";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment.js";
+import { useTestLogger } from "../testUtils/logger.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
 
 /**
@@ -25,6 +26,55 @@ export const messageWaiters = new Map<number, (msg: Message) => boolean>();
  */
 export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessage) => boolean>();
 
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.GuildMessageTyping
+	],
+	partials: [Partials.Reaction, Partials.Channel, Partials.Message],
+	allowedMentions: {
+		parse: ["roles"],
+		repliedUser: true,
+		users: [requireEnv("BOT_TEST_ID")]
+	}
+});
+
+client.on("messageCreate", useDispatchLoop(messageWaiters));
+client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
+
+const logger = useTestLogger();
+
+async function signIn(): Promise<void> {
+	logger.debug("Signing into test client...");
+	const then = Date.now();
+	await client.login(requireEnv("CORDE_TEST_TOKEN"));
+	const now = Date.now();
+	logger.verbose(`Login took ${now - then} ms.`);
+}
+
+// Preemptively start signing in
+const signingIn = signIn();
+
+export async function setupTesterClient(): Promise<void> {
+	await signingIn;
+	if (!client.isReady()) {
+		// Another caller may have destroyed the client. Try again again
+		await signIn();
+	}
+}
+
+/**
+ * Be sure to call this only in an `after` or `afterAll` hook.
+ */
+export function destroyTesterClient(): void {
+	client.destroy();
+	logger.debug("Signed out of test client");
+}
+
 /**
  * Prepares the tester bot's Discord client. If the client is not logged in,
  * then we log it in before we return.
@@ -36,40 +86,16 @@ export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessa
  * @returns the logged-in Discord client for the tester bot.
  */
 export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T>): Promise<T> {
-	const client = new Client({
-		intents: [
-			GatewayIntentBits.Guilds,
-			GatewayIntentBits.GuildMessages,
-			GatewayIntentBits.MessageContent,
-			GatewayIntentBits.GuildMessageReactions,
-			GatewayIntentBits.DirectMessages,
-			GatewayIntentBits.GuildMessageTyping
-		],
-		partials: [Partials.Reaction, Partials.Channel, Partials.Message],
-		allowedMentions: {
-			parse: ["roles"],
-			repliedUser: true,
-			users: [requireEnv("BOT_TEST_ID")]
-		}
-	});
+	logger.debug("Waiting for tester client to sign in...");
+	await setupTesterClient();
 
-	const result = new Promise<T>((resolve, reject) => {
-		client.on("ready", async client => {
-			client.on("messageCreate", useDispatchLoop(messageWaiters));
-			client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
+	logger.debug("Ensuring tester client is signed in...");
+	if (!client.isReady()) throw new Error("Tester client is not ready");
 
-			try {
-				const result = await cb(client);
-				client.destroy();
-				return resolve(result);
-			} catch (error) {
-				client.destroy();
-				return reject(error);
-			}
-		});
-	});
+	const then = Date.now();
+	const result = await cb(client);
+	const now = Date.now();
+	logger.verbose(`Callback finished in ${now - then} ms.`);
 
-	await client.login(requireEnv("CORDE_TEST_TOKEN"));
-
-	return await result;
+	return result;
 }

@@ -21,7 +21,7 @@ describe("Command as admin", function () {
 	const NO_QUEUE = "no queue";
 
 	beforeEach(async function () {
-		const title = this.test?.titlePath().join(" - ");
+		const title = this.test?.fullTitle();
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);
