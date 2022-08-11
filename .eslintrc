@@ -8,7 +8,6 @@
 		"strictest/typescript-eslint",
 		"strictest/unicorn",
 		"eslint:recommended",
-		"plugin:jest/recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:prettier/recommended"
@@ -54,20 +53,32 @@
 
 	"overrides": [
 		{
-			"files": ["src/**/*.test.ts", "tests/**/*.ts", "**/__mocks__/**/*.ts"],
-			"extends": ["plugin:prettier/recommended"],
-			"plugins": ["prettier", "@typescript-eslint"],
-			"parser": "@typescript-eslint/parser",
+			"files": ["src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
+			"extends": ["plugin:jest/recommended"],
+			"plugins": ["jest"],
 			"parserOptions": {
-				"project": "./tsconfig.test.json",
-				"tsconfigRootDir": "."
+				"project": "./tsconfig.test.json"
 			},
 			"env": {
 				"jest": true
 			},
 			"rules": {
 				"prettier/prettier": "warn",
-				"max-nested-callbacks": "off" // Unit tests involve a lot of nested callbacks
+				"max-nested-callbacks": "off" // unit tests involve a lot of nested callbacks
+			}
+		},
+		{
+			"files": ["tests/**/*.ts"],
+			"extends": ["plugin:mocha/recommended"],
+			"plugins": ["mocha"],
+			"parserOptions": {
+				"project": "./tsconfig.e2e.json"
+			},
+			"rules": {
+				"prettier/prettier": "warn",
+				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
+				"func-names": "off", // unnamed functions are common in Mocha
+				"@typescript-eslint/no-invalid-this": "off" // mocha exposes test metadata in `this`
 			}
 		},
 		{

@@ -2,9 +2,10 @@ import type Discord from "discord.js";
 import type { CommandContext } from "./commands/index.js";
 import type { Logger } from "./logger.js";
 import type { Storage } from "./configStorage.js";
-import { invokeCommand } from "./actions/invokeCommand.js";
 import { allCommands } from "./commands/index.js";
+import { ChannelType } from "discord.js";
 import { getEnv } from "./helpers/environment.js";
+import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { replyPrivately, sendMessageInChannel } from "./actions/messages/index.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
@@ -45,8 +46,17 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let channel: Discord.TextBasedChannel | null = null;
-		if (interaction.channel?.isText() === true) {
+		let member: Discord.GuildMember | null;
+		if (interaction.inCachedGuild()) {
+			member = interaction.member;
+		} else {
+			member = (await interaction.guild?.members.fetch(interaction.user)) ?? null;
+		}
+
+		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
+			channel = await interaction.channel.fetch();
+		} else {
 			channel = interaction.channel;
 		}
 
@@ -54,6 +64,7 @@ export async function handleInteraction(
 			type: "interaction",
 			createdTimestamp: interaction.createdTimestamp,
 			user: interaction.user,
+			member,
 			guild: interaction.guild,
 			channel,
 			client: interaction.client,
@@ -145,7 +156,7 @@ export async function handleInteraction(
 					typeof options !== "string" &&
 					(!("reply" in options) || options.reply === false || options.reply === undefined) &&
 					interaction.channel &&
-					interaction.channel.isText()
+					interaction.channel.isTextBased()
 				) {
 					return (
 						(await sendMessageInChannel(interaction.channel, { ...options, reply: undefined })) ??
@@ -153,7 +164,7 @@ export async function handleInteraction(
 					);
 				}
 				try {
-					return (await interaction.followUp(options)) as Discord.Message;
+					return await interaction.followUp(options);
 				} catch (error) {
 					logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					return false;
@@ -161,8 +172,10 @@ export async function handleInteraction(
 			},
 			deleteInvocation: () => Promise.resolve(undefined), // nop
 			sendTyping: () => {
-				void channel?.sendTyping();
-				logger.debug(`Typing in channel ${channel?.id ?? "nowhere"} due to Context.sendTyping`);
+				void interaction.channel?.sendTyping();
+				logger.debug(
+					`Typing in channel ${interaction.channel?.id ?? "nowhere"} due to Context.sendTyping`
+				);
 			}
 		};
 

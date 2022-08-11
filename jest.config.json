@@ -1,53 +1,27 @@
 {
-	"projects": [
-		{
-			"displayName": "src",
-			"clearMocks": true,
-			"preset": "ts-jest/presets/js-with-ts-esm",
-			"transformIgnorePatterns": [
-				"node_modules/(?!(data-uri-to-buffer|formdata-polyfill|fetch-blob|node-fetch|node:http)/)"
-			],
-			"setupFilesAfterEnv": ["jest-extended/all"],
-			"testEnvironment": "node",
-			"testPathIgnorePatterns": ["/node_modules/"],
-			"modulePathIgnorePatterns": ["<rootDir>/.*/__mocks__"],
-			"testRegex": ["src/.*\\.test\\.(t|j)s$"],
-			"globals": {
-				"ts-jest": {
-					"tsconfig": "./tsconfig.test.json",
-					"useESM": true
-				}
-			},
-			"extensionsToTreatAsEsm": [".ts"],
-			"moduleNameMapper": {
-				"^(\\.{1,2}/.*)\\.js$": "$1"
-			},
-			"collectCoverage": true,
-			"collectCoverageFrom": ["src/**/*!(.d)!(.test).ts"],
-			"coverageDirectory": "coverage",
-			"coveragePathIgnorePatterns": ["/node_modules/"],
-			"verbose": true
-		},
-		{
-			"displayName": "e2e",
-			"clearMocks": true,
-			"preset": "ts-jest",
-			"setupFilesAfterEnv": ["./tests/setupJest.ts", "jest-extended/all"],
-			"testEnvironment": "node",
-			"testPathIgnorePatterns": ["/node_modules/"],
-			"testRegex": ["tests/.*\\.test\\.(t|j)s$"],
-			"globals": {
-				"ts-jest": {
-					"tsconfig": "./tsconfig.test.json",
-					"useESM": true
-				}
-			},
-			"extensionsToTreatAsEsm": [".ts"],
-			"moduleNameMapper": {
-				"^(\\.{1,2}/.*)\\.js$": "$1"
-			},
-			"collectCoverage": false,
-			"verbose": true
+	"clearMocks": true,
+	"preset": "ts-jest/presets/js-with-ts-esm",
+	"transformIgnorePatterns": [
+		"node_modules/(?!(data-uri-to-buffer|formdata-polyfill|fetch-blob|node-fetch|node:http)/)"
+	],
+	"setupFilesAfterEnv": ["jest-extended/all"],
+	"testEnvironment": "node",
+	"testPathIgnorePatterns": ["/node_modules/"],
+	"modulePathIgnorePatterns": ["<rootDir>/.*/__mocks__"],
+	"testRegex": ["src/.*\\.test\\.(t|j)s$"],
+	"globals": {
+		"ts-jest": {
+			"tsconfig": "./tsconfig.test.json",
+			"useESM": true
 		}
-	]
+	},
+	"extensionsToTreatAsEsm": [".ts"],
+	"moduleNameMapper": {
+		"^(\\.{1,2}/.*)\\.js$": "$1"
+	},
+	"collectCoverage": true,
+	"collectCoverageFrom": ["src/**/*!(.d)!(.test).ts"],
+	"coverageDirectory": "coverage",
+	"coveragePathIgnorePatterns": ["/node_modules/"],
+	"verbose": true
 }

@@ -4,43 +4,30 @@ exports[`Get Queue Limits shows statistics on queue limits 1`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	infinite",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	none",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -51,43 +38,30 @@ exports[`Get Queue Limits shows statistics on queue limits 2`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	infinite",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	42 seconds",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -98,43 +72,30 @@ exports[`Get Queue Limits shows statistics on queue limits 3`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	infinite",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	none",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -145,43 +106,30 @@ exports[`Get Queue Limits shows statistics on queue limits 4`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	42",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	none",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -192,43 +140,30 @@ exports[`Get Queue Limits shows statistics on queue limits 5`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	infinite",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	42 seconds",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -239,43 +174,30 @@ exports[`Get Queue Limits shows statistics on queue limits 6`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	42",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	none",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -286,43 +208,30 @@ exports[`Get Queue Limits shows statistics on queue limits 7`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	42",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	42 seconds",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	infinite",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,
@@ -333,43 +242,30 @@ exports[`Get Queue Limits shows statistics on queue limits 8`] = `
 Object {
   "embeds": Array [
     Object {
-      "author": null,
-      "color": null,
       "description": "Use \`/cooldown\` to see your cooldown time",
       "fields": Array [
         Object {
-          "inline": false,
           "name": "Number of Submissions:	42",
           "value": "The maximum number of submissions that each user may submit.",
         },
         Object {
-          "inline": false,
           "name": "Submission Cooldown:	42 seconds",
           "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
         },
         Object {
-          "inline": false,
           "name": "Min Song Length:	0",
           "value": "The minimum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Max Song Length:	42 seconds",
           "value": "The maximum duration (in seconds) of a song submission.",
         },
         Object {
-          "inline": false,
           "name": "Total Queue Length:	infinite",
           "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
-      "footer": null,
-      "image": null,
-      "thumbnail": null,
-      "timestamp": null,
       "title": "Queue Limits",
-      "type": "rich",
-      "url": null,
     },
   ],
   "ephemeral": true,

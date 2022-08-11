@@ -3,7 +3,7 @@ import type { Metadata } from "../helpers/urlMetadata/index.js";
 import { getPonyFmTrackInfoFromId } from "../helpers/getPonyFmTrackInfoFromId.js";
 import { isString } from "../helpers/guards.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
-import { URL } from "url";
+import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 import fetch from "node-fetch";
 import SoundCloud from "soundcloud-scraper";

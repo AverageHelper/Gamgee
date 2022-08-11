@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import type { ApplicationCommandType, ApplicationCommandOptionType } from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
 import type { CommandPermission, PermissionAlias } from "./CommandPermission.js";
 
@@ -14,6 +15,7 @@ type PermissionGenerator = (
 interface BaseCommand extends Discord.ChatInputApplicationCommandData {
 	aliases?: Array<string>;
 	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
+	type?: ApplicationCommandType.ChatInput;
 }
 
 export interface GlobalCommand extends BaseCommand {
@@ -22,6 +24,8 @@ export interface GlobalCommand extends BaseCommand {
 
 	/** Permission overwrites for user or guild command access. */
 	permissions?: undefined;
+	defaultMemberPermissions?: undefined;
+	dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -39,6 +43,10 @@ export interface GuildedCommand extends BaseCommand {
 	/** Permission overwrites for user or guild command access. */
 	permissions?: PermissionGenerator | PermissionAliasList;
 
+	// TODO: Unblock these and use them instead of the above `permissions` value
+	defaultMemberPermissions?: undefined;
+	dmPermission?: undefined;
+
 	/**
 	 * The command implementation. Receives contextual information about the
 	 * command invocation. May return a `Promise`.
@@ -54,7 +62,7 @@ export interface GuildedCommand extends BaseCommand {
 export type Command = GlobalCommand | GuildedCommand;
 
 interface BaseSubcommand extends Discord.ApplicationCommandSubCommandData {
-	type: "SUB_COMMAND";
+	type: ApplicationCommandOptionType.Subcommand;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {
@@ -63,6 +71,8 @@ export interface GlobalSubcommand extends BaseSubcommand {
 
 	/** Permission overwrites for user or guild subcommand access. */
 	permissions?: undefined;
+	defaultMemberPermissions?: undefined;
+	dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -79,6 +89,10 @@ export interface GuildedSubcommand extends BaseSubcommand {
 
 	/** Permission overwrites for user or guild subcommand access. */
 	permissions?: PermissionGenerator | PermissionAliasList;
+
+	// TODO: Unblock these and use them instead of the above `permissions` value
+	defaultMemberPermissions?: undefined;
+	dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the

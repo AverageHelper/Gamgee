@@ -38,28 +38,29 @@ export async function suppressEmbedsForMessage(
 	suppress: boolean = true
 ): Promise<void> {
 	try {
-		if (!message.author.bot) {
-			// Assume we didn't send this. Change flags only
-			const flags = new Discord.MessageFlags(message.flags.bitfield);
+		const me = message.client.user;
 
-			if (suppress) {
-				flags.add(Discord.MessageFlags.FLAGS.SUPPRESS_EMBEDS);
-				await message.edit({ flags, allowedMentions: { users: [] } }); // Suppress pings, too
-			} else {
-				flags.remove(Discord.MessageFlags.FLAGS.SUPPRESS_EMBEDS);
-			}
-
+		if (message.author.id !== me?.id) {
+			// Assume we didn't send this.
+			await message.suppressEmbeds(suppress);
 			return;
 		}
 
-		// We sent this. We can edit it.
+		// We sent this, so we can edit its content directly.
+		const flags = new Discord.MessageFlagsBitField(message.flags.bitfield);
 		if (suppress) {
+			flags.add(Discord.MessageFlags.SuppressEmbeds);
 			await editMessage(message, {
+				flags,
 				content: escapeUriInString(message.content),
 				allowedMentions: { users: [] }
 			});
 		} else {
-			await editMessage(message, { content: stopEscapingUriInString(message.content) });
+			flags.remove(Discord.MessageFlags.SuppressEmbeds);
+			await editMessage(message, {
+				flags,
+				content: stopEscapingUriInString(message.content)
+			});
 		}
 	} catch (error) {
 		logger.error(richErrorMessage("Cannot suppress message embeds.", error));

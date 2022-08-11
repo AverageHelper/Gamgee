@@ -1,11 +1,14 @@
+import { expect } from "chai";
 import { requireEnv } from "../src/helpers/environment.js";
 import {
 	setIsQueueAdmin,
 	setIsQueueCreator,
-	commandResponseInSameChannel,
+	commandResponseInTestChannel,
 	sendCommand,
 	waitForMessage,
-	sendMessage
+	sendMessageWithDefaultClient,
+	sendCommandWithDefaultClient,
+	useTesterClient
 } from "./discordUtils/index.js";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
@@ -13,115 +16,118 @@ const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 const QUEUE_COMMAND = "quo";
 
-describe("Command as admin", () => {
+describe("Command as admin", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 	const NO_QUEUE = "no queue";
 
-	beforeEach(async () => {
-		await sendMessage(`**'${expect.getState().currentTestName}'**`);
+	beforeEach(async function () {
+		const title = this.test?.fullTitle();
+		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);
-		await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
+		await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
 
 		// Add the Queue Admin role to the tester bot
 		await setIsQueueCreator(false);
 		await setIsQueueAdmin(true);
 	});
 
-	describe("unknown input", () => {
-		test("does nothing", async () => {
-			const response = await commandResponseInSameChannel("dunno what this does");
-			expect(response).toBeNull();
+	describe("unknown input", function () {
+		it("does nothing", async function () {
+			const content = await commandResponseInTestChannel("dunno what this does");
+			expect(content).to.be.null;
 		});
 	});
 
-	describe("queue", () => {
-		describe("when the queue is not set up", () => {
+	describe("queue", function () {
+		describe("when the queue is not set up", function () {
 			const NO_QUEUE = "no queue";
 
-			test("url request does nothing", async () => {
-				const response = await commandResponseInSameChannel(`sr ${url}`, undefined, NO_QUEUE);
-				expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+			it("url request does nothing", async function () {
+				const content = await commandResponseInTestChannel(`sr ${url}`, NO_QUEUE);
+				expect(content?.toLowerCase()).to.contain(NO_QUEUE);
 			});
 		});
 
-		describe("no queue yet", () => {
-			beforeEach(async () => {
-				await sendMessage(`**Setup**`);
+		describe("no queue yet", function () {
+			beforeEach(async function () {
+				await sendMessageWithDefaultClient(`**Setup**`);
 				await setIsQueueCreator(true);
 				await setIsQueueAdmin(true);
 
-				await commandResponseInSameChannel(`${QUEUE_COMMAND} teardown`, undefined, "deleted");
+				await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
 
 				await setIsQueueCreator(false);
-				await sendMessage(`**Run**`);
+				await sendMessageWithDefaultClient(`**Run**`);
 			});
 
-			test("fails to set up a queue without a channel mention", async () => {
+			it("fails to set up a queue without a channel mention", async function () {
 				await setIsQueueCreator(true);
-				const cmdMessage = await sendCommand(`${QUEUE_COMMAND} setup`);
-				const response = await waitForMessage(
-					msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
-				);
-				// expect(cmdMessage.deleted).toBeTrue(); // FIXME: This should work tho
-				expect(response?.content).toContain("name a text channel");
+				await useTesterClient(async client => {
+					const cmdMessage = await sendCommand(client, `${QUEUE_COMMAND} setup`);
+					const response = await waitForMessage(
+						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
+					);
+					expect(response?.content).to.contain("name a text channel");
+				});
 			});
 
-			test.each`
-				key
-				${"entry-duration"}
-				${"cooldown"}
-				${"count"}
-			`("fails to set $key limits on the queue", async ({ key }: { key: string }) => {
-				const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key} 3`);
-				expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
-			});
-
-			test.each`
-				key
-				${"entry-duration"}
-				${"cooldown"}
-				${"count"}
-			`(
-				"allows the tester to get the queue's global $key limit",
-				async ({ key }: { key: string }) => {
-					const response = await commandResponseInSameChannel(`${QUEUE_COMMAND} limit ${key}`);
-					expect(response?.content.toLowerCase()).toContain(NO_QUEUE);
+			{
+				const keys = [
+					"entry-duration", //
+					"cooldown",
+					"count"
+				];
+				for (const key of keys) {
+					it(`fails to set ${key} limits on the queue`, async function () {
+						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+					});
 				}
-			);
+			}
 
-			test("allows the tester to set up a queue", async () => {
+			{
+				const keys = [
+					"entry-duration", //
+					"cooldown",
+					"count"
+				];
+				for (const key of keys) {
+					it(`allows the tester to get the queue's global ${key} limit`, async function () {
+						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key}`);
+						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+					});
+				}
+			}
+
+			it("allows the tester to set up a queue", async function () {
 				await setIsQueueCreator(true);
-				await sendCommand(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+				await sendCommandWithDefaultClient(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
 				);
-				expect(response?.content).toContain("This is a queue now.");
+				expect(response?.content).to.contain("This is a queue now.");
 			});
 		});
 	});
 
-	describe("video", () => {
+	describe("video", function () {
 		const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
-		test("asks for a song link", async () => {
-			const response = await commandResponseInSameChannel("video", undefined, needSongLink);
-			expect(response?.content).toBe(needSongLink);
+		it("asks for a song link", async function () {
+			const content = await commandResponseInTestChannel("video", needSongLink);
+			expect(content).to.be.string(needSongLink);
 		});
 
-		test("returns the title and duration of a song with normal spacing", async () => {
-			const response = await commandResponseInSameChannel(`video ${url}`, undefined, info);
-			expect(response?.content).toBe(info);
+		it("returns the title and duration of a song with normal spacing", async function () {
+			const content = await commandResponseInTestChannel(`video ${url}`, info);
+			expect(content).to.be.string(info);
 		});
 
-		test("returns the title and duration of a song with suboptimal spacing", async () => {
-			const response = await commandResponseInSameChannel(
-				`video             ${url}`,
-				undefined,
-				info
-			);
-			expect(response?.content).toBe(info);
+		it("returns the title and duration of a song with suboptimal spacing", async function () {
+			const content = await commandResponseInTestChannel(`video             ${url}`, info);
+			expect(content).to.be.string(info);
 		});
 	});
 });

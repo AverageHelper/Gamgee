@@ -1,0 +1,9 @@
+{
+	"bail": true,
+	"exit": true,
+	"extension": "ts",
+	"loader": "ts-node/esm",
+	"require": "./tests/hooks.ts",
+	"retries": 2,
+	"timeout": 20000
+}

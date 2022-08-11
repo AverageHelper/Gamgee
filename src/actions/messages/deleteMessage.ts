@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
+import { ChannelType } from "discord.js";
 import { isDiscordError } from "../../helpers/isError.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
@@ -19,7 +20,7 @@ const logger = useLogger();
 export async function deleteMessage(
 	message: Discord.Message | Discord.PartialMessage
 ): Promise<boolean> {
-	if (message.channel.type === "DM") {
+	if (message.channel.type === ChannelType.DM) {
 		logger.debug("Can't delete others' messages in a DM channel.");
 		return false;
 	}

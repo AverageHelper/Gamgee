@@ -1,18 +1,8 @@
-import Discord from "discord.js";
+import type { Message, PartialMessage } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { requireEnv } from "../../src/helpers/environment.js";
-import { timeoutSeconds } from "../../src/helpers/timeoutSeconds.js";
+import { useTestLogger } from "../testUtils/logger.js";
 import { useDispatchLoop } from "./dispatchLoop.js";
-
-let isClientLoggedIn = false;
-const client = new Discord.Client({
-	intents: [
-		"GUILDS",
-		"GUILD_MESSAGES",
-		"GUILD_MESSAGE_REACTIONS",
-		"DIRECT_MESSAGES",
-		"GUILD_MESSAGE_TYPING"
-	]
-});
 
 /**
  * A collection of functions that expect a message to arrive within a
@@ -23,9 +13,7 @@ const client = new Discord.Client({
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageWaiters = new Discord.Collection<number, (msg: Discord.Message) => boolean>();
-
-client.on("messageCreate", useDispatchLoop(messageWaiters));
+export const messageWaiters = new Map<number, (msg: Message) => boolean>();
 
 /**
  * A collection of functions that expect a message be deleted within a
@@ -36,34 +24,78 @@ client.on("messageCreate", useDispatchLoop(messageWaiters));
  * Waiter functions should remove themselves from this collection if their
  * timeout elapses before a matching message arrives.
  */
-export const messageDeleteWaiters = new Discord.Collection<
-	number,
-	(msg: Discord.Message | Discord.PartialMessage) => boolean
->();
+export const messageDeleteWaiters = new Map<number, (msg: Message | PartialMessage) => boolean>();
 
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.GuildMessageTyping
+	],
+	partials: [Partials.Reaction, Partials.Channel, Partials.Message],
+	allowedMentions: {
+		parse: ["roles"],
+		repliedUser: true,
+		users: [requireEnv("BOT_TEST_ID")]
+	}
+});
+
+client.on("messageCreate", useDispatchLoop(messageWaiters));
 client.on("messageDelete", useDispatchLoop(messageDeleteWaiters));
+
+const logger = useTestLogger();
+
+async function signIn(): Promise<void> {
+	logger.debug("Signing into test client...");
+	const then = Date.now();
+	await client.login(requireEnv("CORDE_TEST_TOKEN"));
+	const now = Date.now();
+	logger.verbose(`Login took ${now - then} ms.`);
+}
+
+// Preemptively start signing in
+const signingIn = signIn();
+
+export async function setupTesterClient(): Promise<void> {
+	await signingIn;
+	if (!client.isReady()) {
+		// Another caller may have destroyed the client. Try again again
+		await signIn();
+	}
+}
+
+/**
+ * Be sure to call this only in an `after` or `afterAll` hook.
+ */
+export function destroyTesterClient(): void {
+	client.destroy();
+	logger.debug("Signed out of test client");
+}
 
 /**
  * Prepares the tester bot's Discord client. If the client is not logged in,
  * then we log it in before we return.
  *
+ * @param cb A callback function that receives a logged-in Discord
+ * client. After the function resolves or throws, the client automatically
+ * logs out.
+ *
  * @returns the logged-in Discord client for the tester bot.
  */
-export async function testerClient(): Promise<Discord.Client> {
-	const TESTER_TOKEN = requireEnv("CORDE_TEST_TOKEN");
-	if (!isClientLoggedIn) {
-		isClientLoggedIn = true;
-		await client.login(TESTER_TOKEN);
-	}
-	return client;
-}
+export async function useTesterClient<T>(cb: (client: Client<true>) => Promise<T>): Promise<T> {
+	logger.debug("Waiting for tester client to sign in...");
+	await setupTesterClient();
 
-/**
- * Logs out of the tester bot's Discord client.
- */
-export async function logOut(): Promise<void> {
-	if (isClientLoggedIn) {
-		client.destroy();
-		await timeoutSeconds(1); // die after 1s
-	}
+	logger.debug("Ensuring tester client is signed in...");
+	if (!client.isReady()) throw new Error("Tester client is not ready");
+
+	const then = Date.now();
+	const result = await cb(client);
+	const now = Date.now();
+	logger.verbose(`Callback finished in ${now - then} ms.`);
+
+	return result;
 }

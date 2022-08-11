@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Nothing, yet!
 
-## [1.6.6]
+## [1.7.0] - 2022-08-10
+### Added
+- Added naive French, German, Hungarian, Portuguese, and Spanish translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
+	- Slash command localizations are in open beta (according to [this message](https://discord.com/channels/613425648685547541/697138785317814292/956670963104239666) in the Discord Developers server). Use the [feature/web-slash-command-localization](https://discord.com/__development/link?s=BfVH8Z8qL1z5eLXlAUJT5uqob9jkwn937VrnvSL5kXg%3D.eyJ0YXJnZXRCdWlsZE92ZXJyaWRlIjp7ImRpc2NvcmRfd2ViIjp7InR5cGUiOiJicmFuY2giLCJpZCI6ImZlYXR1cmUvd2ViLXNsYXNoLWNvbW1hbmQtbG9jYWxpemF0aW9uIn19LCJyZWxlYXNlQ2hhbm5lbCI6bnVsbCwidmFsaWRGb3JVc2VySWRzIjpbXSwiYWxsb3dMb2dnZWRPdXQiOmZhbHNlLCJleHBpcmVzQXQiOiJXZWQsIDMxIEF1ZyAyMDIyIDE3OjU2OjQ2IEdNVCJ9) build override to see command localizations on your desktop client.
+- Added the URL to this repository to the bot's profile. (For some reason, links inside of the bot description are unreliable, and seem to cause the description to go away after a while.)
+
+### Changed
+- Updated discord.js to version 14.1.2
+- Made [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
+- Migrated our integration tests from Jest to Mocha, because [`discord.js` now depends on `undici` instead of `node-fetch`](https://github.com/discordjs/discord.js/pull/7747), and [`undici` historically hasn't played well with Jest's runner](https://github.com/nodejs/undici/issues/318), and I guess [still doesn't](https://github.com/facebook/jest/issues/2549), and the [other](https://github.com/facebook/jest/issues/2549#issuecomment-983717728) [workarounds](https://github.com/facebook/jest/issues/2549#issuecomment-1098071474) [I](https://github.com/kayahr/jest-environment-node-single-context) [tried](https://github.com/nicolo-ribaudo/jest-light-runner) don't play well with ESM or the [`references`](https://www.typescriptlang.org/tsconfig#references) tsconfig option. Mocha works just fine, tho!
+
+## [1.6.6] - 2022-07-26
 ### Added
 - Added a robust [CHANGELOG.md](CHANGELOG.md) based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s example.
 
@@ -300,7 +311,8 @@ Please note:
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...v1.7.0
 [1.6.6]: https://github.com/AverageHelper/Gamgee/compare/v1.6.5...v1.6.6
 [1.6.5]: https://github.com/AverageHelper/Gamgee/compare/v1.6.4...v1.6.5
 [1.6.4]: https://github.com/AverageHelper/Gamgee/compare/v1.6.3...v1.6.4

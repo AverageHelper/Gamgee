@@ -1,7 +1,9 @@
 import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
 import { allCommands } from "../commands/index.js";
+import { ApplicationCommandType } from "discord.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 import { useLogger } from "../logger.js";
 
 const testMode: boolean = false;
@@ -18,9 +20,37 @@ function pluralOf(value: number | Array<unknown>): "" | "s" {
 async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Clearing commands for guild ${guild.id}...`);
 	if (!testMode) {
-		await guild.commands.set([]); // set guild commands
+		try {
+			await guild.commands.set([]); // set guild commands
+		} catch (error) {
+			logger.error(richErrorMessage(`Failed to clear commands for guild ${guild.id}.`, error));
+		}
 	}
 	logger.debug(`Commands cleared for guild ${guild.id}`);
+}
+
+function discordCommandPayloadFromCommand(cmd: Command): Discord.ApplicationCommandDataResolvable {
+	logger.verbose(`\t'/${cmd.name}'  (requires guild, any privilege)`);
+
+	const payload: Discord.ApplicationCommandData = {
+		description: cmd.description,
+		type: cmd.type ?? ApplicationCommandType.ChatInput,
+		name: cmd.name // TODO: Repeat for command aliases
+	};
+	if (cmd.nameLocalizations) {
+		logger.verbose("\t\tits name is localized");
+		payload.nameLocalizations = cmd.nameLocalizations;
+	}
+	if (cmd.descriptionLocalizations) {
+		logger.verbose("\t\tits description is localized");
+		payload.descriptionLocalizations = cmd.descriptionLocalizations;
+	}
+	if (cmd.options) {
+		payload.options = cmd.options;
+	}
+	// TODO: Set defaultMemberPermissions and dmPermission
+
+	return payload;
 }
 
 async function prepareUnprivilegedCommands(
@@ -28,26 +58,28 @@ async function prepareUnprivilegedCommands(
 	guild: Discord.Guild
 ): Promise<number> {
 	logger.verbose(
-		`Creating ${unprivilegedCommands.length} command${pluralOf(unprivilegedCommands)}:`
+		`Creating ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}:`
 	);
-	unprivilegedCommands.forEach(command => {
-		logger.verbose(`\t'/${command.name}'  (requires guild, any privilege)`);
-	});
+
+	const payloads = unprivilegedCommands.map(discordCommandPayloadFromCommand);
 
 	if (!testMode) {
-		await guild.commands.set(unprivilegedCommands);
+		await guild.commands.set(payloads);
 	}
 
-	return unprivilegedCommands.length;
+	return payloads.length;
 }
 
 async function preparePrivilegedCommands(
 	privilegedCommands: Array<GuildedCommand>,
 	guild: Discord.Guild
 ): Promise<number> {
-	let successfulPrivilegedPushes = 0;
-	logger.verbose(`Creating ${privilegedCommands.length} command${pluralOf(privilegedCommands)}...`);
-	await Promise.allSettled(
+	// See https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions for the new way to do this
+
+	logger.verbose(
+		`Creating ${privilegedCommands.length} privileged command${pluralOf(privilegedCommands)}...`
+	);
+	const results = await Promise.allSettled(
 		privilegedCommands.map(async cmd => {
 			try {
 				let appCommand: Discord.ApplicationCommand | undefined;
@@ -57,26 +89,37 @@ async function preparePrivilegedCommands(
 						: "custom permissions"
 					: "any privilege";
 				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
+
+				const payload = discordCommandPayloadFromCommand(cmd);
+
 				if (!testMode) {
-					appCommand = await guild.commands.create(cmd);
+					appCommand = await guild.commands.create(payload);
 					logger.debug(`Created command '/${cmd.name}' (${appCommand.id}) in guild ${guild.id}`);
 				} else {
 					logger.debug(`Created command '/${cmd.name}' in guild ${guild.id}`);
 				}
 
-				// TODO: Set default permissions
-
-				successfulPrivilegedPushes += 1;
+				logger.debug(
+					`Created command '/${cmd.name}' (${appCommand?.id ?? "test mode"}) in guild ${guild.id}`
+				);
 				return appCommand;
 			} catch (error) {
+				// TODO: Can we log this in the final results handler?
 				logger.error(
-					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}`, error)
+					richErrorMessage(`Failed to create command '/${cmd.name}' on guild ${guild.id}.`, error)
 				);
 				throw error;
 			}
 		})
 	);
-	return successfulPrivilegedPushes;
+
+	let numberSuccessful = 0;
+	results.forEach(result => {
+		if (result.status === "fulfilled") {
+			numberSuccessful += 1;
+		}
+	});
+	return numberSuccessful;
 }
 
 async function prepareCommandsForGuild(
@@ -107,7 +150,7 @@ async function prepareCommandsForGuild(
 
 async function prepareGuildedCommands(
 	guildCommands: Array<GuildedCommand>,
-	client: Discord.Client
+	client: Discord.Client<true>
 ): Promise<void> {
 	const oAuthGuilds = await client.guilds.fetch();
 	const guilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
@@ -122,7 +165,7 @@ async function prepareGuildedCommands(
 
 async function prepareGlobalCommands(
 	globalCommands: Array<GlobalCommand>,
-	client: Discord.Client
+	client: Discord.Client<true>
 ): Promise<void> {
 	logger.verbose(
 		`${globalCommands.length} command${pluralOf(
@@ -138,7 +181,12 @@ async function prepareGlobalCommands(
 	logger.verbose(`Set ${globalCommands.length} global command${pluralOf(globalCommands)}.`);
 }
 
-export async function prepareSlashCommandsThenExit(client: Discord.Client): Promise<void> {
+export async function prepareSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
+	logger.warn(
+		"Discord has changed the way command permissions work. Every command will by default be visible. Use the Integrations submenu in Server Settings to change this."
+	);
+	await timeoutSeconds(5);
+
 	const commands: Array<Command> = Array.from(allCommands.values());
 	logger.info(`Syncing ${commands.length} command${pluralOf(commands)}...`);
 
@@ -164,7 +212,7 @@ export async function prepareSlashCommandsThenExit(client: Discord.Client): Prom
 	process.exit(0);
 }
 
-export async function revokeSlashCommandsThenExit(client: Discord.Client): Promise<void> {
+export async function revokeSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
 	logger.info("Unregistering global commands...");
 	if (!testMode) {
 		await client.application?.commands.set([]);

@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
+import { ChannelType } from "discord.js";
 
 export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 
@@ -18,10 +19,13 @@ interface BaseCommandContext {
 	readonly guild: Discord.Guild | null;
 
 	/** The channel in which the command was invoked. */
-	readonly channel: Discord.TextBasedChannel | null;
+	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
 
 	/** The user which invoked the command. */
 	readonly user: Discord.User;
+
+	/** The guild member which invoked the command. */
+	readonly member: Discord.GuildMember | null;
 
 	/** The UNIX time at which the command was invoked. */
 	readonly createdTimestamp: number;
@@ -87,7 +91,10 @@ interface BaseCommandContext {
 	) => Promise<Discord.Message | boolean>;
 }
 
-interface MessageCommandContext extends BaseCommandContext {
+/**
+ * Information relevant to a message command invocation.
+ */
+export interface MessageCommandContext extends BaseCommandContext {
 	readonly type: "message";
 
 	/** The message that contains the command invocation. */
@@ -97,7 +104,10 @@ interface MessageCommandContext extends BaseCommandContext {
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 }
 
-interface InteractionCommandContext extends BaseCommandContext {
+/**
+ * Information relevant to a slash-command invocation.
+ */
+export interface InteractionCommandContext extends BaseCommandContext {
 	readonly type: "interaction";
 
 	/** The interaction that represents the command invocation. */
@@ -112,8 +122,12 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
 /**
  * Information relevant to a command invocation.
  */
-export type GuildedCommandContext = CommandContext & { guild: Discord.Guild };
+export type GuildedCommandContext = CommandContext & {
+	readonly guild: Discord.Guild;
+	readonly member: Discord.GuildMember;
+	readonly channel: Discord.GuildTextBasedChannel | null;
+};
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {
-	return tbd.guild !== null;
+	return tbd.guild !== null && tbd.member !== null && tbd.channel?.type !== ChannelType.DM;
 }

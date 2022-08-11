@@ -37,8 +37,9 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { sr as songRequest } from "./songRequest.js";
-import { URL } from "url";
+import { URL } from "node:url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
 const logger = useTestLogger("error");
@@ -154,8 +155,8 @@ describe("Song request via URL", () => {
 	});
 
 	test("only a user's first submission gets in if a cooldown exists", async () => {
-		const mockMessage1 = mockMessage("another-user", `?sr ${urls[0].toString()}`);
-		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1].toString()}`);
+		const mockMessage1 = mockMessage("another-user", `?sr ${urls[0].href}`);
+		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1].href}`);
 
 		mockQueuePush.mockImplementationOnce(() => {
 			mockQueueGetLatestUserEntry.mockResolvedValueOnce({
@@ -178,8 +179,8 @@ describe("Song request via URL", () => {
 			options: [
 				{
 					name: "url",
-					value: urls[0].toString(),
-					type: "STRING"
+					value: urls[0].href,
+					type: ApplicationCommandOptionType.String
 				}
 			],
 			logger,
@@ -194,8 +195,8 @@ describe("Song request via URL", () => {
 			options: [
 				{
 					name: "url",
-					value: urls[1].toString(),
-					type: "STRING"
+					value: urls[1].href,
+					type: ApplicationCommandOptionType.String
 				}
 			],
 			user: mockMessage2.author,
@@ -227,7 +228,7 @@ describe("Song request via URL", () => {
 		const mockMessages: Array<Discord.Message> = [];
 		urls.forEach((url, i) => {
 			const userId = `user-${i + 1}`;
-			const message = mockMessage(userId, `?sr ${url.toString()}`);
+			const message = mockMessage(userId, `?sr ${url.href}`);
 			mockMessages.push(message);
 		});
 
@@ -241,7 +242,7 @@ describe("Song request via URL", () => {
 							.map(url => ({
 								name: "url",
 								value: url,
-								type: "STRING"
+								type: ApplicationCommandOptionType.String
 							})),
 						guild: message.guild,
 						channel: message.channel,

@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
 
 const mockResolveChannel = jest.fn();
@@ -15,7 +16,7 @@ describe("Option Resolver", () => {
 		} as unknown as Discord.Guild;
 		option = {
 			name: "option",
-			type: "STRING"
+			type: ApplicationCommandOptionType.String
 		};
 	});
 

@@ -1,21 +1,27 @@
 /*
- * --- Response Types ---
+ * --- Responses ---
+ *
+ * This file contains every random conversation piece that Gamgee knows.
+ * These conversation pieces are organized into named `ResponseRepository`
+ * instances.
  *
  * A `ResponseRepository` is an array that contains any
- * of the following `Response` types:
+ * of the following `Response`-type values:
  *
  * 1. A `string` defines a single response.
  *
- * 2. An `Array<string>` defines multiple responses, each
- *    sent with a noticeable delay between them.
+ * 2. An ["array", "of", "strings"] defines multiple responses, each
+ *    sent in order with a noticeable delay between them.
  *
- * 3. A function that returns a response of type 1 or 2. May use
- *    contextual information about the interaction, such as the
- *    bot's display name and the user who initiated the conversation.
- *    Also useful for adding randomized bits to responses!
+ * 3. A function, which returns a response of type 1 or 2. These may
+ *    use contextual information about the interaction, such as the
+ *    bot's own display name and the user who initiated the conversation.
+ *    Also useful for altering the response randomly each time it's chosen!
  *
- * Note: New responses should make some sense in *any* type of server,
+ * Note: New responses should make *some* sense in *any* type of server,
  *    and must follow our **CODE_OF_CONDUCT**.
+ *
+ * See https://github.com/AverageHelper/Gamgee/blob/main/CODE_OF_CONDUCT.md
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";
@@ -29,8 +35,9 @@ const logger = useLogger();
 
 export const SHRUGGIE = "¯\\_(ツ)_/¯";
 
-// NOTE: disabling ESLint here because we don't need to have
-// `: void` declarations sprinkled in the middle of so many blocks
+// NOTE: disabling ESLint here because we don't need
+// to have `: void` declarations sprinkled in the
+// middle of so many blocks:
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
 
 /**

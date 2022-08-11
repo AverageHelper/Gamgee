@@ -15,6 +15,7 @@ import { sr } from "./songRequest.js";
 import { stats } from "./stats.js";
 import { test } from "./test.js";
 import { t } from "./type.js";
+import { userinfo } from "./userinfo.js";
 import { version } from "./version.js";
 import { video } from "./video.js";
 
@@ -59,5 +60,6 @@ add(sr);
 add(stats);
 add(test);
 add(t);
+add(userinfo);
 add(version);
 add(video);

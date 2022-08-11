@@ -1,4 +1,3 @@
-import type Discord from "discord.js";
 import { useTestLogger } from "../testUtils/logger.js";
 
 const logger = useTestLogger();
@@ -15,20 +14,26 @@ const logger = useTestLogger();
  * @returns an event receiver function.
  */
 export function useDispatchLoop<T>(
-	waiterCollection: Discord.Collection<number, (arg: T) => boolean>
+	waiterCollection: Map<number, (arg: T) => boolean>
 ): (arg: T) => void {
 	return function handleEvent(arg): void {
 		if (waiterCollection.size === 0) return;
 
-		const removed = waiterCollection.sweep((waiter, id) => {
+		const keysToRemove: Array<number> = [];
+		waiterCollection.forEach((waiter, id) => {
 			const shouldRemove = waiter(arg);
 			if (shouldRemove) {
 				logger.debug(`Waiter ${id} handled a deleted message. Removing from the loop...`);
+				keysToRemove.push(id); // mark this key for removal
 			} else {
 				logger.debug(`Waiter ${id} did not handle the message. Keeping in the loop.`);
 			}
-			return shouldRemove;
 		});
-		logger.debug(`Removed ${removed} finished waiters.`);
+
+		// remove marked keys
+		keysToRemove.forEach(id => {
+			waiterCollection.delete(id);
+		});
+		logger.debug(`Removed ${keysToRemove.length} finished waiters.`);
 	};
 }

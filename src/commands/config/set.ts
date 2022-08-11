@@ -1,4 +1,5 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { listKeys, allKeys } from "../../constants/config/keys.js";
 import { isConfigKey, isConfigValue } from "../../constants/config/index.js";
@@ -12,7 +13,7 @@ export const set: Subcommand = {
 		{
 			name: "key",
 			description: "A config key",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true,
 			choices: allKeys.map(key => ({
 				name: key,
@@ -22,11 +23,11 @@ export const set: Subcommand = {
 		{
 			name: "value",
 			description: "The new value to set for the config key.",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	async execute({ options, storage, reply }) {
 		const keyOption = options[0];

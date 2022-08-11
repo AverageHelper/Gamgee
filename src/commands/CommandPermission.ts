@@ -1,12 +1,12 @@
-import type Discord from "discord.js";
-import type { Snowflake } from "discord.js";
+import type { ApplicationCommandPermissions, Guild, Snowflake } from "discord.js";
+import { ApplicationCommandPermissionType } from "discord.js";
 import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 
-export interface CommandPermission extends Discord.ApplicationCommandPermissionData {
+export interface CommandPermission extends ApplicationCommandPermissions {
 	/** The `id` of the role or user */
 	id: Snowflake;
 
-	type: "ROLE" | "USER";
+	type: ApplicationCommandPermissionType;
 
 	/** `true` to allow, `false` to disallow */
 	permission: boolean;
@@ -23,10 +23,10 @@ export interface CommandPermission extends Discord.ApplicationCommandPermissionD
  * @returns a new `CommandPermission` that describes the type of access
  * that a guild owner has to a command.
  */
-export function guildOwnerPermission(guild: Discord.Guild, permission: boolean): CommandPermission {
+export function guildOwnerPermission(guild: Guild, permission: boolean): CommandPermission {
 	return {
 		permission,
-		type: "USER",
+		type: ApplicationCommandPermissionType.User,
 		id: guild.ownerId
 	};
 }
@@ -43,7 +43,7 @@ export function guildOwnerPermission(guild: Discord.Guild, permission: boolean):
  * that members of a guild's admin roles have to a command.
  */
 export async function adminRolePermissions(
-	guild: Discord.Guild,
+	guild: Guild,
 	permission: boolean
 ): Promise<Array<CommandPermission>> {
 	const knownAdminRoleIDs = await getGuildAdminRoles(guild);
@@ -62,7 +62,7 @@ export async function adminRolePermissions(
  * that members of a guild's queue-admin roles have to a command.
  */
 export async function queueAdminRolePermissions(
-	guild: Discord.Guild,
+	guild: Guild,
 	permission: boolean
 ): Promise<Array<CommandPermission>> {
 	const knownRoleIDs = await getQueueAdminRoles(guild);
@@ -83,7 +83,7 @@ export async function queueAdminRolePermissions(
 export function rolePermission(roleId: Snowflake, permission: boolean = true): CommandPermission {
 	return {
 		permission,
-		type: "ROLE",
+		type: ApplicationCommandPermissionType.Role,
 		id: roleId
 	};
 }
@@ -92,7 +92,7 @@ export type PermissionAlias = "owner" | "admin" | "queue-admin";
 
 export async function resolvePermissions(
 	aliases: Array<PermissionAlias>,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<Array<CommandPermission>> {
 	const result: Array<CommandPermission> = [];
 

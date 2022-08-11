@@ -4,6 +4,7 @@ import type { Logger } from "./logger.js";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import type { Storage } from "./configStorage.js";
 import { getEnv } from "./helpers/environment.js";
+import { ApplicationCommandOptionType, ChannelType } from "discord.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
@@ -128,7 +129,7 @@ export function optionsFromArgs(args: Array<string>): Array<MessageCommandIntera
 	if (firstArg !== undefined) {
 		const subcommand: MessageCommandInteractionOption = {
 			name: firstArg,
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			value: firstArg,
 			options: []
 		};
@@ -138,11 +139,11 @@ export function optionsFromArgs(args: Array<string>): Array<MessageCommandIntera
 			const name = args.shift() as string;
 			const nextOption: MessageCommandInteractionOption = {
 				name,
-				type: "STRING",
+				type: ApplicationCommandOptionType.String,
 				value: name,
 				options: []
 			};
-			subcommand.type = "SUB_COMMAND";
+			subcommand.type = ApplicationCommandOptionType.Subcommand;
 			subcommand.options?.push(nextOption);
 		}
 	}
@@ -240,12 +241,20 @@ export async function handleCommand(
 			)}`
 		);
 
+		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		if (message.channel?.type === ChannelType.DM && message.channel.partial) {
+			channel = await message.channel.fetch();
+		} else {
+			channel = message.channel;
+		}
+
 		const context: CommandContext = {
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
+			member: message.member,
 			guild: message.guild,
-			channel: message.channel,
+			channel,
 			client: message.client,
 			message,
 			options,

@@ -1,7 +1,7 @@
 import type { RequestInit } from "node-fetch";
 import fetch from "node-fetch";
 import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
-import { URL } from "url";
+import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 
 export interface GitHubMetadata {
@@ -29,11 +29,11 @@ export async function gitHubMetadata(options: Options): Promise<GitHubMetadata> 
 	const gitHubApi = new URL("https://api.github.com/");
 	const url = new URL(`/repos/${owner}/${repo}`, gitHubApi);
 
-	logger.verbose(`Asking ${url.toString()} about its metadata...`);
+	logger.verbose(`Asking ${url.href} about its metadata...`);
 	const repoData = await getFrom(url, isRepoMetadata);
 	const languagesUrl = new URL(repoData.languages_url);
 
-	logger.verbose(`Asking ${languagesUrl.toString()} about language statistics...`);
+	logger.verbose(`Asking ${languagesUrl.href} about language statistics...`);
 	const languages = await getFrom(languagesUrl, isLanguagesMetadata);
 
 	return { ...repoData, languages };

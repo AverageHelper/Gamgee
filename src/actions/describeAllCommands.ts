@@ -1,8 +1,10 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
 import { getConfigCommandPrefix } from "./config/getConfigValue.js";
+import { isGuildedCommandContext } from "../commands/CommandContext.js";
 import {
 	createPartialString,
 	composed,
@@ -25,6 +27,7 @@ const OPT = "?";
 /**
  * Constructs a string that describes the available commands.
  *
+ * @param context The context of the request. Determines which commands get printed.
  * @param commands The collection of available commands.
  * @returns a string describing all commands.
  */
@@ -39,8 +42,14 @@ export async function describeAllCommands(
 	const description = createPartialString();
 	const allCommands = Array.from(commands.values());
 	for (const command of allCommands) {
-		const canRun = await assertUserCanRunCommand(context.user, command, context.guild);
-		if (!canRun) continue;
+		if (
+			command.requiresGuild &&
+			(!isGuildedCommandContext(context) ||
+				!context.channel ||
+				!(await assertUserCanRunCommand(context.member, command, context.channel)))
+		) {
+			continue; // User has no access, so move on
+		}
 
 		const cmdDesc = createPartialString();
 
@@ -68,7 +77,7 @@ export async function describeAllCommands(
 
 		// Describe all subcommands
 		command.options
-			?.filter(optn => optn.type === "SUB_COMMAND")
+			?.filter(optn => optn.type === ApplicationCommandOptionType.Subcommand)
 			?.forEach(sub => {
 				// Describe the subcommand
 				const subDesc = createPartialString();
@@ -107,7 +116,7 @@ function describeParameters(
 	cmdDesc: PartialString
 ): void {
 	options
-		?.filter(optn => optn.type !== "SUB_COMMAND")
+		?.filter(optn => optn.type !== ApplicationCommandOptionType.Subcommand)
 		?.forEach(o => {
 			const option = o as Discord.ApplicationCommandChoicesData;
 
@@ -127,7 +136,7 @@ function describeParameters(
 
 			if (option.choices) {
 				// specific value
-				const choiceValues = option.choices.map(ch => ch.value.toString());
+				const choiceValues = option.choices.map(ch => `${ch.value}`);
 				push(choiceValues.join(SEP) ?? "", subDesc);
 			} else {
 				// arbitrary value

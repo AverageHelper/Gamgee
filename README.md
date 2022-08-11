@@ -77,6 +77,10 @@ Create a file called `.env` in the root of this project folder. Paste your token
 DISCORD_TOKEN=YOUR_TOKEN_GOES_HERE
 ```
 
+### Invite your bot to your server
+
+Go to https://discordapi.com/permissions.html#377957215296 and paste in your bot's client ID to get an invite link.
+
 ### Register Slash Commands
 
 If you want support for Discord [Slash Commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ), you'll need to deploy the commands directly.

@@ -1,4 +1,5 @@
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { listKeys } from "../../constants/config/keys.js";
 import { isConfigKey, allKeys } from "../../constants/config/index.js";
@@ -13,7 +14,7 @@ export const unset: Subcommand = {
 		{
 			name: "key",
 			description: "The config key to unset",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true,
 			choices: allKeys.map(key => ({
 				name: key,
@@ -21,7 +22,7 @@ export const unset: Subcommand = {
 			}))
 		}
 	],
-	type: "SUB_COMMAND",
+	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	async execute({ options, storage, reply }) {
 		const firstOption = options[0];
