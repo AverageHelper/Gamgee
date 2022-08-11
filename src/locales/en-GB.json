@@ -1,0 +1,8 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Submit a song to the queue."
+		}
+	}
+}

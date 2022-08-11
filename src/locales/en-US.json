@@ -1,0 +1,19 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Submit a song to the queue."
+		}
+	},
+	"test": {
+		"something": {
+			"only": {
+				"english": {
+					"would": {
+						"have": "This is a string only found in English. This lets me test that language fallback works correctly."
+					}
+				}
+			}
+		}
+	}
+}

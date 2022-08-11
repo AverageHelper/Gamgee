@@ -1,0 +1,8 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Envie uma música para a fila."
+		}
+	}
+}

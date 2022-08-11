@@ -4,6 +4,7 @@ import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
+import { localizations } from "../i18n.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
@@ -12,16 +13,9 @@ import { useJobQueue } from "@averagehelper/job-queue";
 
 export const sr: GuildedCommand = {
 	name: "sr",
+	nameLocalizations: localizations("commands.sr.name"),
 	description: "Submit a song to the queue.",
-	descriptionLocalizations: {
-		de: "Senden Sie einen Song an die Warteschlange.",
-		"en-GB": "Submit a song to the queue.",
-		"en-US": "Submit a song to the queue.",
-		"es-ES": "Envía una canción a la cola.",
-		fr: "Soumettre une chanson à la file d'attente.",
-		hu: "Adjon fel egy dalt a sorba.",
-		"pt-BR": "Envie uma música para a fila."
-	},
+	descriptionLocalizations: localizations("commands.sr.description"),
 	options: [
 		{
 			name: "url",

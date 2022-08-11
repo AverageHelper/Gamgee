@@ -1,0 +1,8 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Soumettre une chanson à la file d'attente."
+		}
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Senden Sie einen Song an die Warteschlange."
+		}
+	}
+}

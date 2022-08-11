@@ -1,0 +1,8 @@
+{
+	"commands": {
+		"sr": {
+			"name": "sr",
+			"description": "Envía una canción a la cola."
+		}
+	}
+}
