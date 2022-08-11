@@ -98,12 +98,9 @@ export function t<K extends string>(
 ): string | undefined {
 	if (keypath === "") return undefined;
 
-	const result = get<MessageSchema, Split<K, typeof DOT>>(
-		data[locale] as MessageSchema,
-		split(keypath, DOT)
-	);
+	const result = get(data[locale], split(keypath, DOT));
 
-	if (isString(result) && result !== "") return result; // found a result in the given locale!
+	if (isString(result) && result) return result; // found a result in the given locale!
 
 	if (locale !== DEFAULT_LOCALE) {
 		// recurse, try the default locale:
