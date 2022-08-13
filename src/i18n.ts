@@ -1,22 +1,12 @@
-// **
-// Import and install language files here
-// **
-import de from "./locales/de.json";
-import enGB from "./locales/en-GB.json";
-import enUS from "./locales/en-US.json";
-import esES from "./locales/es-ES.json";
-import fr from "./locales/fr.json";
-import hu from "./locales/hu.json";
-import ptBR from "./locales/pt-BR.json";
-
+// ** Install language files here **
 const vocabulary = {
-	de,
-	"en-GB": enGB,
-	"en-US": enUS,
-	"es-ES": esES,
-	fr,
-	hu,
-	"pt-BR": ptBR
+	de: await import("./locales/de.json"),
+	"en-GB": await import("./locales/en-GB.json"),
+	"en-US": await import("./locales/en-US.json"),
+	"es-ES": await import("./locales/es-ES.json"),
+	fr: await import("./locales/fr.json"),
+	hu: await import("./locales/hu.json"),
+	"pt-BR": await import("./locales/pt-BR.json")
 } as const;
 
 const DEFAULT_LOCALE = "en-US";
@@ -140,6 +130,7 @@ export function localizations<K extends string>(
 
 // For science:
 /* eslint-disable @typescript-eslint/no-unused-vars */
+const enUS = vocabulary["en-US"];
 
 // We start with this at dev time, typing into a function:
 const given = "commands.sr.name";
