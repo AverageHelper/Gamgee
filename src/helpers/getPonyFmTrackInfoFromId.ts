@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
 import { isObject, isString } from "./guards.js";
 import { VideoError } from "../errors/index.js";
+import fetch from "node-fetch";
 
 // Based on https://github.com/Poniverse/Pony.fm/blob/a1522f3cd73d849099e4a3d897656dc8c4795dd7/app/Http/Controllers/Api/V1/TracksController.php#L129
 export interface PonyFmTrackAPIResponse {

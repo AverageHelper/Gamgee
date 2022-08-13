@@ -1,8 +1,8 @@
 import type { RequestInit } from "node-fetch";
-import fetch from "node-fetch";
 import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
 import { URL } from "node:url";
 import { useLogger } from "../logger.js";
+import fetch from "node-fetch";
 
 export interface GitHubMetadata {
 	name: string;
