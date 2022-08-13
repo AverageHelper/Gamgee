@@ -2,6 +2,7 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
+	"git.branchProtection": ["main"],
 	"i18n-ally.displayLanguage": "en-US",
 	"i18n-ally.keystyle": "nested",
 	"i18n-ally.localesPaths": ["src/locales"],
