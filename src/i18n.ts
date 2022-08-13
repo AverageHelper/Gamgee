@@ -38,7 +38,8 @@ type Vocabulary = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _: Vocabulary = vocabulary; // ensures our language types are formatted right
 
-import type { Get, Join, Split } from "type-fest";
+import type { Split } from "type-fest/source/split";
+import type { Get } from "type-fest/source/get";
 import _get from "lodash/get";
 import isString from "lodash/isString";
 
@@ -130,7 +131,10 @@ export function localizations<K extends string>(
 
 // For science:
 /* eslint-disable @typescript-eslint/no-unused-vars */
-const enUS = vocabulary["en-US"];
+// const enUS = vocabulary["en-US"];
+
+/*
+import type { Join } from "type-fest";
 
 // We start with this at dev time, typing into a function:
 const given = "commands.sr.name";
@@ -165,5 +169,6 @@ const name: MessageSchema[typeof p0][typeof p1][typeof p2] = t(given, "en-US");
 
 type IsKeyPath<O, K extends string> = Get<O, K> extends string ? true : false;
 
-declare const good: IsKeyPath<MessageSchema, typeof given>;
-declare const bad: IsKeyPath<MessageSchema, "typeof given">;
+const good: IsKeyPath<MessageSchema, typeof given> = true;
+const bad: IsKeyPath<MessageSchema, "typeof given"> = false;
+*/
