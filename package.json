@@ -28,7 +28,7 @@
 	"main": "./dist/main.js",
 	"type": "module",
 	"engines": {
-		"node": ">=16.14"
+		"node": ">=16.10"
 	},
 	"files": [
 		"dist/"
