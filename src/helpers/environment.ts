@@ -2,7 +2,7 @@ import "dotenv/config.js";
 
 import { EnvVariableNotFoundError } from "./EnvVariableNotFoundError.js";
 
-type EnvKey =
+export type EnvKey =
 	| "NODE_ENV"
 	| "DISCORD_TOKEN"
 	| "DATABASE_FOLDER"

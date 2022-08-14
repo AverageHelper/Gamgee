@@ -1,11 +1,11 @@
 import { expect } from "chai";
-import { requireEnv } from "../src/helpers/environment.js";
 import {
+	requireEnv,
 	setIsQueueAdmin,
 	setIsQueueCreator,
 	commandResponseInTestChannel,
 	sendMessageWithDefaultClient
-} from "./discordUtils/index.js";
+} from "./discordUtils/index";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 

@@ -1,6 +1,6 @@
 import type { Message } from "discord.js";
-import { messageWaiters, messageDeleteWaiters } from "./testerClient.js";
-import { useTestLogger } from "../testUtils/logger.js";
+import { messageWaiters, messageDeleteWaiters } from "./testerClient";
+import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 

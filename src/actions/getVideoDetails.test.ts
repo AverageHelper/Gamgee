@@ -83,7 +83,7 @@ describe("Video details", () => {
 		${"https://soundcloud.app.goo.gl/87dF3tEe353HkEBNA"} | ${"https://soundcloud.com/radiarc/ex-nocte"}
 		${"https://soundcloud.app.goo.gl/TFifgUex2VxKxwqZ7"} | ${"https://soundcloud.com/user-417212429-654736718/spy-vs-spy-c64-remix-lukhash"}
 	`(
-		"returns info for a link shared from SoundCloud's mobile app",
+		"returns info for a link shared from SoundCloud's mobile app: $url ~> $result",
 		async ({ url, result }: { url: string; result: string }) => {
 			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", result);
