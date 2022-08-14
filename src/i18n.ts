@@ -1,21 +1,18 @@
-import de from "./locales/de.json" assert { type: "json" };
-import enGB from "./locales/en-GB.json" assert { type: "json" };
-import enUS from "./locales/en-US.json" assert { type: "json" };
-import esES from "./locales/es-ES.json" assert { type: "json" };
-import fr from "./locales/fr.json" assert { type: "json" };
-import hu from "./locales/hu.json" assert { type: "json" };
-import ptBR from "./locales/pt-BR.json" assert { type: "json" };
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 // ** Install language files here **
 const vocabulary = {
-	de,
-	"en-GB": enGB,
-	"en-US": enUS,
-	"es-ES": esES,
-	fr,
-	hu,
-	"pt-BR": ptBR
+	de: require("./locales/de.json") as typeof import("./locales/de.json"),
+	"en-GB": require("./locales/en-GB.json") as typeof import("./locales/en-GB.json"),
+	"en-US": require("./locales/en-US.json") as typeof import("./locales/en-US.json"),
+	"es-ES": require("./locales/es-ES.json") as typeof import("./locales/es-ES.json"),
+	fr: require("./locales/fr.json") as typeof import("./locales/fr.json"),
+	hu: require("./locales/hu.json") as typeof import("./locales/hu.json"),
+	"pt-BR": require("./locales/pt-BR.json") as typeof import("./locales/pt-BR.json")
 } as const;
+// FIXME: Waiting on JSON modules to hit stable before we can get rid of `require` calls
+
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 const DEFAULT_LOCALE = "en-US";
 
