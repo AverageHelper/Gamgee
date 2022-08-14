@@ -1,8 +1,9 @@
-import type { RequestInit } from "node-fetch";
 import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
 import { URL } from "node:url";
 import { useLogger } from "../logger.js";
-import fetch from "node-fetch";
+import fetch from "cross-fetch";
+
+type RequestInit = Exclude<Parameters<typeof fetch>[1], undefined>;
 
 export interface GitHubMetadata {
 	name: string;

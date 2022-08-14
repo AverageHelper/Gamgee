@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- :warning: BREAKING CHANGE: We require Node 16._14_ now, because [versions later than that require import assertions for JSON files](https://github.com/nodejs/node/releases/tag/v16.14.0), and [versions earlier than that don't know what import assertions are](https://github.com/contentlayerdev/contentlayer/issues/153). (I really wish Node had waited a major version to make this change, but JSON modules are experimental anyway, so that's not up to me!)
+- We compile into CommonJS syntax now, because Jest broke.
+- Replaced `node-fetch` with `cross-fetch`, because Jest doesn't seem to like ESM (which [`node-fetch` requires](https://github.com/node-fetch/node-fetch/issues/1279)) or [`undici`](https://github.com/nodejs/undici/issues/318) anymore.
 - Gamgee now speaks over 7 languages, and knows it. (More, if you count JavaScript!)
 - Moved I18N calls into a single file that can be imported from anywhere in the codebase.
 - Locales are now stored in [/src/locales/](/src/locales/). Feel free to contribute there!

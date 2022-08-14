@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 
 /**
  * Wraps Node's `fs.unlink` function in a `Promise` that ignores

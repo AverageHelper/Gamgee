@@ -133,7 +133,7 @@ try {
 	});
 
 	// Log in
-	await client.login(requireEnv("DISCORD_TOKEN"));
+	void client.login(requireEnv("DISCORD_TOKEN"));
 
 	// Handle top-level errors
 } catch (error) {

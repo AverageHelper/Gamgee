@@ -28,7 +28,7 @@
 	"main": "./dist/main.js",
 	"type": "module",
 	"engines": {
-		"node": ">=16.14"
+		"node": ">=16.10"
 	},
 	"files": [
 		"dist/"
@@ -46,17 +46,16 @@
 	"dependencies": {
 		"@averagehelper/job-queue": "1.0.1",
 		"cheerio": "1.0.0-rc.12",
+		"cross-fetch": "3.1.5",
 		"discord.js": "14.1.2",
 		"dotenv": "16.0.1",
 		"humanize-duration": "3.27.2",
 		"lodash": "4.17.21",
-		"node-fetch": "3.2.10",
 		"node-persist": "3.1.0",
 		"reflect-metadata": "0.1.13",
 		"soundcloud-scraper": "5.0.3",
 		"source-map-support": "0.5.21",
 		"sqlite3": "5.0.5",
-		"timeout-signal": "1.1.0",
 		"typeorm": "0.3.7",
 		"winston": "3.8.1",
 		"yargs": "17.5.1",

@@ -5,7 +5,7 @@ import { isString } from "../helpers/guards.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { URL } from "node:url";
 import { useLogger } from "../logger.js";
-import fetch from "node-fetch";
+import fetch from "cross-fetch";
 import SoundCloud from "soundcloud-scraper";
 import urlMetadata from "../helpers/urlMetadata/index.js";
 import ytdl from "ytdl-core";
