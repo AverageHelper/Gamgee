@@ -1,12 +1,20 @@
+import de from "./locales/de.json" assert { type: "json" };
+import enGB from "./locales/en-GB.json" assert { type: "json" };
+import enUS from "./locales/en-US.json" assert { type: "json" };
+import esES from "./locales/es-ES.json" assert { type: "json" };
+import fr from "./locales/fr.json" assert { type: "json" };
+import hu from "./locales/hu.json" assert { type: "json" };
+import ptBR from "./locales/pt-BR.json" assert { type: "json" };
+
 // ** Install language files here **
 const vocabulary = {
-	de: await import("./locales/de.json"),
-	"en-GB": await import("./locales/en-GB.json"),
-	"en-US": await import("./locales/en-US.json"),
-	"es-ES": await import("./locales/es-ES.json"),
-	fr: await import("./locales/fr.json"),
-	hu: await import("./locales/hu.json"),
-	"pt-BR": await import("./locales/pt-BR.json")
+	de,
+	"en-GB": enGB,
+	"en-US": enUS,
+	"es-ES": esES,
+	fr,
+	hu,
+	"pt-BR": ptBR
 } as const;
 
 const DEFAULT_LOCALE = "en-US";
@@ -38,8 +46,7 @@ type Vocabulary = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _: Vocabulary = vocabulary; // ensures our language types are formatted right
 
-import type { Split } from "type-fest/source/split";
-import type { Get } from "type-fest/source/get";
+import type { Get, Split } from "type-fest";
 import _get from "lodash/get.js";
 import isString from "lodash/isString.js";
 
