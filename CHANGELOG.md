@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Nothing, yet!
+
+## [1.7.1] - 2022-08-14
+### Added
+- New info in [CONTRIBUTING.md](CONTRIBUTING.md) about how to contribute translations.
+
 ### Changed
 - We compile into CommonJS syntax now, because Jest broke.
 - Replaced `node-fetch` with `cross-fetch`, because Jest doesn't seem to like ESM (which [`node-fetch` requires](https://github.com/node-fetch/node-fetch/issues/1279)) or [`undici`](https://github.com/nodejs/undici/issues/318) anymore.
@@ -317,7 +323,8 @@ Please note:
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...v1.7.0
 [1.6.6]: https://github.com/AverageHelper/Gamgee/compare/v1.6.5...v1.6.6
 [1.6.5]: https://github.com/AverageHelper/Gamgee/compare/v1.6.4...v1.6.5
