@@ -76,7 +76,6 @@ interface BaseCommandContext {
 
 	/**
 	 * Sends a message in the same channel to the user who invoked the command.
-	 * Does not constitute a "reply" in Discord's canonical sense.
 	 *
 	 * @returns a `Promise` that resolves with a reference to the message sent,
 	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
