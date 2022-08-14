@@ -1,18 +1,26 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// FIXME: Waiting on JSON modules to hit stable before we can get rid of this function
+async function readJson(relativePath: string): Promise<unknown> {
+	const path = resolve(__dirname, relativePath);
+	return JSON.parse(await readFile(path, "utf-8")) as unknown;
+}
 
 // ** Install language files here **
 const vocabulary = {
-	de: require("./locales/de.json") as typeof import("./locales/de.json"),
-	"en-GB": require("./locales/en-GB.json") as typeof import("./locales/en-GB.json"),
-	"en-US": require("./locales/en-US.json") as typeof import("./locales/en-US.json"),
-	"es-ES": require("./locales/es-ES.json") as typeof import("./locales/es-ES.json"),
-	fr: require("./locales/fr.json") as typeof import("./locales/fr.json"),
-	hu: require("./locales/hu.json") as typeof import("./locales/hu.json"),
-	"pt-BR": require("./locales/pt-BR.json") as typeof import("./locales/pt-BR.json")
+	de: (await readJson("./locales/de.json")) as typeof import("./locales/de.json"),
+	"en-GB": (await readJson("./locales/en-GB.json")) as typeof import("./locales/en-GB.json"),
+	"en-US": (await readJson("./locales/en-US.json")) as typeof import("./locales/en-US.json"),
+	"es-ES": (await readJson("./locales/es-ES.json")) as typeof import("./locales/es-ES.json"),
+	fr: (await readJson("./locales/fr.json")) as typeof import("./locales/fr.json"),
+	hu: (await readJson("./locales/hu.json")) as typeof import("./locales/hu.json"),
+	"pt-BR": (await readJson("./locales/pt-BR.json")) as typeof import("./locales/pt-BR.json")
 } as const;
-// FIXME: Waiting on JSON modules to hit stable before we can get rid of `require` calls
-
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 const DEFAULT_LOCALE = "en-US";
 
