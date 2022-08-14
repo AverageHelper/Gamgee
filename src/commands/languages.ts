@@ -1,7 +1,9 @@
 import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
+import { locales } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
@@ -9,7 +11,7 @@ export const languages: GlobalCommand = {
 	name: "languages",
 	description: "Print my core repository's language statistics.",
 	requiresGuild: false,
-	async execute({ logger, prepareForLongRunningTasks, reply }) {
+	async execute({ logger, prepareForLongRunningTasks, reply, followUp }) {
 		const owner = "AverageHelper";
 		const repo = "Gamgee";
 
@@ -26,22 +28,40 @@ export const languages: GlobalCommand = {
 				cachedMetadata = await gitHubMetadata({ owner, repo });
 			} catch (error) {
 				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
-				return await reply("Erm... I'm not sure :sweat_smile:");
+				await reply("Erm... I'm not sure :sweat_smile:");
+				await timeoutSeconds(1);
+				await followUp({
+					content: `I do know that I can speak ${locales.length} different human languages!`,
+					reply: false
+				});
+				return;
 			}
 		}
 
 		const languages = cachedMetadata.languages;
 		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 		if (languages === undefined) {
-			return await reply("I'm really not sure. Ask my boss that.");
+			await reply("I'm really not sure. Ask my boss that.");
+			await timeoutSeconds(1);
+			await followUp({
+				content: `I do know that I can speak ${locales.length} different human languages!`,
+				reply: false
+			});
+			return;
 		}
 
 		const totalLanguages = Object.keys(languages).length;
 		if (totalLanguages > 3) {
 			// Lots of languages. Be vague.
-			return await reply(
-				`I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique.`
+			await reply(
+				`I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique ^^`
 			);
+			await timeoutSeconds(1);
+			await followUp({
+				content: `I can also speak ${locales.length} different human languages!`,
+				reply: false
+			});
+			return;
 		}
 
 		let totalUse = 0;
@@ -58,10 +78,17 @@ export const languages: GlobalCommand = {
 
 		const last = stats.splice(-1)[0] ?? "a secret language only I know the meaning of";
 		if (totalLanguages > 2) {
-			return await reply(`I'm made of ${stats.join(", ")}, and ${last}.`);
+			await reply(`I'm made of ${stats.join(", ")}, and ${last}.`);
 		} else if (totalLanguages > 1) {
-			return await reply(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
+			await reply(`I'm made of ${stats.join(", ")} and ${last}. :blush:`);
+		} else {
+			await reply(`I'm made of ${last}. :blush:`);
 		}
-		return await reply(`I'm made of ${last}. :blush:`);
+
+		await timeoutSeconds(1);
+		await followUp({
+			content: `I can also speak ${locales.length} different human languages!`,
+			reply: false
+		});
 	}
 };

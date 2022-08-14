@@ -23,10 +23,10 @@
 		"test:src:watch": "npm run test:src -- --watch --coverage=false",
 		"test:e2e": "./node_modules/.bin/concurrently -kn bot,mocha -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
 		"start:test": "DATABASE_FOLDER=./tests/db-test NODE_ENV=test node .",
-		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha ./tests/**/*.test.ts"
+		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha"
 	},
 	"main": "./dist/main.js",
-	"type": "module",
+	"type": "commonjs",
 	"engines": {
 		"node": ">=16.10"
 	},
@@ -46,17 +46,16 @@
 	"dependencies": {
 		"@averagehelper/job-queue": "1.0.1",
 		"cheerio": "1.0.0-rc.12",
+		"cross-fetch": "3.1.5",
 		"discord.js": "14.1.2",
 		"dotenv": "16.0.1",
 		"humanize-duration": "3.27.2",
 		"lodash": "4.17.21",
-		"node-fetch": "3.2.10",
 		"node-persist": "3.1.0",
 		"reflect-metadata": "0.1.13",
 		"soundcloud-scraper": "5.0.3",
 		"source-map-support": "0.5.21",
 		"sqlite3": "5.0.5",
-		"timeout-signal": "1.1.0",
 		"typeorm": "0.3.7",
 		"winston": "3.8.1",
 		"yargs": "17.5.1",
@@ -68,7 +67,7 @@
 		"@types/jest": "28.1.6",
 		"@types/lodash": "4.14.182",
 		"@types/mocha": "9.1.1",
-		"@types/node": "16.6.2",
+		"@types/node": "16.9.6",
 		"@types/node-persist": "3.1.2",
 		"@types/source-map-support": "0.5.4",
 		"@typescript-eslint/eslint-plugin": "5.31.0",
@@ -94,6 +93,7 @@
 		"prettier": "2.7.1",
 		"ts-jest": "28.0.7",
 		"ts-node": "10.9.1",
+		"type-fest": "2.18.0",
 		"typescript": "4.7.4"
 	}
 }

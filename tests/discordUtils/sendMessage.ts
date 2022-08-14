@@ -1,6 +1,5 @@
 import type { Client, Message, Snowflake } from "discord.js";
-import { requireEnv } from "../../src/helpers/environment.js";
-import { useTesterClient } from "./testerClient.js";
+import { requireEnv, useTesterClient } from "./testerClient";
 
 const COMMAND_PREFIX = requireEnv("BOT_PREFIX");
 const TEST_CHANNEL_ID: Snowflake = requireEnv("CHANNEL_ID");

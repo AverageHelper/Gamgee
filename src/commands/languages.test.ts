@@ -2,6 +2,7 @@ const mockGithubMetadata = jest.fn();
 jest.mock("../helpers/githubMetadata", () => ({ gitHubMetadata: mockGithubMetadata }));
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockFollowUp = jest.fn().mockResolvedValue({});
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
 
 import type { CommandContext } from "./Command.js";
@@ -17,7 +18,8 @@ describe("Language Statistics from GitHub", () => {
 		context = {
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
-			reply: mockReply
+			reply: mockReply,
+			followUp: mockFollowUp
 		} as unknown as CommandContext;
 
 		mockGithubMetadata.mockResolvedValue({

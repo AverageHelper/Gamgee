@@ -1,0 +1,32 @@
+{
+	"meta": {
+		"code": "de"
+	},
+	"commands": {
+		"cooldown": {
+			"name": "cooldown",
+			"description": "Finden Sie heraus, wann Sie wieder einreichen können."
+		},
+		"help": {
+			"name": "hilfe",
+			"description": "Drucken Sie eine nützliche Hilfenachricht."
+		},
+		"howto": {
+			"name": "wieman"
+		},
+		"sr": {
+			"name": "sr",
+			"description": "Senden Sie einen Song an die Warteschlange.",
+			"options": {
+				"url": {
+					"name": "url",
+					"description": "Ein Link zu einem Lied von einer unterstützten Plattform"
+				}
+			}
+		},
+		"userinfo": {
+			"name": "benutzerinfo",
+			"description": "Gibt einige Informationen über Sie zurück."
+		}
+	}
+}

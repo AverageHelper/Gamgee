@@ -1,26 +1,11 @@
 import type { Command } from "./Command.js";
+import { localizations } from "../i18n.js";
 
 export const userinfo: Command = {
 	name: "userinfo",
-	nameLocalizations: {
-		de: "benutzerinfo",
-		"en-GB": "userinfo",
-		"en-US": "userinfo",
-		"es-ES": "usuarioinfo",
-		fr: "utilinfo",
-		hu: "felhasználóiadatok",
-		"pt-BR": "usuárioinfo"
-	},
+	nameLocalizations: localizations("commands.userinfo.name"),
 	description: "Returns some information about you.",
-	descriptionLocalizations: {
-		de: "Gibt einige Informationen über Sie zurück.",
-		"en-GB": "Returns some information about you.",
-		"en-US": "Returns some information about you.",
-		"es-ES": "Devuelve alguna información sobre usted.",
-		fr: "Retourne quelques informations sur vous.",
-		hu: "Néhány információt visszaad rólad.",
-		"pt-BR": "Retorna algumas informações sobre você."
-	},
+	descriptionLocalizations: localizations("commands.userinfo.description"),
 	requiresGuild: false,
 	async execute(context) {
 		if (context.type !== "interaction") {

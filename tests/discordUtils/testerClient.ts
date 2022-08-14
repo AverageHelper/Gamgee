@@ -1,8 +1,15 @@
+import type { EnvKey } from "../../src/helpers/environment.js";
 import type { Message, PartialMessage } from "discord.js";
+import "dotenv/config";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
-import { requireEnv } from "../../src/helpers/environment.js";
-import { useTestLogger } from "../testUtils/logger.js";
-import { useDispatchLoop } from "./dispatchLoop.js";
+import { useTestLogger } from "../testUtils/logger";
+import { useDispatchLoop } from "./dispatchLoop";
+
+export function requireEnv(key: EnvKey): string {
+	const value = process.env[key];
+	if (value === undefined) throw new TypeError(`${key} not found in environment variables.`);
+	return value;
+}
 
 /**
  * A collection of functions that expect a message to arrive within a

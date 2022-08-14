@@ -1,9 +1,9 @@
 {
 	"bail": true,
 	"exit": true,
-	"extension": "ts",
-	"loader": "ts-node/esm",
-	"require": "./tests/hooks.ts",
+	"extensions": ["ts"],
+	"require": ["ts-node/register", "./tests/hooks.ts"],
 	"retries": 2,
+	"spec": ["./tests/**/*.test.ts"],
 	"timeout": 20000
 }

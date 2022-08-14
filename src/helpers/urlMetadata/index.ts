@@ -1,11 +1,11 @@
 /* Adapted from https://github.com/laurengarcia/url-metadata */
 
 import type { Fields } from "./lib/metadataFields.js";
-import type { RequestInit } from "node-fetch";
 import type { URL } from "node:url";
-import fetch from "node-fetch";
+import fetch from "cross-fetch";
 import parse from "./lib/parse.js";
-import timeoutSignal from "timeout-signal";
+
+type RequestInit = Exclude<Parameters<typeof fetch>[1], undefined>;
 
 export interface Options {
 	userAgent?: string;
@@ -20,6 +20,14 @@ export interface Options {
 }
 
 export type Metadata = Partial<Fields>;
+
+function timeoutSignal(timeout: number): AbortSignal {
+	const controller = new AbortController();
+
+	setTimeout(() => controller.abort(), timeout);
+
+	return controller.signal;
+}
 
 export default async function urlMetadata(url: URL, options?: Options): Promise<Metadata> {
 	const opts = {
@@ -40,7 +48,8 @@ export default async function urlMetadata(url: URL, options?: Options): Promise<
 			"User-Agent": opts.userAgent,
 			From: opts.fromEmail
 		},
-		follow: opts.maxRedirects,
+		redirect: "follow",
+		// follow: opts.maxRedirects, // FIXME: How to set max redirects?
 		signal: timeoutSignal(opts.timeout)
 	};
 	const response = await fetch(url.href, requestOpts);

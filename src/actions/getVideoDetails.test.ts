@@ -1,4 +1,6 @@
-import { getVideoDetails } from "./getVideoDetails.js";
+import { getVideoDetails, getBandcampTrack } from "./getVideoDetails.js";
+import { URL } from "node:url";
+import { VideoError } from "../errors/VideoError.js";
 
 describe("Video details", () => {
 	// ** YouTube
@@ -81,7 +83,7 @@ describe("Video details", () => {
 		${"https://soundcloud.app.goo.gl/87dF3tEe353HkEBNA"} | ${"https://soundcloud.com/radiarc/ex-nocte"}
 		${"https://soundcloud.app.goo.gl/TFifgUex2VxKxwqZ7"} | ${"https://soundcloud.com/user-417212429-654736718/spy-vs-spy-c64-remix-lukhash"}
 	`(
-		"returns info for a link shared from SoundCloud's mobile app",
+		"returns info for a link shared from SoundCloud's mobile app: $url ~> $result",
 		async ({ url, result }: { url: string; result: string }) => {
 			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", result);
@@ -93,8 +95,14 @@ describe("Video details", () => {
 
 	test("returns null for bandcamp album links", async () => {
 		const url = "https://poniesatdawn.bandcamp.com/album/memories";
+		// TODO: We should mock getBandcampTrack and check that getVideoDetails called it
 		const details = await getVideoDetails(url, null);
 		expect(details).toBe(null);
+	});
+
+	test("throws specifically for bandcamp album links", async () => {
+		const url = "https://poniesatdawn.bandcamp.com/album/memories";
+		await expect(() => getBandcampTrack(new URL(url))).rejects.toThrow(VideoError);
 	});
 
 	test.each`
@@ -103,9 +111,25 @@ describe("Video details", () => {
 		${"https://forestrainmedia.com/track/bad-wolf"}                                 | ${277}
 		${"https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"} | ${170}
 	`(
-		"returns info Bandcamp track $url, $duration seconds long",
+		"returns info for Bandcamp track $url, $duration seconds long",
 		async ({ url, duration }: { url: string; duration: number }) => {
+			// TODO: We should mock getBandcampTrack and check that getVideoDetails called it
 			const details = await getVideoDetails(url, null);
+			expect(details).toHaveProperty("url", url);
+			expect(details?.duration.seconds).toBeDefined();
+			expect(details?.duration.seconds).toBe(duration);
+		}
+	);
+
+	test.each`
+		url                                                                             | duration
+		${"https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"}       | ${233}
+		${"https://forestrainmedia.com/track/bad-wolf"}                                 | ${277}
+		${"https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"} | ${170}
+	`(
+		"returns info specifically for Bandcamp track $url, $duration seconds long",
+		async ({ url, duration }: { url: string; duration: number }) => {
+			const details = await getBandcampTrack(new URL(url));
 			expect(details).toHaveProperty("url", url);
 			expect(details?.duration.seconds).toBeDefined();
 			expect(details?.duration.seconds).toBe(duration);

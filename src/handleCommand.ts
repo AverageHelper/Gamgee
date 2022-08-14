@@ -241,7 +241,7 @@ export async function handleCommand(
 			)}`
 		);
 
-		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel;
 		if (message.channel?.type === ChannelType.DM && message.channel.partial) {
 			channel = await message.channel.fetch();
 		} else {

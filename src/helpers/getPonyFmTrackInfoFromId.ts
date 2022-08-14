@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
 import { isObject, isString } from "./guards.js";
 import { VideoError } from "../errors/index.js";
+import fetch from "cross-fetch";
 
 // Based on https://github.com/Poniverse/Pony.fm/blob/a1522f3cd73d849099e4a3d897656dc8c4795dd7/app/Http/Controllers/Api/V1/TracksController.php#L129
 export interface PonyFmTrackAPIResponse {
@@ -86,7 +86,7 @@ export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmT
 	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`);
 	if (response.status === 200) {
 		try {
-			const responseParsed = await response.json();
+			const responseParsed = (await response.json()) as unknown;
 			if (!isPonyFmTrackAPIResponse(responseParsed)) {
 				throw new VideoError(`Malformed response from Pony.fm API`);
 			}
@@ -99,7 +99,7 @@ export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmT
 		}
 	}
 	if (response.status === 404) {
-		const responseParsed = await response.json();
+		const responseParsed = (await response.json()) as unknown;
 		if (!isPonyFmTrackAPIError(responseParsed)) {
 			throw new VideoError(
 				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`

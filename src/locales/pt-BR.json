@@ -1,0 +1,32 @@
+{
+	"meta": {
+		"code": "pt-BR"
+	},
+	"commands": {
+		"cooldown": {
+			"name": "cooldown",
+			"description": "Descubra quando você pode enviar novamente."
+		},
+		"help": {
+			"name": "ajuda",
+			"description": "Imprima uma mensagem de ajuda útil."
+		},
+		"howto": {
+			"name": "como"
+		},
+		"sr": {
+			"name": "sr",
+			"description": "Envie uma música para a fila.",
+			"options": {
+				"url": {
+					"name": "url",
+					"description": "Um link de música de uma plataforma suportada"
+				}
+			}
+		},
+		"userinfo": {
+			"name": "usuárioinfo",
+			"description": "Retorna algumas informações sobre você."
+		}
+	}
+}
