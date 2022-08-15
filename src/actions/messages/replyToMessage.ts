@@ -8,6 +8,8 @@ import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
 
+// TODO: i18n
+
 /**
  * Attempts to send a direct message to the given user. If Discord throws
  * an error at the attempt, then the error is logged, and the returned

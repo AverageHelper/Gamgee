@@ -23,6 +23,8 @@ import {
 
 // FIXME: Some of these may be inlined with functions from useQueueStorage.js, and should be inlined to avoid confusion between raw database function and full queue functions
 
+// TODO: i18n
+
 /**
  * Generates a Discord message that describes the entry. Good for inserting into the guild's queue channel.
  */

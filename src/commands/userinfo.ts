@@ -1,6 +1,7 @@
 import type { Command } from "./Command.js";
 import { localizations } from "../i18n.js";
 
+// TODO: i18n
 export const userinfo: Command = {
 	name: "userinfo",
 	nameLocalizations: localizations("commands.userinfo.name"),

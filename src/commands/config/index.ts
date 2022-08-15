@@ -12,6 +12,7 @@ const subargsList = namedSubcommands
 	.map(v => `\`${v}\``)
 	.join(", ");
 
+// TODO: i18n
 export const config: Command = {
 	name: "config",
 	description: "Read and modify config options.",

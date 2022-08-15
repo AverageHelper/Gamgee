@@ -1,5 +1,7 @@
 /**
  * Returns `true` if the provided string starts with an English vowel.
+ *
+ * @deprecated Use i18n APIs instead
  */
 export function startsWithVowel(str: string): boolean {
 	if (typeof str !== "string") return false;

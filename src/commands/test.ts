@@ -80,6 +80,7 @@ function addResult(result: FetchResult, embed: EmbedBuilder): void {
 
 let isTesting = false;
 
+// TODO: i18n
 export const test: Command = {
 	name: "test",
 	description: "Make sure I still know how to talk to video services.",

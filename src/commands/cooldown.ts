@@ -7,6 +7,7 @@ import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 
+// TODO: i18n
 export const cooldown: Command = {
 	name: "cooldown",
 	nameLocalizations: localizations("commands.cooldown.name"),

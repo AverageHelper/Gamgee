@@ -21,8 +21,8 @@ export function durationString(seconds: number, short: boolean = false): string 
 	if (short) {
 		return shortDurationString(seconds);
 	}
-	if (Number.isNaN(seconds)) return "NaN seconds";
-	if (!Number.isFinite(seconds)) return "Infinity seconds";
-	if (typeof seconds !== "number" || seconds === undefined) return "NaN seconds";
-	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true });
+	if (Number.isNaN(seconds)) return "NaN seconds"; // TODO: i18n
+	if (!Number.isFinite(seconds)) return "Infinity seconds"; // TODO: i18n
+	if (typeof seconds !== "number" || seconds === undefined) return "NaN seconds"; // TODO: i18n
+	return humanize(seconds * MILLISECONDS_IN_SECOND, { round: true }); // TODO: i18n
 }

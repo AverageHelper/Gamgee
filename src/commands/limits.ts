@@ -7,6 +7,7 @@ import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getQueueConfig } from "../useQueueStorage.js";
 import { t } from "../i18n.js";
 
+// TODO: i18n
 export const limits: Command = {
 	name: "limits",
 	description: "Display the song queue's submission limits.",

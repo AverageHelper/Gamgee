@@ -43,6 +43,7 @@ function randomCurrent(): string {
 	return random;
 }
 
+// TODO: i18n
 export const nowPlaying: Command = {
 	name: "now-playing",
 	aliases: ["nowplaying"],

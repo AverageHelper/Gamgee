@@ -2,6 +2,7 @@ import type Discord from "discord.js";
 import type { Command } from "./Command.js";
 import { randomPhrase, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
+// TODO: i18n
 export const ping: Command = {
 	name: "ping",
 	description: "Ping my host server to check latency.",

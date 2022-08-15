@@ -37,6 +37,8 @@ export interface SongRequest {
 
 const logger = useLogger();
 
+// TODO: i18n
+
 async function reject_private(request: SongRequest, reason: string): Promise<void> {
 	const context = request.context;
 	const content = `:hammer: <@!${context.user.id}> ${reason}`;

@@ -15,5 +15,5 @@ export function listKeys(): string {
 	const keyList = allKeys //
 		.map(key => `  - \`${key}\``)
 		.join("\n");
-	return `Valid config keys are as follows:\n${keyList}`;
+	return `Valid config keys are as follows:\n${keyList}`; // TODO: i18n
 }

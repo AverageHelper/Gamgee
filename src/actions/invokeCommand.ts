@@ -12,6 +12,8 @@ const logger = useLogger();
 
 type Invocable = Command | Subcommand;
 
+// TODO: i18n
+
 async function failPermissions(context: CommandContext): Promise<void> {
 	return await context.replyPrivately({
 		content: "You don't have permission to run that command.",

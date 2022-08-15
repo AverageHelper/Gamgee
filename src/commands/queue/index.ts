@@ -30,6 +30,7 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	restart
 ];
 
+// TODO: i18n
 export const quo: Command = {
 	name: "quo",
 	description: "Administrative commands to manage the song queue.",

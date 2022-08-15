@@ -7,6 +7,7 @@ import { getConfigValue } from "../../actions/config/getConfigValue.js";
 import { setConfigValue } from "../../actions/config/setConfigValue.js";
 import { resolveStringFromOption } from "../../helpers/optionResolvers.js";
 
+// TODO: i18n
 export const unset: Subcommand = {
 	name: "unset",
 	description: "Reset the value of a configuration setting to default.",

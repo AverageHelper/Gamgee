@@ -9,6 +9,7 @@ import {
 	pushNewLine
 } from "../helpers/composeStrings.js";
 
+// TODO: i18n
 export const howto: GuildedCommand = {
 	name: "howto",
 	nameLocalizations: localizations("commands.howto.name"),

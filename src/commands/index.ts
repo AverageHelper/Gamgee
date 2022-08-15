@@ -41,7 +41,7 @@ function add(command: Command): void {
 	if (allCommands.has(command.name)) {
 		throw new TypeError(
 			`Failed to add command ${command.name} when a command with that name was already added`
-		);
+		); // TODO: i18n
 	}
 	// TODO: Check that command aliases are as unique as command names
 	allCommands.set(command.name, command);

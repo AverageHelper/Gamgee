@@ -5,7 +5,7 @@ export class InvalidYouTubeUrlError extends VideoError {
 	readonly code = "422";
 
 	constructor(url: URL) {
-		super(`This URL isn't a valid YouTube video URL: ${url.href}`);
+		super(`This URL isn't a valid YouTube video URL: ${url.href}`); // TODO: i18n
 		this.name = "InvalidYouTubeUrlError";
 	}
 }

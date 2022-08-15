@@ -13,6 +13,7 @@ import {
 	getQueueConfig
 } from "../useQueueStorage.js";
 
+// TODO: i18n
 export const stats: Command = {
 	name: "stats",
 	description: "Get your personal queue statistics.",

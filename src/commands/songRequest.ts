@@ -11,6 +11,7 @@ import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
 
+// TODO: i18n
 export const sr: GuildedCommand = {
 	name: "sr",
 	nameLocalizations: localizations("commands.sr.name"),

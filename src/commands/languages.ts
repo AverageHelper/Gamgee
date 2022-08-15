@@ -7,6 +7,7 @@ import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
 let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 
+// TODO: i18n
 export const languages: GlobalCommand = {
 	name: "languages",
 	description: "Print my core repository's language statistics.",

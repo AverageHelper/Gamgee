@@ -6,6 +6,7 @@ import { getVideoDetails } from "../actions/getVideoDetails.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
+// TODO: i18n
 export const video: Command = {
 	name: "video",
 	description: "Reply with the video title and duration.",

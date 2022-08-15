@@ -6,6 +6,7 @@ import { isConfigKey, isConfigValue } from "../../constants/config/index.js";
 import { resolveStringFromOption } from "../../helpers/optionResolvers.js";
 import { setConfigValue } from "../../actions/config/setConfigValue.js";
 
+// TODO: i18n
 export const set: Subcommand = {
 	name: "set",
 	description: "Set the value of a configuration setting.",

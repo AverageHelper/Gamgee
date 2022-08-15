@@ -1,6 +1,7 @@
 import type { Command } from "./Command.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
+// TODO: i18n
 export const t: Command = {
 	name: "t",
 	description: "Start a typing indicator.",

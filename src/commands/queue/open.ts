@@ -3,6 +3,7 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 
+// TODO: i18n
 export const open: GuildedSubcommand = {
 	name: "open",
 	description: "Start accepting song requests to the queue.",

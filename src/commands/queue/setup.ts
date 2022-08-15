@@ -3,6 +3,7 @@ import { ApplicationCommandOptionType, ChannelType } from "discord.js";
 import { resolveChannelFromOption } from "../../helpers/optionResolvers.js";
 import { setQueueChannel } from "../../useGuildStorage.js";
 
+// TODO: i18n
 export const setup: Subcommand = {
 	name: "setup",
 	description: "Set a channel as the 'queue' channel.",

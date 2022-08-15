@@ -44,6 +44,7 @@ export interface QueueLimitArg {
 // 	}
 // }
 
+// TODO: i18n
 export const countLimitMeta: QueueLimitArg = {
 	name: "Number of Submissions",
 	value: "count",

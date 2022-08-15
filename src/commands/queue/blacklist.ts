@@ -15,6 +15,7 @@ import {
 	pushNewLine
 } from "../../helpers/composeStrings.js";
 
+// TODO: i18n
 export const blacklist: Subcommand = {
 	name: "blacklist",
 	description: "Show the list of blacklisted users, or add a user to the blacklist.",

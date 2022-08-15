@@ -2,6 +2,7 @@ import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { setQueueChannel } from "../../useGuildStorage.js";
 
+// TODO: i18n
 export const teardown: Subcommand = {
 	name: "teardown",
 	description: "Deletes and un-sets the current queue.",

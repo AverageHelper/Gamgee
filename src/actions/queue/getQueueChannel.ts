@@ -7,6 +7,8 @@ import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
 
+// TODO: i18n
+
 async function getQueueChannelFromCommand(
 	context: CommandContext
 ): Promise<Discord.TextChannel | null> {
