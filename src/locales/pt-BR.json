@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"code": "pt-BR"
+		"code": "pt-BR",
+		"name": "Português do Brasil",
+		"nickname": "Português"
 	},
 	"commands": {
 		"cooldown": {
@@ -29,5 +31,14 @@
 			"name": "usuárioinfo",
 			"description": "Retorna algumas informações sobre você."
 		}
+	},
+	"languages": {
+		"de": "Alemão",
+		"en-GB": "Inglês, Reino Unido",
+		"en-US": "Inglês, EUA",
+		"es-ES": "Espanhol",
+		"fr": "Francês",
+		"hu": "Húngaro",
+		"pt-BR": "Português, Brasil"
 	}
 }

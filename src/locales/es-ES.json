@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"code": "es-ES"
+		"code": "es-ES",
+		"name": "Español",
+		"nickname": "Español"
 	},
 	"commands": {
 		"cooldown": {
@@ -29,5 +31,14 @@
 			"name": "usuarioinfo",
 			"description": "Devuelve alguna información sobre usted."
 		}
+	},
+	"languages": {
+		"de": "Alemán",
+		"en-GB": "Inglés (Reino Unido)",
+		"en-US": "Inglés (EE. UU.)",
+		"es-ES": "Español",
+		"fr": "Francés",
+		"hu": "Húngaro",
+		"pt-BR": "Portugués (Brasil)"
 	}
 }

@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"code": "fr"
+		"code": "fr",
+		"name": "Français",
+		"nickname": "Français"
 	},
 	"commands": {
 		"cooldown": {
@@ -29,5 +31,14 @@
 			"name": "utilinfo",
 			"description": "Retourne quelques informations sur vous."
 		}
+	},
+	"languages": {
+		"de": "Allemand",
+		"en-GB": "Anglais, Royaume-Uni",
+		"en-US": "Anglais, États-Unis",
+		"es-ES": "Espagnol",
+		"fr": "Français",
+		"hu": "Hongrois",
+		"pt-BR": "Portugais, Brésilien"
 	}
 }

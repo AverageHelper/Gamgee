@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"code": "hu"
+		"code": "hu",
+		"name": "Magyar",
+		"nickname": "Magyar"
 	},
 	"commands": {
 		"cooldown": {
@@ -29,5 +31,14 @@
 			"name": "felhasználóiadatok",
 			"description": "Néhány információt visszaad rólad."
 		}
+	},
+	"languages": {
+		"de": "Német",
+		"en-GB": "Angol, Egyesült Királyság",
+		"en-US": "Angol, Államok",
+		"es-ES": "Spanyol",
+		"fr": "Francia",
+		"hu": "Magyar",
+		"pt-BR": "Portugál, Brazil"
 	}
 }
