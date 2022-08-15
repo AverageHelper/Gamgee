@@ -51,3 +51,234 @@ exports[`Help command describes all commands 1`] = `
 \`?video [url]\` - Reply with the video title and duration.
 "
 `;
+
+exports[`Help command describes all commands in de 1`] = `
+"Befehle:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Finden Sie heraus, wann Sie wieder einreichen können.
+\`?hilfe\` - Drucken Sie eine nützliche Hilfenachricht.
+\`?wieman\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Senden Sie einen Song an die Warteschlange.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?benutzerinfo\` - Gibt einige Informationen über Sie zurück.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in en-GB 1`] = `
+"Commands:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Find out when you can submit again.
+\`?help\` - Print a useful help message.
+\`?howto\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Submit a song to the queue.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?userinfo\` - Returns some information about you.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in en-US 1`] = `
+"Commands:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Find out when you can submit again.
+\`?help\` - Print a handy help message.
+\`?howto\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Submit a song to the queue.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?userinfo\` - Returns some information about you.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in es-ES 1`] = `
+"Comandos:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Averigüe cuándo puede enviar de nuevo.
+\`?ayuda\` - Imprime un mensaje de ayuda útil.
+\`?cómo\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Envía una canción a la cola.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?usuarioinfo\` - Devuelve alguna información sobre usted.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in fr 1`] = `
+"Commandes:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Découvrez quand vous pourrez soumettre à nouveau.
+\`?aider\` - Imprimez un message d'aide utile.
+\`?comment\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Soumettre une chanson à la file d'attente.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?utilinfo\` - Retourne quelques informations sur vous.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in hu 1`] = `
+"Parancsok:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Tudja meg, mikor küldheti be újra.
+\`?segítség\` - Nyomtasson ki egy hasznos súgóüzenetet.
+\`?hogyankell\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Adjon fel egy dalt a sorba.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?felhasználóiadatok\` - Néhány információt visszaad rólad.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;
+
+exports[`Help command describes all commands in pt-BR 1`] = `
+"Comandos:
+\`?config\` - Read and modify config options.
+    \`?config get <command_prefix>\` - Get the value of a configuration setting.
+    \`?config set <command_prefix> [value]\` - Set the value of a configuration setting.
+    \`?config unset <command_prefix>\` - Reset the value of a configuration setting to default.
+\`?cooldown\` - Descubra quando você pode enviar novamente.
+\`?ajuda\` - Imprima uma mensagem de ajuda útil.
+\`?como\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?now-playing\` OR \`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?quo\` - Administrative commands to manage the song queue.
+    \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
+    \`?quo teardown\` - Deletes and un-sets the current queue.
+    \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
+    \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
+    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo close\` - Stop accepting song requests to the queue.
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo stats\` - Print statistics on the current queue.
+    \`?quo restart\` - Empty the queue and start a fresh queue session.
+\`?sr [url]\` - Envie uma música para a fila.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?usuárioinfo\` - Retorna algumas informações sobre você.
+\`?version\` - Display the bot's current codebase version.
+\`?video [url]\` - Reply with the video title and duration.
+"
+`;

@@ -9,7 +9,8 @@
 		},
 		"help": {
 			"name": "segítség",
-			"description": "Nyomtasson ki egy hasznos súgóüzenetet."
+			"description": "Nyomtasson ki egy hasznos súgóüzenetet.",
+			"response": "Parancsok:"
 		},
 		"howto": {
 			"name": "hogyankell"

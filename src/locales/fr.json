@@ -9,7 +9,8 @@
 		},
 		"help": {
 			"name": "aider",
-			"description": "Imprimez un message d'aide utile."
+			"description": "Imprimez un message d'aide utile.",
+			"response": "Commandes:"
 		},
 		"howto": {
 			"name": "comment"

@@ -5,6 +5,7 @@ const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
 
 import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
 import { help } from "./help.js";
+import { locales } from "../i18n.js";
 
 const mockReplyPrivately = jest.fn();
 
@@ -21,6 +22,7 @@ describe("Help command", () => {
 				id: "the-channel"
 			},
 			storage: null,
+			userLocale: "en-US",
 			replyPrivately: mockReplyPrivately
 		} as unknown as GuildedCommandContext;
 
@@ -28,6 +30,19 @@ describe("Help command", () => {
 	});
 
 	test("describes all commands", async () => {
+		await help.execute(context);
+		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+
+		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
+		const description = calls[0];
+		expect(description).toMatchSnapshot();
+	});
+
+	test.each(locales.map(l => [l]))("describes all commands in %s", async locale => {
+		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+		context = { ...context, userLocale: locale } as GuildedCommandContext;
+
 		await help.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());

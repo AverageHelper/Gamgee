@@ -1,6 +1,7 @@
 import type { Command } from "./Command.js";
+import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
+import { DEFAULT_LOCALE, isSupportedLocale, localizations, t } from "../i18n.js";
 import { describeAllCommands } from "../actions/describeAllCommands.js";
-import { localizations } from "../i18n.js";
 
 export const help: Command = {
 	name: "help",
@@ -12,12 +13,15 @@ export const help: Command = {
 		// Dynamic import here, b/c ./index depends on us to resolve
 		const { allCommands } = await import("./index.js");
 
-		// if (context.type === "interaction") {
-		//	// TODO: pass this somewhere to i18nlize the private output
-		// 	context.interaction.locale
-		// }
+		let locale = context.userLocale ?? DEFAULT_LOCALE;
+		if (!isSupportedLocale(locale)) {
+			locale = DEFAULT_LOCALE;
+		}
 
-		const descriptions = await describeAllCommands(context, allCommands);
-		return await context.replyPrivately(`Commands:\n${descriptions}`);
+		const descriptions = await describeAllCommands(context, allCommands, locale);
+		const response = createPartialString(t("commands.help.response", locale));
+		pushNewLine(response);
+		push(descriptions, response);
+		return await context.replyPrivately(composed(response));
 	}
 };

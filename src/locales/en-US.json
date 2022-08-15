@@ -9,7 +9,8 @@
 		},
 		"help": {
 			"name": "help",
-			"description": "Print a handy help message."
+			"description": "Print a handy help message.",
+			"response": "Commands:"
 		},
 		"howto": {
 			"name": "howto"

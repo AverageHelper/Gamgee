@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
+import type { SupportedLocale } from "../i18n.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
 import { getConfigCommandPrefix } from "./config/getConfigValue.js";
@@ -24,6 +25,30 @@ const VAL_START = "[";
 const VAL_END = "]";
 const OPT = "?";
 
+function localizedName(
+	cmd: Pick<Command, "name" | "nameLocalizations">,
+	locale: SupportedLocale
+): string {
+	const defaultName = cmd.name;
+	if (cmd.nameLocalizations) {
+		const localizedName = cmd.nameLocalizations[locale] ?? defaultName;
+		return localizedName || defaultName;
+	}
+	return defaultName;
+}
+
+function localizedDescription(
+	cmd: Pick<Command, "description" | "descriptionLocalizations">,
+	locale: SupportedLocale
+): string {
+	const defaultDescription = cmd.description;
+	if (cmd.descriptionLocalizations) {
+		const localizedDescription = cmd.descriptionLocalizations[locale] ?? defaultDescription;
+		return localizedDescription || defaultDescription;
+	}
+	return defaultDescription;
+}
+
 /**
  * Constructs a string that describes the available commands.
  *
@@ -33,7 +58,8 @@ const OPT = "?";
  */
 export async function describeAllCommands(
 	context: CommandContext,
-	commands: Map<string, Command>
+	commands: Map<string, Command>,
+	locale: SupportedLocale
 ): Promise<string> {
 	const COMMAND_PREFIX =
 		context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
@@ -54,16 +80,19 @@ export async function describeAllCommands(
 		const cmdDesc = createPartialString();
 
 		// Describe the command
-		push(CODE, cmdDesc);
-		push(`${COMMAND_PREFIX}${command.name}`, cmdDesc);
+		const commandName = localizedName(command, locale);
+		const commandDescription = localizedDescription(command, locale);
 
-		describeParameters(command.options ?? [], cmdDesc);
+		push(CODE, cmdDesc);
+		push(`${COMMAND_PREFIX}${commandName}`, cmdDesc);
+
+		describeParameters(command.options ?? [], cmdDesc, locale);
 
 		push(CODE, cmdDesc);
 
 		if (context.type === "message") {
 			// Slash-commands have autocomplete, so aliases aren't as useful. We'll ignore them in the /help buzz
-			const aliases = (command.aliases ?? []).filter(alias => alias !== command.name);
+			const aliases = (command.aliases ?? []).filter(alias => alias !== commandName);
 			if (aliases.length > 0) {
 				aliases.forEach(alias => {
 					push(" OR ", cmdDesc);
@@ -73,28 +102,31 @@ export async function describeAllCommands(
 		}
 
 		push(DASH, cmdDesc);
-		push(command.description, cmdDesc);
+		push(commandDescription, cmdDesc);
 
 		// Describe all subcommands
 		command.options
 			?.filter(optn => optn.type === ApplicationCommandOptionType.Subcommand)
 			?.forEach(sub => {
+				const subName = localizedName(sub, locale);
+				const subDescription = localizedDescription(sub, locale);
+
 				// Describe the subcommand
 				const subDesc = createPartialString();
 				pushNewLine(subDesc);
 				push(INDENT, subDesc);
 
 				push(CODE, subDesc);
-				push(`${COMMAND_PREFIX}${command.name} ${sub.name}`, subDesc);
+				push(`${COMMAND_PREFIX}${commandName} ${subName}`, subDesc);
 
 				if ("options" in sub) {
-					describeParameters(sub.options ?? [], subDesc);
+					describeParameters(sub.options ?? [], subDesc, locale);
 				}
 
 				push(CODE, subDesc);
 
 				push(DASH, subDesc);
-				push(sub.description, subDesc);
+				push(subDescription, subDesc);
 				push(composed(subDesc), cmdDesc);
 			});
 
@@ -113,7 +145,8 @@ function describeParameters(
 		| Discord.ApplicationCommandNonOptionsData
 		| Subcommand
 	>,
-	cmdDesc: PartialString
+	cmdDesc: PartialString,
+	locale: SupportedLocale
 ): void {
 	options
 		?.filter(optn => optn.type !== ApplicationCommandOptionType.Subcommand)
@@ -140,7 +173,7 @@ function describeParameters(
 				push(choiceValues.join(SEP) ?? "", subDesc);
 			} else {
 				// arbitrary value
-				push(option.name, subDesc);
+				push(localizedName(option, locale), subDesc);
 			}
 
 			if (option.required === true && option.choices) {

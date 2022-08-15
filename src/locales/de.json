@@ -9,7 +9,8 @@
 		},
 		"help": {
 			"name": "hilfe",
-			"description": "Drucken Sie eine nützliche Hilfenachricht."
+			"description": "Drucken Sie eine nützliche Hilfenachricht.",
+			"response": "Befehle:"
 		},
 		"howto": {
 			"name": "wieman"
