@@ -13,7 +13,7 @@ const vocabulary = {
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const DEFAULT_LOCALE = "en-US";
+export const DEFAULT_LOCALE = "en-US";
 
 export type SupportedLocale = keyof typeof vocabulary;
 

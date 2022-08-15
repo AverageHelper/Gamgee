@@ -18,6 +18,9 @@ interface BaseCommandContext {
 	/** The guild in which the command was invoked. */
 	readonly guild: Discord.Guild | null;
 
+	/** The guild's preferred locale. */
+	readonly guildLocale: Discord.LocaleString | null;
+
 	/** The channel in which the command was invoked. */
 	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
 
@@ -101,6 +104,9 @@ export interface MessageCommandContext extends BaseCommandContext {
 
 	/** The options that were passed into the command. */
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
+
+	/** The user's preferred locale. Unknown in message contexts. */
+	readonly userLocale: null;
 }
 
 /**
@@ -111,6 +117,9 @@ export interface InteractionCommandContext extends BaseCommandContext {
 
 	/** The interaction that represents the command invocation. */
 	readonly interaction: Discord.CommandInteraction;
+
+	/** The user's preferred locale. Unknown in message contexts. */
+	readonly userLocale: Discord.LocaleString;
 }
 
 /**
