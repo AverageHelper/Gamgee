@@ -105,8 +105,11 @@ export interface MessageCommandContext extends BaseCommandContext {
 	/** The options that were passed into the command. */
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 
-	/** The user's preferred locale. Unknown in message contexts. */
-	readonly userLocale: null;
+	/**
+	 * The user's preferred locale. Defaults to the guild's preferred locale
+	 * when unknown, or in message contexts.
+	 */
+	readonly userLocale: Discord.LocaleString | null;
 }
 
 /**
@@ -118,7 +121,10 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	/** The interaction that represents the command invocation. */
 	readonly interaction: Discord.CommandInteraction;
 
-	/** The user's preferred locale. Unknown in message contexts. */
+	/**
+	 * The user's preferred locale. Defaults to the guild's preferred locale
+	 * when unknown, or in message contexts.
+	 */
 	readonly userLocale: Discord.LocaleString;
 }
 

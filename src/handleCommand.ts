@@ -252,7 +252,7 @@ export async function handleCommand(
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
-			userLocale: null,
+			userLocale: message.guild?.preferredLocale ?? null, // FIXME: Isn't there API to get the user's locale?
 			member: message.member,
 			guild: message.guild,
 			guildLocale: message.guild?.preferredLocale ?? null,
