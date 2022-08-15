@@ -32,6 +32,12 @@
 			"description": "Devuelve alguna información sobre usted."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "No hay cola configurada.",
+			"not-open": "La cola no está abierta."
+		}
+	},
 	"languages": {
 		"de": "Alemán",
 		"en-GB": "Inglés (Reino Unido)",

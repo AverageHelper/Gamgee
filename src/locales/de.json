@@ -32,6 +32,12 @@
 			"description": "Gibt einige Informationen über Sie zurück."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "Es gibt keine Warteschlange.",
+			"not-open": "Die Warteschlange ist nicht geöffnet."
+		}
+	},
 	"languages": {
 		"de": "Deutsch",
 		"en-GB": "Englisch (Großbritannien)",

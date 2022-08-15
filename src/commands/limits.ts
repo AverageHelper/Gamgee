@@ -5,15 +5,16 @@ import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getQueueConfig } from "../useQueueStorage.js";
+import { t } from "../i18n.js";
 
 export const limits: Command = {
 	name: "limits",
 	description: "Display the song queue's submission limits.",
 	requiresGuild: true,
-	async execute({ guild, reply }) {
+	async execute({ guild, guildLocale, reply }) {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
-			return await reply("No queue is set up.");
+			return await reply(t("common.queue.not-set-up", guildLocale));
 		}
 
 		const config = await getQueueConfig(queueChannel);

@@ -12,6 +12,7 @@ import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
+import { t } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 import {
 	countAllEntriesFrom,
@@ -116,6 +117,7 @@ async function acceptSongRequest({
  */
 export async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;
+	const userLocale = context.userLocale;
 	const sender = context.user;
 	const senderId = sender.id;
 
@@ -189,7 +191,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		// ** If, by the time we got here, the queue has closed, reject!
 		const isOpen = await isQueueOpen(queueChannel.guild);
 		if (!isOpen) {
-			return await reject_private(request, "The queue is not open.");
+			return await reject_private(request, t("common.queue.not-open", userLocale));
 		}
 
 		const song = await songInfoPromise; // we need this info now
@@ -242,7 +244,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		// ** If, by the time we got here, the queue has closed, reject!
 		const isStillOpen = await isQueueOpen(queueChannel.guild);
 		if (!isStillOpen) {
-			return await reject_private(request, "The queue is not open.");
+			return await reject_private(request, t("common.queue.not-open", userLocale));
 		}
 
 		const durationBefore = durationString(playtimeTotal, true);

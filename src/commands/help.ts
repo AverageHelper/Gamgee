@@ -1,7 +1,7 @@
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
-import { DEFAULT_LOCALE, isSupportedLocale, localizations, t } from "../i18n.js";
 import { describeAllCommands } from "../actions/describeAllCommands.js";
+import { localizations, t } from "../i18n.js";
 
 export const help: Command = {
 	name: "help",
@@ -13,10 +13,7 @@ export const help: Command = {
 		// Dynamic import here, b/c ./index depends on us to resolve
 		const { allCommands } = await import("./index.js");
 
-		let locale = context.userLocale ?? DEFAULT_LOCALE;
-		if (!isSupportedLocale(locale)) {
-			locale = DEFAULT_LOCALE;
-		}
+		const locale = context.userLocale;
 
 		const descriptions = await describeAllCommands(context, allCommands, locale);
 		const response = createPartialString(t("commands.help.response", locale));

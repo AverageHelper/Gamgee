@@ -4,7 +4,7 @@ import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../us
 import { durationString } from "../helpers/durationString.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { localizations } from "../i18n.js";
+import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 
 export const cooldown: Command = {
@@ -13,7 +13,7 @@ export const cooldown: Command = {
 	description: "Find out when you can submit again.",
 	descriptionLocalizations: localizations("commands.cooldown.description"),
 	requiresGuild: true,
-	async execute({ user, guild, replyPrivately, deleteInvocation }) {
+	async execute({ user, userLocale, guild, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
 		const [queueChannel, isOpen] = await Promise.all([
@@ -21,8 +21,8 @@ export const cooldown: Command = {
 			isQueueOpen(guild)
 		]);
 
-		if (!queueChannel) return await replyPrivately("No queue is set up.");
-		if (!isOpen) return await replyPrivately("The queue is not open.");
+		if (!queueChannel) return await replyPrivately(t("common.queue.not-set-up", userLocale));
+		if (!isOpen) return await replyPrivately(t("common.queue.not-open", userLocale));
 
 		const config = await getQueueConfig(queueChannel);
 

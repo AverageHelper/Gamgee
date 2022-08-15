@@ -4,7 +4,7 @@ import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { localizations } from "../i18n.js";
+import { localizations, t } from "../i18n.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
@@ -30,6 +30,7 @@ export const sr: GuildedCommand = {
 	async execute(context) {
 		const {
 			guild,
+			guildLocale,
 			channel,
 			user,
 			options,
@@ -47,7 +48,7 @@ export const sr: GuildedCommand = {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			await context.followUp({
-				content: `:hammer: <@!${user.id}> No queue is set up.`,
+				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
 				reply: false
 			});
 			return;
@@ -70,7 +71,7 @@ export const sr: GuildedCommand = {
 		const isOpen = await isQueueOpen(guild);
 		if (!isOpen) {
 			return await reply({
-				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
+				content: `:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", guildLocale)}`,
 				ephemeral: true
 			});
 		}

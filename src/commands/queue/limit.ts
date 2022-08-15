@@ -7,6 +7,7 @@ import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { t } from "../../i18n.js";
 import {
 	// ActionRowBuilder,
 	ApplicationCommandOptionType
@@ -122,10 +123,10 @@ export const limit: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const { /* type,*/ guild, options, reply } = context;
+		const { /* type,*/ guild, guildLocale, options, reply } = context;
 
 		const queueChannel = await getQueueChannel(guild);
-		if (!queueChannel) return await reply("No queue is set up.");
+		if (!queueChannel) return await reply(t("common.queue.not-set-up", guildLocale));
 
 		const config = await getQueueConfig(queueChannel);
 

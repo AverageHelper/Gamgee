@@ -5,6 +5,7 @@ import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import type { Storage } from "./configStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { ApplicationCommandOptionType, ChannelType } from "discord.js";
+import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
@@ -252,10 +253,12 @@ export async function handleCommand(
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
-			userLocale: message.guild?.preferredLocale ?? null, // FIXME: Isn't there API to get the user's locale?
+			userLocale: localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE, // FIXME: Isn't there API to get the user's locale?
+			userLocaleRaw: null,
 			member: message.member,
 			guild: message.guild,
-			guildLocale: message.guild?.preferredLocale ?? null,
+			guildLocale: localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE,
+			guildLocaleRaw: message.guild?.preferredLocale ?? null,
 			channel,
 			client: message.client,
 			message,

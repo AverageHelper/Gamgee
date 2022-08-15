@@ -4,6 +4,7 @@ import type { Logger } from "./logger.js";
 import type { Storage } from "./configStorage.js";
 import { allCommands } from "./commands/index.js";
 import { ChannelType } from "discord.js";
+import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
 import { getEnv } from "./helpers/environment.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
@@ -64,10 +65,12 @@ export async function handleInteraction(
 			type: "interaction",
 			createdTimestamp: interaction.createdTimestamp,
 			user: interaction.user,
-			userLocale: interaction.locale,
+			userLocale: localeIfSupported(interaction.locale) ?? DEFAULT_LOCALE,
+			userLocaleRaw: interaction.locale,
 			member,
 			guild: interaction.guild,
-			guildLocale: interaction.guildLocale,
+			guildLocale: localeIfSupported(interaction.guildLocale) ?? DEFAULT_LOCALE,
+			guildLocaleRaw: interaction.guildLocale,
 			channel,
 			client: interaction.client,
 			interaction,

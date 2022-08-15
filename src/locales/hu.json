@@ -32,6 +32,12 @@
 			"description": "Néhány információt visszaad rólad."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "Nincs sor.",
+			"not-open": "A sor nem nyitott."
+		}
+	},
 	"languages": {
 		"de": "Német",
 		"en-GB": "Angol, Egyesült Királyság",

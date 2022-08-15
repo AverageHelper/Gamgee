@@ -24,6 +24,12 @@ export function isSupportedLocale(tbd: unknown): tbd is SupportedLocale {
 	return locales.includes(tbd as SupportedLocale);
 }
 
+/** Returns the given locale if we support that locale. Returns `null` otherwise. */
+export function localeIfSupported(tbd: unknown): SupportedLocale | null {
+	if (!isSupportedLocale(tbd)) return null;
+	return tbd;
+}
+
 // TODO: Validate that all of our strings files match the master schema
 // TypeScript ensures here that DEFAULT_LOCALE is a valid locale:
 type MessageSchema = typeof vocabulary[typeof DEFAULT_LOCALE];

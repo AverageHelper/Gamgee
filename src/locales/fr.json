@@ -32,6 +32,12 @@
 			"description": "Retourne quelques informations sur vous."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "Aucune file d'attente n'est configurée.",
+			"not-open": "La file d'attente n'est pas ouverte."
+		}
+	},
 	"languages": {
 		"de": "Allemand",
 		"en-GB": "Anglais, Royaume-Uni",

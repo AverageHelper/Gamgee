@@ -1,6 +1,7 @@
 import type Discord from "discord.js";
-import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
+import type { Storage } from "../configStorage.js";
+import type { SupportedLocale } from "../i18n.js";
 import { ChannelType } from "discord.js";
 
 export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
@@ -18,8 +19,14 @@ interface BaseCommandContext {
 	/** The guild in which the command was invoked. */
 	readonly guild: Discord.Guild | null;
 
-	/** The guild's preferred locale. */
-	readonly guildLocale: Discord.LocaleString | null;
+	/**
+	 * The guild's preferred locale. If that locale is unknown or unsupported,
+	 * then `en-US` is returned.
+	 */
+	readonly guildLocale: SupportedLocale;
+
+	/** The guild's preferred locale. We might not have translations for this locale. */
+	readonly guildLocaleRaw: Discord.LocaleString | null;
 
 	/** The channel in which the command was invoked. */
 	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
@@ -106,10 +113,19 @@ export interface MessageCommandContext extends BaseCommandContext {
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 
 	/**
-	 * The user's preferred locale. Defaults to the guild's preferred locale
-	 * when unknown, or in message contexts.
+	 * The user's preferred locale.
+	 *
+	 * If the user's locale is unknown, defaults to the guild's preferred locale.
+	 * If the guild's preferred locale is unknown, or the resolved locale is not
+	 * supported, defaults to `en-US`.
 	 */
-	readonly userLocale: Discord.LocaleString | null;
+	readonly userLocale: SupportedLocale;
+
+	/**
+	 * The user's preferred locale, if known. Always `null` in message contexts.
+	 * We might not have translations for this locale.
+	 */
+	readonly userLocaleRaw: null;
 }
 
 /**
@@ -122,10 +138,19 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	readonly interaction: Discord.CommandInteraction;
 
 	/**
-	 * The user's preferred locale. Defaults to the guild's preferred locale
-	 * when unknown, or in message contexts.
+	 * The user's preferred locale.
+	 *
+	 * If the user's locale is unknown, defaults to the guild's preferred locale.
+	 * If the guild's preferred locale is unknown, or the resolved locale is not
+	 * supported, defaults to `en-US`.
 	 */
-	readonly userLocale: Discord.LocaleString;
+	readonly userLocale: SupportedLocale;
+
+	/**
+	 * The user's preferred locale, if known. Always `null` in message contexts.
+	 * We might not have translations for this locale.
+	 */
+	readonly userLocaleRaw: Discord.LocaleString;
 }
 
 /**

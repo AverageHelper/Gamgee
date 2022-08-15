@@ -5,6 +5,7 @@ import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
+import { t } from "../i18n.js";
 import {
 	averageSubmissionPlaytimeForUser,
 	countAllEntriesFrom,
@@ -16,7 +17,7 @@ export const stats: Command = {
 	name: "stats",
 	description: "Get your personal queue statistics.",
 	requiresGuild: true,
-	async execute({ user, guild, replyPrivately, deleteInvocation }) {
+	async execute({ user, userLocale, guild, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
 		const [queueChannel, isOpen] = await Promise.all([
@@ -24,7 +25,7 @@ export const stats: Command = {
 			isQueueOpen(guild)
 		]);
 		if (!queueChannel) {
-			return await replyPrivately("No queue is set up.");
+			return await replyPrivately(t("common.queue.not-set-up", userLocale));
 		}
 
 		const config = await getQueueConfig(queueChannel);

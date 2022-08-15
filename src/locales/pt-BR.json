@@ -32,6 +32,12 @@
 			"description": "Retorna algumas informações sobre você."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "Nenhuma fila está configurada.",
+			"not-open": "A fila não está aberta."
+		}
+	},
 	"languages": {
 		"de": "Alemão",
 		"en-GB": "Inglês, Reino Unido",

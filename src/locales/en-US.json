@@ -32,6 +32,12 @@
 			"description": "Returns some information about you."
 		}
 	},
+	"common": {
+		"queue": {
+			"not-set-up": "No queue is set up.",
+			"not-open": "The queue is not open."
+		}
+	},
 	"languages": {
 		"de": "German",
 		"en-GB": "English, UK",
