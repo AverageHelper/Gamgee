@@ -382,12 +382,12 @@ export async function clearEntries(queueChannel: Discord.TextChannel): Promise<v
 // ** Now-playing Invocations **
 
 /**
- * Retrieves the number of users that invoked `/now-playing` or its variants for an entry,
+ * Retrieves the number of users that invoked `/nowplaying` or its variants for an entry,
  * excluding the requesting user if they also invoked that command.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  * @param queueChannel The channel that identifies the request queue.
- * @returns a promise that resolves with the number of unique `/now-playing` invocations
+ * @returns a promise that resolves with the number of unique `/nowplaying` invocations
  * for the entry.
  */
 export async function getLikeCount(
@@ -411,11 +411,11 @@ export async function getLikeCount(
 }
 
 /**
- * Increments the count of unique `/now-playing` invocations for the entry.
+ * Increments the count of unique `/nowplaying` invocations for the entry.
  * If the user submitted this entry, they are not counted.
- * If the user has already invoked `/now-playing` for this entry, they are not counted.
+ * If the user has already invoked `/nowplaying` for this entry, they are not counted.
  *
- * @param userId The ID of the user who invoked `/now-playing`.
+ * @param userId The ID of the user who invoked `/nowplaying`.
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  * @param queueChannel The channel that identifies the request queue.
  */

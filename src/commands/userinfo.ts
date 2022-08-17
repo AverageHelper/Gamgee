@@ -41,7 +41,7 @@ export const userinfo: Command = {
 		}
 
 		if (guildLocaleRaw) {
-			push(", and your guild's locale is ", response);
+			push(", and the server's locale is ", response);
 			pushCode(guildLocaleRaw, response);
 		}
 

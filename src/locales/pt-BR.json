@@ -18,6 +18,22 @@
 			"description": "Imprima instruções para usar os comandos de fila comum.",
 			"name": "como"
 		},
+		"languages": {
+			"description": "Imprima as estatísticas de idioma do meu repositório principal.",
+			"name": "línguas"
+		},
+		"limits": {
+			"description": "Exibe os limites de envio da fila de músicas.",
+			"name": "limites"
+		},
+		"nowplaying": {
+			"description": "Mostrar a música atual na fila (ou meu melhor palpite).",
+			"name": "agorajogando"
+		},
+		"ping": {
+			"description": "Ping meu servidor host para verificar a latência.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Envie uma música para a fila.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Obtenha suas estatísticas de filas pessoais.",
+			"name": "estatísticas"
 		},
 		"userinfo": {
 			"description": "Retorna algumas informações sobre você.",

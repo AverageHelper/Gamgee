@@ -170,6 +170,7 @@ describe("Command handler", () => {
 			${"howto"}
 			${"languages"}
 			${"limits"}
+			${"nowplaying"}
 			${"now-playing"}
 			${"ping"}
 			${"quo"}
@@ -210,6 +211,7 @@ describe("Command handler", () => {
 			${"howto"}
 			${"languages"}
 			${"limits"}
+			${"nowplaying"}
 			${"now-playing"}
 			${"ping"}
 			${"quo"}
@@ -231,11 +233,11 @@ describe("Command handler", () => {
 			}
 		);
 
-		test("Command alias `nowplaying` calls command `now-playing`", async () => {
-			mockMessage.content = `${prefix}nowplaying`;
+		test("Command alias `now-playing` calls command `nowplaying`", async () => {
+			mockMessage.content = `${prefix}now-playing`;
 			await handleCommand(mockMessage, null, logger);
 
-			const mockNowPlaying = mockCommandDefinitions.get("now-playing");
+			const mockNowPlaying = mockCommandDefinitions.get("nowplaying");
 			expect(mockNowPlaying).toBeDefined();
 			expect(mockNowPlaying?.execute).toHaveBeenCalledTimes(1);
 		});

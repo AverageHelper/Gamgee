@@ -4,8 +4,8 @@ import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
+import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
-import { t } from "../i18n.js";
 import {
 	averageSubmissionPlaytimeForUser,
 	countAllEntriesFrom,
@@ -16,7 +16,9 @@ import {
 // TODO: i18n
 export const stats: Command = {
 	name: "stats",
+	nameLocalizations: localizations("commands.stats.name"),
 	description: "Get your personal queue statistics.",
+	descriptionLocalizations: localizations("commands.stats.description"),
 	requiresGuild: true,
 	async execute({ user, userLocale, guild, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();

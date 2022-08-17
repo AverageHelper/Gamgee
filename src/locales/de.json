@@ -18,6 +18,22 @@
 			"description": "Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.",
 			"name": "wieman"
 		},
+		"languages": {
+			"description": "Drucke die Sprachstatistiken meines Hauptrepositorys.",
+			"name": "sprachen"
+		},
+		"limits": {
+			"description": "Zeigen Sie die Einreichungslimits der Song-Warteschlange an.",
+			"name": "grenzen"
+		},
+		"nowplaying": {
+			"description": "Zeigen Sie den aktuellen Song in der Warteschlange an (oder meine beste Vermutung).",
+			"name": "spieltjetzt"
+		},
+		"ping": {
+			"description": "Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Senden Sie einen Song an die Warteschlange.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Holen Sie sich Ihre persönliche Warteschlangenstatistik.",
+			"name": "statistiken"
 		},
 		"userinfo": {
 			"description": "Gibt einige Informationen über Sie zurück.",

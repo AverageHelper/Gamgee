@@ -18,6 +18,22 @@
 			"description": "Nyomtasson ki utasításokat a gyakori parancsok használatához.",
 			"name": "hogyankell"
 		},
+		"languages": {
+			"description": "Nyomtassa ki az alaptáram nyelvi statisztikáit.",
+			"name": "nyelvek"
+		},
+		"limits": {
+			"description": "Jelenítse meg a dalok várólista beküldési korlátait.",
+			"name": "határait"
+		},
+		"nowplaying": {
+			"description": "Mutasd fel az aktuális dalt a sorban (vagy a legjobb tippem).",
+			"name": "mitjátszik"
+		},
+		"ping": {
+			"description": "Pingelje a gazdagépemet a késleltetés ellenőrzéséhez.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Adjon fel egy dalt a sorba.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Szerezze meg személyes sorstatisztikáit.",
+			"name": "statisztika"
 		},
 		"userinfo": {
 			"description": "Néhány információt visszaad rólad.",

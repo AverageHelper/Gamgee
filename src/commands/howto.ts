@@ -16,17 +16,26 @@ export const howto: GuildedCommand = {
 	description: "Print instructions for using the common queue commands.",
 	descriptionLocalizations: localizations("commands.howto.description"),
 	requiresGuild: true,
-	async execute({ storage, type, reply }) {
+	async execute({ guildLocale, storage, type, reply }) {
 		const { sr } = await import("./songRequest.js");
 		const { nowPlaying } = await import("./nowPlaying.js");
+
+		const srCommandName: string = sr.nameLocalizations
+			? sr.nameLocalizations[guildLocale] ?? sr.name
+			: sr.name;
+		const nowPlayingCommandName: string = nowPlaying.nameLocalizations
+			? nowPlaying.nameLocalizations[guildLocale] ?? nowPlaying.name
+			: nowPlaying.name;
 
 		// Print the standard help
 		const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
 		const msg = createPartialString();
 
-		push(`To submit a song, type \`${COMMAND_PREFIX}${sr.name} <link>\`.`, msg);
+		const exampleQuery = "https://youtu.be/dQw4w9WgXcQ"; // :P
+
+		push(`To submit a song, type \`${COMMAND_PREFIX}${srCommandName} <link>\`.`, msg);
 		pushNewLine(msg);
-		push(`For example: \`${COMMAND_PREFIX}${sr.name} https://youtu.be/dQw4w9WgXcQ\``, msg);
+		push(`For example: \`${COMMAND_PREFIX}${srCommandName} ${exampleQuery}\``, msg);
 		pushNewLine(msg);
 		push("I will respond with a text verification indicating your song has joined the queue!", msg);
 		pushNewLine(msg);
@@ -42,7 +51,7 @@ export const howto: GuildedCommand = {
 		pushNewLine(msg);
 
 		push("To get a link to the current song, type ", msg);
-		pushCode(`${COMMAND_PREFIX}${nowPlaying.name}`, msg);
+		pushCode(`${COMMAND_PREFIX}${nowPlayingCommandName}`, msg);
 		if (type === "message") {
 			push(" and check your DMs", msg);
 		}

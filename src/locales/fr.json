@@ -18,6 +18,22 @@
 			"description": "Imprimez les instructions d'utilisation des commandes de file d'attente courantes.",
 			"name": "comment"
 		},
+		"languages": {
+			"description": "Imprimer les statistiques linguistiques de mon référentiel principal.",
+			"name": "langues"
+		},
+		"limits": {
+			"description": "Afficher les limites de soumission de la file d'attente de chansons.",
+			"name": "limites"
+		},
+		"nowplaying": {
+			"description": "Révélez la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
+			"name": "jouermaintenant"
+		},
+		"ping": {
+			"description": "Ping mon serveur hôte pour vérifier la latence.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Soumettre une chanson à la file d'attente.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Obtenez vos statistiques de file d'attente personnelles.",
+			"name": "statistiques"
 		},
 		"userinfo": {
 			"description": "Retourne quelques informations sur vous.",

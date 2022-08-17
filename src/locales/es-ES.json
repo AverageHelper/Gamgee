@@ -18,6 +18,22 @@
 			"description": "Imprima instrucciones para usar los comandos de cola comunes.",
 			"name": "cómo"
 		},
+		"languages": {
+			"description": "Imprimir las estadísticas de idioma de mi repositorio principal.",
+			"name": "idiomas"
+		},
+		"limits": {
+			"description": "Muestra los límites de envío de la cola de canciones.",
+			"name": "limites"
+		},
+		"nowplaying": {
+			"description": "Muestra la canción actual en la cola (o mi mejor suposición).",
+			"name": "jugandoahora"
+		},
+		"ping": {
+			"description": "Haga ping a mi servidor host para comprobar la latencia.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Envía una canción a la cola.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Obtenga sus estadísticas de colas personales.",
+			"name": "estadísticas"
 		},
 		"userinfo": {
 			"description": "Devuelve alguna información sobre usted.",

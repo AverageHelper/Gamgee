@@ -5,12 +5,14 @@ import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getQueueConfig } from "../useQueueStorage.js";
-import { t } from "../i18n.js";
+import { localizations, t } from "../i18n.js";
 
 // TODO: i18n
 export const limits: Command = {
 	name: "limits",
+	nameLocalizations: localizations("commands.limits.name"),
 	description: "Display the song queue's submission limits.",
+	descriptionLocalizations: localizations("commands.limits.description"),
 	requiresGuild: true,
 	async execute({ type, guild, guildLocale, userLocale, reply }) {
 		const queueChannel = await getQueueChannel(guild);
@@ -24,10 +26,15 @@ export const limits: Command = {
 		// slash-command interactions and message commands.
 		const locale = type === "interaction" ? userLocale : guildLocale;
 
+		const { cooldown: cooldownCommand } = await import("./cooldown.js");
+		const cooldownName: string = cooldownCommand.nameLocalizations
+			? cooldownCommand.nameLocalizations[locale] ?? cooldownCommand.name
+			: cooldownCommand.name;
+
 		// Read out the existing limits
 		const embed = new EmbedBuilder() //
 			.setTitle("Queue Limits")
-			.setDescription("Use `/cooldown` to see your cooldown time");
+			.setDescription(`Use \`/${cooldownName}\` to see your cooldown time`);
 
 		allLimits.forEach(key => {
 			let value: string;

@@ -4,6 +4,7 @@ import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { fetchAllEntries } from "../useQueueStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
+import { localizations } from "../i18n.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 
 const uncertainties = [
@@ -45,9 +46,11 @@ function randomCurrent(): string {
 
 // TODO: i18n
 export const nowPlaying: Command = {
-	name: "now-playing",
-	aliases: ["nowplaying"],
+	name: "nowplaying",
+	nameLocalizations: localizations("commands.nowplaying.name"),
+	aliases: ["now-playing"],
 	description: "Reveal the current song in the queue (or my best guess).",
+	descriptionLocalizations: localizations("commands.nowplaying.description"),
 	requiresGuild: true,
 	async execute({ guild, user, logger, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();

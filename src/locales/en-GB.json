@@ -18,6 +18,22 @@
 			"description": "Print instructions for using the common queue commands.",
 			"name": "howto"
 		},
+		"languages": {
+			"description": "Print my core repository's language statistics.",
+			"name": "languages"
+		},
+		"limits": {
+			"description": "Display the song queue's submission limits.",
+			"name": "limits"
+		},
+		"nowplaying": {
+			"description": "Reveal the current song in the queue (or my best guess).",
+			"name": "nowplaying"
+		},
+		"ping": {
+			"description": "Ping my host server to check latency.",
+			"name": "ping"
+		},
 		"sr": {
 			"description": "Submit a song to the queue.",
 			"name": "sr",
@@ -27,6 +43,10 @@
 					"name": "url"
 				}
 			}
+		},
+		"stats": {
+			"description": "Get your personal queue statistics.",
+			"name": "stats"
 		},
 		"userinfo": {
 			"description": "Returns some information about you.",

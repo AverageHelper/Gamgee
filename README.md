@@ -46,7 +46,7 @@ $ cd Gamgee
     - [`howto`](#howto)
     - [`languages`](#languages)
     - [`limits`](#limits)
-    - [`now-playing`](#now-playing)
+    - [`nowplaying`](#nowplaying)
     - [`ping`](#ping)
     - [`quo`](#quo)
     - [`sr`](#sr)
@@ -184,7 +184,7 @@ Prints the list of languages that make up Gamgee's source code.
 
 Prints the limits on the song request queue. Learn more about the available limits under the [`quo limit`](#quo-limit-key-value) command.
 
-### `now-playing`
+### `nowplaying`
 
 Sends a DM to the user with the earliest queue entry that is not marked "Done". If all entries are marked "Done", or the queue is empty, then Gamgee will make the user aware of that.
 

@@ -1,7 +1,7 @@
 import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
-import { locales } from "../i18n.js";
+import { locales, localizations } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
@@ -10,7 +10,9 @@ let cachedMetadata: GitHubMetadata | null | "waiting" = null;
 // TODO: i18n
 export const languages: GlobalCommand = {
 	name: "languages",
+	nameLocalizations: localizations("commands.languages.name"),
 	description: "Print my core repository's language statistics.",
+	descriptionLocalizations: localizations("commands.languages.description"),
 	requiresGuild: false,
 	async execute({ logger, prepareForLongRunningTasks, reply, followUp }) {
 		const owner = "AverageHelper";
