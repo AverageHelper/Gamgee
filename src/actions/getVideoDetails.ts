@@ -129,6 +129,7 @@ export async function getSoundCloudTrack(
  * @returns a `Promise` that resolves with the track details.
  */
 export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
+	// TODO: look into https://www.npmjs.com/package/metascraper
 	let metadata: Metadata;
 	try {
 		metadata = await urlMetadata(url, { timeout: 5000 });

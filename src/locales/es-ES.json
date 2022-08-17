@@ -33,6 +33,12 @@
 		}
 	},
 	"common": {
+		"count": {
+			"not-a-number": "NaN",
+			"infinity": "Infinito",
+			"seconds-nan": "NaN segundos",
+			"seconds-infinity": "Segundos infinitos"
+		},
 		"queue": {
 			"not-set-up": "No hay cola configurada.",
 			"not-open": "La cola no está abierta."

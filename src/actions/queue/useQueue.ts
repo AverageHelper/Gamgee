@@ -1,10 +1,12 @@
 import type Discord from "discord.js";
 import type { MessageButton } from "../../buttons.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
+import type { SupportedLocale } from "../../i18n.js";
 import { actionRow, DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "../../buttons.js";
 import { addStrikethrough } from "./strikethroughText.js";
 import { deleteMessage, editMessage, escapeUriInString } from "../messages/index.js";
 import { durationString } from "../../helpers/durationString.js";
+import { preferredLocale } from "../../i18n.js";
 import {
 	addToHaveCalledNowPlaying,
 	createEntry,
@@ -29,12 +31,13 @@ import {
  * Generates a Discord message that describes the entry. Good for inserting into the guild's queue channel.
  */
 function queueMessageFromEntry(
+	locale: SupportedLocale,
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
 ): Discord.MessageOptions & Discord.MessageEditOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
 	push(" requested a song that's ", partialContent);
-	pushBold(durationString(entry.seconds), partialContent);
+	pushBold(durationString(locale, entry.seconds), partialContent);
 	push(" long: ", partialContent);
 
 	// Suppress embeds if the entry is marked "Done"
@@ -108,7 +111,7 @@ export async function pushEntryToQueue(
 	newEntry: UnsentQueueEntry,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry> {
-	const messageOptions = queueMessageFromEntry({
+	const messageOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), {
 		...newEntry,
 		isDone: false,
 		haveCalledNowPlaying: []
@@ -146,7 +149,7 @@ export async function markEntryNotDoneInQueue(
 	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
 	if (!entry) return;
 
-	const editOptions = queueMessageFromEntry(entry);
+	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
 	await editMessage(queueMessage, editOptions);
 }
 
@@ -159,7 +162,7 @@ export async function markEntryDoneInQueue(
 	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
 	if (!entry) return;
 
-	const editOptions = queueMessageFromEntry(entry);
+	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
 	await editMessage(queueMessage, editOptions);
 }
 
@@ -174,7 +177,10 @@ export async function addUserToHaveCalledNowPlaying(
 	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
 	if (!entry) return;
 
-	await editMessage(queueMessage, queueMessageFromEntry(entry));
+	await editMessage(
+		queueMessage,
+		queueMessageFromEntry(preferredLocale(queueChannel.guild), entry)
+	);
 }
 
 /**

@@ -33,6 +33,12 @@
 		}
 	},
 	"common": {
+		"count": {
+			"not-a-number": "NaN",
+			"infinity": "Infinity",
+			"seconds-nan": "NaN seconds",
+			"seconds-infinity": "Infinity seconds"
+		},
 		"queue": {
 			"not-set-up": "No queue is set up.",
 			"not-open": "The queue is not open."

@@ -65,7 +65,7 @@ export const cooldown: Command = {
 			const absolute = Math.round(
 				latestTimestamp / MILLISECONDS_IN_SECOND + config.cooldownSeconds
 			);
-			const relative = durationString(timeToWait);
+			const relative = durationString(userLocale, timeToWait);
 
 			const msg = createPartialString("You may submit in ");
 			pushBold(relative, msg);

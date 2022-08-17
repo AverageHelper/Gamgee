@@ -33,6 +33,12 @@
 		}
 	},
 	"common": {
+		"count": {
+			"not-a-number": "NaN",
+			"infinity": "Unendlichkeit",
+			"seconds-nan": "NaN Sekunden",
+			"seconds-infinity": "Unendliche Sekunden"
+		},
 		"queue": {
 			"not-set-up": "Es gibt keine Warteschlange.",
 			"not-open": "Die Warteschlange ist nicht geöffnet."

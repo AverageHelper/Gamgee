@@ -33,6 +33,12 @@
 		}
 	},
 	"common": {
+		"count": {
+			"not-a-number": "NaN",
+			"infinity": "Végtelenség",
+			"seconds-nan": "NaN másodperc",
+			"seconds-infinity": "Végtelen másodperc"
+		},
 		"queue": {
 			"not-set-up": "Nincs sor.",
 			"not-open": "A sor nem nyitott."

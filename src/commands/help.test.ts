@@ -4,8 +4,8 @@ import { assertUserCanRunCommand } from "../actions/invokeCommand.js";
 const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
 
 import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
+import { DEFAULT_LOCALE, locales } from "../i18n.js";
 import { help } from "./help.js";
-import { locales } from "../i18n.js";
 
 const mockReplyPrivately = jest.fn();
 
@@ -22,7 +22,7 @@ describe("Help command", () => {
 				id: "the-channel"
 			},
 			storage: null,
-			userLocale: "en-US",
+			userLocale: DEFAULT_LOCALE,
 			replyPrivately: mockReplyPrivately
 		} as unknown as GuildedCommandContext;
 

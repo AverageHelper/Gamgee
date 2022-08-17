@@ -33,6 +33,12 @@
 		}
 	},
 	"common": {
+		"count": {
+			"not-a-number": "NaN",
+			"infinity": "Infini",
+			"seconds-nan": "NaN secondes",
+			"seconds-infinity": "Secondes infinies"
+		},
 		"queue": {
 			"not-set-up": "Aucune file d'attente n'est configurée.",
 			"not-open": "La file d'attente n'est pas ouverte."

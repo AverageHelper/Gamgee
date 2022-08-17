@@ -249,6 +249,8 @@ export async function handleCommand(
 			channel = message.channel;
 		}
 
+		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
+
 		const context: CommandContext = {
 			type: "message",
 			createdTimestamp: message.createdTimestamp,

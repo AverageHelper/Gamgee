@@ -20,7 +20,7 @@ export const video: Command = {
 	],
 	requiresGuild: false,
 	async execute(context) {
-		const { logger, options, type, reply } = context;
+		const { guildLocale, logger, options, type, reply } = context;
 		const firstOption = options[0];
 		if (!firstOption) {
 			return await reply({
@@ -56,7 +56,7 @@ export const video: Command = {
 
 			push(video.title, response);
 			push(": ", response);
-			push(`(${durationString(video.duration.seconds)})`, response);
+			push(`(${durationString(guildLocale, video.duration.seconds)})`, response);
 
 			return await reply(composed(response));
 

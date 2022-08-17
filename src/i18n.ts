@@ -30,6 +30,13 @@ export function localeIfSupported(tbd: unknown): SupportedLocale | null {
 	return tbd;
 }
 
+import type Discord from "discord.js";
+
+/** Returns the unit's preferred locale, if supported, or the default locale if not. */
+export function preferredLocale(guild: Pick<Discord.Guild, "preferredLocale">): SupportedLocale {
+	return localeIfSupported(guild.preferredLocale) ?? DEFAULT_LOCALE;
+}
+
 // TODO: Validate that all of our strings files match the master schema
 // TypeScript ensures here that DEFAULT_LOCALE is a valid locale:
 type MessageSchema = typeof vocabulary[typeof DEFAULT_LOCALE];

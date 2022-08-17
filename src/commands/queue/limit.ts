@@ -181,7 +181,9 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no upper limit on entry duration.");
 					}
-					return await reply(`Upper entry duration limit is **${durationString(value)}**`);
+					return await reply(
+						`Upper entry duration limit is **${durationString(guildLocale, value)}**`
+					);
 				}
 
 				// Set a new limit
@@ -197,7 +199,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -210,7 +212,9 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no lower limit on entry duration.");
 					}
-					return await reply(`Entry duration lower limit is **${durationString(value)}**`);
+					return await reply(
+						`Entry duration lower limit is **${durationString(guildLocale, value)}**`
+					);
 				}
 
 				// Set a new limit
@@ -226,7 +230,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -239,7 +243,7 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no limit on the queue's total duration.");
 					}
-					return await reply(`Queue duration limit is **${durationString(value)}**`);
+					return await reply(`Queue duration limit is **${durationString(guildLocale, value)}**`);
 				}
 
 				// Set a new limit
@@ -255,7 +259,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -268,7 +272,7 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no submission cooldown time");
 					}
-					return await reply(`Submission cooldown is **${durationString(value)}**`);
+					return await reply(`Submission cooldown is **${durationString(guildLocale, value)}**`);
 				}
 
 				// Set a new limit
@@ -285,7 +289,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}

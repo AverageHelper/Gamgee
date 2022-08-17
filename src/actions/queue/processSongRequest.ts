@@ -12,7 +12,7 @@ import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
 import { SHRUGGIE } from "../../constants/textResponses.js";
-import { t } from "../../i18n.js";
+import { DEFAULT_LOCALE, t } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 import {
 	countAllEntriesFrom,
@@ -120,6 +120,7 @@ async function acceptSongRequest({
 export async function processSongRequest(request: SongRequest): Promise<void> {
 	const { songUrl, context, queueChannel, logger } = request;
 	const userLocale = context.userLocale;
+	const guildLocale = context.guildLocale;
 	const sender = context.user;
 	const senderId = sender.id;
 
@@ -171,7 +172,10 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			);
 		} else {
 			logger.verbose(
-				`User ${logUser(sender)} last submitted a request ${durationString(timeSinceLatest)} ago.`
+				`User ${logUser(sender)} last submitted a request ${durationString(
+					DEFAULT_LOCALE,
+					timeSinceLatest
+				)} ago.`
 			);
 		}
 		if (
@@ -182,9 +186,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		) {
 			const rejection = createPartialString();
 			push("You've already submitted a song within the last ", rejection);
-			push(durationString(cooldown), rejection);
+			push(durationString(userLocale, cooldown), rejection);
 			push(". You must wait ", rejection);
-			pushBold(durationString(cooldown - timeSinceLatest), rejection);
+			pushBold(durationString(userLocale, cooldown - timeSinceLatest), rejection);
 			push(" before submitting again.", rejection);
 			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
 			return await reject_private(request, composed(rejection));
@@ -210,7 +214,10 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const url = song.url;
 		const seconds = song.duration.seconds;
 		logger.verbose(
-			`User ${logUser(sender)} wants to submit a song that is ${durationString(seconds)} long.`
+			`User ${logUser(sender)} wants to submit a song that is ${durationString(
+				DEFAULT_LOCALE,
+				seconds
+			)} long.`
 		);
 
 		// ** If the song is too short, reject!
@@ -218,9 +225,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		if (minDuration !== null && minDuration > 0 && seconds < minDuration) {
 			const rejection = createPartialString();
 			push("That song is too short. The limit is ", rejection);
-			pushBold(durationString(minDuration), rejection);
+			pushBold(durationString(guildLocale, minDuration), rejection);
 			push(", but this is ", rejection);
-			pushBold(durationString(seconds), rejection);
+			pushBold(durationString(guildLocale, seconds), rejection);
 			push(" long.", rejection);
 			pushNewLine(rejection);
 			push("Try something a bit longer", rejection);
@@ -233,9 +240,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString();
 			push("That song is too long. The limit is ", rejection);
-			pushBold(durationString(maxDuration), rejection);
+			pushBold(durationString(guildLocale, maxDuration), rejection);
 			push(", but this is ", rejection);
-			pushBold(durationString(seconds), rejection);
+			pushBold(durationString(guildLocale, seconds), rejection);
 			push(" long.", rejection);
 			pushNewLine(rejection);
 			push("Try something a bit shorter", rejection);
@@ -249,9 +256,11 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			return await reject_private(request, t("common.queue.not-open", userLocale));
 		}
 
-		const durationBefore = durationString(playtimeTotal, true);
-		const durationAfter = durationString(playtimeTotal + seconds, true);
-		logger.info(`This submission would put the queue from ${durationBefore} to ${durationAfter}`);
+		{
+			const durationBefore = durationString(DEFAULT_LOCALE, playtimeTotal, true);
+			const durationAfter = durationString(DEFAULT_LOCALE, playtimeTotal + seconds, true);
+			logger.info(`This submission would put the queue from ${durationBefore} to ${durationAfter}`);
+		}
 
 		const entry = { url, seconds, senderId };
 
@@ -265,11 +274,13 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 
 		// If the queue would be overfull with this submission, accept the submission then close the queue
 		if (totalPlaytimeLimit !== null && playtimeTotal + seconds > totalPlaytimeLimit) {
-			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
-			const durationMsg = durationString(playtimeTotal + seconds, true);
-			logger.info(
-				`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue.`
-			);
+			{
+				const durationLimitMsg = durationString(DEFAULT_LOCALE, totalPlaytimeLimit, true);
+				const durationMsg = durationString(DEFAULT_LOCALE, playtimeTotal + seconds, true);
+				logger.info(
+					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue.`
+				);
+			}
 
 			// This code is mainly copied from the implementation of `/quo close`
 			const promises: Array<Promise<unknown>> = [
@@ -290,11 +301,13 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			totalPlaytimeLimit !== null &&
 			playtimeTotal + seconds + buffer > totalPlaytimeLimit
 		) {
-			const durationLimitMsg = durationString(totalPlaytimeLimit, true);
-			const durationMsg = durationString(playtimeTotal + seconds, true);
-			logger.info(
-				`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue soon.`
-			);
+			{
+				const durationLimitMsg = durationString(DEFAULT_LOCALE, totalPlaytimeLimit, true);
+				const durationMsg = durationString(DEFAULT_LOCALE, playtimeTotal + seconds, true);
+				logger.info(
+					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue soon.`
+				);
+			}
 
 			await context.followUp({
 				content:

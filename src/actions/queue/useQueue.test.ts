@@ -22,6 +22,7 @@ import type Discord from "discord.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
+import { DEFAULT_LOCALE } from "../../i18n.js";
 import { deleteEntryFromMessage, pushEntryToQueue } from "./useQueue.js";
 
 describe("Request Queue", () => {
@@ -35,8 +36,14 @@ describe("Request Queue", () => {
 	let entry: QueueEntry;
 
 	beforeEach(() => {
+		const guild = {
+			id: guildId,
+			preferredLocale: DEFAULT_LOCALE
+		} as unknown as Discord.Guild;
+
 		queueChannel = {
 			id: "queue-channel",
+			guild,
 			send: mockChannelSend
 		} as unknown as Discord.TextChannel;
 
@@ -48,9 +55,7 @@ describe("Request Queue", () => {
 			author: {
 				id: entrySenderId
 			},
-			guild: {
-				id: guildId
-			}
+			guild
 		} as unknown as Discord.Message;
 
 		entry = {
