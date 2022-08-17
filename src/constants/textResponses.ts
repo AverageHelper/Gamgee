@@ -184,6 +184,7 @@ export const phrases: ResponseRepository = [
 	"Bit of a tongue twister",
 	"Bloatware!? I don't see any, wdym??",
 	"Bloatware!? I heard that's just a Windows thing",
+	"Bloatware!? That's just a Windows thing... right?",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
 	[
@@ -237,6 +238,7 @@ export const phrases: ResponseRepository = [
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
 	"I can't even right now.",
 	"I don't like this can we change the topic plz ty",
+	"I don't like your tone.",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
@@ -322,7 +324,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 204 of these
+]; // 206 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
