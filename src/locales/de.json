@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Finden Sie heraus, wann Sie wieder einreichen können."
+			"description": "Finden Sie heraus, wann Sie wieder einreichen können.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "hilfe",
 			"description": "Drucken Sie eine nützliche Hilfenachricht.",
+			"name": "hilfe",
 			"response": "Befehle:"
 		},
 		"howto": {
+			"description": "Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.",
 			"name": "wieman"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Senden Sie einen Song an die Warteschlange.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Ein Link zu einem Lied von einer unterstützten Plattform"
+					"description": "Ein Link zu einem Lied von einer unterstützten Plattform",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "benutzerinfo",
-			"description": "Gibt einige Informationen über Sie zurück."
+			"description": "Gibt einige Informationen über Sie zurück.",
+			"name": "benutzerinfo"
+		},
+		"version": {
+			"description": "Zeigt die aktuelle Codebasisversion des Bots an.",
+			"name": "ausführung"
+		},
+		"video": {
+			"description": "Antworte mit Videotitel und Dauer.",
+			"name": "video"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Unendlichkeit",
-			"seconds-nan": "NaN Sekunden",
-			"seconds-infinity": "Unendliche Sekunden"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Unendliche Sekunden",
+			"seconds-nan": "NaN Sekunden"
 		},
 		"queue": {
-			"not-set-up": "Es gibt keine Warteschlange.",
-			"not-open": "Die Warteschlange ist nicht geöffnet."
+			"not-open": "Die Warteschlange ist nicht geöffnet.",
+			"not-set-up": "Es gibt keine Warteschlange."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "Französisch",
 		"hu": "Ungarisch",
 		"pt-BR": "Portugiesisch (Brasilien)"
+	},
+	"self": {
+		"unknown-name": "Mir"
 	}
 }

@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Averigüe cuándo puede enviar de nuevo."
+			"description": "Averigüe cuándo puede enviar de nuevo.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "ayuda",
 			"description": "Imprime un mensaje de ayuda útil.",
+			"name": "ayuda",
 			"response": "Comandos:"
 		},
 		"howto": {
+			"description": "Imprima instrucciones para usar los comandos de cola comunes.",
 			"name": "cómo"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Envía una canción a la cola.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Un enlace de canción desde una plataforma compatible"
+					"description": "Un enlace de canción desde una plataforma compatible",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "usuarioinfo",
-			"description": "Devuelve alguna información sobre usted."
+			"description": "Devuelve alguna información sobre usted.",
+			"name": "usuarioinfo"
+		},
+		"version": {
+			"description": "Muestra la versión actual de la base de código del bot.",
+			"name": "versión"
+		},
+		"video": {
+			"description": "Responde con el título y la duración del video.",
+			"name": "video"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Infinito",
-			"seconds-nan": "NaN segundos",
-			"seconds-infinity": "Segundos infinitos"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Segundos infinitos",
+			"seconds-nan": "NaN segundos"
 		},
 		"queue": {
-			"not-set-up": "No hay cola configurada.",
-			"not-open": "La cola no está abierta."
+			"not-open": "La cola no está abierta.",
+			"not-set-up": "No hay cola configurada."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "Francés",
 		"hu": "Húngaro",
 		"pt-BR": "Portugués (Brasil)"
+	},
+	"self": {
+		"unknown-name": "Yo"
 	}
 }

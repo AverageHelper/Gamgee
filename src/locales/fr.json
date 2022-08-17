@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Découvrez quand vous pourrez soumettre à nouveau."
+			"description": "Découvrez quand vous pourrez soumettre à nouveau.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "aider",
 			"description": "Imprimez un message d'aide utile.",
+			"name": "aider",
 			"response": "Commandes:"
 		},
 		"howto": {
+			"description": "Imprimez les instructions d'utilisation des commandes de file d'attente courantes.",
 			"name": "comment"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Soumettre une chanson à la file d'attente.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Un lien de chanson à partir d'une plate-forme prise en charge"
+					"description": "Un lien de chanson à partir d'une plate-forme prise en charge",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "utilinfo",
-			"description": "Retourne quelques informations sur vous."
+			"description": "Retourne quelques informations sur vous.",
+			"name": "utilinfo"
+		},
+		"version": {
+			"description": "Affichez la version actuelle de la base de code du bot.",
+			"name": "version"
+		},
+		"video": {
+			"description": "Répondez avec le titre et la durée de la vidéo.",
+			"name": "vidéo"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Infini",
-			"seconds-nan": "NaN secondes",
-			"seconds-infinity": "Secondes infinies"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Secondes infinies",
+			"seconds-nan": "NaN secondes"
 		},
 		"queue": {
-			"not-set-up": "Aucune file d'attente n'est configurée.",
-			"not-open": "La file d'attente n'est pas ouverte."
+			"not-open": "La file d'attente n'est pas ouverte.",
+			"not-set-up": "Aucune file d'attente n'est configurée."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "Français",
 		"hu": "Hongrois",
 		"pt-BR": "Portugais, Brésilien"
+	},
+	"self": {
+		"unknown-name": "Moi"
 	}
 }

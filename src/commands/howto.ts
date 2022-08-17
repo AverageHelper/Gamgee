@@ -14,6 +14,7 @@ export const howto: GuildedCommand = {
 	name: "howto",
 	nameLocalizations: localizations("commands.howto.name"),
 	description: "Print instructions for using the common queue commands.",
+	descriptionLocalizations: localizations("commands.howto.description"),
 	requiresGuild: true,
 	async execute({ storage, type, reply }) {
 		const { sr } = await import("./songRequest.js");

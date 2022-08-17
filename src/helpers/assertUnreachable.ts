@@ -29,5 +29,7 @@
  * @throws An error describing the unhandled value.
  */
 export function assertUnreachable(x: never): never {
-	throw new Error(`Unexpected value ${JSON.stringify(x)}`); // TODO: i18n
+	// No need for i18n, since the user should never see this.
+	// If the user does see this, that's a catastrophic bug.
+	throw new Error(`Unexpected value ${JSON.stringify(x)}`);
 }

@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Tudja meg, mikor küldheti be újra."
+			"description": "Tudja meg, mikor küldheti be újra.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "segítség",
 			"description": "Nyomtasson ki egy hasznos súgóüzenetet.",
+			"name": "segítség",
 			"response": "Parancsok:"
 		},
 		"howto": {
+			"description": "Nyomtasson ki utasításokat a gyakori parancsok használatához.",
 			"name": "hogyankell"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Adjon fel egy dalt a sorba.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Dal linkje egy támogatott platformról"
+					"description": "Dal linkje egy támogatott platformról",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "felhasználóiadatok",
-			"description": "Néhány információt visszaad rólad."
+			"description": "Néhány információt visszaad rólad.",
+			"name": "felhasználóiadatok"
+		},
+		"version": {
+			"description": "A bot aktuális kódbázis verziójának megjelenítése.",
+			"name": "változat"
+		},
+		"video": {
+			"description": "Válaszolj a videó címével és időtartamával.",
+			"name": "videó"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Végtelenség",
-			"seconds-nan": "NaN másodperc",
-			"seconds-infinity": "Végtelen másodperc"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Végtelen másodperc",
+			"seconds-nan": "NaN másodperc"
 		},
 		"queue": {
-			"not-set-up": "Nincs sor.",
-			"not-open": "A sor nem nyitott."
+			"not-open": "A sor nem nyitott.",
+			"not-set-up": "Nincs sor."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "Francia",
 		"hu": "Magyar",
 		"pt-BR": "Portugál, Brazil"
+	},
+	"self": {
+		"unknown-name": "Nekem"
 	}
 }

@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Descubra quando você pode enviar novamente."
+			"description": "Descubra quando você pode enviar novamente.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "ajuda",
 			"description": "Imprima uma mensagem de ajuda útil.",
+			"name": "ajuda",
 			"response": "Comandos:"
 		},
 		"howto": {
+			"description": "Imprima instruções para usar os comandos de fila comum.",
 			"name": "como"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Envie uma música para a fila.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Um link de música de uma plataforma suportada"
+					"description": "Um link de música de uma plataforma suportada",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "usuárioinfo",
-			"description": "Retorna algumas informações sobre você."
+			"description": "Retorna algumas informações sobre você.",
+			"name": "usuárioinfo"
+		},
+		"version": {
+			"description": "Exiba a versão atual da base de código do bot.",
+			"name": "versão"
+		},
+		"video": {
+			"description": "Responda com o título e a duração do vídeo.",
+			"name": "vídeo"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Infinidade",
-			"seconds-nan": "NaN segundos",
-			"seconds-infinity": "Segundos infinitos"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Segundos infinitos",
+			"seconds-nan": "NaN segundos"
 		},
 		"queue": {
-			"not-set-up": "Nenhuma fila está configurada.",
-			"not-open": "A fila não está aberta."
+			"not-open": "A fila não está aberta.",
+			"not-set-up": "Nenhuma fila está configurada."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "Francês",
 		"hu": "Húngaro",
 		"pt-BR": "Português, Brasil"
+	},
+	"self": {
+		"unknown-name": "Eu"
 	}
 }

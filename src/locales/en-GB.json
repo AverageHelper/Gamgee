@@ -6,42 +6,51 @@
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Find out when you can submit again."
+			"description": "Find out when you can submit again.",
+			"name": "cooldown"
 		},
 		"help": {
-			"name": "help",
 			"description": "Print a useful help message.",
+			"name": "help",
 			"response": "Commands:"
 		},
 		"howto": {
+			"description": "Print instructions for using the common queue commands.",
 			"name": "howto"
 		},
 		"sr": {
-			"name": "sr",
 			"description": "Submit a song to the queue.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "A song link from a supported platform"
+					"description": "A song link from a supported platform",
+					"name": "url"
 				}
 			}
 		},
 		"userinfo": {
-			"name": "userinfo",
-			"description": "Returns some information about you."
+			"description": "Returns some information about you.",
+			"name": "userinfo"
+		},
+		"version": {
+			"description": "Display the bot's current codebase version.",
+			"name": "version"
+		},
+		"video": {
+			"description": "Reply with the video title and duration.",
+			"name": "video"
 		}
 	},
 	"common": {
 		"count": {
-			"not-a-number": "NaN",
 			"infinity": "Infinity",
-			"seconds-nan": "NaN seconds",
-			"seconds-infinity": "Infinity seconds"
+			"not-a-number": "NaN",
+			"seconds-infinity": "Infinity seconds",
+			"seconds-nan": "NaN seconds"
 		},
 		"queue": {
-			"not-set-up": "No queue is set up.",
-			"not-open": "The queue is not open."
+			"not-open": "The queue is not open.",
+			"not-set-up": "No queue is set up."
 		}
 	},
 	"languages": {
@@ -52,5 +61,8 @@
 		"fr": "French",
 		"hu": "Hungarian",
 		"pt-BR": "Portuguese, Brazilian"
+	},
+	"self": {
+		"unknown-name": "Me"
 	}
 }

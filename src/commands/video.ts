@@ -3,17 +3,22 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { getVideoDetails } from "../actions/getVideoDetails.js";
+import { localizations } from "../i18n.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 
 // TODO: i18n
 export const video: Command = {
 	name: "video",
+	nameLocalizations: localizations("commands.video.name"),
 	description: "Reply with the video title and duration.",
+	descriptionLocalizations: localizations("commands.video.description"),
 	options: [
 		{
 			name: "url",
-			description: "A track link from a supported platform",
+			nameLocalizations: localizations("commands.sr.options.url.name"),
+			description: "A song link from a supported platform",
+			descriptionLocalizations: localizations("commands.sr.options.url.description"),
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
