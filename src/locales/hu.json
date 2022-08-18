@@ -104,6 +104,8 @@
 			"seconds-nan": "NaN másodperc"
 		},
 		"deprecated": "Elavult",
+		"no-personal-permission": "Nincs engedélye a parancs futtatására.",
+		"not-here": "Itt ezt nem teheti meg.",
 		"queue": {
 			"not-open": "A sor nem nyitott.",
 			"not-set-up": "Nincs sor."

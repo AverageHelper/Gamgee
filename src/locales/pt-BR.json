@@ -104,6 +104,8 @@
 			"seconds-nan": "NaN segundos"
 		},
 		"deprecated": "Obsoleto",
+		"no-personal-permission": "Você não tem permissão para executar este comando.",
+		"not-here": "Você não pode fazer isso aqui.",
 		"queue": {
 			"not-open": "A fila não está aberta.",
 			"not-set-up": "Nenhuma fila está configurada."

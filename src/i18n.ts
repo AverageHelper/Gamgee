@@ -11,11 +11,17 @@ const vocabulary = {
 	"pt-BR": require("./locales/pt-BR.json") as typeof import("./locales/pt-BR.json")
 } as const;
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 export const DEFAULT_LOCALE = "en-US";
 
 export type SupportedLocale = keyof typeof vocabulary;
+
+export interface LocaleMetadata {
+	code: string;
+	name: string;
+	nickname: string;
+}
 
 export const locales = Object.keys(vocabulary) as ReadonlyArray<SupportedLocale>;
 
@@ -28,6 +34,14 @@ export function isSupportedLocale(tbd: unknown): tbd is SupportedLocale {
 export function localeIfSupported(tbd: unknown): SupportedLocale | null {
 	if (!isSupportedLocale(tbd)) return null;
 	return tbd;
+}
+
+export function randomSupportedLocale(): SupportedLocale {
+	return randomElementOfArray(locales.slice()) ?? DEFAULT_LOCALE;
+}
+
+export function metadataForLocale(locale: SupportedLocale): LocaleMetadata {
+	return vocabulary[locale].meta;
 }
 
 import type Discord from "discord.js";
@@ -120,6 +134,7 @@ export function t<K extends string>(
 export { t as translate };
 
 import { composed, createPartialString, push } from "./helpers/composeStrings.js";
+import { randomElementOfArray } from "./helpers/randomElementOfArray.js";
 
 /**
  * Returns the given `locale`'s translation for the given `keypath`,

@@ -31,5 +31,5 @@
 export function assertUnreachable(x: never): never {
 	// No need for i18n, since the user should never see this.
 	// If the user does see this, that's a catastrophic bug.
-	throw new Error(`Unexpected value ${JSON.stringify(x)}`);
+	throw new TypeError(`Unexpected value ${JSON.stringify(x)}`);
 }

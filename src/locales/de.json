@@ -104,6 +104,8 @@
 			"seconds-nan": "NaN Sekunden"
 		},
 		"deprecated": "Veraltet",
+		"no-personal-permission": "Sie haben keine Erlaubnis, diesen Befehl auszuführen.",
+		"not-here": "Das können Sie hier nicht tun.",
 		"queue": {
 			"not-open": "Die Warteschlange ist nicht geöffnet.",
 			"not-set-up": "Es gibt keine Warteschlange."

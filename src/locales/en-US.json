@@ -104,6 +104,8 @@
 			"seconds-nan": "NaN seconds"
 		},
 		"deprecated": "Deprecated",
+		"no-personal-permission": "You don't have permission to run that command.",
+		"not-here": "Can't do that here.",
 		"queue": {
 			"not-open": "The queue is not open.",
 			"not-set-up": "No queue is set up."

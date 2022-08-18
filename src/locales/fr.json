@@ -104,6 +104,8 @@
 			"seconds-nan": "NaN secondes"
 		},
 		"deprecated": "Obsolète",
+		"no-personal-permission": "Vous n'avez pas la permission d'exécuter cette commande.",
+		"not-here": "Vous ne pouvez pas faire ça ici.",
 		"queue": {
 			"not-open": "La file d'attente n'est pas ouverte.",
 			"not-set-up": "Aucune file d'attente n'est configurée."
