@@ -63,6 +63,18 @@
 			"description": "Obtenha suas estatísticas de filas pessoais.",
 			"name": "estatísticas"
 		},
+		"test": {
+			"description": "Certifique-se de que ainda sei falar com os serviços de vídeo.",
+			"name": "teste",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Espere, alguém acabou de executar este comando...",
+				"preamble-failure": "Ué, algo deu errado. Melhor olhar para isso:",
+				"preamble-success": "Eu corri os números, e parece que estamos todos bem!",
+				"results-header": "Resultado dos Testes",
+				"see-on-github": "Consulte a {list} em nosso GitHub.",
+				"supported-platforms": "lista de plataformas compatíveis"
+			}
+		},
 		"userinfo": {
 			"description": "Retorna algumas informações sobre você.",
 			"name": "usuárioinfo"

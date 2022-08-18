@@ -63,6 +63,18 @@
 			"description": "Szerezze meg személyes sorstatisztikáit.",
 			"name": "statisztika"
 		},
+		"test": {
+			"description": "Győződjön meg róla, hogy továbbra is tudok beszélni a videoszolgáltatókkal.",
+			"name": "teszt",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Várj, valaki éppen most futtatta ezt a parancsot...",
+				"preamble-failure": "Valami elromlott. Ezt nézd meg:",
+				"preamble-success": "Lefuttattam a számokat, és úgy tűnik, jól vagyunk!",
+				"results-header": "Vizsgálati Eredmények",
+				"see-on-github": "Tekintse meg a {list} a GitHubon.",
+				"supported-platforms": "támogatott platformok listáját"
+			}
+		},
 		"userinfo": {
 			"description": "Néhány információt visszaad rólad.",
 			"name": "felhasználóiadatok"

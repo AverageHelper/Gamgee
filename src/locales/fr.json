@@ -63,6 +63,18 @@
 			"description": "Obtenez vos statistiques de file d'attente personnelles.",
 			"name": "statistiques"
 		},
+		"test": {
+			"description": "Assurez-vous que je sais toujours comment parler aux services vidéo.",
+			"name": "test",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Attendez, quelqu'un vient d'exécuter cette commande...",
+				"preamble-failure": "Euh, quelque chose s'est mal passé. Le mieux est de regarder ceci:",
+				"preamble-success": "J'ai couru les chiffres, et on dirait que nous allons tous bien!",
+				"results-header": "Résultats de test",
+				"see-on-github": "Consultez la {list} sur notre GitHub.",
+				"supported-platforms": "liste des plates-formes prises en charge"
+			}
+		},
 		"userinfo": {
 			"description": "Retourne quelques informations sur vous.",
 			"name": "utilinfo"

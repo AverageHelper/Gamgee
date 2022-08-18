@@ -63,6 +63,18 @@
 			"description": "Obtenga sus estadísticas de colas personales.",
 			"name": "estadísticas"
 		},
+		"test": {
+			"description": "Asegúrese de que todavía sé cómo hablar con los servicios de video.",
+			"name": "prueba",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Espera, alguien acaba de ejecutar este comando...",
+				"preamble-failure": "Uh, algo salió mal. Mejor mira esto:",
+				"preamble-success": "Corrí los números, ¡y parece que todos estamos bien!",
+				"results-header": "Resultados de la Prueba",
+				"see-on-github": "Consulte la {list} en nuestro GitHub.",
+				"supported-platforms": "lista de plataformas compatibles"
+			}
+		},
 		"userinfo": {
 			"description": "Devuelve alguna información sobre usted.",
 			"name": "usuarioinfo"

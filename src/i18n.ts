@@ -89,7 +89,7 @@ export function t<K extends string>(
  * If the given `locale` does not contain a matching translation,
  * but the default locale does, then that translation is returned.
  *
- * Returns `keypath` if no matching translation exists.
+ * Returns `undefined` if no matching translation exists.
  */
 export function t<K extends string, V extends Vocabulary>(
 	keypath: K,
@@ -119,6 +119,15 @@ export function t<K extends string>(
 
 import { composed, createPartialString, push } from "./helpers/composeStrings.js";
 
+/**
+ * Returns the given `locale`'s translation for the given `keypath`,
+ * while interpolating the given `values` into their respective placeholders.
+ *
+ * If the given `locale` does not contain a matching translation,
+ * but the default locale does, then that translation is returned.
+ *
+ * Returns `undefined` if no matching translation exists.
+ */
 export function ti<K extends string>(
 	keypath: K,
 	values: Record<string, string>,

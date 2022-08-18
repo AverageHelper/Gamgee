@@ -63,6 +63,18 @@
 			"description": "Holen Sie sich Ihre persönliche Warteschlangenstatistik.",
 			"name": "statistiken"
 		},
+		"test": {
+			"description": "Stellen Sie sicher, dass ich immer noch weiß, wie ich mit Videodiensten spreche.",
+			"name": "prüfung",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Bitte warten Sie, jemand hat gerade diesen Befehl ausgeführt...",
+				"preamble-failure": "Äh, etwas ist schief gelaufen. Schau am besten mal hier rein:",
+				"preamble-success": "Ich habe die Zahlen überprüft und es sieht so aus, als ob es uns allen gut geht!",
+				"results-header": "Testergebnisse",
+				"see-on-github": "Sehen Sie sich die {list} auf unserem GitHub an.",
+				"supported-platforms": "Liste der unterstützten Plattformen"
+			}
+		},
 		"userinfo": {
 			"description": "Gibt einige Informationen über Sie zurück.",
 			"name": "benutzerinfo"
