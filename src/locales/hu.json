@@ -63,6 +63,14 @@
 			"description": "Szerezze meg személyes sorstatisztikáit.",
 			"name": "statisztika"
 		},
+		"t": {
+			"description": "Mutasd meg, hogy itt gépelek",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Hiba történt, és nem találtam a csatornát, amelyről hívott. Kérlek próbáld újra",
+				"success-cheeky": "Elkezdtem ide írni, de nem fejezem be :P"
+			}
+		},
 		"test": {
 			"description": "Győződjön meg róla, hogy továbbra is tudok beszélni a videoszolgáltatókkal.",
 			"name": "teszt",

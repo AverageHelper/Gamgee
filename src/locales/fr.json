@@ -63,6 +63,14 @@
 			"description": "Obtenez vos statistiques de file d'attente personnelles.",
 			"name": "statistiques"
 		},
+		"t": {
+			"description": "montrer que je tape.",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Quelque chose s'est mal passé et je n'ai pas trouvé le canal à partir duquel vous m'avez appelé. Veuillez réessayer?",
+				"success-cheeky": "J'ai commencé à écrire ici, mais je ne finirai pas :P"
+			}
+		},
 		"test": {
 			"description": "Assurez-vous que je sais toujours comment parler aux services vidéo.",
 			"name": "test",

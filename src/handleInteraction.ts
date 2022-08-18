@@ -56,7 +56,7 @@ export async function handleInteraction(
 		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
 			channel = await interaction.channel.fetch();
 		} else {
-			channel = interaction.channel;
+			channel = interaction.channel; // FIXME: Shouldn't this always exist?
 		}
 
 		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?

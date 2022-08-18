@@ -63,6 +63,14 @@
 			"description": "Obtenha suas estatísticas de filas pessoais.",
 			"name": "estatísticas"
 		},
+		"t": {
+			"description": "Mostre-me digitando aqui.",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Algo deu errado e não consegui encontrar o canal de onde você me ligou. Por favor, tente novamente",
+				"success-cheeky": "Comecei a digitar aqui, mas não vou terminar :P"
+			}
+		},
 		"test": {
 			"description": "Certifique-se de que ainda sei falar com os serviços de vídeo.",
 			"name": "teste",

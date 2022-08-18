@@ -63,6 +63,14 @@
 			"description": "Obtenga sus estadísticas de colas personales.",
 			"name": "estadísticas"
 		},
+		"t": {
+			"description": "Mostrar que estoy escribiendo.",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Algo salió mal y no pude encontrar el canal desde el que me llamaste. Intentarlo de nuevo tal vez?",
+				"success-cheeky": "Empecé a escribir aquí... pero no lo terminaré :P"
+			}
+		},
 		"test": {
 			"description": "Asegúrese de que todavía sé cómo hablar con los servicios de video.",
 			"name": "prueba",

@@ -63,6 +63,14 @@
 			"description": "Holen Sie sich Ihre persönliche Warteschlangenstatistik.",
 			"name": "statistiken"
 		},
+		"t": {
+			"description": "Zeigen Sie, dass ich tippe",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Irgendetwas ist schief gelaufen und ich konnte den Kanal, von dem aus Sie mich angerufen haben, nicht finden. Bitte versuche es erneut",
+				"success-cheeky": "Ich habe hier angefangen zu schreiben, aber ich werde es nicht beenden :P"
+			}
+		},
 		"test": {
 			"description": "Stellen Sie sicher, dass ich immer noch weiß, wie ich mit Videodiensten spreche.",
 			"name": "prüfung",

@@ -117,6 +117,8 @@ export function t<K extends string>(
 	return undefined; // we're stumped, return nothing
 }
 
+export { t as translate };
+
 import { composed, createPartialString, push } from "./helpers/composeStrings.js";
 
 /**
@@ -218,6 +220,8 @@ export function ti<K extends string>(
 
 	return composed(partial);
 }
+
+export { ti as translateInterpolating };
 
 /**
  * Returns an object with every translation we have for the given `keypath`,
