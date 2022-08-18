@@ -34,6 +34,21 @@
 			"description": "Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Legen Sie das Präfix fest, das von Nachrichtenbefehlen verwendet wird.",
+			"name": "präfixsetzen",
+			"options": {
+				"prefix": {
+					"description": "Das neue Präfix, das vor Nachrichtenbefehlen verwendet werden soll.",
+					"name": "präfix"
+				}
+			},
+			"responses": {
+				"missing-value": "Es wurde ein Wert erwartet, der als Befehlspräfix festgelegt werden soll",
+				"try-example": "Versuchen Sie {sample} zum Beispiel",
+				"value-header": "Nachrichtenbefehlspräfix"
+			}
+		},
 		"sr": {
 			"description": "Senden Sie einen Song an die Warteschlange.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Unendliche Sekunden",
 			"seconds-nan": "NaN Sekunden"
 		},
+		"deprecated": "Veraltet",
 		"queue": {
 			"not-open": "Die Warteschlange ist nicht geöffnet.",
 			"not-set-up": "Es gibt keine Warteschlange."

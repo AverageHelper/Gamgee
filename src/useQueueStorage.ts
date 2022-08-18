@@ -2,6 +2,7 @@ import type Discord from "discord.js";
 import type { EntityManager } from "typeorm";
 import type { Snowflake } from "discord.js";
 import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model/index.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { useRepository, useTransaction } from "./database/useDatabase.js";
 import { useLogger } from "./logger.js";
 
@@ -44,7 +45,7 @@ export async function getQueueConfig(
 		});
 
 	return await useRepository(repo, async repo => {
-		const config = await repo.findOne({ where: { channelId } });
+		const config = await repo.findOneBy({ channelId });
 		return config ?? defaultConfig();
 	});
 }
@@ -136,11 +137,8 @@ export async function createEntry(
 
 		// Make sure the guild and channels are in there
 		const guild =
-			(await guilds.findOne({
-				where: {
-					id: queueChannel.guild.id
-				}
-			})) ?? new Guild(queueChannel.guild.id, false, queueChannel.id);
+			(await guilds.findOneBy({ id: queueChannel.guild.id })) ??
+			new Guild(queueChannel.guild.id, false, queueChannel.id, DEFAULT_MESSAGE_COMMAND_PREFIX);
 		await transaction.save(guild);
 
 		const channel = new Channel(queueChannel.id, queueChannel.guild.id);
@@ -157,7 +155,7 @@ export async function createEntry(
 				blacklistedUsers: []
 			});
 		const channelId = queueChannel.id;
-		const config = (await queueConfigs.findOne({ where: { channelId } })) ?? defaultConfig();
+		const config = (await queueConfigs.findOneBy({ channelId })) ?? defaultConfig();
 
 		await transaction.save(config);
 
@@ -203,12 +201,10 @@ export async function fetchEntryFromMessage(
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry | null> {
 	return await useRepository(QueueEntry, async repo => {
-		const doc = await repo.findOne({
-			where: {
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			}
+		const doc = await repo.findOneBy({
+			channelId: queueChannel.id,
+			guildId: queueChannel.guild.id,
+			queueMessageId
 		});
 		return doc ?? null;
 	});
@@ -398,12 +394,10 @@ export async function getLikeCount(
 	logger.debug(queueChannel.guild.id);
 	logger.debug(queueMessageId);
 	const entry = await useRepository(QueueEntry, repo =>
-		repo.findOne({
-			where: {
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			}
+		repo.findOneBy({
+			channelId: queueChannel.id,
+			guildId: queueChannel.guild.id,
+			queueMessageId
 		})
 	);
 	logger.debug(entry);
@@ -426,12 +420,10 @@ export async function addToHaveCalledNowPlaying(
 ): Promise<void> {
 	logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
 	const entry = await useRepository(QueueEntry, repo =>
-		repo.findOne({
-			where: {
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			}
+		repo.findOneBy({
+			channelId: queueChannel.id,
+			guildId: queueChannel.guild.id,
+			queueMessageId
 		})
 	);
 	if (!entry) {

@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { defaultValueForConfigKey } from "./constants/config/defaultValueForConfigKey.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
 jest.mock("./commands");
 import { allCommands as mockCommandDefinitions } from "./commands/index.js";
@@ -11,7 +11,6 @@ import { useTestLogger } from "../tests/testUtils/logger.js";
 const logger = useTestLogger("error");
 
 describe("Command handler", () => {
-	const PREFIX = defaultValueForConfigKey("command_prefix") as string;
 	const botId = "this-user";
 
 	const mockReply = jest.fn().mockResolvedValue(undefined);
@@ -151,7 +150,7 @@ describe("Command handler", () => {
 			`does nothing with unknown command '${prefix}$content'`,
 			async ({ content }: { content: string }) => {
 				mockMessage.content = content;
-				await handleCommand(mockMessage, null, logger);
+				await handleCommand(mockMessage, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
@@ -165,7 +164,7 @@ describe("Command handler", () => {
 
 		test.each`
 			command
-			${"config"}
+			${"setprefix"}
 			${"help"}
 			${"howto"}
 			${"languages"}
@@ -183,7 +182,7 @@ describe("Command handler", () => {
 		`("calls the $command command", async ({ command }: { command: string }) => {
 			mockMessage.content = `${prefix}${command}`;
 			mockMessage.author.bot = false;
-			await handleCommand(mockMessage, null, logger);
+			await handleCommand(mockMessage, logger);
 
 			const mock = mockCommandDefinitions.get(command)?.execute;
 			expect(mock).toBeDefined();
@@ -206,7 +205,7 @@ describe("Command handler", () => {
 
 		test.each`
 			command
-			${"config"}
+			${"setprefix"}
 			${"help"}
 			${"howto"}
 			${"languages"}
@@ -226,7 +225,7 @@ describe("Command handler", () => {
 			async ({ command }: { command: string }) => {
 				mockMessage.content = `${prefix}${command}`;
 				mockMessage.author.bot = true;
-				await handleCommand(mockMessage, null, logger);
+				await handleCommand(mockMessage, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				expect.assertions(mockCommandDefinitions.size);
@@ -235,7 +234,7 @@ describe("Command handler", () => {
 
 		test("Command alias `now-playing` calls command `nowplaying`", async () => {
 			mockMessage.content = `${prefix}now-playing`;
-			await handleCommand(mockMessage, null, logger);
+			await handleCommand(mockMessage, logger);
 
 			const mockNowPlaying = mockCommandDefinitions.get("nowplaying");
 			expect(mockNowPlaying).toBeDefined();

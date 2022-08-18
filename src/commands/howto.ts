@@ -1,6 +1,7 @@
 import type { GuildedCommand } from "./Command.js";
-import { getConfigCommandPrefix } from "../actions/config/getConfigValue.js";
+import { getCommandPrefix } from "../useGuildStorage.js";
 import { localizations } from "../i18n.js";
+import { SLASH_COMMAND_INTENT_PREFIX } from "../constants/database.js";
 import {
 	composed,
 	createPartialString,
@@ -16,7 +17,7 @@ export const howto: GuildedCommand = {
 	description: "Print instructions for using the common queue commands.",
 	descriptionLocalizations: localizations("commands.howto.description"),
 	requiresGuild: true,
-	async execute({ guildLocale, storage, type, reply }) {
+	async execute({ guildLocale, guild, type, reply }) {
 		const { sr } = await import("./songRequest.js");
 		const { nowPlaying } = await import("./nowPlaying.js");
 
@@ -28,7 +29,8 @@ export const howto: GuildedCommand = {
 			: nowPlaying.name;
 
 		// Print the standard help
-		const COMMAND_PREFIX = type === "message" ? await getConfigCommandPrefix(storage) : "/";
+		const COMMAND_PREFIX =
+			type === "message" ? await getCommandPrefix(guild) : SLASH_COMMAND_INTENT_PREFIX;
 		const msg = createPartialString();
 
 		const exampleQuery = "https://youtu.be/dQw4w9WgXcQ"; // :P

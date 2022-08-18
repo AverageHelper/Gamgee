@@ -34,6 +34,21 @@
 			"description": "Haga ping a mi servidor host para comprobar la latencia.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Establezca el prefijo utilizado por los comandos de mensajes.",
+			"name": "establecerprefijo",
+			"options": {
+				"prefix": {
+					"description": "El nuevo prefijo para usar antes de los comandos de mensajes.",
+					"name": "prefijo"
+				}
+			},
+			"responses": {
+				"missing-value": "Se esperaba un valor para establecer como prefijo de comando",
+				"try-example": "Pruebe {sample}, por ejemplo",
+				"value-header": "Prefijo de comando de mensaje"
+			}
+		},
 		"sr": {
 			"description": "Envía una canción a la cola.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Segundos infinitos",
 			"seconds-nan": "NaN segundos"
 		},
+		"deprecated": "Obsoleto",
 		"queue": {
 			"not-open": "La cola no está abierta.",
 			"not-set-up": "No hay cola configurada."

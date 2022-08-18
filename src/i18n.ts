@@ -117,6 +117,99 @@ export function t<K extends string>(
 	return undefined; // we're stumped, return nothing
 }
 
+import { composed, createPartialString, push } from "./helpers/composeStrings.js";
+
+export function ti<K extends string>(
+	keypath: K,
+	values: Record<string, string>,
+	locale: SupportedLocale
+): Get<MessageSchema, K> extends string ? string : undefined;
+
+// FIXME: We shouldn't need to overload this
+export function ti<K extends string>(
+	keypath: K,
+	values: Record<string, string>,
+	locale: SupportedLocale
+): string | undefined {
+	const rawText: string | undefined = t(keypath, locale);
+	if (rawText === undefined || rawText === "") return rawText;
+
+	// Parse out text and variable names
+	interface SlotItem {
+		/** `true` if the item should render some slotted data. */
+		isVar: true;
+		/** The name of the variable. */
+		name: string;
+	}
+
+	interface TextItem {
+		/** `true` if the item should render some slotted data. */
+		isVar: false;
+		/** Text to render. */
+		text: string;
+	}
+
+	type Item = SlotItem | TextItem;
+
+	const items: Array<Item> = [];
+
+	let mode: "discovery" | "text" | "slot" = "discovery";
+	let text = "";
+	for (const char of rawText) {
+		if (char === "{" && mode !== "slot") {
+			if (mode === "text") {
+				// Finish text node
+				items.push({ isVar: false, text });
+			}
+			// Start variable name
+			text = "";
+			mode = "slot";
+		} else if (char === "}" && mode === "slot") {
+			// We've hit the end of a variable name
+			if (text === "") {
+				// but the brackets were empty. Treat that as a text node
+				items.push({ isVar: false, text: "{}" });
+			} else {
+				items.push({ isVar: true, name: text });
+			}
+			text = "";
+			mode = "discovery";
+		} else if (mode === "slot") {
+			// Continue variable name
+			text += char;
+		} else {
+			// Continue text
+			text += char;
+			mode = "text";
+		}
+	}
+	if (text !== "") {
+		if (mode === "text") {
+			// Finished, but there's some string left
+			items.push({ isVar: false, text });
+		} else if (mode === "slot") {
+			// Finished, but we ended with an incomplete variable. Push it as text
+			text = `{${text}`; // make sure to include the variable starter
+			items.push({ isVar: false, text });
+		}
+	}
+
+	// Combine items, mixing given values for variables if given
+	const partial = createPartialString();
+
+	for (const item of items) {
+		let str: string;
+		if (item.isVar) {
+			str = values[item.name] ?? `{${item.name}}`; // default to the raw variable name
+		} else {
+			str = item.text;
+		}
+		push(str, partial);
+	}
+
+	return composed(partial);
+}
+
 /**
  * Returns an object with every translation we have for the given `keypath`,
  * or `undefined` if no translations exist.

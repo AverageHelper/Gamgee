@@ -296,6 +296,7 @@ export const phrases: ResponseRepository = [
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
 	"That's par for the course",
+	// eslint-disable-next-line deprecation/deprecation
 	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",

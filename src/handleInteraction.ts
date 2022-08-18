@@ -1,7 +1,6 @@
 import type Discord from "discord.js";
 import type { CommandContext } from "./commands/index.js";
 import type { Logger } from "./logger.js";
-import type { Storage } from "./configStorage.js";
 import { allCommands } from "./commands/index.js";
 import { ChannelType } from "discord.js";
 import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
@@ -16,11 +15,10 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * The command is ignored if the interaction is from a bot.
  *
  * @param interaction The Discord interaction to handle.
- * @param storage Arbitrary persistent storage.
+ * @param logger The place to write system messages.
  */
 export async function handleInteraction(
 	interaction: Discord.CommandInteraction,
-	storage: Storage | null,
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -77,7 +75,6 @@ export async function handleInteraction(
 			client: interaction.client,
 			interaction,
 			options: interaction.options.data,
-			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
 				try {

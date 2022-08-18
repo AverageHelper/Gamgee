@@ -34,6 +34,21 @@
 			"description": "Ping mon serveur hôte pour vérifier la latence.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Définissez le préfixe utilisé par les commandes de message.",
+			"name": "définirpréfixe",
+			"options": {
+				"prefix": {
+					"description": "Le nouveau préfixe à utiliser avant les commandes de message.",
+					"name": "préfixe"
+				}
+			},
+			"responses": {
+				"missing-value": "On attendait une valeur à définir comme préfixe de commande",
+				"try-example": "Essayez {sample}, par exemple",
+				"value-header": "Préfixe de Commande de Message"
+			}
+		},
 		"sr": {
 			"description": "Soumettre une chanson à la file d'attente.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Secondes infinies",
 			"seconds-nan": "NaN secondes"
 		},
+		"deprecated": "Obsolète",
 		"queue": {
 			"not-open": "La file d'attente n'est pas ouverte.",
 			"not-set-up": "Aucune file d'attente n'est configurée."

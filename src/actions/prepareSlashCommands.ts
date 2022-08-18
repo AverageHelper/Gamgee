@@ -5,6 +5,7 @@ import { ApplicationCommandType } from "discord.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 import { useLogger } from "../logger.js";
+import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 
 const testMode: boolean = false;
 const logger = useLogger("verbose");
@@ -29,22 +30,49 @@ async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 	logger.debug(`Commands cleared for guild ${guild.id}`);
 }
 
-function discordCommandPayloadFromCommand(cmd: Command): Discord.ApplicationCommandDataResolvable {
-	logger.verbose(`\t'/${cmd.name}'  (requires guild, any privilege)`);
+function discordCommandPayloadFromCommand(
+	cmd: Command,
+	log: boolean = true
+): Discord.ApplicationCommandDataResolvable {
+	if (log) logger.verbose(`\t'/${cmd.name}'  (requires guild, any privilege)`);
 
 	const payload: Discord.ApplicationCommandData = {
 		description: cmd.description,
 		type: cmd.type ?? ApplicationCommandType.ChatInput,
 		name: cmd.name // TODO: Repeat for command aliases
 	};
+
+	if (cmd.deprecated === true) {
+		payload.description = `(${t("common.deprecated", DEFAULT_LOCALE)}) ${cmd.description}`;
+	}
+
 	if (cmd.nameLocalizations) {
-		logger.verbose("\t\tits name is localized");
+		if (log) logger.verbose("\t\tits name is localized");
 		payload.nameLocalizations = cmd.nameLocalizations;
 	}
 	if (cmd.descriptionLocalizations) {
-		logger.verbose("\t\tits description is localized");
+		if (log) logger.verbose("\t\tits description is localized");
 		payload.descriptionLocalizations = cmd.descriptionLocalizations;
+		if (cmd.deprecated === true) {
+			for (const [key, value] of Object.entries(payload.descriptionLocalizations)) {
+				const locale = localeIfSupported(key);
+				if (locale === null) continue;
+				if (value === null) continue;
+				payload.descriptionLocalizations ??= {};
+				payload.descriptionLocalizations[locale] = `(${t("common.deprecated", locale)}) ${value}`;
+			}
+		}
+	} else if (cmd.deprecated === true) {
+		if (log) logger.verbose("\t\tits description is not localized");
+		// Tell the people, in every language we know, that this command is obsolete.
+		payload.descriptionLocalizations ??= {};
+		for (const locale of locales) {
+			payload.descriptionLocalizations[locale] = `(${t("common.deprecated", locale)}) ${
+				cmd.description
+			}`;
+		}
 	}
+
 	if (cmd.options) {
 		payload.options = cmd.options;
 	}
@@ -61,7 +89,7 @@ async function prepareUnprivilegedCommands(
 		`Creating ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}:`
 	);
 
-	const payloads = unprivilegedCommands.map(discordCommandPayloadFromCommand);
+	const payloads = unprivilegedCommands.map(c => discordCommandPayloadFromCommand(c));
 
 	if (!testMode) {
 		await guild.commands.set(payloads);
@@ -90,7 +118,7 @@ async function preparePrivilegedCommands(
 					: "any privilege";
 				logger.verbose(`\t'/${cmd.name}'  (requires guild, ${permissions})`);
 
-				const payload = discordCommandPayloadFromCommand(cmd);
+				const payload = discordCommandPayloadFromCommand(cmd, false);
 
 				if (!testMode) {
 					appCommand = await guild.commands.create(payload);

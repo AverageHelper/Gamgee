@@ -11,6 +11,7 @@ import { limits } from "./limits.js";
 import { nowPlaying } from "./nowPlaying.js";
 import { ping } from "./ping.js";
 import { quo } from "./queue/index.js";
+import { setPrefix } from "./setPrefix.js";
 import { sr } from "./songRequest.js";
 import { stats } from "./stats.js";
 import { test } from "./test.js";
@@ -45,6 +46,7 @@ function add(command: Command): void {
 	}
 	// TODO: Check that command aliases are as unique as command names
 	allCommands.set(command.name, command);
+	// TODO: Add the command by its localized names as well
 }
 
 add(config);
@@ -56,6 +58,7 @@ add(limits);
 add(nowPlaying);
 add(ping);
 add(quo);
+add(setPrefix);
 add(sr);
 add(stats);
 add(test);

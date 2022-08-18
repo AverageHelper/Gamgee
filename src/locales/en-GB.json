@@ -34,6 +34,21 @@
 			"description": "Ping my host server to check latency.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Set the prefix used by message commands.",
+			"name": "setprefix",
+			"options": {
+				"prefix": {
+					"description": "The new prefix to use before message commands.",
+					"name": "prefix"
+				}
+			},
+			"responses": {
+				"missing-value": "Expected a value to set as the command prefix",
+				"try-example": "Try {sample}, for example",
+				"value-header": "Message Command Prefix"
+			}
+		},
 		"sr": {
 			"description": "Submit a song to the queue.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Infinity seconds",
 			"seconds-nan": "NaN seconds"
 		},
+		"deprecated": "Deprecated",
 		"queue": {
 			"not-open": "The queue is not open.",
 			"not-set-up": "No queue is set up."

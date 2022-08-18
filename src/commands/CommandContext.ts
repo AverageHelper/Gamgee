@@ -1,6 +1,5 @@
 import type Discord from "discord.js";
 import type { Logger } from "../logger.js";
-import type { Storage } from "../configStorage.js";
 import type { SupportedLocale } from "../i18n.js";
 import { ChannelType } from "discord.js";
 
@@ -9,9 +8,6 @@ export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
 	readonly client: Discord.Client<true>;
-
-	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
-	readonly storage: Storage | null;
 
 	/** A logger to use to submit informative debug messages. */
 	readonly logger: Logger;

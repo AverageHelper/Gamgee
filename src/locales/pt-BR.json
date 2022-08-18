@@ -34,6 +34,21 @@
 			"description": "Ping meu servidor host para verificar a latência.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Defina o prefixo usado pelos comandos de mensagem.",
+			"name": "definirprefixo",
+			"options": {
+				"prefix": {
+					"description": "Novo prefixo a ser usado antes dos comandos de mensagem.",
+					"name": "prefixo"
+				}
+			},
+			"responses": {
+				"missing-value": "Esperado um valor para definir como o prefixo de comando",
+				"try-example": "Tente {sample}, por exemplo",
+				"value-header": "Prefixo de Comando de Mensagem"
+			}
+		},
 		"sr": {
 			"description": "Envie uma música para a fila.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Segundos infinitos",
 			"seconds-nan": "NaN segundos"
 		},
+		"deprecated": "Obsoleto",
 		"queue": {
 			"not-open": "A fila não está aberta.",
 			"not-set-up": "Nenhuma fila está configurada."

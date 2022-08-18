@@ -6,5 +6,6 @@ import { startsWithVowel } from "./startsWithVowel.js";
  * @deprecated Use i18n APIs instead
  */
 export function indefiniteArticle(noun: string): "a" | "an" {
+	// eslint-disable-next-line deprecation/deprecation
 	return startsWithVowel(noun) ? "an" : "a";
 }

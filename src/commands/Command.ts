@@ -16,6 +16,17 @@ interface BaseCommand extends Discord.ChatInputApplicationCommandData {
 	aliases?: Array<string>;
 	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
 	type?: ApplicationCommandType.ChatInput;
+
+	/**
+	 * Deprecated commands are hidden from normal `/help` output,
+	 * marked in user-facing contexts with a *"Deprecated"* note,
+	 * and should be removed in the next Semver major version.
+	 *
+	 * Users may still invoke a deprecated command. Use such
+	 * invocations this as opportunities to educate users about
+	 * the command's alternatives, if any.
+	 */
+	deprecated?: boolean;
 }
 
 export interface GlobalCommand extends BaseCommand {

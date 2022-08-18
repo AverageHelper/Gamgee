@@ -4,8 +4,9 @@ import type { PartialString } from "../helpers/composeStrings.js";
 import type { SupportedLocale } from "../i18n.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { assertUserCanRunCommand } from "./invokeCommand.js";
-import { getConfigCommandPrefix } from "./config/getConfigValue.js";
+import { getCommandPrefix } from "../useGuildStorage.js";
 import { isGuildedCommandContext } from "../commands/CommandContext.js";
+import { SLASH_COMMAND_INTENT_PREFIX } from "../constants/database.js";
 import {
 	createPartialString,
 	composed,
@@ -62,12 +63,15 @@ export async function describeAllCommands(
 	locale: SupportedLocale
 ): Promise<string> {
 	const COMMAND_PREFIX =
-		context.type === "message" ? await getConfigCommandPrefix(context.storage) : "/";
+		context.type === "message"
+			? await getCommandPrefix(context.guild)
+			: SLASH_COMMAND_INTENT_PREFIX;
 
 	// Describe all commands
 	const description = createPartialString();
 	const allCommands = Array.from(commands.values());
 	for (const command of allCommands) {
+		if (command.deprecated === true) continue; // Skip obsolete commands
 		if (
 			command.requiresGuild &&
 			(!isGuildedCommandContext(context) ||

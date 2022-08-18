@@ -1,15 +1,17 @@
 import "source-map-support/register.js";
 import "reflect-metadata";
 import { ActivityType, Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
+import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
 import { handleMessageComponent } from "./handleMessageComponent.js";
 import { handleReactionAdd } from "./handleReactionAdd.js";
+import { hasLegacyConfig, PATH_TO_LEGACY_CONFIG, useStorage } from "./configStorage.js";
 import { hideBin } from "yargs/helpers";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
+import { setCommandPrefix } from "./useGuildStorage.js";
 import { useLogger } from "./logger.js";
-import { useStorage } from "./configStorage.js";
 import { version as gamgeeVersion } from "./version.js";
 import yargs from "yargs";
 import {
@@ -40,7 +42,7 @@ const shouldStartNormally = !args["deploy-commands"] && !args["revoke-commands"]
 
 const logger = useLogger();
 
-// ** Setup Discord Client **
+// MARK: - Setup Discord Client
 
 try {
 	const client = new Client({
@@ -59,7 +61,7 @@ try {
 		}
 	});
 
-	// ** Handle Events **
+	// MARK: Handle Events
 
 	client.on("ready", async client => {
 		logger.debug(`Node ${process.version}`);
@@ -68,6 +70,30 @@ try {
 			logger.verbose("*Yawn* Good morning!");
 			logger.verbose("Starting...");
 			logger.debug(`NODE_ENV: ${getEnv("NODE_ENV") ?? "undefined"}`);
+
+			// MARK: - Migrate legacy Config data someplace more sane
+			const oAuthGuilds = await client.guilds.fetch();
+			const knownGuilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
+			logger.verbose(`I'm part of ${knownGuilds.length} guild(s)`);
+			const shouldMigrate = await hasLegacyConfig(logger);
+			if (shouldMigrate) {
+				logger.verbose("Migrating legacy config...");
+				for (const guild of knownGuilds) {
+					/* eslint-disable deprecation/deprecation */
+					const oldStorage = await useStorage(guild, logger);
+					const newPrefix = await getConfigCommandPrefix(oldStorage);
+					logger.debug(`Guild ${guild.id} has command prefix set to '${newPrefix}'`);
+					await setCommandPrefix(guild, newPrefix);
+					logger.debug(`Migrated legacy config for guild ${guild.id}!`);
+					/* eslint-enable deprecation/deprecation */
+				}
+
+				logger.warn(
+					`** Legacy config moved. Please delete '${PATH_TO_LEGACY_CONFIG}' before next run **`
+				);
+			}
+
+			// MARK: - Do bot things
 			logger.info(`Started Gamgee Core v${gamgeeVersion}`);
 
 			// Register interaction listeners
@@ -76,8 +102,7 @@ try {
 				if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user.id) return;
 				try {
 					const message = await msg.fetch();
-					const storage = await useStorage(message.guild, logger);
-					await handleCommand(message, storage, logger);
+					await handleCommand(message, logger);
 				} catch (error) {
 					const msgDescription = JSON.stringify(msg, undefined, 2);
 					logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
@@ -85,9 +110,8 @@ try {
 			});
 
 			client.on("interactionCreate", async interaction => {
-				const storage = await useStorage(interaction.guild, logger);
 				if (interaction.isCommand()) {
-					await handleInteraction(interaction, storage, logger);
+					await handleInteraction(interaction, logger);
 				} else if (interaction.isButton()) {
 					await handleMessageComponent(interaction, logger);
 				}

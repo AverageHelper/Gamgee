@@ -34,6 +34,21 @@
 			"description": "Pingelje a gazdagépemet a késleltetés ellenőrzéséhez.",
 			"name": "ping"
 		},
+		"setprefix": {
+			"description": "Állítsa be az üzenetparancsok által használt előtagot.",
+			"name": "előtagbeállítása",
+			"options": {
+				"prefix": {
+					"description": "Az üzenetparancsok előtt használandó új előtag.",
+					"name": "előtag"
+				}
+			},
+			"responses": {
+				"missing-value": "Parancs előtagként értéket vártam",
+				"try-example": "Próbáld ki például a {sample}",
+				"value-header": "Üzenet Parancs Előtagja"
+			}
+		},
 		"sr": {
 			"description": "Adjon fel egy dalt a sorba.",
 			"name": "sr",
@@ -68,6 +83,7 @@
 			"seconds-infinity": "Végtelen másodperc",
 			"seconds-nan": "NaN másodperc"
 		},
+		"deprecated": "Elavult",
 		"queue": {
 			"not-open": "A sor nem nyitott.",
 			"not-set-up": "Nincs sor."

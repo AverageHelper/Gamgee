@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import type { Snowflake } from "discord.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
 import { Guild, Role } from "./database/model/index.js";
 import { useRepository, useTransaction } from "./database/useDatabase.js";
@@ -88,13 +89,7 @@ export async function removeRole(roleId: Snowflake, guild: Discord.Guild): Promi
 
 /** Retrieves the guild's queue channel ID, if it exists. */
 export async function getQueueChannelId(guild: Discord.Guild): Promise<Snowflake | null> {
-	const guildInfo = await useRepository(Guild, repo =>
-		repo.findOne({
-			where: {
-				id: guild.id
-			}
-		})
-	);
+	const guildInfo = await useRepository(Guild, repo => repo.findOneBy({ id: guild.id }));
 	return guildInfo?.currentQueue ?? null;
 }
 
@@ -113,26 +108,46 @@ export async function setQueueChannel(
 
 	await useTransaction(async transaction => {
 		const guilds = transaction.getRepository(Guild);
-		const guildInfo = await guilds.findOne({
-			where: {
-				id: guild.id
-			}
-		});
+		const guildInfo = await guilds.findOneBy({ id: guild.id });
 
-		const newGuild = new Guild(guild.id, guildInfo?.isQueueOpen ?? false, currentQueue);
+		const newGuild = new Guild(
+			guild.id,
+			guildInfo?.isQueueOpen ?? false,
+			currentQueue,
+			DEFAULT_MESSAGE_COMMAND_PREFIX
+		);
+		await transaction.save(newGuild);
+	});
+}
+
+/** Retrieves the guild's message command prefix. */
+export async function getCommandPrefix(guild: Discord.Guild | null | undefined): Promise<string> {
+	if (!guild) return DEFAULT_MESSAGE_COMMAND_PREFIX;
+	const guildInfo = await useRepository(Guild, repo => repo.findOneBy({ id: guild.id }));
+	return guildInfo?.messageCommandPrefix ?? DEFAULT_MESSAGE_COMMAND_PREFIX;
+}
+
+/** Sets the guild's message command prefix. */
+export async function setCommandPrefix(guild: Discord.Guild, newPrefix: string): Promise<void> {
+	if (!newPrefix) throw new TypeError("New prefix cannot be empty");
+
+	await useTransaction(async transaction => {
+		const guilds = transaction.getRepository(Guild);
+		const guildInfo = await guilds.findOneBy({ id: guild.id });
+
+		const newGuild = new Guild(
+			guild.id,
+			guildInfo?.isQueueOpen ?? false,
+			guildInfo?.currentQueue ?? null,
+			newPrefix
+		);
 		await transaction.save(newGuild);
 	});
 }
 
 /** Get's the queue's current open status. */
 export async function isQueueOpen(guild: Discord.Guild): Promise<boolean> {
-	const guildInfo = await useRepository(Guild, repo =>
-		repo.findOne({
-			where: {
-				id: guild.id
-			}
-		})
-	);
+	const guildInfo = await useRepository(Guild, repo => repo.findOneBy({ id: guild.id }));
 	return guildInfo?.isQueueOpen ?? false;
 }
 
@@ -140,11 +155,7 @@ export async function isQueueOpen(guild: Discord.Guild): Promise<boolean> {
 export async function setQueueOpen(isOpen: boolean, guild: Discord.Guild): Promise<void> {
 	await useTransaction(async transaction => {
 		const guilds = transaction.getRepository(Guild);
-		const guildInfo = await guilds.findOne({
-			where: {
-				id: guild.id
-			}
-		});
+		const guildInfo = await guilds.findOneBy({ id: guild.id });
 		if (
 			isOpen &&
 			(guildInfo?.currentQueue === undefined ||
