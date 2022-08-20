@@ -1,6 +1,6 @@
 {
 	"name": "gamgee",
-	"version": "1.8.0",
+	"version": "1.8.1",
 	"description": "A Discord bot for managing a song request queue.",
 	"private": true,
 	"scripts": {
