@@ -57,6 +57,25 @@
 					"description": "Ein Link zu einem Lied von einer unterstützten Plattform",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Fertig.",
+				"not-allowed": "Sie dürfen keine Songs einreichen. Es tut mir Leid.",
+				"rejections": {
+					"allotment-expended": "Sie haben alle {max} Ihrer zugeteilten Einreichungen verwendet.",
+					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut senden.",
+					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das ist {actual} lang.",
+					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das ist {actual} lang."
+				},
+				"this-queue-full-autoclose": "Diese Warteschlange ist voll. Ich schließe es jetzt.",
+				"query-returned-error": "Diese Abfrage gab mir einen Fehler. Vielleicht nochmal versuchen?",
+				"queue-full-autoclose": "Die Warteschlange ist voll. Ich schließe es jetzt.",
+				"queue-nearly-full": "Die Warteschlange ist fast voll. Einreichen, solange es noch geht!",
+				"song-not-found": "Ich kann das Lied nicht finden.",
+				"submission-accepted": "Einreichung angenommen!",
+				"try-longer-song": "Versuchen Sie es mit einem längeren Lied",
+				"try-shorter-song": "Versuchen Sie es mit einem kürzeren Lied",
+				"try-supported-platform": "Probieren Sie einen Link von einer unterstützten Plattform aus."
 			}
 		},
 		"stats": {

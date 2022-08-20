@@ -57,6 +57,25 @@
 					"description": "Un lien de chanson à partir d'une plate-forme prise en charge",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Fait.",
+				"not-allowed": "Vous n'êtes pas autorisé à soumettre des chansons. Je suis désolé.",
+				"rejections": {
+					"allotment-expended": "Vous avez utilisé les {max} soumissions qui vous étaient allouées.",
+					"cooldown": "Vous avez déjà soumis une chanson dans les {duration} dernières. Vous devez attendre {remaining} avant de soumettre à nouveau.",
+					"too-long": "Cette chanson est trop longue. La limite est de {limit}, mais celle-ci dure {actual}.",
+					"too-short": "Cette chanson est trop courte. La limite est de {limit}, mais celle-ci dure {actual}."
+				},
+				"this-queue-full-autoclose": "Cette file d'attente est pleine. Je le ferme maintenant.",
+				"query-returned-error": "Cette requête m'a donné une erreur. Réessayez peut-être?",
+				"queue-full-autoclose": "La file d'attente est pleine. Je le ferme maintenant.",
+				"queue-nearly-full": "La file d'attente est presque pleine. Soumettez pendant que vous le pouvez encore!",
+				"song-not-found": "Je ne trouve pas cette chanson.",
+				"submission-accepted": "Soumission acceptée!",
+				"try-longer-song": "Essayez quelque chose d'un peu plus longtemps",
+				"try-shorter-song": "Essayez quelque chose d'un peu plus court",
+				"try-supported-platform": "Essayez un lien d'une plate-forme prise en charge."
 			}
 		},
 		"stats": {

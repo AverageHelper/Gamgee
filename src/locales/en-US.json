@@ -57,6 +57,25 @@
 					"description": "A song link from a supported platform",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Done.",
+				"not-allowed": "You're not allowed to submit songs. My apologies.",
+				"rejections": {
+					"allotment-expended": "You have used all {max} of your allotted submissions.",
+					"cooldown": "You've already submitted a song within the last {duration}. You must wait {remaining} before submitting again.",
+					"too-long": "That song is too long. The limit is {limit}, but this is {actual} long.",
+					"too-short": "That song is too short. The limit is {limit}, but this is {actual} long."
+				},
+				"this-queue-full-autoclose": "This queue is full. I'm closing it now.",
+				"query-returned-error": "That query gave me an error. Try again maybe?",
+				"queue-full-autoclose": "The queue is full. I'm closing it now.",
+				"queue-nearly-full": "The queue is nearly full. Get your submissions in while you still can!",
+				"song-not-found": "I can't find that song.",
+				"submission-accepted": "Submission Accepted!",
+				"try-longer-song": "Try something a bit longer",
+				"try-shorter-song": "Try something a bit shorter",
+				"try-supported-platform": "Try a link from a supported platform."
 			}
 		},
 		"stats": {

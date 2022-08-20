@@ -57,6 +57,25 @@
 					"description": "Un enlace de canción desde una plataforma compatible",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Hecho.",
+				"not-allowed": "No tienes permitido enviar canciones. Mis disculpas.",
+				"rejections": {
+					"allotment-expended": "Ha utilizado los {max} envíos asignados.",
+					"cooldown": "Ya has enviado una canción en los últimos {duration}. Debe esperar {remaining} antes de volver a enviar.",
+					"too-long": "Esa canción es demasiado larga. El límite es de {limit}, pero esto dura {actual}.",
+					"too-short": "Esa canción es demasiado corta. El límite es de {limit}, pero esto dura {actual}."
+				},
+				"this-queue-full-autoclose": "Esta cola está llena. Lo estoy cerrando ahora.",
+				"query-returned-error": "Esa consulta me dio error. ¿Intentar de nuevo tal vez?",
+				"queue-full-autoclose": "La cola está llena. Lo estoy cerrando ahora.",
+				"queue-nearly-full": "La cola está casi llena. ¡Envía mientras puedas!",
+				"song-not-found": "No encuentro esa cancion.",
+				"submission-accepted": "¡Envío aceptado!",
+				"try-longer-song": "Prueba algo un poco más largo",
+				"try-shorter-song": "Prueba algo un poco más corta",
+				"try-supported-platform": "Pruebe con un enlace de una plataforma compatible."
 			}
 		},
 		"stats": {

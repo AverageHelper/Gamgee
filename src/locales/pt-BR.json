@@ -57,6 +57,25 @@
 					"description": "Um link de música de uma plataforma suportada",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Terminei.",
+				"not-allowed": "Você não tem permissão para enviar músicas. Me desculpe.",
+				"rejections": {
+					"allotment-expended": "Você usou todos os {max} envios atribuídos.",
+					"cooldown": "Você já enviou uma música nos últimos {duration}. Você deve esperar {remaining} antes de enviar novamente.",
+					"too-long": "Essa música é muito longa. O limite é de {limit}, mas este é de {actual}.",
+					"too-short": "Essa música é muito curta. O limite é de {limit}, mas este é de {actual}."
+				},
+				"this-queue-full-autoclose": "Esta fila está cheia. Estou fechando agora.",
+				"query-returned-error": "Essa consulta me deu um erro. Tente novamente talvez?",
+				"queue-full-autoclose": "A fila está cheia. Estou fechando agora.",
+				"queue-nearly-full": "A fila está quase cheia. Envie enquanto ainda pode!",
+				"song-not-found": "Não consigo encontrar essa música.",
+				"submission-accepted": "Submissão aceita!",
+				"try-longer-song": "Tente algo um pouco mais longo",
+				"try-shorter-song": "Tente algo um pouco mais curto",
+				"try-supported-platform": "Experimente um link de uma plataforma suportada."
 			}
 		},
 		"stats": {

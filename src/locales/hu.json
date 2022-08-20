@@ -57,6 +57,25 @@
 					"description": "Dal linkje egy támogatott platformról",
 					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Befejezett.",
+				"not-allowed": "Nem küldhet be dalokat. Fogadd bocsánatkérésem.",
+				"rejections": {
+					"allotment-expended": "Felhasználta mind a(z) {max} kijelölt beküldést.",
+					"cooldown": "Már beküldött egy dalt az elmúlt {duration}. Várnia kell {remaining}, mielőtt újra elküldi.",
+					"too-long": "Ez a dal túl hosszú. A határ {limit}, de ez {actual} hosszú.",
+					"too-short": "Ez a dal túl rövid. A határ {limit}, de ez {actual} hosszú."
+				},
+				"this-queue-full-autoclose": "Ez a sor megtelt. Most bezárom.",
+				"query-returned-error": "Ez a lekérdezés hibát adott. Próbáld újra esetleg?",
+				"queue-full-autoclose": "A sor megtelt. Most bezárom.",
+				"queue-nearly-full": "A sor majdnem megtelt. Add be a dalt, amíg még lehet!",
+				"song-not-found": "Nem találom azt a dalt.",
+				"submission-accepted": "Beküldés elfogadva!",
+				"try-longer-song": "Próbálj ki egy hosszabb dalt",
+				"try-shorter-song": "Próbálj meg egy rövidebb dalt",
+				"try-supported-platform": "Próbáljon ki egy linket egy támogatott platformról."
 			}
 		},
 		"stats": {
