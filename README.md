@@ -274,6 +274,7 @@ See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
 - [**ajnrules**](https://github.com/ajnrules) - _Contributor_
 - [**bendai94**](https://github.com/bendai94) - _Contributor_
 - [**karcsesz**](https://github.com/karcsesz) - _Contributor_
+- [**vayandas**](https://github.com/vayandas) - _Contributor_
 
 ## License
 
