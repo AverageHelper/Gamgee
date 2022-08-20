@@ -10,25 +10,25 @@
 			"name": "cooldown"
 		},
 		"help": {
-			"description": "Imprimez un message d'aide utile.",
-			"name": "aider",
+			"description": "Imprime un message d'aide utile.",
+			"name": "aide",
 			"response": "Commandes:"
 		},
 		"howto": {
-			"description": "Imprimez les instructions d'utilisation des commandes de file d'attente courantes.",
+			"description": "Imprime les instructions d'utilisation des commandes de la file d'attente courante.",
 			"name": "comment"
 		},
 		"languages": {
-			"description": "Imprimer les statistiques linguistiques de mon référentiel principal.",
+			"description": "Imprime les statistiques linguistiques de mon référentiel principal.",
 			"name": "langues"
 		},
 		"limits": {
-			"description": "Afficher les limites de soumission de la file d'attente de chansons.",
+			"description": "Affiche les limites de soumission de la file d'attente de chansons.",
 			"name": "limites"
 		},
 		"nowplaying": {
-			"description": "Révélez la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
-			"name": "jouermaintenant"
+			"description": "Révèle la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
+			"name": "jouemaintenant"
 		},
 		"ping": {
 			"description": "Ping mon serveur hôte pour vérifier la latence.",
@@ -50,7 +50,7 @@
 			}
 		},
 		"sr": {
-			"description": "Soumettre une chanson à la file d'attente.",
+			"description": "Soumets une chanson à la file d'attente.",
 			"name": "sr",
 			"options": {
 				"url": {
@@ -79,11 +79,11 @@
 			}
 		},
 		"stats": {
-			"description": "Obtenez vos statistiques de file d'attente personnelles.",
+			"description": "Obtenez vos statistiques de votre file d'attente personnelle.",
 			"name": "statistiques"
 		},
 		"t": {
-			"description": "montrer que je tape.",
+			"description": "Montre que je suis en train d'écrire.",
 			"name": "t",
 			"responses": {
 				"channel-not-found": "Quelque chose s'est mal passé et je n'ai pas trouvé le canal à partir duquel vous m'avez appelé. Veuillez réessayer?",
@@ -91,7 +91,7 @@
 			}
 		},
 		"test": {
-			"description": "Assurez-vous que je sais toujours comment parler aux services vidéo.",
+			"description": "Assure que je sais toujours comment parler aux services vidéo.",
 			"name": "test",
 			"responses": {
 				"cannot-run-concurrent-invocations": "Attendez, quelqu'un vient d'exécuter cette commande...",
@@ -104,14 +104,14 @@
 		},
 		"userinfo": {
 			"description": "Retourne quelques informations sur vous.",
-			"name": "utilinfo"
+			"name": "infoutilisateur"
 		},
 		"version": {
-			"description": "Affichez la version actuelle de la base de code du bot.",
+			"description": "Affiche la version actuelle de la base de code du bot.",
 			"name": "version"
 		},
 		"video": {
-			"description": "Répondez avec le titre et la durée de la vidéo.",
+			"description": "Répond avec le titre et la durée de la vidéo.",
 			"name": "vidéo"
 		}
 	},
