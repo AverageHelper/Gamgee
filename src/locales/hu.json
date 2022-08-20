@@ -104,12 +104,14 @@
 			"seconds-nan": "NaN másodperc"
 		},
 		"deprecated": "Elavult",
+		"dm-failed-disabled": "Most próbáltam DM-et küldeni neked, de úgy tűnik, a DM-jeid ki vannak kapcsolva.",
 		"no-personal-permission": "Nincs engedélye a parancs futtatására.",
 		"not-here": "Itt ezt nem teheti meg.",
 		"queue": {
 			"not-open": "A sor nem nyitott.",
 			"not-set-up": "Nincs sor."
-		}
+		},
+		"reply-from-channel": "Válasz a {channel}"
 	},
 	"languages": {
 		"de": "Német",

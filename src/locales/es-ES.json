@@ -104,12 +104,14 @@
 			"seconds-nan": "NaN segundos"
 		},
 		"deprecated": "Obsoleto",
+		"dm-failed-disabled": "Intenté enviarte un DM hace un momento, pero parece que tus DM están apagados.",
 		"no-personal-permission": "No tienes permiso para ejecutar ese comando.",
 		"not-here": "No puedes hacer eso aquí.",
 		"queue": {
 			"not-open": "La cola no está abierta.",
 			"not-set-up": "No hay cola configurada."
-		}
+		},
+		"reply-from-channel": "Respuesta de {channel}"
 	},
 	"languages": {
 		"de": "Alemán",

@@ -104,12 +104,14 @@
 			"seconds-nan": "NaN secondes"
 		},
 		"deprecated": "Obsolète",
+		"dm-failed-disabled": "J'ai essayé de vous envoyer un DM tout à l'heure, mais il semble que vos DM soient désactivés.",
 		"no-personal-permission": "Vous n'avez pas la permission d'exécuter cette commande.",
 		"not-here": "Vous ne pouvez pas faire ça ici.",
 		"queue": {
 			"not-open": "La file d'attente n'est pas ouverte.",
 			"not-set-up": "Aucune file d'attente n'est configurée."
-		}
+		},
+		"reply-from-channel": "Réponse du {channel}"
 	},
 	"languages": {
 		"de": "Allemand",

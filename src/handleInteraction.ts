@@ -61,15 +61,18 @@ export async function handleInteraction(
 
 		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
 
+		const userLocale = localeIfSupported(interaction.locale) ?? DEFAULT_LOCALE;
+		const guildLocale = localeIfSupported(interaction.guildLocale) ?? DEFAULT_LOCALE;
+
 		const context: CommandContext = {
 			type: "interaction",
 			createdTimestamp: interaction.createdTimestamp,
 			user: interaction.user,
-			userLocale: localeIfSupported(interaction.locale) ?? DEFAULT_LOCALE,
+			userLocale,
 			userLocaleRaw: interaction.locale,
 			member,
 			guild: interaction.guild,
-			guildLocale: localeIfSupported(interaction.guildLocale) ?? DEFAULT_LOCALE,
+			guildLocale,
 			guildLocaleRaw: interaction.guildLocale,
 			channel,
 			client: interaction.client,
@@ -111,7 +114,7 @@ export async function handleInteraction(
 						logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					}
 				} else {
-					const reply = await replyPrivately(interaction, options, viaDM);
+					const reply = await replyPrivately(interaction, options, viaDM, userLocale, guildLocale);
 					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}

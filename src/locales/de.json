@@ -104,12 +104,14 @@
 			"seconds-nan": "NaN Sekunden"
 		},
 		"deprecated": "Veraltet",
+		"dm-failed-disabled": "Ich habe gerade versucht, dir eine DM zu schreiben, aber es sieht so aus, als wären deine DMs deaktiviert.",
 		"no-personal-permission": "Sie haben keine Erlaubnis, diesen Befehl auszuführen.",
 		"not-here": "Das können Sie hier nicht tun.",
 		"queue": {
 			"not-open": "Die Warteschlange ist nicht geöffnet.",
 			"not-set-up": "Es gibt keine Warteschlange."
-		}
+		},
+		"reply-from-channel": "Antwort vom {channel}"
 	},
 	"languages": {
 		"de": "Deutsch",

@@ -243,15 +243,19 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 
 		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
 
+		// FIXME: Isn't there API to get the user's locale?
+		const userLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+		const guildLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+
 		const context: CommandContext = {
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
-			userLocale: localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE, // FIXME: Isn't there API to get the user's locale?
+			userLocale,
 			userLocaleRaw: null,
 			member: message.member,
 			guild: message.guild,
-			guildLocale: localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE,
+			guildLocale,
 			guildLocaleRaw: message.guild?.preferredLocale ?? null,
 			channel,
 			client: message.client,
@@ -267,7 +271,7 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 				}
 			},
 			replyPrivately: async options => {
-				const reply = await replyPrivately(message, options, true);
+				const reply = await replyPrivately(message, options, true, userLocale, guildLocale);
 				if (reply === null) {
 					logger.info(`User ${logUser(message.author)} has DMs turned off.`);
 				}
@@ -281,7 +285,7 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 			},
 			followUp: async options => {
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
-					return await replyPrivately(message, options, true);
+					return await replyPrivately(message, options, true, userLocale, guildLocale);
 				}
 				if (typeof options === "string") {
 					return (await sendMessageInChannel(message.channel, options)) ?? false;

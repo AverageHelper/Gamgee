@@ -104,12 +104,14 @@
 			"seconds-nan": "NaN segundos"
 		},
 		"deprecated": "Obsoleto",
+		"dm-failed-disabled": "Tentei enviar uma DM para você agora, mas parece que suas DMs estão desativadas.",
 		"no-personal-permission": "Você não tem permissão para executar este comando.",
 		"not-here": "Você não pode fazer isso aqui.",
 		"queue": {
 			"not-open": "A fila não está aberta.",
 			"not-set-up": "Nenhuma fila está configurada."
-		}
+		},
+		"reply-from-channel": "Resposta do {channel}"
 	},
 	"languages": {
 		"de": "Alemão",
