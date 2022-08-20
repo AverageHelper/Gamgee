@@ -172,11 +172,11 @@ exports[`Help command describes all commands in es-ES 1`] = `
 exports[`Help command describes all commands in fr 1`] = `
 "Commandes:
 \`?cooldown\` - Découvrez quand vous pourrez soumettre à nouveau.
-\`?aider\` - Imprimez un message d'aide utile.
-\`?comment\` - Imprimez les instructions d'utilisation des commandes de file d'attente courantes.
-\`?langues\` - Imprimer les statistiques linguistiques de mon référentiel principal.
-\`?limites\` - Afficher les limites de soumission de la file d'attente de chansons.
-\`?jouermaintenant\` OR \`?now-playing\` - Révélez la chanson actuelle dans la file d'attente (ou ma meilleure estimation).
+\`?aide\` - Imprime un message d'aide utile.
+\`?comment\` - Imprime les instructions d'utilisation des commandes de la file d'attente courante.
+\`?langues\` - Imprime les statistiques linguistiques de mon référentiel principal.
+\`?limites\` - Affiche les limites de soumission de la file d'attente de chansons.
+\`?jouemaintenant\` OR \`?now-playing\` - Révèle la chanson actuelle dans la file d'attente (ou ma meilleure estimation).
 \`?ping\` - Ping mon serveur hôte pour vérifier la latence.
 \`?quo\` - Administrative commands to manage the song queue.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
@@ -189,13 +189,13 @@ exports[`Help command describes all commands in fr 1`] = `
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?définirpréfixe [préfixe]\` OR \`?set-prefix\` - Définissez le préfixe utilisé par les commandes de message.
-\`?sr [url]\` - Soumettre une chanson à la file d'attente.
-\`?statistiques\` - Obtenez vos statistiques de file d'attente personnelles.
-\`?test\` - Assurez-vous que je sais toujours comment parler aux services vidéo.
-\`?t\` - montrer que je tape.
-\`?utilinfo\` - Retourne quelques informations sur vous.
-\`?version\` - Affichez la version actuelle de la base de code du bot.
-\`?vidéo [url]\` - Répondez avec le titre et la durée de la vidéo.
+\`?sr [url]\` - Soumets une chanson à la file d'attente.
+\`?statistiques\` - Obtenez vos statistiques de votre file d'attente personnelle.
+\`?test\` - Assure que je sais toujours comment parler aux services vidéo.
+\`?t\` - Montre que je suis en train d'écrire.
+\`?infoutilisateur\` - Retourne quelques informations sur vous.
+\`?version\` - Affiche la version actuelle de la base du code du bot.
+\`?vidéo [url]\` - Répond avec le titre et la durée de la vidéo.
 "
 `;
 

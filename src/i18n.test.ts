@@ -91,7 +91,7 @@ describe("i18n", () => {
 				"en-GB": "Submit a song to the queue.",
 				"en-US": "Submit a song to the queue.",
 				"es-ES": "Envía una canción a la cola.",
-				fr: "Soumettre une chanson à la file d'attente.",
+				fr: "Soumets une chanson à la file d'attente.",
 				hu: "Adjon fel egy dalt a sorba.",
 				"pt-BR": "Envie uma música para a fila."
 			});

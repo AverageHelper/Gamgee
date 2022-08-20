@@ -10,25 +10,25 @@
 			"name": "cooldown"
 		},
 		"help": {
-			"description": "Imprimez un message d'aide utile.",
-			"name": "aider",
+			"description": "Imprime un message d'aide utile.",
+			"name": "aide",
 			"response": "Commandes:"
 		},
 		"howto": {
-			"description": "Imprimez les instructions d'utilisation des commandes de file d'attente courantes.",
+			"description": "Imprime les instructions d'utilisation des commandes de la file d'attente courante.",
 			"name": "comment"
 		},
 		"languages": {
-			"description": "Imprimer les statistiques linguistiques de mon référentiel principal.",
+			"description": "Imprime les statistiques linguistiques de mon référentiel principal.",
 			"name": "langues"
 		},
 		"limits": {
-			"description": "Afficher les limites de soumission de la file d'attente de chansons.",
+			"description": "Affiche les limites de soumission de la file d'attente de chansons.",
 			"name": "limites"
 		},
 		"nowplaying": {
-			"description": "Révélez la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
-			"name": "jouermaintenant"
+			"description": "Révèle la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
+			"name": "jouemaintenant"
 		},
 		"ping": {
 			"description": "Ping mon serveur hôte pour vérifier la latence.",
@@ -50,11 +50,11 @@
 			}
 		},
 		"sr": {
-			"description": "Soumettre une chanson à la file d'attente.",
+			"description": "Soumets une chanson à la file d'attente.",
 			"name": "sr",
 			"options": {
 				"url": {
-					"description": "Un lien de chanson à partir d'une plate-forme prise en charge",
+					"description": "Un lien d'une chanson à partir d'une plate-forme prise en charge",
 					"name": "url"
 				}
 			},
@@ -62,56 +62,56 @@
 				"finished": "Fait.",
 				"not-allowed": "Vous n'êtes pas autorisé à soumettre des chansons. Je suis désolé.",
 				"rejections": {
-					"allotment-expended": "Vous avez utilisé les {max} soumissions qui vous étaient allouées.",
-					"cooldown": "Vous avez déjà soumis une chanson dans les {duration} dernières. Vous devez attendre {remaining} avant de soumettre à nouveau.",
+					"allotment-expended": "Vous avez utilisé les {max} soumissions qui vous était allouées.",
+					"cooldown": "Vous avez déjà soumis une chanson dans les dernières {duration}. Vous devez attendre {remaining} avant de soumettre à nouveau.",
 					"too-long": "Cette chanson est trop longue. La limite est de {limit}, mais celle-ci dure {actual}.",
 					"too-short": "Cette chanson est trop courte. La limite est de {limit}, mais celle-ci dure {actual}."
 				},
-				"this-queue-full-autoclose": "Cette file d'attente est pleine. Je le ferme maintenant.",
+				"this-queue-full-autoclose": "Cette file d'attente est pleine. Je la ferme maintenant.",
 				"query-returned-error": "Cette requête m'a donné une erreur. Réessayez peut-être?",
-				"queue-full-autoclose": "La file d'attente est pleine. Je le ferme maintenant.",
+				"queue-full-autoclose": "La file d'attente est pleine. Je la ferme maintenant.",
 				"queue-nearly-full": "La file d'attente est presque pleine. Soumettez pendant que vous le pouvez encore!",
 				"song-not-found": "Je ne trouve pas cette chanson.",
 				"submission-accepted": "Soumission acceptée!",
-				"try-longer-song": "Essayez quelque chose d'un peu plus longtemps",
+				"try-longer-song": "Essayez quelque chose d'un peu plus long",
 				"try-shorter-song": "Essayez quelque chose d'un peu plus court",
 				"try-supported-platform": "Essayez un lien d'une plate-forme prise en charge."
 			}
 		},
 		"stats": {
-			"description": "Obtenez vos statistiques de file d'attente personnelles.",
+			"description": "Obtenez vos statistiques de votre file d'attente personnelle.",
 			"name": "statistiques"
 		},
 		"t": {
-			"description": "montrer que je tape.",
+			"description": "Montre que je suis en train d'écrire.",
 			"name": "t",
 			"responses": {
-				"channel-not-found": "Quelque chose s'est mal passé et je n'ai pas trouvé le canal à partir duquel vous m'avez appelé. Veuillez réessayer?",
+				"channel-not-found": "Quelque chose s'est mal passée et je n'ai pas trouvé le canal à partir duquel vous m'avez appelé. Veuillez réessayer?",
 				"success-cheeky": "J'ai commencé à écrire ici, mais je ne finirai pas :P"
 			}
 		},
 		"test": {
-			"description": "Assurez-vous que je sais toujours comment parler aux services vidéo.",
+			"description": "Assure que je sais toujours comment parler aux services vidéo.",
 			"name": "test",
 			"responses": {
 				"cannot-run-concurrent-invocations": "Attendez, quelqu'un vient d'exécuter cette commande...",
 				"preamble-failure": "Euh, quelque chose s'est mal passé. Le mieux est de regarder ceci:",
-				"preamble-success": "J'ai couru les chiffres, et on dirait que nous allons tous bien!",
-				"results-header": "Résultats de test",
+				"preamble-success": "J'ai fait les calculs, et on dirait que tout va bien!",
+				"results-header": "Résultats du test",
 				"see-on-github": "Consultez la {list} sur notre GitHub.",
-				"supported-platforms": "liste des plates-formes prises en charge"
+				"supported-platforms": "liste des plates-formes prise en charge"
 			}
 		},
 		"userinfo": {
 			"description": "Retourne quelques informations sur vous.",
-			"name": "utilinfo"
+			"name": "infoutilisateur"
 		},
 		"version": {
-			"description": "Affichez la version actuelle de la base de code du bot.",
+			"description": "Affiche la version actuelle de la base du code du bot.",
 			"name": "version"
 		},
 		"video": {
-			"description": "Répondez avec le titre et la durée de la vidéo.",
+			"description": "Répond avec le titre et la durée de la vidéo.",
 			"name": "vidéo"
 		}
 	},
