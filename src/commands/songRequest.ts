@@ -34,9 +34,11 @@ export const sr: GuildedCommand = {
 			guildLocale,
 			channel,
 			user,
+			userLocale,
 			options,
 			createdTimestamp,
 			logger,
+			type,
 			reply,
 			replyPrivately,
 			prepareForLongRunningTasks,
@@ -64,15 +66,16 @@ export const sr: GuildedCommand = {
 		if (channel?.id === queueChannel.id) {
 			await Promise.all([
 				deleteInvocation(),
-				replyPrivately("Requesting songs in the queue channel has not been implemented yet.")
+				replyPrivately("Requesting songs in the queue channel has not been implemented yet.") // TODO: I18N
 			]);
 			return;
 		}
 
 		const isOpen = await isQueueOpen(guild);
 		if (!isOpen) {
+			const locale = type === "interaction" ? userLocale : guildLocale;
 			return await reply({
-				content: `:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", guildLocale)}`,
+				content: `:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", locale)}`,
 				ephemeral: true
 			});
 		}

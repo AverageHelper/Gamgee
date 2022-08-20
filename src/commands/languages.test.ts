@@ -33,7 +33,12 @@ describe("Language Statistics from GitHub", () => {
 	});
 
 	test("asks GitHub about my language statistics", async () => {
+		const owner = "AverageHelper";
+		const repo = "Gamgee";
+
 		await expect(languages.execute(context)).resolves.toBeUndefined();
+		expect(mockGitHubMetadata).toHaveBeenCalledTimes(1);
+		expect(mockGitHubMetadata).toHaveBeenCalledWith({ owner, repo });
 
 		expect(mockReply).toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("languages"));

@@ -1,3 +1,4 @@
+import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
 import { locales, localizations } from "../i18n.js";
@@ -7,7 +8,7 @@ import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 const owner = "AverageHelper";
 const repo = "Gamgee";
 
-const cachedMetadata = gitHubMetadata({ owner, repo });
+let cachedMetadata: GitHubMetadata | null = null;
 
 // TODO: i18n
 export const languages: GlobalCommand = {
@@ -17,11 +18,12 @@ export const languages: GlobalCommand = {
 	descriptionLocalizations: localizations("commands.languages.description"),
 	requiresGuild: false,
 	async execute({ logger, prepareForLongRunningTasks, reply, followUp }) {
-		let languages: Record<string, number>;
-
 		try {
 			await prepareForLongRunningTasks();
-			languages = (await cachedMetadata).languages;
+			if (cachedMetadata === null) {
+				// eslint-disable-next-line require-atomic-updates
+				cachedMetadata = await gitHubMetadata({ owner, repo });
+			}
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
 			await reply("Erm... I'm not sure :sweat_smile:");
@@ -33,6 +35,7 @@ export const languages: GlobalCommand = {
 			return;
 		}
 
+		const languages = cachedMetadata.languages;
 		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 
 		const totalLanguages = Object.keys(languages).length;
