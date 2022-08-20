@@ -13,7 +13,8 @@ import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueu
 const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
 const mockQueuePush = pushEntryToQueue as jest.Mock;
 
-import { isQueueOpen } from "../useGuildStorage.js";
+import { getCommandPrefix, isQueueOpen } from "../useGuildStorage.js";
+const mockGetCommandPrefix = getCommandPrefix as jest.Mock;
 const mockIsQueueOpen = isQueueOpen as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
@@ -38,6 +39,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "../constants/database.js";
 import { sr as songRequest } from "./songRequest.js";
 import { URL } from "node:url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
@@ -70,6 +72,7 @@ describe("Song request via URL", () => {
 	mockQueueUserEntryCount.mockResolvedValue(0);
 
 	mockPlaytimeTotal.mockResolvedValue(0);
+	mockGetCommandPrefix.mockResolvedValue(DEFAULT_MESSAGE_COMMAND_PREFIX);
 	mockIsQueueOpen.mockResolvedValue(true);
 
 	const queueChannel = {

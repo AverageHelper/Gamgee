@@ -184,7 +184,7 @@ describe("Command handler", () => {
 			mockMessage.author.bot = false;
 			await handleCommand(mockMessage, logger);
 
-			const mock = mockCommandDefinitions.get(command)?.execute;
+			const mock = mockCommandDefinitions.get(command.replace("-", ""))?.execute;
 			expect(mock).toBeDefined();
 			expect(mock).toHaveBeenCalledTimes(1);
 			expect(mock).toHaveBeenCalledWith(
@@ -196,9 +196,8 @@ describe("Command handler", () => {
 						command
 							.split(/ +/u)
 							.slice(1)
-							.map(s => ({ name: s, type: ApplicationCommandOptionType.String }))
-					],
-					["storage", null]
+							.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+					]
 				])
 			);
 		});
