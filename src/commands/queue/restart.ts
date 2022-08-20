@@ -4,6 +4,7 @@ import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 import { clearEntries, fetchAllEntries } from "../../useQueueStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 
+// TODO: i18n
 export const restart: Subcommand = {
 	name: "restart",
 	description: "Empty the queue and start a fresh queue session.",

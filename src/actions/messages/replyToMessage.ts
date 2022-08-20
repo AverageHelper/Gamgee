@@ -1,9 +1,11 @@
+import type { SupportedLocale } from "../../i18n.js";
 import type Discord from "discord.js";
 import { ChannelType, DiscordAPIError } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
 import { getEnv } from "../../helpers/environment.js";
 import { logUser } from "../../helpers/logUser.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
+import { t, ti } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 
 const logger = useLogger();
@@ -63,11 +65,14 @@ async function sendDM(
 
 function replyMessage(
 	source: Discord.TextBasedChannel | null,
-	content: string | null | undefined
+	content: string | null | undefined,
+	locale: SupportedLocale
 ): string {
 	const msg = createPartialString();
 	if (source && source.type !== ChannelType.DM) {
-		push(`(Reply from <#${source.id}>)`, msg);
+		push("(", msg);
+		push(ti("common.reply-from-channel", { channel: `<#${source.id}>` }, locale), msg);
+		push(")", msg);
 		pushNewLine(msg);
 	}
 	push(content ?? "", msg);
@@ -76,12 +81,13 @@ function replyMessage(
 
 async function sendDMReply(
 	source: Discord.Message,
-	options: string | Discord.ReplyMessageOptions
+	options: string | Discord.ReplyMessageOptions,
+	locale: SupportedLocale
 ): Promise<Discord.Message | null> {
 	const user: Discord.User = source.author;
 	try {
 		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
-			// this is our known tester
+			// this is our known tester, no need to i18nlize
 			logger.silly(`Good morning, Miss ${user.username}.`);
 
 			if (typeof options === "string") {
@@ -96,7 +102,7 @@ async function sendDMReply(
 		} else if (!user.bot) {
 			logger.silly("This is a human. Or their dog... I love dogs!");
 			const content = typeof options !== "string" ? options.content ?? null : options;
-			const response = replyMessage(source.channel, content);
+			const response = replyMessage(source.channel, content, locale);
 			if (typeof options === "string") {
 				return await sendDM(user, response);
 			}
@@ -152,22 +158,24 @@ async function sendEphemeralReply(
 export async function replyPrivately(
 	source: Discord.Message | Discord.CommandInteraction,
 	options: string | Omit<Discord.MessageOptions, "reply" | "flags">,
-	preferDMs: boolean
+	preferDMs: boolean,
+	userLocale: SupportedLocale,
+	guildLocale: SupportedLocale
 ): Promise<Discord.Message | boolean> {
 	let message: Discord.Message | null;
 
 	// If this is a message (no ephemeral reply option)
 	if ("author" in source) {
-		message = await sendDMReply(source, options);
+		message = await sendDMReply(source, options, userLocale);
 
 		// If this is an interaction, but we really wanna use DMs
 	} else if (preferDMs) {
 		if (typeof options === "string") {
-			message = await sendDM(source.user, replyMessage(source.channel, options));
+			message = await sendDM(source.user, replyMessage(source.channel, options, userLocale));
 		} else {
 			message = await sendDM(source.user, {
 				...options,
-				content: replyMessage(source.channel, options.content)
+				content: replyMessage(source.channel, options.content, userLocale)
 			});
 		}
 
@@ -180,11 +188,19 @@ export async function replyPrivately(
 	if (message === null) {
 		// Inform the user that we tried to DM them, but they have their DMs off
 		if ("author" in source) {
+			// TODO: Tried to DM about what? Be more specific
 			await source.channel?.send(
-				`<@!${source.author.id}> I tried to DM you just now, but it looks like your DMs are off. :slight_frown:`
+				`<@!${source.author.id}> ${t("common.dm-failed-disabled", guildLocale)} :slight_frown:`
 			);
+		} else if (typeof options === "string") {
+			return await sendEphemeralReply(source, {
+				content: `${t("common.dm-failed-disabled", userLocale)}\n${options}`
+			});
 		} else {
-			return await sendEphemeralReply(source, options);
+			return await sendEphemeralReply(source, {
+				...options,
+				content: `${t("common.dm-failed-disabled", userLocale)}\n${options.content ?? ""}`
+			});
 		}
 		return false;
 	}

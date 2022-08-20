@@ -3,7 +3,7 @@
  */
 export class EnvVariableNotFoundError extends Error {
 	constructor(name: string) {
-		super(`${name} not found in environment variables.`);
+		super(`${name} not found in environment variables.`); // TODO: i18n?
 		this.name = "EnvVariableNotFoundError";
 	}
 }

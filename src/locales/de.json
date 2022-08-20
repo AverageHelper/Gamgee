@@ -1,32 +1,147 @@
 {
 	"meta": {
-		"code": "de"
+		"code": "de",
+		"name": "Deutsch",
+		"nickname": "Deutsch"
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Finden Sie heraus, wann Sie wieder einreichen können."
+			"description": "Finden Sie heraus, wann Sie wieder einreichen können.",
+			"name": "cooldown"
 		},
 		"help": {
+			"description": "Drucken Sie eine nützliche Hilfenachricht.",
 			"name": "hilfe",
-			"description": "Drucken Sie eine nützliche Hilfenachricht."
+			"response": "Befehle:"
 		},
 		"howto": {
+			"description": "Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.",
 			"name": "wieman"
 		},
+		"languages": {
+			"description": "Drucke die Sprachstatistiken meines Hauptrepositorys.",
+			"name": "sprachen"
+		},
+		"limits": {
+			"description": "Zeigen Sie die Einreichungslimits der Song-Warteschlange an.",
+			"name": "grenzen"
+		},
+		"nowplaying": {
+			"description": "Zeigen Sie den aktuellen Song in der Warteschlange an (oder meine beste Vermutung).",
+			"name": "spieltjetzt"
+		},
+		"ping": {
+			"description": "Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.",
+			"name": "ping"
+		},
+		"setprefix": {
+			"description": "Legen Sie das Präfix fest, das von Nachrichtenbefehlen verwendet wird.",
+			"name": "präfixsetzen",
+			"options": {
+				"prefix": {
+					"description": "Das neue Präfix, das vor Nachrichtenbefehlen verwendet werden soll.",
+					"name": "präfix"
+				}
+			},
+			"responses": {
+				"missing-value": "Es wurde ein Wert erwartet, der als Befehlspräfix festgelegt werden soll",
+				"try-example": "Versuchen Sie {sample} zum Beispiel",
+				"value-header": "Nachrichtenbefehlspräfix"
+			}
+		},
 		"sr": {
-			"name": "sr",
 			"description": "Senden Sie einen Song an die Warteschlange.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Ein Link zu einem Lied von einer unterstützten Plattform"
+					"description": "Ein Link zu einem Lied von einer unterstützten Plattform",
+					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Fertig.",
+				"not-allowed": "Sie dürfen keine Songs einreichen. Es tut mir Leid.",
+				"rejections": {
+					"allotment-expended": "Sie haben alle {max} Ihrer zugeteilten Einreichungen verwendet.",
+					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut senden.",
+					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das ist {actual} lang.",
+					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das ist {actual} lang."
+				},
+				"this-queue-full-autoclose": "Diese Warteschlange ist voll. Ich schließe es jetzt.",
+				"query-returned-error": "Diese Abfrage gab mir einen Fehler. Vielleicht nochmal versuchen?",
+				"queue-full-autoclose": "Die Warteschlange ist voll. Ich schließe es jetzt.",
+				"queue-nearly-full": "Die Warteschlange ist fast voll. Einreichen, solange es noch geht!",
+				"song-not-found": "Ich kann das Lied nicht finden.",
+				"submission-accepted": "Einreichung angenommen!",
+				"try-longer-song": "Versuchen Sie es mit einem längeren Lied",
+				"try-shorter-song": "Versuchen Sie es mit einem kürzeren Lied",
+				"try-supported-platform": "Probieren Sie einen Link von einer unterstützten Plattform aus."
+			}
+		},
+		"stats": {
+			"description": "Holen Sie sich Ihre persönliche Warteschlangenstatistik.",
+			"name": "statistiken"
+		},
+		"t": {
+			"description": "Zeigen Sie, dass ich tippe",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Irgendetwas ist schief gelaufen und ich konnte den Kanal, von dem aus Sie mich angerufen haben, nicht finden. Bitte versuche es erneut",
+				"success-cheeky": "Ich habe hier angefangen zu schreiben, aber ich werde es nicht beenden :P"
+			}
+		},
+		"test": {
+			"description": "Stellen Sie sicher, dass ich immer noch weiß, wie ich mit Videodiensten spreche.",
+			"name": "prüfung",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Bitte warten Sie, jemand hat gerade diesen Befehl ausgeführt...",
+				"preamble-failure": "Äh, etwas ist schief gelaufen. Schau am besten mal hier rein:",
+				"preamble-success": "Ich habe die Zahlen überprüft und es sieht so aus, als ob es uns allen gut geht!",
+				"results-header": "Testergebnisse",
+				"see-on-github": "Sehen Sie sich die {list} auf unserem GitHub an.",
+				"supported-platforms": "Liste der unterstützten Plattformen"
 			}
 		},
 		"userinfo": {
-			"name": "benutzerinfo",
-			"description": "Gibt einige Informationen über Sie zurück."
+			"description": "Gibt einige Informationen über Sie zurück.",
+			"name": "benutzerinfo"
+		},
+		"version": {
+			"description": "Zeigt die aktuelle Codebasisversion des Bots an.",
+			"name": "ausführung"
+		},
+		"video": {
+			"description": "Antworte mit Videotitel und Dauer.",
+			"name": "video"
 		}
+	},
+	"common": {
+		"count": {
+			"infinity": "Unendlichkeit",
+			"not-a-number": "NaN",
+			"seconds-infinity": "Unendliche Sekunden",
+			"seconds-nan": "NaN Sekunden"
+		},
+		"deprecated": "Veraltet",
+		"dm-failed-disabled": "Ich habe gerade versucht, dir eine DM zu schreiben, aber es sieht so aus, als wären deine DMs deaktiviert.",
+		"no-personal-permission": "Sie haben keine Erlaubnis, diesen Befehl auszuführen.",
+		"not-here": "Das können Sie hier nicht tun.",
+		"queue": {
+			"not-open": "Die Warteschlange ist nicht geöffnet.",
+			"not-set-up": "Es gibt keine Warteschlange."
+		},
+		"reply-from-channel": "Antwort vom {channel}"
+	},
+	"languages": {
+		"de": "Deutsch",
+		"en-GB": "Englisch (Großbritannien)",
+		"en-US": "Englisch (USA)",
+		"es-ES": "Spanisch",
+		"fr": "Französisch",
+		"hu": "Ungarisch",
+		"pt-BR": "Portugiesisch (Brasilien)"
+	},
+	"self": {
+		"unknown-name": "Mir"
 	}
 }

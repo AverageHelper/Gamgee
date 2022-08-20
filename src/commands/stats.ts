@@ -4,6 +4,7 @@ import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
+import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	averageSubmissionPlaytimeForUser,
@@ -12,11 +13,14 @@ import {
 	getQueueConfig
 } from "../useQueueStorage.js";
 
+// TODO: i18n
 export const stats: Command = {
 	name: "stats",
+	nameLocalizations: localizations("commands.stats.name"),
 	description: "Get your personal queue statistics.",
+	descriptionLocalizations: localizations("commands.stats.description"),
 	requiresGuild: true,
-	async execute({ user, guild, replyPrivately, deleteInvocation }) {
+	async execute({ user, userLocale, guild, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
 		const [queueChannel, isOpen] = await Promise.all([
@@ -24,7 +28,7 @@ export const stats: Command = {
 			isQueueOpen(guild)
 		]);
 		if (!queueChannel) {
-			return await replyPrivately("No queue is set up.");
+			return await replyPrivately(t("common.queue.not-set-up", userLocale));
 		}
 
 		const config = await getQueueConfig(queueChannel);
@@ -45,9 +49,9 @@ export const stats: Command = {
 		]);
 
 		// Average song length
-		const durationMsg = createPartialString(durationString(avgDuration));
+		const durationMsg = createPartialString(durationString(userLocale, avgDuration));
 		if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-			push(` (limit ${durationString(config.entryDurationSeconds)})`, durationMsg);
+			push(` (limit ${durationString(userLocale, config.entryDurationSeconds)})`, durationMsg);
 		}
 		embed.addFields({ name: "Average Length of Your Submissions", value: composed(durationMsg) });
 
@@ -75,7 +79,7 @@ export const stats: Command = {
 				timeSinceLatest !== null
 					? Math.max(0, config.cooldownSeconds - timeSinceLatest)
 					: 0;
-			const value = durationString(timeToWait);
+			const value = durationString(userLocale, timeToWait);
 			embed.addFields({ name: "Time Remaining on Cooldown", value });
 
 			// TODO: ETA to user's next submission would be nice here

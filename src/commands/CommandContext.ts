@@ -1,6 +1,6 @@
 import type Discord from "discord.js";
-import type { Storage } from "../configStorage.js";
 import type { Logger } from "../logger.js";
+import type { SupportedLocale } from "../i18n.js";
 import { ChannelType } from "discord.js";
 
 export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
@@ -9,14 +9,20 @@ interface BaseCommandContext {
 	/** Gamgee's Discord client. */
 	readonly client: Discord.Client<true>;
 
-	/** A `LocalStorage` instance scoped to the guild in which the interaction occurred. */
-	readonly storage: Storage | null;
-
 	/** A logger to use to submit informative debug messages. */
 	readonly logger: Logger;
 
 	/** The guild in which the command was invoked. */
 	readonly guild: Discord.Guild | null;
+
+	/**
+	 * The guild's preferred locale. If that locale is unknown or unsupported,
+	 * then `en-US` is returned.
+	 */
+	readonly guildLocale: SupportedLocale;
+
+	/** The guild's preferred locale. We might not have translations for this locale. */
+	readonly guildLocaleRaw: Discord.LocaleString | null;
 
 	/** The channel in which the command was invoked. */
 	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
@@ -101,6 +107,21 @@ export interface MessageCommandContext extends BaseCommandContext {
 
 	/** The options that were passed into the command. */
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
+
+	/**
+	 * The user's preferred locale.
+	 *
+	 * If the user's locale is unknown, defaults to the guild's preferred locale.
+	 * If the guild's preferred locale is unknown, or the resolved locale is not
+	 * supported, defaults to `en-US`.
+	 */
+	readonly userLocale: SupportedLocale;
+
+	/**
+	 * The user's preferred locale, if known. Always `null` in message contexts.
+	 * We might not have translations for this locale.
+	 */
+	readonly userLocaleRaw: null;
 }
 
 /**
@@ -111,6 +132,21 @@ export interface InteractionCommandContext extends BaseCommandContext {
 
 	/** The interaction that represents the command invocation. */
 	readonly interaction: Discord.CommandInteraction;
+
+	/**
+	 * The user's preferred locale.
+	 *
+	 * If the user's locale is unknown, defaults to the guild's preferred locale.
+	 * If the guild's preferred locale is unknown, or the resolved locale is not
+	 * supported, defaults to `en-US`.
+	 */
+	readonly userLocale: SupportedLocale;
+
+	/**
+	 * The user's preferred locale, if known. Always `null` in message contexts.
+	 * We might not have translations for this locale.
+	 */
+	readonly userLocaleRaw: Discord.LocaleString;
 }
 
 /**

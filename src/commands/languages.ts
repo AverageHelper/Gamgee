@@ -1,47 +1,32 @@
 import type { GitHubMetadata } from "../helpers/githubMetadata.js";
 import type { GlobalCommand } from "./Command.js";
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
-import { locales } from "../i18n.js";
+import { locales, localizations } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
-let cachedMetadata: GitHubMetadata | null | "waiting" = null;
+const owner = "AverageHelper";
+const repo = "Gamgee";
 
+let cachedMetadata: GitHubMetadata | null = null;
+
+// TODO: i18n
 export const languages: GlobalCommand = {
 	name: "languages",
+	nameLocalizations: localizations("commands.languages.name"),
 	description: "Print my core repository's language statistics.",
+	descriptionLocalizations: localizations("commands.languages.description"),
 	requiresGuild: false,
 	async execute({ logger, prepareForLongRunningTasks, reply, followUp }) {
-		const owner = "AverageHelper";
-		const repo = "Gamgee";
-
-		if (cachedMetadata === "waiting") {
-			return await reply("working on it...");
-		}
-
-		if (cachedMetadata === null) {
-			try {
-				cachedMetadata = "waiting";
-				await prepareForLongRunningTasks();
-
+		try {
+			await prepareForLongRunningTasks();
+			if (cachedMetadata === null) {
 				// eslint-disable-next-line require-atomic-updates
 				cachedMetadata = await gitHubMetadata({ owner, repo });
-			} catch (error) {
-				logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
-				await reply("Erm... I'm not sure :sweat_smile:");
-				await timeoutSeconds(1);
-				await followUp({
-					content: `I do know that I can speak ${locales.length} different human languages!`,
-					reply: false
-				});
-				return;
 			}
-		}
-
-		const languages = cachedMetadata.languages;
-		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
-		if (languages === undefined) {
-			await reply("I'm really not sure. Ask my boss that.");
+		} catch (error) {
+			logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
+			await reply("Erm... I'm not sure :sweat_smile:");
 			await timeoutSeconds(1);
 			await followUp({
 				content: `I do know that I can speak ${locales.length} different human languages!`,
@@ -49,6 +34,9 @@ export const languages: GlobalCommand = {
 			});
 			return;
 		}
+
+		const languages = cachedMetadata.languages;
+		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 
 		const totalLanguages = Object.keys(languages).length;
 		if (totalLanguages > 3) {

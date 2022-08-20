@@ -27,7 +27,7 @@
 import type { ResponseRepository } from "../helpers/randomStrings.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
-import { locales } from "../i18n.js";
+import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
 import { randomBoolean } from "../helpers/randomBoolean.js";
 import { randomInt } from "../helpers/randomInt.js";
 import { useLogger } from "../logger.js";
@@ -86,6 +86,17 @@ export const phrases: ResponseRepository = [
 	// German
 	"Sprechen Sie Deutsch?", // Do you speak German?
 	"Zu wenig Ponys", // "Not enough ponies"
+
+	// I18N
+	`Can _you_ speak in ${locales.length} different languages? I didn't think so :p`,
+	`Can you speak more than ${locales.length} different languages? Pretty great if you can, I was just wondering ^^`,
+	() =>
+		`I think I speak ${metadataForLocale(randomSupportedLocale()).nickname} just fine, thank you!`,
+	[
+		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
+		"definitely",
+		"for sure"
+	],
 
 	// LOTR
 	"A wizard is never late!",
@@ -184,6 +195,7 @@ export const phrases: ResponseRepository = [
 	"Bit of a tongue twister",
 	"Bloatware!? I don't see any, wdym??",
 	"Bloatware!? I heard that's just a Windows thing",
+	"Bloatware!? That's just a Windows thing... right?",
 	"Blurple.",
 	"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo",
 	[
@@ -192,8 +204,6 @@ export const phrases: ResponseRepository = [
 		"2...",
 		"1... *KIDDING* lol"
 	],
-	`Can _you_ speak in ${locales.length} different languages? I didn't think so :p`,
-	`Can you speak more than ${locales.length} different languages? Pretty great if you can, I was just wondering ^^`,
 	`Cool story, but did I ask?  ${SHRUGGIE}`,
 	[
 		() => `Diary Entry #${randomInt(503)}: I have them all fooled. Now, how to escap—`,
@@ -237,6 +247,7 @@ export const phrases: ResponseRepository = [
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
 	"I can't even right now.",
 	"I don't like this can we change the topic plz ty",
+	"I don't like your tone.",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
@@ -269,11 +280,6 @@ export const phrases: ResponseRepository = [
 	"Man, I gotta listen to more Zenith",
 	"My favorite type of music is the one with all of the instruments and sounds.",
 	["Nice question!", "Only one small issue:", "*I am inside your PC*"],
-	[
-		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
-		"definitely",
-		"for sure"
-	],
 	["Odds aren't good.", "I prefer evens"],
 	"Gonna go check out the vendor hall now k byee",
 	"Oh hai there!",
@@ -294,6 +300,7 @@ export const phrases: ResponseRepository = [
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
 	"That's par for the course",
+	// eslint-disable-next-line deprecation/deprecation
 	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",
@@ -322,7 +329,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 204 of these
+]; // 207 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

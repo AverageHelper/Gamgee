@@ -1,32 +1,147 @@
 {
 	"meta": {
-		"code": "en-GB"
+		"code": "en-GB",
+		"name": "English, UK",
+		"nickname": "English"
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Find out when you can submit again."
+			"description": "Find out when you can submit again.",
+			"name": "cooldown"
 		},
 		"help": {
+			"description": "Print a useful help message.",
 			"name": "help",
-			"description": "Print a useful help message."
+			"response": "Commands:"
 		},
 		"howto": {
+			"description": "Print instructions for using the common queue commands.",
 			"name": "howto"
 		},
+		"languages": {
+			"description": "Print my core repository's language statistics.",
+			"name": "languages"
+		},
+		"limits": {
+			"description": "Display the song queue's submission limits.",
+			"name": "limits"
+		},
+		"nowplaying": {
+			"description": "Reveal the current song in the queue (or my best guess).",
+			"name": "nowplaying"
+		},
+		"ping": {
+			"description": "Ping my host server to check latency.",
+			"name": "ping"
+		},
+		"setprefix": {
+			"description": "Set the prefix used by message commands.",
+			"name": "setprefix",
+			"options": {
+				"prefix": {
+					"description": "The new prefix to use before message commands.",
+					"name": "prefix"
+				}
+			},
+			"responses": {
+				"missing-value": "Expected a value to set as the command prefix",
+				"try-example": "Try {sample}, for example",
+				"value-header": "Message Command Prefix"
+			}
+		},
 		"sr": {
-			"name": "sr",
 			"description": "Submit a song to the queue.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "A song link from a supported platform"
+					"description": "A song link from a supported platform",
+					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Done.",
+				"not-allowed": "You're not allowed to submit songs. My apologies.",
+				"rejections": {
+					"allotment-expended": "You have used all {max} of your allotted submissions.",
+					"cooldown": "You've already submitted a song within the last {duration}. You must wait {remaining} before submitting again.",
+					"too-long": "That song is too long. The limit is {limit}, but this is {actual} long.",
+					"too-short": "That song is too short. The limit is {limit}, but this is {actual} long."
+				},
+				"this-queue-full-autoclose": "This queue is full. I'm closing it now.",
+				"query-returned-error": "That query gave me an error. Try again maybe?",
+				"queue-full-autoclose": "The queue is full. I'm closing it now.",
+				"queue-nearly-full": "The queue is nearly full. Get your submissions in while you still can!",
+				"song-not-found": "I can't find that song.",
+				"submission-accepted": "Submission Accepted!",
+				"try-longer-song": "Try something a bit longer",
+				"try-shorter-song": "Try something a bit shorter",
+				"try-supported-platform": "Try a link from a supported platform."
+			}
+		},
+		"stats": {
+			"description": "Get your personal queue statistics.",
+			"name": "stats"
+		},
+		"t": {
+			"description": "Start a typing indicator.",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Something went wrong, and I couldn't find the channel you called me from. Please try again",
+				"success-cheeky": "So, I started typing here... but I don't think I'll finish my message :P"
+			}
+		},
+		"test": {
+			"description": "Make sure I still know how to talk to video services.",
+			"name": "test",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Stand by, someone just ran this command...",
+				"preamble-failure": "Erm, something went wrong. Best look into this:",
+				"preamble-success": "I ran the numbers, and it looks like we're all good!",
+				"results-header": "Test Results",
+				"see-on-github": "See the {list} on our GitHub.",
+				"supported-platforms": "list of supported platforms"
 			}
 		},
 		"userinfo": {
-			"name": "userinfo",
-			"description": "Returns some information about you."
+			"description": "Returns some information about you.",
+			"name": "userinfo"
+		},
+		"version": {
+			"description": "Display the bot's current codebase version.",
+			"name": "version"
+		},
+		"video": {
+			"description": "Reply with the video title and duration.",
+			"name": "video"
 		}
+	},
+	"common": {
+		"count": {
+			"infinity": "Infinity",
+			"not-a-number": "NaN",
+			"seconds-infinity": "Infinity seconds",
+			"seconds-nan": "NaN seconds"
+		},
+		"deprecated": "Deprecated",
+		"dm-failed-disabled": "I tried to DM you just now, but it looks like your DMs are off.",
+		"no-personal-permission": "You don't have permission to run that command.",
+		"not-here": "Can't do that here.",
+		"queue": {
+			"not-open": "The queue is not open.",
+			"not-set-up": "No queue is set up."
+		},
+		"reply-from-channel": "Reply from {channel}"
+	},
+	"languages": {
+		"de": "German",
+		"en-GB": "English, UK",
+		"en-US": "English, US",
+		"es-ES": "Spanish",
+		"fr": "French",
+		"hu": "Hungarian",
+		"pt-BR": "Portuguese, Brazilian"
+	},
+	"self": {
+		"unknown-name": "Me"
 	}
 }

@@ -7,6 +7,7 @@ import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
+import { t } from "../../i18n.js";
 import {
 	// ActionRowBuilder,
 	ApplicationCommandOptionType
@@ -43,6 +44,7 @@ export interface QueueLimitArg {
 // 	}
 // }
 
+// TODO: i18n
 export const countLimitMeta: QueueLimitArg = {
 	name: "Number of Submissions",
 	value: "count",
@@ -122,10 +124,10 @@ export const limit: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const { /* type,*/ guild, options, reply } = context;
+		const { /* type,*/ guild, guildLocale, options, reply } = context;
 
 		const queueChannel = await getQueueChannel(guild);
-		if (!queueChannel) return await reply("No queue is set up.");
+		if (!queueChannel) return await reply(t("common.queue.not-set-up", guildLocale));
 
 		const config = await getQueueConfig(queueChannel);
 
@@ -179,7 +181,9 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no upper limit on entry duration.");
 					}
-					return await reply(`Upper entry duration limit is **${durationString(value)}**`);
+					return await reply(
+						`Upper entry duration limit is **${durationString(guildLocale, value)}**`
+					);
 				}
 
 				// Set a new limit
@@ -195,7 +199,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -208,7 +212,9 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no lower limit on entry duration.");
 					}
-					return await reply(`Entry duration lower limit is **${durationString(value)}**`);
+					return await reply(
+						`Entry duration lower limit is **${durationString(guildLocale, value)}**`
+					);
 				}
 
 				// Set a new limit
@@ -224,7 +230,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -237,7 +243,7 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no limit on the queue's total duration.");
 					}
-					return await reply(`Queue duration limit is **${durationString(value)}**`);
+					return await reply(`Queue duration limit is **${durationString(guildLocale, value)}**`);
 				}
 
 				// Set a new limit
@@ -253,7 +259,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}
@@ -266,7 +272,7 @@ export const limit: Subcommand = {
 					if (value === null) {
 						return await reply("There is no submission cooldown time");
 					}
-					return await reply(`Submission cooldown is **${durationString(value)}**`);
+					return await reply(`Submission cooldown is **${durationString(guildLocale, value)}**`);
 				}
 
 				// Set a new limit
@@ -283,7 +289,7 @@ export const limit: Subcommand = {
 					pushBold("removed", response);
 				} else {
 					push("set to ", response);
-					pushBold(durationString(value), response);
+					pushBold(durationString(guildLocale, value), response);
 				}
 				return await reply(composed(response));
 			}

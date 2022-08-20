@@ -1,10 +1,14 @@
 import type Discord from "discord.js";
 import type { Command } from "./Command.js";
+import { localizations } from "../i18n.js";
 import { randomPhrase, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
+// TODO: i18n
 export const ping: Command = {
 	name: "ping",
+	nameLocalizations: localizations("commands.ping.name"),
 	description: "Ping my host server to check latency.",
+	descriptionLocalizations: localizations("commands.ping.description"),
 	requiresGuild: false,
 	async execute(context) {
 		const { client, user, logger } = context;

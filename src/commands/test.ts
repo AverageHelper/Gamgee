@@ -1,5 +1,6 @@
 import type { Command } from "./Command.js";
 import { EmbedBuilder } from "discord.js";
+import { localizations, t, ti } from "../i18n.js";
 import { URL } from "node:url";
 import {
 	getBandcampTrack,
@@ -82,11 +83,15 @@ let isTesting = false;
 
 export const test: Command = {
 	name: "test",
+	nameLocalizations: localizations("commands.test.name"),
 	description: "Make sure I still know how to talk to video services.",
+	descriptionLocalizations: localizations("commands.test.description"),
 	requiresGuild: false,
-	async execute({ prepareForLongRunningTasks, replyPrivately }) {
+	async execute({ userLocale, prepareForLongRunningTasks, replyPrivately }) {
 		if (isTesting) {
-			await replyPrivately("Hold up...");
+			await replyPrivately(
+				t("commands.test.responses.cannot-run-concurrent-invocations", userLocale)
+			);
 			return;
 		}
 		isTesting = true;
@@ -103,16 +108,19 @@ export const test: Command = {
 			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
 			const supportedPlatformsList =
 				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
-			embed.setTitle("Test Results");
-			embed.setDescription(
-				`See the [list of supported platforms](${supportedPlatformsList}) on our GitHub.`
-			);
+			const list = `[${t(
+				"commands.test.responses.supported-platforms",
+				userLocale
+			)}](${supportedPlatformsList})`;
+
+			embed.setTitle(t("commands.test.responses.results-header", userLocale));
+			embed.setDescription(ti("commands.test.responses.see-on-github", { list }, userLocale));
 			results.forEach(result => addResult(result, embed));
 
 			const anyFailures = results.some(result => result.error !== undefined);
 			const content = anyFailures
-				? ":sweat: Erm, something went wrong. Best look into this:"
-				: "I ran the numbers, and it looks like we're all good! :grin:";
+				? `:sweat: ${t("commands.test.responses.preamble-failure", userLocale)}`
+				: `${t("commands.test.responses.preamble-success", userLocale)} :grin:`;
 
 			await replyPrivately({ content, embeds: [embed] });
 		} finally {

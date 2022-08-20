@@ -13,7 +13,13 @@ usageMatchRegex:
   # Detect `localizations("your.i18n.keys")`
   - "[^\\w\\d]localizations\\(['\"`]({key})['\"`]\\)"
   # Detect `t("your.i18n.keys"`
-  - "[^\\w\\d]t\\(['\"`]({key})['\"`]"
+  - "[^\\w\\d]t\\(\\s*['\"`]({key})['\"`]"
+  # Detect `translate("your.i18n.keys"`
+  - "[^\\w\\d]translate\\(\\s*['\"`]({key})['\"`]"
+  # Detect `ti("your.i18n.keys"`
+  - "[^\\w\\d]ti\\(\\s*['\"`]({key})['\"`]"
+  # Detect `translateInterpolating("your.i18n.keys"`
+  - "[^\\w\\d]translateInterpolating\\(\\s*['\"`]({key})['\"`]"
 
 # An array of strings containing refactor templates.
 # The "$1" will be replaced by the keypath specified.

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Nothing, yet!
 
+## [1.8.0] - 2022-08-19
+### Added
+- Added a new `/setprefix` command to change the guild's preferred message-command prefix. (This means you can change the default `?` to any 1-3 char string you want!) This feature has been around for a long time, in the form of the now-gone `/config` family of subcommands. Those commands used a storage medium separate from the main SQLite database, and that was always weird to me. Enjoy the new more stable experience!
+- Translations for a bunch of user-facing strings into German, Spanish, French, Hungarian, and Portuguese.
+
+### Changed
+- The `/config` command now prints a message instructing the user to use the `/setprefix` command instead.
+- Moved guild-scoped message-command prefix config to the SQLite database. I plan to retain this migration code until the next Semver Major version.
+- Translate duration strings to a language and format that makes sense to the user (for private responses) or to the guild (for public responses).
+- `/quo stats` no longer repsonds publicly, even when the channel of invocation is the queue channel.
+- `/now-playing` has been renamed to `/nowplaying`. The command retains `now-playing` as an alias, in case users wish to do things the hard way.
+
+### Removed
+- Removed legacy `/config` command subtree. Use the `/setprefix` command instead.
+
 ## [1.7.1] - 2022-08-14
 ### Added
 - New info in [CONTRIBUTING.md](CONTRIBUTING.md) about how to contribute translations.
@@ -323,7 +338,8 @@ Please note:
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...v1.7.0
 [1.6.6]: https://github.com/AverageHelper/Gamgee/compare/v1.6.5...v1.6.6

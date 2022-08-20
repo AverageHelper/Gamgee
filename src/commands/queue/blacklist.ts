@@ -1,9 +1,10 @@
 import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
-import { getConfigCommandPrefix } from "../../actions/config/getConfigValue.js";
+import { getCommandPrefix } from "../../useGuildStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { logUser } from "../../helpers/logUser.js";
+import { SLASH_COMMAND_INTENT_PREFIX } from "../../constants/database.js";
 import { sr as parentCommand } from "../songRequest.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import { whitelist } from "./whitelist.js";
@@ -15,6 +16,7 @@ import {
 	pushNewLine
 } from "../../helpers/composeStrings.js";
 
+// TODO: i18n
 export const blacklist: Subcommand = {
 	name: "blacklist",
 	description: "Show the list of blacklisted users, or add a user to the blacklist.",
@@ -30,8 +32,7 @@ export const blacklist: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
-		const { guild, user, options, storage, logger, reply, replyPrivately, deleteInvocation } =
-			context;
+		const { type, guild, user, options, logger, reply, replyPrivately, deleteInvocation } = context;
 
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
@@ -49,7 +50,8 @@ export const blacklist: Subcommand = {
 			const queueConfig = await getQueueConfig(queueChannel);
 			const blacklistedUsers = queueConfig.blacklistedUsers?.map(user => user.id) ?? [];
 
-			const prefix = await getConfigCommandPrefix(storage);
+			const prefix =
+				type === "interaction" ? SLASH_COMMAND_INTENT_PREFIX : await getCommandPrefix(guild);
 			const guildName = guild.name.trim();
 
 			const replyMsg = createPartialString();

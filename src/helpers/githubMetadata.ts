@@ -41,8 +41,8 @@ export async function gitHubMetadata(options: Options): Promise<GitHubMetadata> 
 }
 
 export class UnexpectedResponseError extends TypeError {
-	constructor() {
-		super("Server response was unexpected");
+	constructor(url: URL) {
+		super(`[${url.href}] Server response was unexpected`);
 		this.name = "UnexpectedResponseError";
 	}
 }
@@ -81,7 +81,9 @@ async function getFrom<T>(url: URL, typeGuard: TypeGuard<T>): Promise<T> {
 		const response = await fetch(url.href, request);
 
 		const json: unknown = await response.json();
-		if (!typeGuard(json)) throw new UnexpectedResponseError();
+
+		if (!response.ok) throw json; // Expect that the response was an error
+		if (!typeGuard(json)) throw new UnexpectedResponseError(url);
 
 		return json;
 	} catch (error) {

@@ -6,5 +6,5 @@ For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with a text verification indicating your song has joined the queue!
 See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
 
-To get a link to the current song, type \`?now-playing\` and check your DMs."
+To get a link to the current song, type \`?nowplaying\` and check your DMs."
 `;

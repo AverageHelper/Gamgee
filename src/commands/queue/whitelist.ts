@@ -5,6 +5,7 @@ import { logUser } from "../../helpers/logUser.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import { whitelistUser } from "../../useQueueStorage.js";
 
+// TODO: i18n
 export const whitelist: Subcommand = {
 	name: "whitelist",
 	description: "Allows a previously-blacklisted user to make song requests.",

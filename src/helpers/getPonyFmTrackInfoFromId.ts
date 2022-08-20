@@ -88,12 +88,12 @@ export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmT
 		try {
 			const responseParsed = (await response.json()) as unknown;
 			if (!isPonyFmTrackAPIResponse(responseParsed)) {
-				throw new VideoError(`Malformed response from Pony.fm API`);
+				throw new VideoError(`Malformed response from Pony.fm API`); // TODO: i18n?
 			}
 			return responseParsed;
 		} catch (error) {
 			if (error instanceof SyntaxError) {
-				throw new VideoError(`Malformed response from Pony.fm API`);
+				throw new VideoError(`Malformed response from Pony.fm API`); // TODO: i18n?
 			}
 			throw error;
 		}
@@ -103,9 +103,9 @@ export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmT
 		if (!isPonyFmTrackAPIError(responseParsed)) {
 			throw new VideoError(
 				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`
-			);
+			); // TODO: i18n?
 		}
-		throw new VideoError(`Pony.fm API errored: ${responseParsed.message}`);
+		throw new VideoError(`Pony.fm API errored: ${responseParsed.message}`); // TODO: i18n?
 	}
-	throw new VideoError(`Unexpected status code from Pony.fm API: ${response.status}`);
+	throw new VideoError(`Unexpected status code from Pony.fm API: ${response.status}`); // TODO: i18n?
 }

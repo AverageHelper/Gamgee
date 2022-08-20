@@ -4,13 +4,14 @@ import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { localizations } from "../i18n.js";
+import { localizations, t } from "../i18n.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel } from "../actions/messages/index.js";
 import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
 
+// TODO: i18n
 export const sr: GuildedCommand = {
 	name: "sr",
 	nameLocalizations: localizations("commands.sr.name"),
@@ -30,11 +31,14 @@ export const sr: GuildedCommand = {
 	async execute(context) {
 		const {
 			guild,
+			guildLocale,
 			channel,
 			user,
+			userLocale,
 			options,
 			createdTimestamp,
 			logger,
+			type,
 			reply,
 			replyPrivately,
 			prepareForLongRunningTasks,
@@ -47,7 +51,7 @@ export const sr: GuildedCommand = {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			await context.followUp({
-				content: `:hammer: <@!${user.id}> No queue is set up.`,
+				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
 				reply: false
 			});
 			return;
@@ -62,15 +66,16 @@ export const sr: GuildedCommand = {
 		if (channel?.id === queueChannel.id) {
 			await Promise.all([
 				deleteInvocation(),
-				replyPrivately("Requesting songs in the queue channel has not been implemented yet.")
+				replyPrivately("Requesting songs in the queue channel has not been implemented yet.") // TODO: I18N
 			]);
 			return;
 		}
 
 		const isOpen = await isQueueOpen(guild);
 		if (!isOpen) {
+			const locale = type === "interaction" ? userLocale : guildLocale;
 			return await reply({
-				content: `:hammer: ${MENTION_SENDER} The queue is not open.`,
+				content: `:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", locale)}`,
 				ephemeral: true
 			});
 		}

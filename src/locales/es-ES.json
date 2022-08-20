@@ -1,32 +1,147 @@
 {
 	"meta": {
-		"code": "es-ES"
+		"code": "es-ES",
+		"name": "Español",
+		"nickname": "Español"
 	},
 	"commands": {
 		"cooldown": {
-			"name": "cooldown",
-			"description": "Averigüe cuándo puede enviar de nuevo."
+			"description": "Averigüe cuándo puede enviar de nuevo.",
+			"name": "cooldown"
 		},
 		"help": {
+			"description": "Imprime un mensaje de ayuda útil.",
 			"name": "ayuda",
-			"description": "Imprime un mensaje de ayuda útil."
+			"response": "Comandos:"
 		},
 		"howto": {
+			"description": "Imprima instrucciones para usar los comandos de cola comunes.",
 			"name": "cómo"
 		},
+		"languages": {
+			"description": "Imprimir las estadísticas de idioma de mi repositorio principal.",
+			"name": "idiomas"
+		},
+		"limits": {
+			"description": "Muestra los límites de envío de la cola de canciones.",
+			"name": "limites"
+		},
+		"nowplaying": {
+			"description": "Muestra la canción actual en la cola (o mi mejor suposición).",
+			"name": "jugandoahora"
+		},
+		"ping": {
+			"description": "Haga ping a mi servidor host para comprobar la latencia.",
+			"name": "ping"
+		},
+		"setprefix": {
+			"description": "Establezca el prefijo utilizado por los comandos de mensajes.",
+			"name": "establecerprefijo",
+			"options": {
+				"prefix": {
+					"description": "El nuevo prefijo para usar antes de los comandos de mensajes.",
+					"name": "prefijo"
+				}
+			},
+			"responses": {
+				"missing-value": "Se esperaba un valor para establecer como prefijo de comando",
+				"try-example": "Pruebe {sample}, por ejemplo",
+				"value-header": "Prefijo de comando de mensaje"
+			}
+		},
 		"sr": {
-			"name": "sr",
 			"description": "Envía una canción a la cola.",
+			"name": "sr",
 			"options": {
 				"url": {
-					"name": "url",
-					"description": "Un enlace de canción desde una plataforma compatible"
+					"description": "Un enlace de canción desde una plataforma compatible",
+					"name": "url"
 				}
+			},
+			"responses": {
+				"finished": "Hecho.",
+				"not-allowed": "No tienes permitido enviar canciones. Mis disculpas.",
+				"rejections": {
+					"allotment-expended": "Ha utilizado los {max} envíos asignados.",
+					"cooldown": "Ya has enviado una canción en los últimos {duration}. Debe esperar {remaining} antes de volver a enviar.",
+					"too-long": "Esa canción es demasiado larga. El límite es de {limit}, pero esto dura {actual}.",
+					"too-short": "Esa canción es demasiado corta. El límite es de {limit}, pero esto dura {actual}."
+				},
+				"this-queue-full-autoclose": "Esta cola está llena. Lo estoy cerrando ahora.",
+				"query-returned-error": "Esa consulta me dio error. ¿Intentar de nuevo tal vez?",
+				"queue-full-autoclose": "La cola está llena. Lo estoy cerrando ahora.",
+				"queue-nearly-full": "La cola está casi llena. ¡Envía mientras puedas!",
+				"song-not-found": "No encuentro esa cancion.",
+				"submission-accepted": "¡Envío aceptado!",
+				"try-longer-song": "Prueba algo un poco más largo",
+				"try-shorter-song": "Prueba algo un poco más corta",
+				"try-supported-platform": "Pruebe con un enlace de una plataforma compatible."
+			}
+		},
+		"stats": {
+			"description": "Obtenga sus estadísticas de colas personales.",
+			"name": "estadísticas"
+		},
+		"t": {
+			"description": "Mostrar que estoy escribiendo.",
+			"name": "t",
+			"responses": {
+				"channel-not-found": "Algo salió mal y no pude encontrar el canal desde el que me llamaste. Intentarlo de nuevo tal vez?",
+				"success-cheeky": "Empecé a escribir aquí... pero no lo terminaré :P"
+			}
+		},
+		"test": {
+			"description": "Asegúrese de que todavía sé cómo hablar con los servicios de video.",
+			"name": "prueba",
+			"responses": {
+				"cannot-run-concurrent-invocations": "Espera, alguien acaba de ejecutar este comando...",
+				"preamble-failure": "Uh, algo salió mal. Mejor mira esto:",
+				"preamble-success": "Corrí los números, ¡y parece que todos estamos bien!",
+				"results-header": "Resultados de la Prueba",
+				"see-on-github": "Consulte la {list} en nuestro GitHub.",
+				"supported-platforms": "lista de plataformas compatibles"
 			}
 		},
 		"userinfo": {
-			"name": "usuarioinfo",
-			"description": "Devuelve alguna información sobre usted."
+			"description": "Devuelve alguna información sobre usted.",
+			"name": "usuarioinfo"
+		},
+		"version": {
+			"description": "Muestra la versión actual de la base de código del bot.",
+			"name": "versión"
+		},
+		"video": {
+			"description": "Responde con el título y la duración del video.",
+			"name": "video"
 		}
+	},
+	"common": {
+		"count": {
+			"infinity": "Infinito",
+			"not-a-number": "NaN",
+			"seconds-infinity": "Segundos infinitos",
+			"seconds-nan": "NaN segundos"
+		},
+		"deprecated": "Obsoleto",
+		"dm-failed-disabled": "Intenté enviarte un DM hace un momento, pero parece que tus DM están apagados.",
+		"no-personal-permission": "No tienes permiso para ejecutar ese comando.",
+		"not-here": "No puedes hacer eso aquí.",
+		"queue": {
+			"not-open": "La cola no está abierta.",
+			"not-set-up": "No hay cola configurada."
+		},
+		"reply-from-channel": "Respuesta de {channel}"
+	},
+	"languages": {
+		"de": "Alemán",
+		"en-GB": "Inglés (Reino Unido)",
+		"en-US": "Inglés (EE. UU.)",
+		"es-ES": "Español",
+		"fr": "Francés",
+		"hu": "Húngaro",
+		"pt-BR": "Portugués (Brasil)"
+	},
+	"self": {
+		"unknown-name": "Yo"
 	}
 }

@@ -1,6 +1,22 @@
 import type Discord from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { defaultValueForConfigKey } from "./constants/config/defaultValueForConfigKey.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
+
+jest.mock("./helpers/githubMetadata.js");
+
+import { gitHubMetadata } from "./helpers/githubMetadata.js";
+const mockGitHubMetadata = gitHubMetadata as jest.Mock;
+mockGitHubMetadata.mockResolvedValue({
+	name: "Gamgee",
+	full_name: "Gamgee",
+	private: false,
+	html_url: "https://example.com",
+	description: "Gamgee",
+	languages_url: "https://example.com",
+	languages: {
+		TypeScript: 100
+	}
+});
 
 jest.mock("./commands");
 import { allCommands as mockCommandDefinitions } from "./commands/index.js";
@@ -11,7 +27,6 @@ import { useTestLogger } from "../tests/testUtils/logger.js";
 const logger = useTestLogger("error");
 
 describe("Command handler", () => {
-	const PREFIX = defaultValueForConfigKey("command_prefix") as string;
 	const botId = "this-user";
 
 	const mockReply = jest.fn().mockResolvedValue(undefined);
@@ -151,7 +166,7 @@ describe("Command handler", () => {
 			`does nothing with unknown command '${prefix}$content'`,
 			async ({ content }: { content: string }) => {
 				mockMessage.content = content;
-				await handleCommand(mockMessage, null, logger);
+				await handleCommand(mockMessage, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
@@ -165,11 +180,12 @@ describe("Command handler", () => {
 
 		test.each`
 			command
-			${"config"}
+			${"setprefix"}
 			${"help"}
 			${"howto"}
 			${"languages"}
 			${"limits"}
+			${"nowplaying"}
 			${"now-playing"}
 			${"ping"}
 			${"quo"}
@@ -182,9 +198,9 @@ describe("Command handler", () => {
 		`("calls the $command command", async ({ command }: { command: string }) => {
 			mockMessage.content = `${prefix}${command}`;
 			mockMessage.author.bot = false;
-			await handleCommand(mockMessage, null, logger);
+			await handleCommand(mockMessage, logger);
 
-			const mock = mockCommandDefinitions.get(command)?.execute;
+			const mock = mockCommandDefinitions.get(command.replace("-", ""))?.execute;
 			expect(mock).toBeDefined();
 			expect(mock).toHaveBeenCalledTimes(1);
 			expect(mock).toHaveBeenCalledWith(
@@ -196,20 +212,20 @@ describe("Command handler", () => {
 						command
 							.split(/ +/u)
 							.slice(1)
-							.map(s => ({ name: s, type: ApplicationCommandOptionType.String }))
-					],
-					["storage", null]
+							.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+					]
 				])
 			);
 		});
 
 		test.each`
 			command
-			${"config"}
+			${"setprefix"}
 			${"help"}
 			${"howto"}
 			${"languages"}
 			${"limits"}
+			${"nowplaying"}
 			${"now-playing"}
 			${"ping"}
 			${"quo"}
@@ -224,18 +240,18 @@ describe("Command handler", () => {
 			async ({ command }: { command: string }) => {
 				mockMessage.content = `${prefix}${command}`;
 				mockMessage.author.bot = true;
-				await handleCommand(mockMessage, null, logger);
+				await handleCommand(mockMessage, logger);
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				expect.assertions(mockCommandDefinitions.size);
 			}
 		);
 
-		test("Command alias `nowplaying` calls command `now-playing`", async () => {
-			mockMessage.content = `${prefix}nowplaying`;
-			await handleCommand(mockMessage, null, logger);
+		test("Command alias `now-playing` calls command `nowplaying`", async () => {
+			mockMessage.content = `${prefix}now-playing`;
+			await handleCommand(mockMessage, logger);
 
-			const mockNowPlaying = mockCommandDefinitions.get("now-playing");
+			const mockNowPlaying = mockCommandDefinitions.get("nowplaying");
 			expect(mockNowPlaying).toBeDefined();
 			expect(mockNowPlaying?.execute).toHaveBeenCalledTimes(1);
 		});

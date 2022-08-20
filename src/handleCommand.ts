@@ -2,14 +2,15 @@ import type Discord from "discord.js";
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
 import type { Logger } from "./logger.js";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
-import type { Storage } from "./configStorage.js";
-import { getEnv } from "./helpers/environment.js";
 import { ApplicationCommandOptionType, ChannelType } from "discord.js";
-import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
+import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
+import { getCommandPrefix } from "./useGuildStorage.js";
+import { getEnv } from "./helpers/environment.js";
 import { getUserIdFromMention } from "./helpers/getUserIdFromMention.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
+import { SLASH_COMMAND_INTENT_PREFIX } from "./constants/database.js";
 import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
 import {
 	deleteMessage,
@@ -24,8 +25,6 @@ import {
 	randomQuestion,
 	unwrappingWith
 } from "./helpers/randomStrings.js";
-
-const SLASH_COMMAND_INTENT_PREFIX = "/";
 
 /**
  * The method that was used to invoke a command via a normal Discord message.
@@ -64,14 +63,12 @@ interface QueryMessage {
  * Non-query messages will resolve to an `undefined` query, and should be ignored.
  *
  * @param message The message to parse.
- * @param storage The bot's persistent storage.
- * @param logger The logger to send messages to.
+ * @param logger The place to write system messages.
  *
  * @returns The command query. The first argument is the command name, and the rest are arguments.
  */
 export async function queryFromMessage(
 	message: Discord.Message,
-	storage: Storage | null,
 	logger: Logger
 ): Promise<QueryMessage | null> {
 	const client = message.client;
@@ -104,7 +101,7 @@ export async function queryFromMessage(
 	}
 
 	// See if it's a message-command intent
-	const commandPrefix = await getConfigCommandPrefix(storage);
+	const commandPrefix = await getCommandPrefix(message.guild);
 	if (content.startsWith(commandPrefix)) {
 		// get rid of the prefix
 		query[0] = query[0]?.slice(commandPrefix.length) ?? "";
@@ -173,13 +170,9 @@ async function responseContext(message: Discord.Message): Promise<ResponseContex
  * configured command prefix.
  *
  * @param message The Discord message to handle.
- * @param storage Arbitrary persistent storage.
+ * @param logger The place to write system messages.
  */
-export async function handleCommand(
-	message: Discord.Message,
-	storage: Storage | null,
-	logger: Logger
-): Promise<void> {
+export async function handleCommand(message: Discord.Message, logger: Logger): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
 		message.author.bot &&
@@ -202,7 +195,7 @@ export async function handleCommand(
 		}`
 	);
 
-	const parsedQuery = await queryFromMessage(message, storage, logger);
+	const parsedQuery = await queryFromMessage(message, logger);
 	if (!parsedQuery) return; // Don't bother with normal chatter
 	const { query, invocationMethod } = parsedQuery;
 
@@ -221,7 +214,7 @@ export async function handleCommand(
 
 	if (invocationMethod === "slash") {
 		// TODO: Educate the masses on Slash Commands
-		// const commandPrefix = await getConfigCommandPrefix(storage);
+		// const commandPrefix = await getCommandPrefix(message.guild);
 		// await message.reply(
 		// 	`It seems like you tried a Slash Command (\`${SLASH_COMMAND_INTENT_PREFIX}${givenCommandName}\`), but Discord thought you were going for a normal message. If your text field doesn't show a command name above it as you type, Discord doesn't think you're writing a command.\n\nI'll take your message like an old-style command (\`${commandPrefix}${givenCommandName}\`) for now, but you might wanna practice your slasher skills for next time :P`
 		// );
@@ -248,17 +241,26 @@ export async function handleCommand(
 			channel = message.channel;
 		}
 
+		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
+
+		// FIXME: Isn't there API to get the user's locale?
+		const userLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+		const guildLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+
 		const context: CommandContext = {
 			type: "message",
 			createdTimestamp: message.createdTimestamp,
 			user: message.author,
+			userLocale,
+			userLocaleRaw: null,
 			member: message.member,
 			guild: message.guild,
+			guildLocale,
+			guildLocaleRaw: message.guild?.preferredLocale ?? null,
 			channel,
 			client: message.client,
 			message,
 			options,
-			storage,
 			logger,
 			prepareForLongRunningTasks: (ephemeral?: boolean) => {
 				if (ephemeral === undefined || !ephemeral) {
@@ -269,7 +271,7 @@ export async function handleCommand(
 				}
 			},
 			replyPrivately: async options => {
-				const reply = await replyPrivately(message, options, true);
+				const reply = await replyPrivately(message, options, true, userLocale, guildLocale);
 				if (reply === null) {
 					logger.info(`User ${logUser(message.author)} has DMs turned off.`);
 				}
@@ -283,7 +285,7 @@ export async function handleCommand(
 			},
 			followUp: async options => {
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
-					return await replyPrivately(message, options, true);
+					return await replyPrivately(message, options, true, userLocale, guildLocale);
 				}
 				if (typeof options === "string") {
 					return (await sendMessageInChannel(message.channel, options)) ?? false;

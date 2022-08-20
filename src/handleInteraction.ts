@@ -1,9 +1,9 @@
 import type Discord from "discord.js";
 import type { CommandContext } from "./commands/index.js";
 import type { Logger } from "./logger.js";
-import type { Storage } from "./configStorage.js";
 import { allCommands } from "./commands/index.js";
 import { ChannelType } from "discord.js";
+import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
 import { getEnv } from "./helpers/environment.js";
 import { invokeCommand } from "./actions/invokeCommand.js";
 import { logUser } from "./helpers/logUser.js";
@@ -15,11 +15,10 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * The command is ignored if the interaction is from a bot.
  *
  * @param interaction The Discord interaction to handle.
- * @param storage Arbitrary persistent storage.
+ * @param logger The place to write system messages.
  */
 export async function handleInteraction(
 	interaction: Discord.CommandInteraction,
-	storage: Storage | null,
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -57,20 +56,28 @@ export async function handleInteraction(
 		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
 			channel = await interaction.channel.fetch();
 		} else {
-			channel = interaction.channel;
+			channel = interaction.channel; // FIXME: Shouldn't this always exist?
 		}
+
+		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
+
+		const userLocale = localeIfSupported(interaction.locale) ?? DEFAULT_LOCALE;
+		const guildLocale = localeIfSupported(interaction.guildLocale) ?? DEFAULT_LOCALE;
 
 		const context: CommandContext = {
 			type: "interaction",
 			createdTimestamp: interaction.createdTimestamp,
 			user: interaction.user,
+			userLocale,
+			userLocaleRaw: interaction.locale,
 			member,
 			guild: interaction.guild,
+			guildLocale,
+			guildLocaleRaw: interaction.guildLocale,
 			channel,
 			client: interaction.client,
 			interaction,
 			options: interaction.options.data,
-			storage,
 			logger,
 			prepareForLongRunningTasks: async (ephemeral?: boolean) => {
 				try {
@@ -107,7 +114,7 @@ export async function handleInteraction(
 						logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					}
 				} else {
-					const reply = await replyPrivately(interaction, options, viaDM);
+					const reply = await replyPrivately(interaction, options, viaDM, userLocale, guildLocale);
 					if (reply === false) {
 						logger.info(`User ${logUser(interaction.user)} has DMs turned off.`);
 					}

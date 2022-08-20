@@ -10,20 +10,22 @@ import {
 	playtimeTotalInQueue
 } from "../../actions/queue/useQueue.js";
 
+// TODO: i18n
 export const stats: Subcommand = {
 	name: "stats",
 	description: "Print statistics on the current queue.",
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
-	async execute({ guild, channel, logger, reply, replyPrivately, deleteInvocation }) {
+	async execute({ userLocale, guild, logger, replyPrivately, deleteInvocation }) {
+		await deleteInvocation();
+
 		const queueChannel = await getQueueChannel(guild);
 
 		if (!queueChannel) {
-			return await reply(`No queue is set up. Would you like to start one?`);
+			return await replyPrivately(`No queue is set up. Would you like to start one?`);
 		}
 
 		// Get the current queue's statistics
-		const queueIsCurrent = channel?.id === queueChannel.id;
 		const [count, playtimeRemaining, playtimeTotal, playtimeAverage] = await Promise.all([
 			countAllEntries(queueChannel),
 			playtimeRemainingInQueue(queueChannel),
@@ -32,10 +34,10 @@ export const stats: Subcommand = {
 		]);
 		const playtimePlayed = playtimeTotal - playtimeRemaining;
 
-		const formattedPlaytimeAverage = durationString(playtimeAverage, true);
-		const formattedPlaytimePlayed = durationString(playtimePlayed, true);
-		const formattedPlaytimeTotal = durationString(playtimeTotal, true);
-		const formattedPlaytimeRemaining = durationString(playtimeRemaining, true);
+		const formattedPlaytimeAverage = durationString(userLocale, playtimeAverage, true);
+		const formattedPlaytimePlayed = durationString(userLocale, playtimePlayed, true);
+		const formattedPlaytimeTotal = durationString(userLocale, playtimeTotal, true);
+		const formattedPlaytimeRemaining = durationString(userLocale, playtimeRemaining, true);
 
 		logger.info(
 			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`
@@ -63,9 +65,6 @@ export const stats: Subcommand = {
 			);
 		}
 
-		await Promise.all([
-			queueIsCurrent ? reply({ embeds: [embed] }) : replyPrivately({ embeds: [embed] }),
-			deleteInvocation()
-		]);
+		await replyPrivately({ embeds: [embed] });
 	}
 };

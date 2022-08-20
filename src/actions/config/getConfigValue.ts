@@ -1,28 +1,13 @@
 import type { Storage } from "../../configStorage.js";
-import type { ConfigKey, ConfigValue } from "../../constants/config/index.js";
-import {
-	CONFIG_KEY_COMMAND_PREFIX,
-	defaultValueForConfigKey
-} from "../../constants/config/index.js";
+import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "../../constants/database.js";
 
-export async function getConfigValue(
-	storage: Storage | null,
-	key: ConfigKey
-): Promise<ConfigValue> {
-	if (!storage) {
-		return defaultValueForConfigKey(key);
-	}
-	const storedValue = (await storage.get(key)) as ConfigValue | undefined;
-
-	if (storedValue === undefined) {
-		return defaultValueForConfigKey(key);
-	}
-
-	return storedValue ?? null;
-}
-
-// FIXME: Shouldn't this be set per-guild?
+/** @deprecated Use a proper database instead */
 export async function getConfigCommandPrefix(storage: Storage | null): Promise<string> {
-	const val = (await getConfigValue(storage, CONFIG_KEY_COMMAND_PREFIX)) as string;
-	return val.toString();
+	if (!storage) {
+		return DEFAULT_MESSAGE_COMMAND_PREFIX;
+	}
+	const storedValue = (await storage.get("command_prefix")) as string | number | null | undefined;
+
+	if (typeof storedValue !== "string") return DEFAULT_MESSAGE_COMMAND_PREFIX;
+	return storedValue ?? DEFAULT_MESSAGE_COMMAND_PREFIX;
 }

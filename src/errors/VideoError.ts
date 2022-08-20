@@ -4,7 +4,7 @@ export class VideoError extends Error {
 	readonly code: string;
 
 	constructor(error: unknown) {
-		super("Unknown error");
+		super("Unknown error"); // TODO: i18n
 		this.name = "VideoError";
 
 		if (isError(error)) {

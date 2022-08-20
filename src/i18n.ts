@@ -11,17 +11,44 @@ const vocabulary = {
 	"pt-BR": require("./locales/pt-BR.json") as typeof import("./locales/pt-BR.json")
 } as const;
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-enable @typescript-eslint/no-var-requires */
 
-const DEFAULT_LOCALE = "en-US";
+export const DEFAULT_LOCALE = "en-US";
 
 export type SupportedLocale = keyof typeof vocabulary;
+
+export interface LocaleMetadata {
+	code: string;
+	name: string;
+	nickname: string;
+}
 
 export const locales = Object.keys(vocabulary) as ReadonlyArray<SupportedLocale>;
 
 /** Returns `true` if the given string matches a supported locale code. */
 export function isSupportedLocale(tbd: unknown): tbd is SupportedLocale {
 	return locales.includes(tbd as SupportedLocale);
+}
+
+/** Returns the given locale if we support that locale. Returns `null` otherwise. */
+export function localeIfSupported(tbd: unknown): SupportedLocale | null {
+	if (!isSupportedLocale(tbd)) return null;
+	return tbd;
+}
+
+export function randomSupportedLocale(): SupportedLocale {
+	return randomElementOfArray(locales.slice()) ?? DEFAULT_LOCALE;
+}
+
+export function metadataForLocale(locale: SupportedLocale): LocaleMetadata {
+	return vocabulary[locale].meta;
+}
+
+import type Discord from "discord.js";
+
+/** Returns the unit's preferred locale, if supported, or the default locale if not. */
+export function preferredLocale(guild: Pick<Discord.Guild, "preferredLocale">): SupportedLocale {
+	return localeIfSupported(guild.preferredLocale) ?? DEFAULT_LOCALE;
 }
 
 // TODO: Validate that all of our strings files match the master schema
@@ -76,7 +103,7 @@ export function t<K extends string>(
  * If the given `locale` does not contain a matching translation,
  * but the default locale does, then that translation is returned.
  *
- * Returns `keypath` if no matching translation exists.
+ * Returns `undefined` if no matching translation exists.
  */
 export function t<K extends string, V extends Vocabulary>(
 	keypath: K,
@@ -103,6 +130,113 @@ export function t<K extends string>(
 
 	return undefined; // we're stumped, return nothing
 }
+
+export { t as translate };
+
+import { composed, createPartialString, push } from "./helpers/composeStrings.js";
+import { randomElementOfArray } from "./helpers/randomElementOfArray.js";
+
+/**
+ * Returns the given `locale`'s translation for the given `keypath`,
+ * while interpolating the given `values` into their respective placeholders.
+ *
+ * If the given `locale` does not contain a matching translation,
+ * but the default locale does, then that translation is returned.
+ *
+ * Returns `undefined` if no matching translation exists.
+ */
+export function ti<K extends string>(
+	keypath: K,
+	values: Record<string, string>,
+	locale: SupportedLocale
+): Get<MessageSchema, K> extends string ? string : undefined;
+
+// FIXME: We shouldn't need to overload this
+export function ti<K extends string>(
+	keypath: K,
+	values: Record<string, string>,
+	locale: SupportedLocale
+): string | undefined {
+	const rawText: string | undefined = t(keypath, locale);
+	if (rawText === undefined || rawText === "") return rawText;
+
+	// Parse out text and variable names
+	interface SlotItem {
+		/** `true` if the item should render some slotted data. */
+		isVar: true;
+		/** The name of the variable. */
+		name: string;
+	}
+
+	interface TextItem {
+		/** `true` if the item should render some slotted data. */
+		isVar: false;
+		/** Text to render. */
+		text: string;
+	}
+
+	type Item = SlotItem | TextItem;
+
+	const items: Array<Item> = [];
+
+	let mode: "discovery" | "text" | "slot" = "discovery";
+	let text = "";
+	for (const char of rawText) {
+		if (char === "{" && mode !== "slot") {
+			if (mode === "text") {
+				// Finish text node
+				items.push({ isVar: false, text });
+			}
+			// Start variable name
+			text = "";
+			mode = "slot";
+		} else if (char === "}" && mode === "slot") {
+			// We've hit the end of a variable name
+			if (text === "") {
+				// but the brackets were empty. Treat that as a text node
+				items.push({ isVar: false, text: "{}" });
+			} else {
+				items.push({ isVar: true, name: text });
+			}
+			text = "";
+			mode = "discovery";
+		} else if (mode === "slot") {
+			// Continue variable name
+			text += char;
+		} else {
+			// Continue text
+			text += char;
+			mode = "text";
+		}
+	}
+	if (text !== "") {
+		if (mode === "text") {
+			// Finished, but there's some string left
+			items.push({ isVar: false, text });
+		} else if (mode === "slot") {
+			// Finished, but we ended with an incomplete variable. Push it as text
+			text = `{${text}`; // make sure to include the variable starter
+			items.push({ isVar: false, text });
+		}
+	}
+
+	// Combine items, mixing given values for variables if given
+	const partial = createPartialString();
+
+	for (const item of items) {
+		let str: string;
+		if (item.isVar) {
+			str = values[item.name] ?? `{${item.name}}`; // default to the raw variable name
+		} else {
+			str = item.text;
+		}
+		push(str, partial);
+	}
+
+	return composed(partial);
+}
+
+export { ti as translateInterpolating };
 
 /**
  * Returns an object with every translation we have for the given `keypath`,

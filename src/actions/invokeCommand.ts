@@ -1,7 +1,9 @@
 import type Discord from "discord.js";
 import type { Command, CommandContext, CommandPermission, Subcommand } from "../commands/index.js";
 import { ApplicationCommandPermissionType } from "discord.js";
+import { assertUnreachable } from "../helpers/assertUnreachable.js";
 import { isGuildedCommandContext, resolvePermissions } from "../commands/index.js";
+import { t } from "../i18n.js";
 import { useLogger } from "../logger.js";
 import {
 	userHasPermissionInChannel,
@@ -14,17 +16,16 @@ type Invocable = Command | Subcommand;
 
 async function failPermissions(context: CommandContext): Promise<void> {
 	return await context.replyPrivately({
-		content: "You don't have permission to run that command.",
+		content: t("common.no-personal-permission", context.userLocale),
 		ephemeral: true
 	});
 }
 
 async function failNoGuild(context: CommandContext): Promise<void> {
-	return await context.reply({ content: "Can't do that here.", ephemeral: true });
-}
-
-function neverFallthrough(val: never): never {
-	throw new TypeError(`Unexpected case: ${JSON.stringify(val)}`);
+	return await context.reply({
+		content: t("common.not-here", context.userLocale),
+		ephemeral: true
+	});
 }
 
 /**
@@ -116,7 +117,7 @@ export async function assertUserCanRunCommand(
 			}
 
 			default:
-				return neverFallthrough(access.type);
+				return assertUnreachable(access.type);
 		}
 	}
 
