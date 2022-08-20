@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Nothing, yet!
+
+## [1.8.0] - 2022-08-19
 ### Added
 - Added a new `/setprefix` command to change the guild's preferred message-command prefix. (This means you can change the default `?` to any 1-3 char string you want!) This feature has been around for a long time, in the form of the now-gone `/config` family of subcommands. Those commands used a storage medium separate from the main SQLite database, and that was always weird to me. Enjoy the new more stable experience!
+- Translations for a bunch of user-facing strings into German, Spanish, French, Hungarian, and Portuguese.
 
 ### Changed
 - The `/config` command now prints a message instructing the user to use the `/setprefix` command instead.
@@ -334,7 +338,8 @@ Please note:
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/AverageHelper/Gamgee/compare/v1.6.6...v1.7.0
 [1.6.6]: https://github.com/AverageHelper/Gamgee/compare/v1.6.5...v1.6.6
