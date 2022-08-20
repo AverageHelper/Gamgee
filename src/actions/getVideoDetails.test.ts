@@ -88,7 +88,8 @@ describe("Video details", () => {
 			const details = await getVideoDetails(url, null);
 			expect(details).toHaveProperty("url", result);
 			expect(details?.duration.seconds).toBePositive();
-		}
+		},
+		10000
 	);
 
 	// ** BandCamp
