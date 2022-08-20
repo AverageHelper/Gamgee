@@ -1,5 +1,14 @@
-const mockGithubMetadata = jest.fn();
-jest.mock("../helpers/githubMetadata", () => ({ gitHubMetadata: mockGithubMetadata }));
+jest.mock("../helpers/githubMetadata.js");
+import { gitHubMetadata } from "../helpers/githubMetadata.js";
+const mockGitHubMetadata = gitHubMetadata as jest.Mock;
+mockGitHubMetadata.mockResolvedValue({
+	languages: {
+		English: 80,
+		Spanish: 10,
+		Indonesian: 5,
+		HTML: 5
+	}
+});
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockFollowUp = jest.fn().mockResolvedValue({});
@@ -21,26 +30,12 @@ describe("Language Statistics from GitHub", () => {
 			reply: mockReply,
 			followUp: mockFollowUp
 		} as unknown as CommandContext;
-
-		mockGithubMetadata.mockResolvedValue({
-			languages: {
-				English: 80,
-				Spanish: 10,
-				Indonesian: 5,
-				HTML: 5
-			}
-		});
 	});
 
 	test("asks GitHub about my language statistics", async () => {
 		await expect(languages.execute(context)).resolves.toBeUndefined();
 
-		const owner = "AverageHelper";
-		const repo = "Gamgee";
-		expect(mockGithubMetadata).toHaveBeenCalledTimes(1);
-		expect(mockGithubMetadata).toHaveBeenCalledWith({ owner, repo });
-
 		expect(mockReply).toHaveBeenCalled();
-		expect(mockReply).toHaveBeenCalledWith(expect.toContainValue("4"));
+		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("languages"));
 	});
 });

@@ -2,6 +2,22 @@ import type Discord from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
+jest.mock("./helpers/githubMetadata.js");
+
+import { gitHubMetadata } from "./helpers/githubMetadata.js";
+const mockGitHubMetadata = gitHubMetadata as jest.Mock;
+mockGitHubMetadata.mockResolvedValue({
+	name: "Gamgee",
+	full_name: "Gamgee",
+	private: false,
+	html_url: "https://example.com",
+	description: "Gamgee",
+	languages_url: "https://example.com",
+	languages: {
+		TypeScript: 100
+	}
+});
+
 jest.mock("./commands");
 import { allCommands as mockCommandDefinitions } from "./commands/index.js";
 
