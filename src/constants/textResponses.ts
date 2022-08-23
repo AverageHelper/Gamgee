@@ -68,6 +68,9 @@ export const philosophy: ResponseRepository = [
  * These get mixed into the pool of `phrases` below.
  */
 export const copypasta = [
+	// from GTX
+	"Ash is just the example that we all live with today in the realm of Computer Sciences and the IT field: He's a 10 year old that's been in the industry for 20 years and that's what it took for him to succeed. He's a 10 year old with 20 years of experience and that's what the IT field wants in all of us.",
+
 	"The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, …."
 ];
 
@@ -329,7 +332,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 207 of these
+]; // 208 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

@@ -1,9 +1,11 @@
-import { isObject, isString } from "./guards.js";
-import { VideoError } from "../errors/index.js";
+import type { URL } from "node:url";
+import type { VideoDetails } from "../getVideoDetails.js"; // FIXME: this is circular
+import { isObject, isString } from "../../helpers/guards.js";
+import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
 import fetch from "cross-fetch";
 
 // Based on https://github.com/Poniverse/Pony.fm/blob/a1522f3cd73d849099e4a3d897656dc8c4795dd7/app/Http/Controllers/Api/V1/TracksController.php#L129
-export interface PonyFmTrackAPIResponse {
+interface PonyFmTrackAPIResponse {
 	// id: number;
 	title: string;
 	// description: string;
@@ -66,7 +68,7 @@ function isPonyFmTrackAPIResponse(resp: unknown): resp is PonyFmTrackAPIResponse
 	);
 }
 
-export interface PonyFmTrackAPIError {
+interface PonyFmTrackAPIError {
 	message: string;
 }
 
@@ -82,7 +84,7 @@ function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
  * @throws a `VideoError` if the track info couldn't be found for the provided ID.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
+async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
 	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`);
 	if (response.status === 200) {
 		try {
@@ -108,4 +110,41 @@ export async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmT
 		throw new VideoError(`Pony.fm API errored: ${responseParsed.message}`); // TODO: i18n?
 	}
 	throw new VideoError(`Unexpected status code from Pony.fm API: ${response.status}`); // TODO: i18n?
+}
+
+/**
+ * Gets information about a Pony.fm track.
+ *
+ * @param url The track URL to check.
+ *
+ * @throws an `InvalidPonyFmUrlError` if the provided URL is not a Pony.fm URL.
+ * @throws a `VideoError` if the track info couldn't be found for the provided URL.
+ * @returns a `Promise` that resolves with the track details.
+ */
+export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
+	// Full link looks like this: https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine
+	// Short link looks like this: https://pony.fm/t46025
+
+	const pathnameLower = url.pathname.toLowerCase();
+
+	// Throw out obviously invalid links
+	if (url.host.toLowerCase() !== "pony.fm" || !pathnameLower.startsWith("/t")) {
+		throw new InvalidPonyFmUrlError(url);
+	}
+
+	// Calculate start index based on link type
+	const startIndex = pathnameLower.startsWith("racks/", 2) ? 8 : 2;
+
+	// Parse out ID and fetch track info
+	const trackId = Number.parseInt(url.pathname.slice(startIndex), 10);
+	if (Number.isNaN(trackId)) {
+		throw new InvalidPonyFmUrlError(url);
+	}
+	const trackData = await getPonyFmTrackInfoFromId(trackId);
+
+	return {
+		url: trackData.url,
+		title: trackData.title,
+		duration: { seconds: Math.floor(Number.parseFloat(trackData.duration)) }
+	};
 }
