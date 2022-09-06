@@ -243,7 +243,6 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 
 		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
 
-		// FIXME: Isn't there API to get the user's locale?
 		const userLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
 		const guildLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
 
