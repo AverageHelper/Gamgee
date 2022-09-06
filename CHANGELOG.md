@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created issue templates!
 
+### Changed
+- Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is code size and maintenance overhead.
+
 ## [1.8.1] - 2022-08-20
 ### Changed
 - Improved French translations! (Thanks again, @vayandas!)
@@ -172,7 +175,7 @@ This update adds a field to the database schema, and adds new commands. Remember
 ### Changed
 - Functional refactor: Trying to slim down on the spaghetti, I've refactored most of the core structures from object methods to free functions. [Data shouldn't have conceptual responsibilities over data.](https://youtu.be/QM1iUe6IofM) There's lots more cleanup work to be done, especially to organize these new functions in a sane way, but the preliminary work is done.
 - Improved formatting of interaction counts
-- Re-do how we parse Bandcamp links. (The [url-metadata](https://www.npmjs.com/package/url-metadata) package is not well-maintained, and contains some minor security vulnerabilities that GitHub _really_ wants me to fix. Since the package is quite small, I moved it in-house for now and patched it myself.)
+- Re-do how we parse Bandcamp links. (The [`url-metadata`](https://www.npmjs.com/package/url-metadata) package is not well-maintained, and contains some minor security vulnerabilities that GitHub _really_ wants me to fix. Since the package is quite small, I moved it in-house for now and patched it myself.)
 - Update our compile target to native ESM syntax. (You _are_ running Node 16, _right?_ ;)
 - Ditch an old database migrator that hasn't been relevant since before v1.0.0
 - Clarified some documentation comments, especially in textResponses.ts

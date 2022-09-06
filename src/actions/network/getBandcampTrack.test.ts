@@ -1,3 +1,4 @@
+import { benchmark } from "../../../tests/testUtils/benchmark.js";
 import { getBandcampTrack } from "./getBandcampTrack.js";
 import { URL } from "node:url";
 import { VideoError } from "../../errors/VideoError.js";
@@ -22,4 +23,19 @@ describe("Bandcamp track details", () => {
 			expect(details?.duration.seconds).toBe(duration);
 		}
 	);
+
+	const ms = 650;
+	test(`runs in a reasonable amount of time (less than ${ms}ms)`, async () => {
+		const url = new URL("https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul");
+
+		// Sanity: check that this is still the right track
+		const duration = 233;
+		const song = await getBandcampTrack(url);
+		expect(song.duration.seconds).toBe(duration);
+
+		// Benchmark the fetch operation
+		const average = await benchmark(() => getBandcampTrack(url));
+
+		expect(average).toBeLessThan(ms);
+	}, 20000);
 });

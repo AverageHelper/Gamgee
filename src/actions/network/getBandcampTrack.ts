@@ -1,9 +1,8 @@
-import type { Metadata } from "../../helpers/urlMetadata/index.js";
 import type { URL } from "node:url";
 import type { VideoDetails } from "../getVideoDetails.js";
+import { fetchMetadata } from "../../helpers/fetchMetadata.js";
 import { isString } from "../../helpers/guards.js";
 import { VideoError } from "../../errors/index.js";
-import urlMetadata from "../../helpers/urlMetadata/index.js";
 
 /**
  * Gets information about a Bandcamp track.
@@ -16,16 +15,11 @@ import urlMetadata from "../../helpers/urlMetadata/index.js";
  * @returns a `Promise` that resolves with the track details.
  */
 export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
-	// TODO: look into https://www.npmjs.com/package/metascraper
-	let metadata: Metadata;
-	try {
-		metadata = await urlMetadata(url, { timeout: 5000 });
-	} catch (error) {
-		throw new VideoError(error);
-	}
+	const metadata = await fetchMetadata(url);
 
 	type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-	const json = metadata.jsonld as
+	const jsonld = metadata.jsonld ?? [];
+	const json = jsonld[0] as
 		| { name?: string; duration: `${string}H${Digit}${Digit}M${Digit}${Digit}S` }
 		| undefined;
 	if (!json) throw new VideoError("Duration and title not found");
@@ -50,7 +44,7 @@ export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
 	if (title === null || !title) throw new VideoError("Title not found");
 
 	return {
-		url: metadata.url ?? url.href,
+		url: url.href,
 		title,
 		duration: { seconds: Math.floor(totalSeconds) }
 	};
