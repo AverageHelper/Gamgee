@@ -9,11 +9,7 @@ import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
 const mockGetBandcampTrack = getBandcampTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
 const mockGetPonyFmTrack = getPonyFmTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
-// FIXME: Not sure why unknown:
-const mockGetSoundCloudTrack = getSoundCloudTrack as unknown as jest.Mock<
-	Promise<VideoDetails>,
-	[URL]
->;
+const mockGetSoundCloudTrack = getSoundCloudTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
 const mockGetYouTubeVideo = getYouTubeVideo as jest.Mock<Promise<VideoDetails>, [URL]>;
 
 import type { VideoDetails } from "./getVideoDetails.js";

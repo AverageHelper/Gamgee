@@ -1,6 +1,6 @@
 import type { Metadata } from "../../helpers/urlMetadata/index.js";
 import type { URL } from "node:url";
-import type { VideoDetails } from "../getVideoDetails.js"; // FIXME: this is circular
+import type { VideoDetails } from "../getVideoDetails.js";
 import { isString } from "../../helpers/guards.js";
 import { VideoError } from "../../errors/index.js";
 import urlMetadata from "../../helpers/urlMetadata/index.js";

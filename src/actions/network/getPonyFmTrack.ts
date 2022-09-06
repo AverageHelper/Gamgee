@@ -1,5 +1,5 @@
 import type { URL } from "node:url";
-import type { VideoDetails } from "../getVideoDetails.js"; // FIXME: this is circular
+import type { VideoDetails } from "../getVideoDetails.js";
 import { isObject, isString } from "../../helpers/guards.js";
 import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
 import fetch from "cross-fetch";
