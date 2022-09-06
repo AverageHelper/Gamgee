@@ -63,7 +63,7 @@ export async function updateRole(
 	guild: Discord.Guild
 ): Promise<void> {
 	if (!roleId) return;
-	if (attrs === {}) return;
+	if (Object.keys(attrs).length === 0) return;
 
 	await useTransaction(async transaction => {
 		const roles = transaction.getRepository(Role);

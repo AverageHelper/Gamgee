@@ -27,6 +27,7 @@
 		"no-constant-condition": "warn",
 		"no-console": "warn",
 		"no-dupe-else-if": "warn",
+		"spaced-comment": ["warn", "always", { "exceptions": ["*"] }], // doc comments exist
 		"consistent-return": "off", // TS handles this
 		"no-duplicate-imports": "off", // typescript-eslint handles this
 		"@typescript-eslint/no-duplicate-imports": "error",

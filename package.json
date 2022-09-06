@@ -11,8 +11,9 @@
 		"premigrate": "npm run build:only",
 		"migrate": "npm run migrate:only",
 		"migrate:only": "./node_modules/.bin/typeorm migration:run -d ./dist/database/sqliteDataSource.js",
-		"lint": "npm run export-version && ./node_modules/.bin/eslint . --ext .ts",
-		"lint:fix": "npm run lint -- --fix",
+		"lint": "npm run export-version && npm run lintonly",
+		"lint:fix": "npm run export-version && npm run lintonly -- --fix",
+		"lintonly": "./node_modules/.bin/eslint . --ext .ts",
 		"prebuild": "npm run lint",
 		"build": "npm run build:only",
 		"build:only": "./node_modules/.bin/tsc -p tsconfig.prod.json",
@@ -70,8 +71,8 @@
 		"@types/node": "16.9.6",
 		"@types/node-persist": "3.1.2",
 		"@types/source-map-support": "0.5.4",
-		"@typescript-eslint/eslint-plugin": "5.31.0",
-		"@typescript-eslint/parser": "5.31.0",
+		"@typescript-eslint/eslint-plugin": "5.36.2",
+		"@typescript-eslint/parser": "5.36.2",
 		"chai": "4.3.6",
 		"concurrently": "7.2.2",
 		"eslint": "8.20.0",
@@ -94,6 +95,6 @@
 		"ts-jest": "28.0.7",
 		"ts-node": "10.9.1",
 		"type-fest": "2.18.0",
-		"typescript": "4.7.4"
+		"typescript": "4.8.2"
 	}
 }
