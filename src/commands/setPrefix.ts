@@ -17,7 +17,7 @@ export const setPrefix: Command = {
 			description: "The new prefix to use before message commands.",
 			descriptionLocalizations: localizations("commands.setprefix.options.prefix.description"),
 			type: ApplicationCommandOptionType.String,
-			minLength: 1, // TODO: Enforce these limits for message commands
+			minLength: 1,
 			maxLength: 3,
 			required: true
 		}

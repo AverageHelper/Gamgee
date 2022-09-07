@@ -12,10 +12,11 @@ import { logUser } from "./helpers/logUser.js";
 import { resolveAlias, allCommands as commands } from "./commands/index.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "./constants/database.js";
 import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
+import { assert, integer, max, min, number, size, string, StructError } from "superstruct";
 import {
 	deleteMessage,
-	reply,
-	replyPrivately,
+	reply as _reply,
+	replyPrivately as _replyPrivately,
 	sendMessageInChannel
 } from "./actions/messages/index.js";
 import {
@@ -116,36 +117,75 @@ export async function queryFromMessage(
 
 /**
  * Translates an array of command argument strings into an array of
- * {@link MessageCommandInteractionOption}.
+ * {@link MessageCommandInteractionOption} objects. Cross-references
+ * option properties with those defined on the given `command`.
+ *
+ * Throws a {@link StructError} if the args don't match the constraints defined
+ * for the command. Never throws if `command` is not provided.
  */
-export function optionsFromArgs(args: Array<string>): Array<MessageCommandInteractionOption> {
-	const options: Array<MessageCommandInteractionOption> = [];
-
-	// one argument
+export function optionsFromArgs(
+	args: Array<string>,
+	command?: Command
+): [MessageCommandInteractionOption] | [] {
 	const firstArg = args.shift();
-	if (firstArg !== undefined) {
-		const subcommand: MessageCommandInteractionOption = {
-			name: firstArg,
-			type: ApplicationCommandOptionType.String,
-			value: firstArg,
-			options: []
-		};
-		options.push(subcommand);
-		while (args.length > 0) {
-			// two arguments or more
-			const name = args.shift() as string;
-			const nextOption: MessageCommandInteractionOption = {
-				name,
-				type: ApplicationCommandOptionType.String,
-				value: name,
-				options: []
-			};
-			subcommand.type = ApplicationCommandOptionType.Subcommand;
-			subcommand.options?.push(nextOption);
+	if (firstArg === undefined) return [];
+
+	const first: MessageCommandInteractionOption = {
+		name: firstArg,
+		type: ApplicationCommandOptionType.String,
+		value: firstArg,
+		options: []
+	};
+
+	// assert the option type, return null if not match
+	const firstOption = command?.options?.[0];
+	if (firstOption) {
+		const firstValue = first.value as string;
+		switch (firstOption.type) {
+			case ApplicationCommandOptionType.String:
+				assert(firstValue, size(string(), firstOption.minLength ?? 0, firstOption.maxLength));
+				break;
+			case ApplicationCommandOptionType.Integer: {
+				let struct = integer();
+				if (firstOption.minValue !== undefined) {
+					struct = min(struct, firstOption.minValue);
+				}
+				if (firstOption.maxValue !== undefined) {
+					struct = max(struct, firstOption.maxValue);
+				}
+				assert(firstValue, struct);
+				first.type = firstOption.type;
+				break;
+			}
+			case ApplicationCommandOptionType.Number: {
+				let struct = number();
+				if (firstOption.minValue !== undefined) {
+					struct = min(struct, firstOption.minValue);
+				}
+				if (firstOption.maxValue !== undefined) {
+					struct = max(struct, firstOption.maxValue);
+				}
+				assert(firstValue, struct);
+				first.type = firstOption.type;
+				break;
+			}
+			// TODO: Update `first` with the correct type, properly hydrated
 		}
 	}
 
-	return options;
+	if (args.length === 0) return [first];
+
+	first.type = ApplicationCommandOptionType.Subcommand;
+	first.options = args.flat().map(value => {
+		return {
+			name: value,
+			type: ApplicationCommandOptionType.String,
+			value,
+			options: []
+		};
+	});
+
+	return [first];
 }
 
 /** Resolves guild member information for the bot and for the user who invoked the interaction. */
@@ -202,7 +242,7 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 	if (query.length === 0) {
 		// This is a query for us to handle (we might've been pinged), but it's empty.
 		const ctx = await responseContext(message);
-		return await unwrappingWith(ctx, randomQuestion(), r => message.reply(r));
+		return await unwrappingWith(ctx, randomQuestion(), r => _reply(message, r));
 	}
 
 	// Get the command
@@ -224,7 +264,22 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 	// Run the command
 	if (command) {
 		// Get args from the query. The first one is the command name, so we slice it off.
-		const options = optionsFromArgs(query.slice(1));
+		let options: Array<MessageCommandInteractionOption>;
+
+		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
+
+		const userLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+		const guildLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
+
+		try {
+			options = optionsFromArgs(query.slice(1), command);
+		} catch (error) {
+			if (error instanceof StructError) {
+				await _replyPrivately(message, error.message, false, userLocale, guildLocale);
+				return;
+			}
+			throw error;
+		}
 
 		logger.debug(
 			`Calling command handler '${command.name}' with options ${JSON.stringify(
@@ -240,11 +295,6 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 		} else {
 			channel = message.channel;
 		}
-
-		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
-
-		const userLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
-		const guildLocale = localeIfSupported(message.guild?.preferredLocale) ?? DEFAULT_LOCALE;
 
 		const context: CommandContext = {
 			type: "message",
@@ -270,21 +320,21 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 				}
 			},
 			replyPrivately: async options => {
-				const reply = await replyPrivately(message, options, true, userLocale, guildLocale);
+				const reply = await _replyPrivately(message, options, true, userLocale, guildLocale);
 				if (reply === null) {
 					logger.info(`User ${logUser(message.author)} has DMs turned off.`);
 				}
 			},
 			reply: async options => {
 				if (typeof options === "string" || !("shouldMention" in options)) {
-					await reply(message, options);
+					await _reply(message, options);
 				} else {
-					await reply(message, options, options?.shouldMention);
+					await _reply(message, options, options?.shouldMention);
 				}
 			},
 			followUp: async options => {
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {
-					return await replyPrivately(message, options, true, userLocale, guildLocale);
+					return await _replyPrivately(message, options, true, userLocale, guildLocale);
 				}
 				if (typeof options === "string") {
 					return (await sendMessageInChannel(message.channel, options)) ?? false;

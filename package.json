@@ -58,6 +58,7 @@
 		"soundcloud-scraper": "5.0.3",
 		"source-map-support": "0.5.21",
 		"sqlite3": "5.0.5",
+		"superstruct": "0.16.0",
 		"typeorm": "0.3.7",
 		"winston": "3.8.1",
 		"yargs": "17.5.1",
