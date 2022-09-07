@@ -103,9 +103,9 @@ describe("Request Queue", () => {
 		message.id = queueMessageId;
 		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBe(entry);
 
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledTimes(1);
+		expect(mockRemoveEntryFromMessage).toHaveBeenCalledOnce();
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
-		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
 
@@ -125,7 +125,7 @@ describe("Request Queue", () => {
 
 		await flushPromises();
 
-		expect(mockCreateEntry).toHaveBeenCalledTimes(1);
+		expect(mockCreateEntry).toHaveBeenCalledOnce();
 		expect(mockCreateEntry).toHaveBeenCalledWith(
 			{
 				...request,

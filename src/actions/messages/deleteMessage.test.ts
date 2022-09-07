@@ -51,7 +51,7 @@ describe("Bulk Message Delete", () => {
 		await expect(bulkDeleteMessagesWithIds(messageIds, channel)).resolves.toBeTrue();
 
 		expect(mockBulkDelete).not.toHaveBeenCalled();
-		expect(mockSingleDelete).toHaveBeenCalledTimes(1);
+		expect(mockSingleDelete).toHaveBeenCalledOnce();
 		expect(mockSingleDelete).toHaveBeenCalledWith("a");
 	});
 

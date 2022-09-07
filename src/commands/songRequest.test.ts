@@ -148,7 +148,7 @@ describe("Song request via URL", () => {
 			} as unknown as GuildedCommandContext;
 
 			await songRequest.execute(context);
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
 
 			const calls = mockReply.mock.calls[0] as Array<unknown>;
@@ -215,15 +215,15 @@ describe("Song request via URL", () => {
 		await new Promise(resolve => setTimeout(resolve, 500));
 
 		// queue.push should only have been called on the first URL
-		expect(mockQueuePush).toHaveBeenCalledTimes(1);
+		expect(mockQueuePush).toHaveBeenCalledOnce();
 		expect(mockQueuePush).toHaveBeenCalledWith(
 			expect.toContainEntry(["url", urls[0]]),
 			queueChannel
 		);
 
 		// The submission should have been rejected with a cooldown warning via DMs
-		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait") as string);
 	});
 

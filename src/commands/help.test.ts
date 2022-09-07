@@ -31,7 +31,7 @@ describe("Help command", () => {
 
 	test("describes all commands", async () => {
 		await help.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
@@ -44,7 +44,7 @@ describe("Help command", () => {
 		context = { ...context, userLocale: locale } as GuildedCommandContext;
 
 		await help.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
@@ -64,7 +64,7 @@ describe("Help command", () => {
 		});
 
 		await help.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;

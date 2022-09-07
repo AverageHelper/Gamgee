@@ -53,10 +53,10 @@ describe("Video details", () => {
 
 	test("calls every video retrieval function with the given URL", async () => {
 		await expect(getVideoDetails(realUrl, null)).resolves.toBeNull();
-		expect(mockGetBandcampTrack).toHaveBeenCalledTimes(1);
-		expect(mockGetPonyFmTrack).toHaveBeenCalledTimes(1);
-		expect(mockGetSoundCloudTrack).toHaveBeenCalledTimes(1);
-		expect(mockGetYouTubeVideo).toHaveBeenCalledTimes(1);
+		expect(mockGetBandcampTrack).toHaveBeenCalledOnce();
+		expect(mockGetPonyFmTrack).toHaveBeenCalledOnce();
+		expect(mockGetSoundCloudTrack).toHaveBeenCalledOnce();
+		expect(mockGetYouTubeVideo).toHaveBeenCalledOnce();
 		expect.assertions(5); // asserts that we've checked every platform module
 	});
 

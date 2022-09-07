@@ -44,7 +44,7 @@ describe("Option Resolver", () => {
 			option.value = `<#${channelId}>`;
 			resolveChannelFromOption(option, guild);
 
-			expect(mockResolveChannel).toHaveBeenCalledTimes(1);
+			expect(mockResolveChannel).toHaveBeenCalledOnce();
 			expect(mockResolveChannel).toHaveBeenCalledWith(channelId);
 		});
 

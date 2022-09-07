@@ -166,7 +166,7 @@ describe("Song request pipeline", () => {
 
 		// expect the queue close command to have been fired, and only 3 entries pushed
 		expect(mockPushEntryToQueue).toHaveBeenCalledTimes(3); // 3 successful pushes
-		expect(mockSetQueueOpen).toHaveBeenCalledTimes(1); // 1 queue closure
+		expect(mockSetQueueOpen).toHaveBeenCalledOnce(); // 1 queue closure
 		expect(mockSetQueueOpen).toHaveBeenCalledWith(false, request.queueChannel.guild);
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(2); // 2 rejections
 	});
