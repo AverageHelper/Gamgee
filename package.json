@@ -62,7 +62,7 @@
 		"typeorm": "0.3.7",
 		"winston": "3.8.1",
 		"yargs": "17.5.1",
-		"ytdl-core": "4.11.0"
+		"ytdl-core": "4.11.2"
 	},
 	"devDependencies": {
 		"@types/chai": "4.3.3",
