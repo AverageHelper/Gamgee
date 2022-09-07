@@ -29,6 +29,7 @@ import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
 import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
 import { randomBoolean } from "../helpers/randomBoolean.js";
+import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 import { randomInt } from "../helpers/randomInt.js";
 import { useLogger } from "../logger.js";
 
@@ -296,7 +297,22 @@ export const phrases: ResponseRepository = [
 	"Second star to the right, and straight on until closing time",
 	"So anyways, I started blasting",
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
-	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||", // TODO: Randomize the spoiler?
+	() =>
+		`So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||${randomElementOfArray(
+			[
+				"[DECISION.EXE CRASHED]",
+				"[ERROR 404: DECISION NOT FOUND]",
+				"do nothing.",
+				"take the leftward path first",
+				"take the Mines of Moria",
+				"keep the One Ring",
+				"chuck the One Ring into the garbage",
+				"stop talking now",
+				"stop talking... someday",
+				"start reading your messages",
+				"01011011 01000100 01000101 01000011 01001001 01010011 01001001 01001111 01001110 00101110 01000101 01011000 01000101 00100000 01000011 01010010 01000001 01010011 01001000 01000101 01000100 01011101" // [DECISION.EXE CRASHED]
+			]
+		)}||`,
 	"Something smells fishy...",
 	"Sponsored by",
 	"spoon",

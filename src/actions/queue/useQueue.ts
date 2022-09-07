@@ -195,7 +195,6 @@ export async function deleteEntryFromMessage(
 	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
 	if (entry === null) return entry;
 
-	// TODO: Check the docs that both Message and PartialMessage would contain an ID
 	await removeEntryFromMessage(queueMessage.id, queueChannel);
 	await deleteMessage(queueMessage);
 

@@ -29,7 +29,7 @@ export const setPrefix: Command = {
 		// slash-command interactions and message commands.
 		const locale = type === "interaction" ? userLocale : guildLocale;
 
-		const valueOption = options[0]; // TODO: Encorce at the number of options at the type level
+		const valueOption = options[0]; // TODO: Encorce the number of options at the type level
 		if (!valueOption) {
 			return await reply({
 				content: t("commands.setprefix.responses.missing-value", locale),
