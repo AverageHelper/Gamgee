@@ -6,36 +6,36 @@
 	},
 	"commands": {
 		"cooldown": {
-			"description": "Tudja meg, mikor küldhet új kérést.",
+			"description": "Tudja meg, mikor küldhet új dalt.",
 			"name": "cooldown"
 		},
 		"help": {
-			"description": "Visszaad egy hasznos súgóüzenetet.",
+			"description": "Kiír egy hasznos súgóüzenetet.",
 			"name": "segítség",
 			"response": "Parancsok:"
 		},
 		"howto": {
-			"description": "Visszaad utasításokat a gyakori parancsok használatához.",
+			"description": "Kiír utasításokat a gyakori parancsok használatához.",
 			"name": "hogyankell"
 		},
 		"languages": {
-			"description": "Visszaadja a forráskódom nyelvi statisztikáit.",
+			"description": "Kiírja a forráskódom nyelvi statisztikáit.",
 			"name": "nyelvek"
 		},
 		"limits": {
-			"description": "Visszaadja a várólista beküldési korlátait.",
+			"description": "Kiírja a várólista beküldési korlátait.",
 			"name": "határok"
 		},
 		"nowplaying": {
-			"description": "Visszaadja az aktuális dalt a sorban (vagy a legjobb tippet).",
+			"description": "Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).",
 			"name": "mitjátszik"
 		},
 		"ping": {
-			"description": "Pingelje a szerveremet a válaszidő ellenőrzéséhez.",
+			"description": "Pingeli a szerveremet a válaszidő ellenőrzéséhez.",
 			"name": "ping"
 		},
 		"setprefix": {
-			"description": "Állítsa be az üzenetparancsok előtt használt előtagot.",
+			"description": "Beállítja az üzenetparancsok előtt használt előtagot.",
 			"name": "előtagbeállítás",
 			"options": {
 				"prefix": {
@@ -45,7 +45,7 @@
 			},
 			"responses": {
 				"missing-value": "Nem kaptam új előtagot!",
-				"try-example": "Próbáld ki például a {sample}",
+				"try-example": "Próbálja ki például a {sample} parancsot",
 				"value-header": "Üzenetparancs előtagja"
 			}
 		},
@@ -63,7 +63,7 @@
 				"not-allowed": "Sajnos nem küldhet be dalokat.",
 				"rejections": {
 					"allotment-expended": "Felhasználta mind a(z) {max} lehetőségét.",
-					"cooldown": "Már küldött be dalt az elmúlt {duration}. Várnia kell {remaining}, mielőtt újra küldhet.",
+					"cooldown": "Már küldött be dalt az elmúlt {duration}-ban/ben. Várnia kell {remaining}-(e)t, mielőtt újra küldhet.",
 					"too-long": "Ez a dal túl hosszú. A határ {limit}, de ez {actual} hosszú.",
 					"too-short": "Ez a dal túl rövid. A határ {limit}, de ez {actual} hosszú."
 				},
@@ -75,7 +75,7 @@
 				"submission-accepted": "Elfogadva!",
 				"try-longer-song": "Próbáljon egy hosszabb dalt.",
 				"try-shorter-song": "Próbáljon egy rövidebb dalt.",
-				"try-supported-platform": "Próbáljon ki egy linket egy támogatott platformról."
+				"try-supported-platform": "Próbáljon egy linket egy támogatott platformról."
 			}
 		},
 		"stats": {
@@ -91,7 +91,7 @@
 			}
 		},
 		"test": {
-			"description": "Győződjön meg róla, hogy továbbra is tudok beszélni a videoszolgáltatókkal.",
+			"description": "Ellenőrzi, hogy továbbra is tudok beszélni a videószolgáltatókkal.",
 			"name": "teszt",
 			"responses": {
 				"cannot-run-concurrent-invocations": "Várjon, valaki éppen most futtatta ezt a parancsot...",
@@ -103,15 +103,15 @@
 			}
 		},
 		"userinfo": {
-			"description": "Néhány információt visszaad önről.",
+			"description": "Néhány információt kiír önről.",
 			"name": "felhasználóadatok"
 		},
 		"version": {
-			"description": "A bot aktuális verziójának megjelenítése.",
+			"description": "Megjeleníti a bot aktuális verzióját.",
 			"name": "verzió"
 		},
 		"video": {
-			"description": "Visszaadja a videó címét és időtartamát.",
+			"description": "Kiírja a videó címét és időtartamát.",
 			"name": "videó"
 		}
 	},
@@ -123,7 +123,7 @@
 			"seconds-nan": "NaN másodperc"
 		},
 		"deprecated": "Elavult",
-		"dm-failed-disabled": "Próbáltam privát üzenetet küldeni, de úgy tűnik, azok ki vannak kapcsolva önnél.",
+		"dm-failed-disabled": "Próbáltam privát üzenetet küldeni, de úgy tűnik, azok le vannak tiltva önnél.",
 		"no-personal-permission": "Nincs engedélye a parancs futtatásához.",
 		"not-here": "Itt ezt nem teheti meg.",
 		"queue": {
