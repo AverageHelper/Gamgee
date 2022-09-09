@@ -19,6 +19,9 @@ describe("Command as pleb", function () {
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);
+		await setIsQueueAdmin(true);
+		await commandResponseInTestChannel(`${QUEUE_COMMAND} restart`, "queue");
+		await commandResponseInTestChannel(`${QUEUE_COMMAND} limit entry-duration 0`, "removed");
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
 
 		// Remove the Queue Admin role from the tester bot
