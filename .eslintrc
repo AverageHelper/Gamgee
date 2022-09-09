@@ -91,6 +91,18 @@
 			"rules": {
 				"unicorn/filename-case": "off"
 			}
+		},
+		{
+			"files": ["scripts/**/*.ts"],
+
+			"parserOptions": {
+				"project": "./tsconfig.test.json",
+				"tsconfigRootDir": "."
+			},
+			"rules": {
+				"unicorn/no-process-exit": "off",
+				"no-console": ["warn", { "allow": ["error", "warn", "info"] }]
+			}
 		}
 	]
 }
