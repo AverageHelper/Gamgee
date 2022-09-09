@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -46,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.7.0] - 2022-08-10
 ### Added
 - Added naive French, German, Hungarian, Portuguese, and Spanish translations for the invocation interfaces of `/cooldown`, `/help`, `/howto`, and `/sr`. Eventually, I'd like to i18nlize every interaction based on the locale of the user (for private responses) or the locale of the guild (for public responses).
-	- Slash command localizations are in open beta (according to [this message](https://discord.com/channels/613425648685547541/697138785317814292/956670963104239666) in the Discord Developers server). Use the [feature/web-slash-command-localization](https://discord.com/__development/link?s=BfVH8Z8qL1z5eLXlAUJT5uqob9jkwn937VrnvSL5kXg%3D.eyJ0YXJnZXRCdWlsZE92ZXJyaWRlIjp7ImRpc2NvcmRfd2ViIjp7InR5cGUiOiJicmFuY2giLCJpZCI6ImZlYXR1cmUvd2ViLXNsYXNoLWNvbW1hbmQtbG9jYWxpemF0aW9uIn19LCJyZWxlYXNlQ2hhbm5lbCI6bnVsbCwidmFsaWRGb3JVc2VySWRzIjpbXSwiYWxsb3dMb2dnZWRPdXQiOmZhbHNlLCJleHBpcmVzQXQiOiJXZWQsIDMxIEF1ZyAyMDIyIDE3OjU2OjQ2IEdNVCJ9) build override to see command localizations on your desktop client.
+  - Slash command localizations are in open beta (according to [this message](https://discord.com/channels/613425648685547541/697138785317814292/956670963104239666) in the Discord Developers server). Use the [feature/web-slash-command-localization](https://discord.com/__development/link?s=BfVH8Z8qL1z5eLXlAUJT5uqob9jkwn937VrnvSL5kXg%3D.eyJ0YXJnZXRCdWlsZE92ZXJyaWRlIjp7ImRpc2NvcmRfd2ViIjp7InR5cGUiOiJicmFuY2giLCJpZCI6ImZlYXR1cmUvd2ViLXNsYXNoLWNvbW1hbmQtbG9jYWxpemF0aW9uIn19LCJyZWxlYXNlQ2hhbm5lbCI6bnVsbCwidmFsaWRGb3JVc2VySWRzIjpbXSwiYWxsb3dMb2dnZWRPdXQiOmZhbHNlLCJleHBpcmVzQXQiOiJXZWQsIDMxIEF1ZyAyMDIyIDE3OjU2OjQ2IEdNVCJ9) build override to see command localizations on your desktop client.
 - Added the URL to this repository to the bot's profile. (For some reason, links inside of the bot description are unreliable, and seem to cause the description to go away after a while.)
 
 ### Changed
@@ -82,8 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed a bug which could allow multiple requests to sneak into the queue if they were submitted at about the same time as the queue auto-closed.
-
-Dev note: If you use VS Code and the Prettier extension, you may need to reload your window after pulling this down, or else Prettier might not correctly apply its updated opinions.
+- Dev note: If you use VS Code and the Prettier extension, you may need to reload your window after pulling this down, or else Prettier might not correctly apply its updated opinions.
 
 ## [1.6.3] - 2022-06-15
 ### Fixed
@@ -101,8 +101,7 @@ Dev note: If you use VS Code and the Prettier extension, you may need to reload 
 ### Changed
 - **No runtime changes** this version. The only change was to a setup file that handled the (infrequent) deployment of app commands to Discord. If you had trouble with the deployment in 1.6.0, this should fix that.
 - Due to [discord-api-docs#4830](https://github.com/discord/discord-api-docs/pull/4830), we no longer try to set app command permissions. We'll handle that with the same runtime fallback that message command permissions use.
-
-In the future, we may set the default command permissions using new API constructs, and lean on Discord's UI to let guild admins configure command permissions as they see fit.
+- In the future, we may set the default command permissions using new API constructs, and lean on Discord's UI to let guild admins configure command permissions as they see fit.
 
 ## [1.6.0] - 2022-05-17
 After updating, be sure to run `npm ci && npm run build:clean && npm run migrate` before running the bot.
@@ -115,14 +114,12 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 - Make `/stats` output clearer
 - Clearer message when Gamgee auto-closes an overfull queue
 - Reorganize some code internally so we can better catch Slash Command edge cases
-
-### Known Issues
-- The command deployment script removes guild-level slash-commands. Working on a fix for that now. **As a workaround, avoid running `npm run setup` or `npm run commands:deploy` in this version.**
+- Known Issues:
+  - The command deployment script removes guild-level slash-commands. Working on a fix for that now. **As a workaround, avoid running `npm run setup` or `npm run commands:deploy` in this version.**
 
 ## [1.5.0] - 2022-04-23
-This update adds a field to the database schema, and adds new commands. Remember to run `npm run setup` to migrate the database and update Discord's command index.
-
 ### Added
+- This update adds a field to the database schema, and adds new commands. Remember to run `npm run setup` to migrate the database and update Discord's command index.
 - Added `/stats` to show users their personal queue stats
 - Added `/cooldown` to show users their personal cooldown timer
 - Added a configurable limit to the queue's total estimated playtime
@@ -183,13 +180,11 @@ This update adds a field to the database schema, and adds new commands. Remember
 
 ## [1.3.0] - 2022-02-27
 ### Added
-Added a "Likes" counter to the request queue. Most users won't notice this, but DJs might.
+- Added a "Likes" counter to the request queue. Most users won't notice this, but DJs might.
 - Every time a user runs `/now-playing` or its variants on a song that they didn't submit, the Likes counter increments.
 - Subsequent invocations from the same user do not add to that counter
-
-NOTE: You _should not_ have to run the migrator, since we only _added_ an optional field to the database here.
-
-Coming soon: The ability to disable the Likes counter, for DJs who are concerned about it.
+- NOTE: You _should not_ have to run the migrator, since we only _added_ an optional field to the database here.
+- Coming soon: The ability to disable the Likes counter, for DJs who are concerned about it.
 
 ## [1.2.5] - 2022-02-14
 ### Fixed
@@ -270,7 +265,7 @@ Coming soon: The ability to disable the Likes counter, for DJs who are concerned
 - `?help` and `/help` now work in DMs
 
 ## [1.0.0-beta.8] - 2021-07-17
-### Changes
+### Changed
 - **UI:** Use new buttons for interactivity instead of reactions (see [discordjs/discord.js#5674](https://github.com/discordjs/discord.js/pull/5674)). This means that reaction buttons are no longer necessary, and there is zero delay between posting a message and making that message interactive; it's all one `send` or `edit` call.
 - **Bandground:** Use a specific Discord.js commit, so we can run `npm install` without breaking things while we use this bleeding-edge build of DJS
 - **Bandground:** Update dependencies to fix a security issue.
@@ -302,9 +297,7 @@ Coming soon: The ability to disable the Likes counter, for DJs who are concerned
 ### Changed
 - Reorganize commands slightly to better support Discord's slash commands structure
 - Restructure the command context to reduce imports and make user interfaces more generic
-
-Please note:
-- We're using a pre-release version of Discord.js in order to use its TypeScripted slash command structures. You may experience some subtle bugs.
+- Please note: We're using a pre-release version of Discord.js in order to use its TypeScripted slash command structures. You may experience some subtle bugs.
 
 ## [1.0.0-alpha.9] - 2021-04-28
 ### Added
@@ -343,7 +336,7 @@ Please note:
 ### Changed
 - Serialize all song request processing
 
-## [Initial commit] - 2021-03-14
+## [0.0.0] - 2021-03-14
 ### Added
 - Initial commit
 
@@ -385,5 +378,5 @@ Please note:
 [1.0.0-alpha.6]: https://github.com/AverageHelper/Gamgee/compare/v1.0.0-alpha.5...v1.0.0-alpha.6
 [1.0.0-alpha.5]: https://github.com/AverageHelper/Gamgee/compare/v1.0.0-alpha.4...v1.0.0-alpha.5
 [1.0.0-alpha.4]: https://github.com/AverageHelper/Gamgee/compare/v1.0.0-alpha.3...v1.0.0-alpha.4
-[1.0.0-alpha.3]: https://github.com/AverageHelper/Gamgee/releases/tag/v1.0.0-alpha.3
-[Initial commit]: https://github.com/AverageHelper/Gamgee/commit/ac2efa4ed2b3422b3c423e3a5527671193525b1e
+[1.0.0-alpha.3]: https://github.com/AverageHelper/Gamgee/compare/v0.0.0...v1.0.0-alpha.3
+[0.0.0]: https://github.com/AverageHelper/Gamgee/releases/tag/v0.0.0
