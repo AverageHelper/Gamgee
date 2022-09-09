@@ -5,9 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.8.2] - 2022-09-09
 ### Added
 - Created issue templates!
+- Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md).
 
 ### Changed
 - Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is code size and maintenance overhead.

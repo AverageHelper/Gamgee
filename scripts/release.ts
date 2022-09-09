@@ -3,8 +3,8 @@ import { parser as changelogParser } from "keep-a-changelog";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, literal, string, type } from "superstruct";
-import gitDiff = require("git-diff");
-import semver = require("semver");
+import gitDiff from "git-diff";
+import semver from "semver";
 
 // Fixes the changelog's footer links and bumps the `version` in [package.json](/package.json) and [package-lock.json](/package-lock.json).
 // This script may be run repeatedly on the same project.
