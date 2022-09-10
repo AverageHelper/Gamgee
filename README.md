@@ -126,7 +126,10 @@ If the default database location (the `Gamgee/db/` folder) won't work for your s
 ```sh
 # .env
 
+# Your own bot token
 DISCORD_TOKEN=YOUR_TOKEN_GOES_HERE
+
+# Where the database files should live
 DATABASE_FOLDER=./foo/bar/baz # The database will go in this folder, at baz/db.sqlite
 ```
 
@@ -141,12 +144,14 @@ Gamgee generates some files as needed. This is normal, and you should not bother
 
 ### Supported Music Platforms
 
-Gamgee supports the following music (and video) streaming platforms:
+We support the following media platforms:
 
 - [YouTube](https://www.youtube.com/)
 - [SoundCloud](https://soundcloud.com/)
 - [Bandcamp](https://bandcamp.com/)
 - [Pony.FM](https://pony.fm/)
+
+If you'd like us to support another platform, please [submit an issue](https://github.com/AverageHelper/Gamgee/issues/new?labels=enhancement&template=feature_request.md)!
 
 ## Commands
 
@@ -155,6 +160,8 @@ All commands must begin with a command prefix (`/` for Slash Commands; `?` by de
 ### `setprefix`
 
 Controls the prefix which marks normal messages as command invocations (such as the `?` in `?help`). This command may only be run by the server owner (and is therefore unavailable in DMs). Responses will be ephemeral (if using [Slash Commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ)), or a private DM (if using message commands).
+
+[This command requires special permissions.](#command-permissions)
 
 ### `help`
 

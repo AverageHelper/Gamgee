@@ -17,7 +17,7 @@ export const setPrefix: Command = {
 			description: "The new prefix to use before message commands.",
 			descriptionLocalizations: localizations("commands.setprefix.options.prefix.description"),
 			type: ApplicationCommandOptionType.String,
-			minLength: 1, // TODO: Enforce these limits for message commands
+			minLength: 1,
 			maxLength: 3,
 			required: true
 		}
@@ -29,7 +29,7 @@ export const setPrefix: Command = {
 		// slash-command interactions and message commands.
 		const locale = type === "interaction" ? userLocale : guildLocale;
 
-		const valueOption = options[0]; // TODO: Encorce at the number of options at the type level
+		const valueOption = options[0]; // TODO: Encorce the number of options at the type level
 		if (!valueOption) {
 			return await reply({
 				content: t("commands.setprefix.responses.missing-value", locale),

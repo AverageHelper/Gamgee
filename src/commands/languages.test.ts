@@ -37,7 +37,7 @@ describe("Language Statistics from GitHub", () => {
 		const repo = "Gamgee";
 
 		await expect(languages.execute(context)).resolves.toBeUndefined();
-		expect(mockGitHubMetadata).toHaveBeenCalledTimes(1);
+		expect(mockGitHubMetadata).toHaveBeenCalledOnce();
 		expect(mockGitHubMetadata).toHaveBeenCalledWith({ owner, repo });
 
 		expect(mockReply).toHaveBeenCalled();

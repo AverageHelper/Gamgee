@@ -90,7 +90,7 @@ describe("Invoke Command", () => {
 			(context as { channel: null }).channel = null;
 			(context as { member: null }).member = null;
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-			expect(mockExecute).toHaveBeenCalledTimes(1);
+			expect(mockExecute).toHaveBeenCalledOnce();
 			expect(mockExecute).toHaveBeenCalledWith(context);
 		});
 
@@ -126,13 +126,13 @@ describe("Invoke Command", () => {
 		test("always executes if the command does not define permission requirements", async () => {
 			command.permissions = undefined;
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-			expect(mockExecute).toHaveBeenCalledTimes(1);
+			expect(mockExecute).toHaveBeenCalledOnce();
 			expect(mockExecute).toHaveBeenCalledWith(context);
 		});
 
 		test("calls the command's permissions function for permission cases", async () => {
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-			expect(mockPermissions).toHaveBeenCalledTimes(1);
+			expect(mockPermissions).toHaveBeenCalledOnce();
 			expect(mockPermissions).toHaveBeenCalledWith(expect.objectContaining(context.guild));
 		});
 
@@ -155,7 +155,7 @@ describe("Invoke Command", () => {
 					]);
 				}
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				expect(mockExecute).toHaveBeenCalledTimes(1);
+				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
 			}
 		);
@@ -203,7 +203,7 @@ describe("Invoke Command", () => {
 				}
 				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				expect(mockExecute).toHaveBeenCalledTimes(1);
+				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
 			}
 		);
@@ -241,7 +241,7 @@ describe("Invoke Command", () => {
 				}
 				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
-				expect(mockExecute).toHaveBeenCalledTimes(1);
+				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
 			}
 		);

@@ -1,0 +1,29 @@
+name: Create Release
+
+# On push to main, if the latest version in CHANGELOG.md is different from the latest version tag, create a new tag and release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Parse Changelog
+        id: changelog
+        uses: coditory/changelog-parser@v1.0.2
+
+      - name: Publish Release
+        if: github.ref == 'refs/heads/main' && steps.changelog.outputs.status != 'unreleased'
+        # This action doesn't create a new release if the tag already exists
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          tag_name: v${{ steps.changelog.outputs.version }}
+          name: v${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.description }}
+          prerelease: ${{ steps.changelog.outputs.versionMajor == 0 || steps.changelog.outputs.status == 'prerelease' }}
