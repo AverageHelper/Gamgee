@@ -1,16 +1,11 @@
-import type { GitDiffOptions } from "git-diff";
-import { parser as changelogParser } from "keep-a-changelog";
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { assert, literal, string, type } from "superstruct";
-import gitDiff from "git-diff";
-import semver from "semver";
+import { join } from "node:path";
+import { parser as changelogParser } from "keep-a-changelog";
+import { parse as parseSemVer } from "semver";
+import { readFileSync, writeFileSync } from "node:fs";
 
 // Fixes the changelog's footer links and bumps the `version` in [package.json](/package.json) and [package-lock.json](/package-lock.json).
 // This script may be run repeatedly on the same project.
-
-const { parse: parseSemVer } = semver;
-const diffOptions: GitDiffOptions = { color: true };
 
 function quote(str: string | undefined): string | undefined {
 	if (str === undefined) return str;
@@ -41,19 +36,20 @@ console.info("latest release:", thisRelease.version?.toString());
 const prevRelease = releases[thisReleaseIdx + 1];
 console.info("previous release:", prevRelease?.version?.toString());
 
-// Fix the changelog's format (new compare links, etc.), and print the diff of our changes
+// Fix the changelog's format (new compare links, etc.)
 console.info("\n** Spec compliance **");
 
 const newChangelog = changelog.toString();
 writeFileSync(changelogPath, newChangelog);
 
-const changelogDiff = gitDiff(rawChangelog, newChangelog, diffOptions);
-const didFixChangelog = changelogDiff !== undefined;
+// `git-diff` against the current CHANGELOG.md eats node_modules. Not sure why.
+// Until that's worked out, don't bother diffing.
+// const changelogDiff = gitDiff(rawChangelog, newChangelog);
+const didFixChangelog = rawChangelog !== newChangelog;
 if (!didFixChangelog) {
 	console.info("Changelog was already spec compliant.");
 } else {
-	console.info("Fixed formatting for spec compliance:");
-	console.info(changelogDiff);
+	console.info("Fixed formatting for spec compliance.");
 }
 
 // Fix package.json and package-lock.json
@@ -104,13 +100,11 @@ packageJson.version = thisRelease.version.version;
 const newPackageJson = `${JSON.stringify(packageJson, undefined, "\t")}\n`;
 writeFileSync(packageJsonPath, newPackageJson);
 
-const packageDiff = gitDiff(oldPackageJson, newPackageJson, diffOptions);
-const didFixPackageJson = packageDiff !== undefined;
+const didFixPackageJson = oldPackageJson !== newPackageJson;
 if (!didFixPackageJson) {
 	console.info("package.json already had the correct version.");
 } else {
-	console.info("Updated package.json version:");
-	console.info(packageDiff);
+	console.info("Updated package.json version.");
 }
 
 // Update package-lock.json
@@ -121,13 +115,11 @@ packageLockJson.packages[""].version = thisRelease.version.version;
 const newPackageLockJson = `${JSON.stringify(packageLockJson, undefined, "\t")}\n`;
 writeFileSync(packageLockJsonPath, newPackageLockJson);
 
-const packageLockDiff = gitDiff(oldPackageLockJson, newPackageLockJson, diffOptions);
-const didFixPackageLockJson = packageLockDiff !== undefined;
+const didFixPackageLockJson = oldPackageLockJson !== newPackageLockJson;
 if (!didFixPackageLockJson) {
 	console.info("package-lock.json already had the correct version.");
 } else {
-	console.info("Updated package-lock.json version:");
-	console.info(packageDiff);
+	console.info("Updated package-lock.json version.");
 }
 
 // If we fixed the changelog or updated package.json, throw
