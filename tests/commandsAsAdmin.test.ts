@@ -19,6 +19,7 @@ const QUEUE_COMMAND = "quo";
 describe("Command as admin", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 	const NO_QUEUE = "no queue";
+	const NEW_QUEUE = "New queue";
 
 	beforeEach(async function () {
 		const title = this.test?.fullTitle();
@@ -40,6 +41,30 @@ describe("Command as admin", function () {
 	});
 
 	describe("queue", function () {
+		describe("when the queue is set up", function () {
+			beforeEach(async function () {
+				await setIsQueueCreator(true);
+				await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+					NEW_QUEUE
+				);
+			});
+
+			{
+				const keys = [
+					"entry-duration", //
+					"cooldown",
+					"count"
+				];
+				for (const key of keys) {
+					it(`allows the tester to set ${key} limits on the queue`, async function () {
+						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+						expect(content?.toLowerCase()).to.contain(`set to **3`);
+					});
+				}
+			}
+		});
+
 		describe("when the queue is not set up", function () {
 			const NO_QUEUE = "no queue";
 

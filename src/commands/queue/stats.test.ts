@@ -60,9 +60,9 @@ describe("Queue Statistics", () => {
 
 	test("displays queue statistics to the user", async () => {
 		await expect(stats.execute(context)).resolves.toBeUndefined();
-		expect(mockPlaytimeAverage).toHaveBeenCalledTimes(1);
-		expect(mockPlaytimeRemaining).toHaveBeenCalledTimes(1);
-		expect(mockPlaytimeTotal).toHaveBeenCalledTimes(1);
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockPlaytimeAverage).toHaveBeenCalledOnce();
+		expect(mockPlaytimeRemaining).toHaveBeenCalledOnce();
+		expect(mockPlaytimeTotal).toHaveBeenCalledOnce();
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 	});
 });

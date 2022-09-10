@@ -2,20 +2,22 @@ import { DatabaseLogger } from "./DatabaseLogger.js";
 import { DataSource } from "typeorm";
 import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
 import { getEnv } from "../helpers/environment.js";
+import { join as joinPath, normalize as normalizePath } from "node:path";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { useLogger } from "../logger.js";
 import * as entities from "./model/index.js";
 import * as migrations from "./migrations/index.js";
-import * as path from "node:path"; // We can't use default import because TypeORM's CLI doesn't expect it.
 
 const logger = useLogger();
 
-const dbFolder = path.normalize(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
+// TODO: Require DATABASE_FOLDER to be specified, so we can bundle the executable together
+const dbFolder = normalizePath(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
+const dbFile = joinPath(dbFolder, "db.sqlite");
 
-const dbFile = path.join(dbFolder, "db.sqlite");
+logger.debug(`Database: '${dbFolder}'`);
 
 export const dataSource = new DataSource({
-	type: "sqlite", // TODO: Wanna use MongoDB (probs via mongoose or smth)
+	type: "sqlite",
 	database: dbFile,
 	logging: "all",
 	logger: new DatabaseLogger(logger),

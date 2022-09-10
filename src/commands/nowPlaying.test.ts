@@ -54,9 +54,9 @@ describe("Now-Playing", () => {
 		await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 		expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
-		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockReplyWithMention).not.toHaveBeenCalled();
-		expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("no queue"));
 	});
 
@@ -74,9 +74,9 @@ describe("Now-Playing", () => {
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
 			expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
-			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+			expect(mockDeleteMessage).toHaveBeenCalledOnce();
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
-			expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("nothing"));
 		}
 	);
@@ -104,10 +104,10 @@ describe("Now-Playing", () => {
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
-			expect(mockAddUserToHaveCalledNowPlaying).toHaveBeenCalledTimes(1);
-			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+			expect(mockAddUserToHaveCalledNowPlaying).toHaveBeenCalledOnce();
+			expect(mockDeleteMessage).toHaveBeenCalledOnce();
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
-			expect(mockReplyPrivately).toHaveBeenCalledTimes(1);
+			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("first!"), true);
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("<@me>"), true);
 		}

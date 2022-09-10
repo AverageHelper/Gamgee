@@ -27,6 +27,7 @@
 		"no-constant-condition": "warn",
 		"no-console": "warn",
 		"no-dupe-else-if": "warn",
+		"spaced-comment": ["warn", "always", { "exceptions": ["*"] }], // doc comments exist
 		"consistent-return": "off", // TS handles this
 		"no-duplicate-imports": "off", // typescript-eslint handles this
 		"@typescript-eslint/no-duplicate-imports": "error",
@@ -89,6 +90,18 @@
 			"files": ["database/migrations/*.ts"],
 			"rules": {
 				"unicorn/filename-case": "off"
+			}
+		},
+		{
+			"files": ["scripts/**/*.ts"],
+
+			"parserOptions": {
+				"project": "./tsconfig.test.json",
+				"tsconfigRootDir": "."
+			},
+			"rules": {
+				"unicorn/no-process-exit": "off",
+				"no-console": ["warn", { "allow": ["error", "warn", "info"] }]
 			}
 		}
 	]

@@ -1,7 +1,7 @@
-import type { EntityTarget, EntityManager, Repository } from "typeorm";
+import type { EntityTarget, EntityManager, Repository, ObjectLiteral } from "typeorm";
 import { dataSource, initialize } from "./sqliteDataSource.js";
 
-export async function useRepository<Entity, T = undefined>(
+export async function useRepository<Entity extends ObjectLiteral, T = undefined>(
 	targetOrRepository: EntityTarget<Entity> | Repository<Entity>,
 	cb: (repository: Repository<Entity>) => T | Promise<T>
 ): Promise<T> {

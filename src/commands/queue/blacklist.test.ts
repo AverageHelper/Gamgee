@@ -71,7 +71,7 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
 				expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
@@ -83,7 +83,7 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
-			expect(mockReply).toHaveBeenCalledTimes(1); // only called when not a '/' command
+			expect(mockReply).toHaveBeenCalledOnce(); // only called when not a '/' command
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
 				expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
@@ -97,7 +97,7 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist yourself") as string,
@@ -111,7 +111,7 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist the owner") as string,
@@ -126,7 +126,7 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockBlacklistUser).not.toHaveBeenCalled();
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist yourself") as string,
@@ -153,11 +153,11 @@ describe("Manage the Queue Blacklist", () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			// blacklist effect
-			expect(mockBlacklistUser).toHaveBeenCalledTimes(1);
+			expect(mockBlacklistUser).toHaveBeenCalledOnce();
 			expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId, queueChannel);
 
 			// response
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining(badUserId) as string,
@@ -165,7 +165,7 @@ describe("Manage the Queue Blacklist", () => {
 					ephemeral: true
 				})
 			);
-			expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+			expect(mockDeleteMessage).toHaveBeenCalledOnce();
 			expect(mockDeleteMessage).toHaveBeenCalledWith();
 		});
 	});

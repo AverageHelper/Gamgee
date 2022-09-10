@@ -29,6 +29,7 @@ import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
 import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
 import { randomBoolean } from "../helpers/randomBoolean.js";
+import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 import { randomInt } from "../helpers/randomInt.js";
 import { useLogger } from "../logger.js";
 
@@ -68,6 +69,9 @@ export const philosophy: ResponseRepository = [
  * These get mixed into the pool of `phrases` below.
  */
 export const copypasta = [
+	// from GTX
+	"Ash is just the example that we all live with today in the realm of Computer Sciences and the IT field: He's a 10 year old that's been in the industry for 20 years and that's what it took for him to succeed. He's a 10 year old with 20 years of experience and that's what the IT field wants in all of us.",
+
 	"The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, …."
 ];
 
@@ -191,6 +195,7 @@ export const phrases: ResponseRepository = [
 	"Are you sure you typed your message correctly? All I see is a bunch of words",
 	"Based",
 	"Based on what?",
+	"**_beep boop_ generic text**",
 	"Before was was _was,_ was was _is._",
 	"Bit of a tongue twister",
 	"Bloatware!? I don't see any, wdym??",
@@ -292,7 +297,22 @@ export const phrases: ResponseRepository = [
 	"Second star to the right, and straight on until closing time",
 	"So anyways, I started blasting",
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
-	"So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||[DECISION.EXE CRASHED]||", // TODO: Randomize the spoiler?
+	() =>
+		`So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||${randomElementOfArray(
+			[
+				"[DECISION.EXE CRASHED]",
+				"[ERROR 404: DECISION NOT FOUND]",
+				"do nothing.",
+				"take the leftward path first",
+				"take the Mines of Moria",
+				"keep the One Ring",
+				"chuck the One Ring into the garbage",
+				"stop talking now",
+				"stop talking... someday",
+				"start reading your messages",
+				"01011011 01000100 01000101 01000011 01001001 01010011 01001001 01001111 01001110 00101110 01000101 01011000 01000101 00100000 01000011 01010010 01000001 01010011 01001000 01000101 01000100 01011101" // [DECISION.EXE CRASHED]
+			]
+		)}||`,
 	"Something smells fishy...",
 	"Sponsored by",
 	"spoon",
@@ -329,7 +349,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 207 of these
+]; // 209 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

@@ -58,7 +58,7 @@ describe("Removing from Queue Blacklist", () => {
 		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockReply).toHaveBeenCalledTimes(1);
+		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true
@@ -69,7 +69,7 @@ describe("Removing from Queue Blacklist", () => {
 		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockReply).toHaveBeenCalledTimes(1);
+		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true
@@ -81,7 +81,7 @@ describe("Removing from Queue Blacklist", () => {
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockWhitelistUser).not.toHaveBeenCalled();
-		expect(mockReply).toHaveBeenCalledTimes(1);
+		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("whitelist yourself") as string,
 			ephemeral: true
@@ -106,17 +106,17 @@ describe("Removing from Queue Blacklist", () => {
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		// whitelist effect
-		expect(mockWhitelistUser).toHaveBeenCalledTimes(1);
+		expect(mockWhitelistUser).toHaveBeenCalledOnce();
 		expect(mockWhitelistUser).toHaveBeenCalledWith(goodUserId, queueChannel);
 
 		// response
-		expect(mockReply).toHaveBeenCalledTimes(1);
+		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining(goodUserId) as string,
 			shouldMention: false,
 			ephemeral: true
 		});
-		expect(mockDeleteMessage).toHaveBeenCalledTimes(1);
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith();
 	});
 });

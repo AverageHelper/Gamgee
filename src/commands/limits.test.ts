@@ -66,7 +66,7 @@ describe("Get Queue Limits", () => {
 				submissionMaxQuantity
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();
-			expect(mockReply).toHaveBeenCalledTimes(1);
+			expect(mockReply).toHaveBeenCalledOnce();
 
 			const replyArgs = mockReply.mock.calls[0] as Array<unknown>;
 			expect(replyArgs[0]).toMatchSnapshot();

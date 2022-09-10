@@ -30,6 +30,7 @@ describe("Command handler", () => {
 	const botId = "this-user";
 
 	const mockReply = jest.fn().mockResolvedValue(undefined);
+	const mockAuthorSend = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
 
@@ -45,7 +46,8 @@ describe("Command handler", () => {
 		content: "",
 		author: {
 			bot: false,
-			id: mockSenderMember.user.id
+			id: mockSenderMember.user.id,
+			send: mockAuthorSend
 		},
 		client: mockClient,
 		reply: mockReply,
@@ -152,6 +154,89 @@ describe("Command handler", () => {
 		${`<@${botId}> `}  | ${"username-mention"}
 		${`<@!${botId}> `} | ${"nickname-mention"}
 	`("using $desc", ({ prefix }: { prefix: string }) => {
+		describe("Option Constraints", () => {
+			test("runs if option string is valid", async () => {
+				const cmd = "setprefix"; // this command has length constraints on its first option
+				const value = "";
+				mockMessage.content = `${prefix}${cmd} ${value}`;
+				await handleCommand(mockMessage, logger);
+
+				const mock = mockCommandDefinitions.get(cmd)?.execute;
+				expect(mock).toBeDefined();
+				expect(mock).toHaveBeenCalledOnce();
+
+				// Shouldn't reply privately to the user about the error that doesn't exist
+				expect(mockAuthorSend).not.toHaveBeenCalled();
+			});
+
+			test.each`
+				value     | desc
+				${"long"} | ${"too long"}
+			`("asserts option string is not $desc", async ({ value }: { value: string }) => {
+				const cmd = "setprefix"; // this command has length constraints on its first option
+				mockMessage.content = `${prefix}${cmd} ${value}`;
+				await handleCommand(mockMessage, logger);
+
+				const expectedMin = 1;
+				const expectedMax = 3;
+				const mock = mockCommandDefinitions.get(cmd)?.execute;
+				expect(mock).toBeDefined();
+				expect(mock).not.toHaveBeenCalled();
+
+				// Should reply privately to the user about the error
+				expect(mockAuthorSend).toHaveBeenCalledOnce();
+				expect(mockAuthorSend).toHaveBeenCalledWith(
+					expect.stringContaining(
+						`Expected a string with a length between \`${expectedMin}\` and \`${expectedMax}\` but received one with a length of \`${value.length}\``
+					)
+				);
+			});
+
+			// eslint-disable-next-line jest/no-commented-out-tests
+			/*
+			test("runs if option integer is valid", async () => {
+				const cmd = "limit"; // this command has range constraints on its second option
+				const value = 5;
+				mockMessage.content = `${prefix}${cmd} entry-duration ${value}`;
+				await handleCommand(mockMessage, logger);
+
+				const mock = mockCommandDefinitions.get(cmd)?.execute;
+				expect(mock).toBeDefined();
+				expect(mock).toHaveBeenCalledOnce();
+
+				// Shouldn't reply privately to the user about the error that doesn't exist
+				expect(mockAuthorSend).not.toHaveBeenCalled();
+
+				// TODO: Option type and meta should have been transformed
+			});
+
+			test.each`
+				value    | desc
+				${"nan"} | ${"a string"}
+				${3.01}  | ${"a floating-point value"}
+				${-2}    | ${"just below limit"}
+				${-10}   | ${"below limit"}
+			`("asserts option integer is not $desc", async ({ value }: { value: number }) => {
+				const cmd = "limit"; // this command has range constraints on its second option
+				mockMessage.content = `${prefix}quo ${cmd} entry-duration ${value}`;
+				await handleCommand(mockMessage, logger);
+
+				const expectedMin = -1;
+				const mock = mockCommandDefinitions.get(cmd)?.execute;
+				expect(mock).toBeDefined();
+				expect(mock).not.toHaveBeenCalled();
+
+				// Should reply privately to the user about the error
+				expect(mockAuthorSend).toHaveBeenCalledOnce();
+				expect(mockAuthorSend).toHaveBeenCalledWith(
+					expect.stringContaining(
+						`Expected a string with a length between \`${expectedMin}\` but received one with a length of \`${value}\``
+					)
+				);
+			});
+			*/
+		});
+
 		test.each`
 			content
 			${"Some words"}
@@ -202,7 +287,7 @@ describe("Command handler", () => {
 
 			const mock = mockCommandDefinitions.get(command.replace("-", ""))?.execute;
 			expect(mock).toBeDefined();
-			expect(mock).toHaveBeenCalledTimes(1);
+			expect(mock).toHaveBeenCalledOnce();
 			expect(mock).toHaveBeenCalledWith(
 				expect.toContainEntries([
 					["client", mockClient],
@@ -253,7 +338,7 @@ describe("Command handler", () => {
 
 			const mockNowPlaying = mockCommandDefinitions.get("nowplaying");
 			expect(mockNowPlaying).toBeDefined();
-			expect(mockNowPlaying?.execute).toHaveBeenCalledTimes(1);
+			expect(mockNowPlaying?.execute).toHaveBeenCalledOnce();
 		});
 	});
 });

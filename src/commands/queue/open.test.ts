@@ -46,7 +46,7 @@ describe("Open the Queue", () => {
 	test("cannot open a queue when the queue is already open", async () => {
 		mockIsQueueOpen.mockResolvedValue(true);
 		await expect(open.execute(context)).resolves.toBeUndefined();
-		expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
+		expect(mockIsQueueOpen).toHaveBeenCalledOnce();
 		expect(mockSetQueueOpen).not.toHaveBeenCalled();
 		expect(mockChannelSend).not.toHaveBeenCalled();
 	});
@@ -54,10 +54,10 @@ describe("Open the Queue", () => {
 	test("opens the queue when the queue exists and is closed", async () => {
 		mockIsQueueOpen.mockResolvedValue(false);
 		await expect(open.execute(context)).resolves.toBeUndefined();
-		expect(mockIsQueueOpen).toHaveBeenCalledTimes(1);
-		expect(mockSetQueueOpen).toHaveBeenCalledTimes(1);
+		expect(mockIsQueueOpen).toHaveBeenCalledOnce();
+		expect(mockSetQueueOpen).toHaveBeenCalledOnce();
 		expect(mockSetQueueOpen).toHaveBeenCalledWith(true, context.guild);
-		expect(mockChannelSend).toHaveBeenCalledTimes(1);
+		expect(mockChannelSend).toHaveBeenCalledOnce();
 
 		expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("now open"));
 		expect(mockFollowUp).toHaveBeenCalledWith(
