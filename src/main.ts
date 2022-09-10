@@ -3,9 +3,9 @@ import "reflect-metadata";
 import { ActivityType, Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
 import { getConfigCommandPrefix } from "./actions/config/getConfigValue.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
+import { handleButton } from "./handleButton.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
-import { handleMessageComponent } from "./handleMessageComponent.js";
 import { handleReactionAdd } from "./handleReactionAdd.js";
 import { hasLegacyConfig, PATH_TO_LEGACY_CONFIG, useStorage } from "./configStorage.js";
 import { hideBin } from "yargs/helpers";
@@ -113,7 +113,7 @@ try {
 				if (interaction.isCommand()) {
 					await handleInteraction(interaction, logger);
 				} else if (interaction.isButton()) {
-					await handleMessageComponent(interaction, logger);
+					await handleButton(interaction, logger);
 				}
 			});
 

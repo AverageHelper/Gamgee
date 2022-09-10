@@ -17,8 +17,6 @@ import {
 	markEntryNotDoneInQueue
 } from "./actions/queue/useQueue.js";
 
-// TODO: Rename to `handleButton`
-
 /**
  * Performs actions from a Discord command interaction.
  * The command is ignored if the interaction is from a bot.
@@ -26,7 +24,7 @@ import {
  * @param interaction The Discord interaction to handle.
  * @param logger The logger to talk to about what's going on.
  */
-export async function handleMessageComponent(
+export async function handleButton(
 	interaction: Discord.ButtonInteraction,
 	logger: Logger
 ): Promise<void> {
