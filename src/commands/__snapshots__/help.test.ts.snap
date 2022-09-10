@@ -201,13 +201,13 @@ exports[`Help command describes all commands in fr 1`] = `
 
 exports[`Help command describes all commands in hu 1`] = `
 "Parancsok:
-\`?cooldown\` - Tudja meg, mikor küldheti be újra.
-\`?segítség\` - Nyomtasson ki egy hasznos súgóüzenetet.
-\`?hogyankell\` - Nyomtasson ki utasításokat a gyakori parancsok használatához.
-\`?nyelvek\` - Nyomtassa ki az alaptáram nyelvi statisztikáit.
-\`?határait\` - Jelenítse meg a dalok várólista beküldési korlátait.
-\`?mitjátszik\` OR \`?now-playing\` - Mutasd fel az aktuális dalt a sorban (vagy a legjobb tippem).
-\`?ping\` - Pingelje a gazdagépemet a késleltetés ellenőrzéséhez.
+\`?cooldown\` - Tudja meg, mikor küldhet új dalt.
+\`?segítség\` - Kiír egy hasznos súgóüzenetet.
+\`?hogyankell\` - Kiír utasításokat a gyakori parancsok használatához.
+\`?nyelvek\` - Kiírja a forráskódom nyelvi statisztikáit.
+\`?határok\` - Kiírja a várólista beküldési korlátait.
+\`?mitjátszik\` OR \`?now-playing\` - Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).
+\`?ping\` - Pingeli a szerveremet a válaszidő ellenőrzéséhez.
 \`?quo\` - Administrative commands to manage the song queue.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
@@ -218,14 +218,14 @@ exports[`Help command describes all commands in hu 1`] = `
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
-\`?előtagbeállítása [előtag]\` OR \`?set-prefix\` - Állítsa be az üzenetparancsok által használt előtagot.
-\`?sr [url]\` - Adjon fel egy dalt a sorba.
-\`?statisztika\` - Szerezze meg személyes sorstatisztikáit.
-\`?teszt\` - Győződjön meg róla, hogy továbbra is tudok beszélni a videoszolgáltatókkal.
-\`?t\` - Mutasd meg, hogy itt gépelek
-\`?felhasználóiadatok\` - Néhány információt visszaad rólad.
-\`?változat\` - A bot aktuális kódbázis verziójának megjelenítése.
-\`?videó [url]\` - Válaszolj a videó címével és időtartamával.
+\`?előtagbeállítás [előtag]\` OR \`?set-prefix\` - Beállítja az üzenetparancsok előtt használt előtagot.
+\`?sr [url]\` - Beküld egy dalt a sorba.
+\`?statisztika\` - Lekéri személyes sorstatisztikáit.
+\`?teszt\` - Ellenőrzi, hogy továbbra is tudok beszélni a videószolgáltatókkal.
+\`?t\` - Megmutatja, hogy itt gépelek.
+\`?felhasználóadatok\` - Néhány információt kiír önről.
+\`?verzió\` - Megjeleníti a bot aktuális verzióját.
+\`?videó [url]\` - Kiírja a videó címét és időtartamát.
 "
 `;
 

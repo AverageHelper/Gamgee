@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md).
 
 ### Changed
+- Better Hungarian translations! (Thanks again, @karcsesz!)
 - Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is code size and maintenance overhead.
 - Message commands now assert that numbers and strings are correctly formatted. This applies only to `?setprefix` for the moment, which previously would allow an argument longer than 3 characters, whereas the slash command would properly keep the value under 4 characters.
 
