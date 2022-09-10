@@ -5,19 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.8.2] - 2022-09-10
 ### Added
 - Created issue templates!
 - Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md).
 
 ### Changed
-- Better Hungarian translations! (Thanks again, @karcsesz!)
+- Better Hungarian translations! (Thanks again, [@karcsesz](https://github.com/karcsesz)!)
 - Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is code size and maintenance overhead.
 - Message commands now assert that numbers and strings are correctly formatted. This applies only to `?setprefix` for the moment, which previously would allow an argument longer than 3 characters, whereas the slash command would properly keep the value under 4 characters.
 
 ## [1.8.1] - 2022-08-20
 ### Changed
-- Improved French translations! (Thanks again, @vayandas!)
+- Improved French translations! (Thanks again, [@vayandas](https://github.com/vayandas)!)
 
 ## [1.8.0] - 2022-08-19
 ### Added
@@ -168,7 +168,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ## [1.3.1] - 2022-03-08
 ### Added
 - Include a link to our repository when users run `/version`
-- Add @karcsesz to the README list of contributors
+- Add [@karcsesz](https://github.com/karcsesz) to the README list of contributors
 - Add proper [Code of Conduct](CODE_OF_CONDUCT.md) and [Contributing](CONTRIBUTING.md) docs
 - More random things to say
 
@@ -236,7 +236,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 
 ## [1.1.0] - 2021-11-08
 ### Added
-- Added a contributor to the README. (Thanks again, @ajnrules!)
+- Added a contributor to the README. (Thanks again, [@ajnrules](https://github.com/ajnrules)!)
 
 ### Changed
 - Simplified a few things
@@ -342,7 +342,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...HEAD
+[1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/AverageHelper/Gamgee/compare/v1.7.0...v1.7.1
