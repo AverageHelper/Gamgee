@@ -143,7 +143,14 @@ export function optionsFromArgs(
 		const firstValue = first.value as string;
 		switch (firstOption.type) {
 			case ApplicationCommandOptionType.String:
-				assert(firstValue, size(string(), firstOption.minLength ?? 0, firstOption.maxLength));
+				assert(
+					firstValue,
+					size(
+						string(),
+						firstOption.minLength ?? 0,
+						firstOption.maxLength ?? Number.MAX_SAFE_INTEGER
+					)
+				);
 				break;
 			case ApplicationCommandOptionType.Integer: {
 				let struct = integer();
