@@ -92,7 +92,7 @@ describe("i18n", () => {
 				"en-US": "Submit a song to the queue.",
 				"es-ES": "Envía una canción a la cola.",
 				fr: "Soumets une chanson à la file d'attente.",
-				hu: "Adjon fel egy dalt a sorba.",
+				hu: "Beküld egy dalt a sorba.",
 				"pt-BR": "Envie uma música para a fila."
 			});
 		});
