@@ -6,37 +6,37 @@
 	},
 	"commands": {
 		"cooldown": {
-			"description": "Tudja meg, mikor küldheti be újra.",
+			"description": "Tudja meg, mikor küldhet új dalt.",
 			"name": "cooldown"
 		},
 		"help": {
-			"description": "Nyomtasson ki egy hasznos súgóüzenetet.",
+			"description": "Kiír egy hasznos súgóüzenetet.",
 			"name": "segítség",
 			"response": "Parancsok:"
 		},
 		"howto": {
-			"description": "Nyomtasson ki utasításokat a gyakori parancsok használatához.",
+			"description": "Kiír utasításokat a gyakori parancsok használatához.",
 			"name": "hogyankell"
 		},
 		"languages": {
-			"description": "Nyomtassa ki az alaptáram nyelvi statisztikáit.",
+			"description": "Kiírja a forráskódom nyelvi statisztikáit.",
 			"name": "nyelvek"
 		},
 		"limits": {
-			"description": "Jelenítse meg a dalok várólista beküldési korlátait.",
-			"name": "határait"
+			"description": "Kiírja a várólista beküldési korlátait.",
+			"name": "határok"
 		},
 		"nowplaying": {
-			"description": "Mutasd fel az aktuális dalt a sorban (vagy a legjobb tippem).",
+			"description": "Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).",
 			"name": "mitjátszik"
 		},
 		"ping": {
-			"description": "Pingelje a gazdagépemet a késleltetés ellenőrzéséhez.",
+			"description": "Pingeli a szerveremet a válaszidő ellenőrzéséhez.",
 			"name": "ping"
 		},
 		"setprefix": {
-			"description": "Állítsa be az üzenetparancsok által használt előtagot.",
-			"name": "előtagbeállítása",
+			"description": "Beállítja az üzenetparancsok előtt használt előtagot.",
+			"name": "előtagbeállítás",
 			"options": {
 				"prefix": {
 					"description": "Az üzenetparancsok előtt használandó új előtag.",
@@ -44,13 +44,13 @@
 				}
 			},
 			"responses": {
-				"missing-value": "Parancs előtagként értéket vártam",
-				"try-example": "Próbáld ki például a {sample}",
-				"value-header": "Üzenet Parancs Előtagja"
+				"missing-value": "Nem kaptam új előtagot!",
+				"try-example": "Próbálja ki például a {sample} parancsot",
+				"value-header": "Üzenetparancs előtagja"
 			}
 		},
 		"sr": {
-			"description": "Adjon fel egy dalt a sorba.",
+			"description": "Beküld egy dalt a sorba.",
 			"name": "sr",
 			"options": {
 				"url": {
@@ -59,83 +59,83 @@
 				}
 			},
 			"responses": {
-				"finished": "Befejezett.",
-				"not-allowed": "Nem küldhet be dalokat. Fogadd bocsánatkérésem.",
+				"finished": "Siker!",
+				"not-allowed": "Sajnos nem küldhet be dalokat.",
 				"rejections": {
-					"allotment-expended": "Felhasználta mind a(z) {max} kijelölt beküldést.",
-					"cooldown": "Már beküldött egy dalt az elmúlt {duration}. Várnia kell {remaining}, mielőtt újra elküldi.",
+					"allotment-expended": "Felhasználta mind a(z) {max} lehetőségét.",
+					"cooldown": "Már küldött be dalt az elmúlt {duration}-ban/ben. Várnia kell {remaining}-(e)t, mielőtt újra küldhet.",
 					"too-long": "Ez a dal túl hosszú. A határ {limit}, de ez {actual} hosszú.",
 					"too-short": "Ez a dal túl rövid. A határ {limit}, de ez {actual} hosszú."
 				},
 				"this-queue-full-autoclose": "Ez a sor megtelt. Most bezárom.",
-				"query-returned-error": "Ez a lekérdezés hibát adott. Próbáld újra esetleg?",
+				"query-returned-error": "Ez a lekérdezés hibát adott. Próbálja újra esetleg?",
 				"queue-full-autoclose": "A sor megtelt. Most bezárom.",
-				"queue-nearly-full": "A sor majdnem megtelt. Add be a dalt, amíg még lehet!",
-				"song-not-found": "Nem találom azt a dalt.",
-				"submission-accepted": "Beküldés elfogadva!",
-				"try-longer-song": "Próbálj ki egy hosszabb dalt",
-				"try-shorter-song": "Próbálj meg egy rövidebb dalt",
-				"try-supported-platform": "Próbáljon ki egy linket egy támogatott platformról."
+				"queue-nearly-full": "A sor majdnem megtelt. Küldjön dalokat, amíg még lehet!",
+				"song-not-found": "Nem találom ezt a dalt.",
+				"submission-accepted": "Elfogadva!",
+				"try-longer-song": "Próbáljon egy hosszabb dalt.",
+				"try-shorter-song": "Próbáljon egy rövidebb dalt.",
+				"try-supported-platform": "Próbáljon egy linket egy támogatott platformról."
 			}
 		},
 		"stats": {
-			"description": "Szerezze meg személyes sorstatisztikáit.",
+			"description": "Lekéri személyes sorstatisztikáit.",
 			"name": "statisztika"
 		},
 		"t": {
-			"description": "Mutasd meg, hogy itt gépelek",
+			"description": "Megmutatja, hogy itt gépelek.",
 			"name": "t",
 			"responses": {
-				"channel-not-found": "Hiba történt, és nem találtam a csatornát, amelyről hívott. Kérlek próbáld újra",
-				"success-cheeky": "Elkezdtem ide írni, de nem fejezem be :P"
+				"channel-not-found": "Hiba történt, és nem találtam a csatornát, amelyről hívott. Kérem, próbálja újra!",
+				"success-cheeky": "Elkezdtem ide írni valamit, de nem hiszem, hogy be akarom fejezni :P"
 			}
 		},
 		"test": {
-			"description": "Győződjön meg róla, hogy továbbra is tudok beszélni a videoszolgáltatókkal.",
+			"description": "Ellenőrzi, hogy továbbra is tudok beszélni a videószolgáltatókkal.",
 			"name": "teszt",
 			"responses": {
-				"cannot-run-concurrent-invocations": "Várj, valaki éppen most futtatta ezt a parancsot...",
-				"preamble-failure": "Valami elromlott. Ezt nézd meg:",
-				"preamble-success": "Lefuttattam a számokat, és úgy tűnik, jól vagyunk!",
-				"results-header": "Vizsgálati Eredmények",
+				"cannot-run-concurrent-invocations": "Várjon, valaki éppen most futtatta ezt a parancsot...",
+				"preamble-failure": "Valami elromlott. Ez fontos lehet:",
+				"preamble-success": "Osztottam és szoroztam, és úgy tűnik, minden rendben!",
+				"results-header": "Vizsgálat eredményei",
 				"see-on-github": "Tekintse meg a {list} a GitHubon.",
 				"supported-platforms": "támogatott platformok listáját"
 			}
 		},
 		"userinfo": {
-			"description": "Néhány információt visszaad rólad.",
-			"name": "felhasználóiadatok"
+			"description": "Néhány információt kiír önről.",
+			"name": "felhasználóadatok"
 		},
 		"version": {
-			"description": "A bot aktuális kódbázis verziójának megjelenítése.",
-			"name": "változat"
+			"description": "Megjeleníti a bot aktuális verzióját.",
+			"name": "verzió"
 		},
 		"video": {
-			"description": "Válaszolj a videó címével és időtartamával.",
+			"description": "Kiírja a videó címét és időtartamát.",
 			"name": "videó"
 		}
 	},
 	"common": {
 		"count": {
-			"infinity": "Végtelenség",
+			"infinity": "végtelen",
 			"not-a-number": "NaN",
-			"seconds-infinity": "Végtelen másodperc",
+			"seconds-infinity": "végtelen másodperc",
 			"seconds-nan": "NaN másodperc"
 		},
 		"deprecated": "Elavult",
-		"dm-failed-disabled": "Most próbáltam DM-et küldeni neked, de úgy tűnik, a DM-jeid ki vannak kapcsolva.",
-		"no-personal-permission": "Nincs engedélye a parancs futtatására.",
+		"dm-failed-disabled": "Próbáltam privát üzenetet küldeni, de úgy tűnik, azok le vannak tiltva önnél.",
+		"no-personal-permission": "Nincs engedélye a parancs futtatásához.",
 		"not-here": "Itt ezt nem teheti meg.",
 		"queue": {
-			"not-open": "A sor nem nyitott.",
+			"not-open": "A sor nincs nyitva.",
 			"not-set-up": "Nincs sor."
 		},
-		"reply-from-channel": "Válasz a {channel}"
+		"reply-from-channel": "Válasz a {channel}-ról/ről"
 	},
 	"languages": {
 		"de": "Német",
 		"en-GB": "Angol, Egyesült Királyság",
-		"en-US": "Angol, Államok",
+		"en-US": "Angol, Amerikai Egyesült Államok",
 		"es-ES": "Spanyol",
 		"fr": "Francia",
 		"hu": "Magyar",
