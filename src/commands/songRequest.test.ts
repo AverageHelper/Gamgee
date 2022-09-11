@@ -44,7 +44,7 @@ import { sr as songRequest } from "./songRequest.js";
 import { URL } from "node:url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Song request via URL", () => {
 	const urls: [URL, URL, URL, URL, URL, URL, URL, URL, URL, URL] = [

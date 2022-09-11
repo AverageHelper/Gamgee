@@ -22,7 +22,7 @@ import { useTestLogger } from "../../../tests/testUtils/logger.js";
 const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
 const mockReply = jest.fn().mockResolvedValue(undefined);
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Clear queue contents", () => {
 	let context: GuildedCommandContext;

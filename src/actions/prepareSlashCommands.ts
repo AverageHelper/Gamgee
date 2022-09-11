@@ -8,7 +8,7 @@ import { useLogger } from "../logger.js";
 import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 
 const testMode: boolean = false;
-const logger = useLogger("verbose");
+const logger = useLogger();
 
 function pluralOf(value: number | Array<unknown>): "" | "s" {
 	const PLURAL = "s";

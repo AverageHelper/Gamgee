@@ -59,21 +59,16 @@ let hasSetTransportNotices = false;
 /**
  * Sets up and returns the default runtime logger.
  *
- * @param consoleLogLevel The lowest log level which should be printed to the console.
- *
  * @returns The logger, or a new one if no logger has been set up yet.
  */
-export function useLogger(
-	consoleLogLevel: LogLevel = defaultConsoleLogLevel,
-	defaultMeta: unknown = undefined
-): Logger {
+export function useLogger(): Logger {
+	const consoleLogLevel: LogLevel = defaultConsoleLogLevel;
 	let logger = loggers.get(consoleLogLevel);
 
 	if (!logger) {
 		logger = winston.createLogger({
 			level: "silly",
 			format: format.json(),
-			defaultMeta,
 			// defaultMeta: { service: "user-service" },
 			transports: [
 				//

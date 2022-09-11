@@ -24,7 +24,7 @@ import { allCommands as mockCommandDefinitions } from "./commands/index.js";
 import { handleCommand, optionsFromArgs } from "./handleCommand.js";
 import { useTestLogger } from "../tests/testUtils/logger.js";
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Command handler", () => {
 	const botId = "this-user";

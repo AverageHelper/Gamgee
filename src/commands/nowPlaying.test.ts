@@ -25,7 +25,7 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 import type { GuildedCommandContext } from "./Command.js";
 import type { QueueEntry } from "../useQueueStorage.js";
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Now-Playing", () => {
 	const queueChannelId = "queue-channel";
