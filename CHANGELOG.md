@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- A new `LOG_LEVEL` environment variable lets you choose what log level is forwarded to the console.
+
 ### Changed
 - Gamgee now automatically rotates log files daily, retaining only the last 30 days of logs. This should help to keep log bloat down for active instances.
+  - You may wish to delete old plain log files after some time, since these are not rotated.
   - If you use [`pm2`](https://pm2.io/) to run your instance, you might want to look into [`pm2-logrotate`](https://github.com/keymetrics/pm2-logrotate), whose defaults presently match what Gamgee's logs do.
 
 ## [1.8.2] - 2022-09-10

@@ -3,20 +3,21 @@ import "dotenv/config.js";
 import { EnvVariableNotFoundError } from "./EnvVariableNotFoundError.js";
 
 export type EnvKey =
-	| "NODE_ENV"
-	| "DISCORD_TOKEN"
-	| "DATABASE_FOLDER"
+	| "BOT_ADMIN_ROLE_ID"
 	| "BOT_PREFIX"
 	| "BOT_TEST_ID"
-	| "CORDE_TEST_TOKEN"
-	| "CORDE_BOT_ID"
 	| "CHANNEL_ID"
-	| "QUEUE_CHANNEL_ID"
-	| "GUILD_ID"
-	| "QUEUE_ADMIN_ROLE_ID"
-	| "QUEUE_CREATOR_ROLE_ID"
+	| "CORDE_BOT_ID"
+	| "CORDE_TEST_TOKEN"
+	| "DATABASE_FOLDER"
+	| "DISCORD_TOKEN"
 	| "EVENTS_ROLE_ID"
-	| "BOT_ADMIN_ROLE_ID";
+	| "GUILD_ID"
+	| "LOG_LEVEL"
+	| "NODE_ENV"
+	| "QUEUE_ADMIN_ROLE_ID"
+	| "QUEUE_CHANNEL_ID"
+	| "QUEUE_CREATOR_ROLE_ID";
 
 /**
  * Fetches the value of an environment variable key.

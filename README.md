@@ -88,6 +88,12 @@ Create a file called `.env` in the root of this project folder. Paste your token
 # .env
 
 DISCORD_TOKEN=YOUR_TOKEN_GOES_HERE
+# required, token for your Discord bot
+
+LOG_LEVEL={silly | debug | verbose | info | warn | error}
+# optional, the level of logs you should see in the console
+# must be one of [silly, debug, verbose, info, warn, error]
+# defaults to `info` in production mode, `error` in test mode, and `debug` in any other mode
 ```
 
 ### Invite your bot to your server
@@ -141,6 +147,9 @@ If the default database location (the `Gamgee/db/` folder) won't work for your s
 
 # Your own bot token
 DISCORD_TOKEN=YOUR_TOKEN_GOES_HERE
+
+# Your selected log level (optional)
+LOG_LEVEL={silly | debug | verbose | info | warn | error}
 
 # Where the database files should live
 DATABASE_FOLDER=./foo/bar/baz # The database will go in this folder, at baz/db.sqlite
