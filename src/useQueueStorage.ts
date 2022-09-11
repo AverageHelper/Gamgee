@@ -16,6 +16,7 @@ export type UnsentQueueEntry = Omit<
 
 // TODO: Break these into separate files where appropriate
 // TODO: Make clear that these functions do not touch Discord's API, only local storage
+// TODO: Only retain user-provided data for at most 90 days
 
 // ** Queue Config **
 

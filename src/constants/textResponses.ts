@@ -5,13 +5,13 @@
  * These conversation pieces are organized into named `ResponseRepository`
  * instances.
  *
- * A `ResponseRepository` is an array that contains any
- * of the following `Response`-type values:
+ * A `ResponseRepository` is an array that contains values of any
+ * of the following types:
  *
  * 1. A `string` defines a single response.
  *
  * 2. An ["array", "of", "strings"] defines multiple responses, each
- *    sent in order with a noticeable delay between them.
+ *    sent in order with ~1 second of delay between each.
  *
  * 3. A function, which returns a response of type 1 or 2. These may
  *    use contextual information about the interaction, such as the
@@ -19,9 +19,8 @@
  *    Also useful for altering the response randomly each time it's chosen!
  *
  * Note: New responses should make *some* sense in *any* type of server,
- *    and must follow our **CODE_OF_CONDUCT**.
- *
- * See https://github.com/AverageHelper/Gamgee/blob/main/CODE_OF_CONDUCT.md
+ *    and must follow our **CODE_OF_CONDUCT**:
+ *    https://github.com/AverageHelper/Gamgee/blob/main/CODE_OF_CONDUCT.md
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";
@@ -85,7 +84,10 @@ export const phrases: ResponseRepository = [
 	"I like trains",
 
 	// Deltarune
+	"Don't have anythings better to do.",
+	"Ho ho ho, i lost and confused.",
 	"That's a [BIG SHOT] move right there",
+	"You' rerealllyaswellpersonyouknowthat?!",
 
 	// German
 	"Sprechen Sie Deutsch?", // Do you speak German?
@@ -95,7 +97,9 @@ export const phrases: ResponseRepository = [
 	`Can _you_ speak in ${locales.length} different languages? I didn't think so :p`,
 	`Can you speak more than ${locales.length} different languages? Pretty great if you can, I was just wondering ^^`,
 	() =>
-		`I think I speak ${metadataForLocale(randomSupportedLocale()).nickname} just fine, thank you!`,
+		`I think I speak "${
+			metadataForLocale(randomSupportedLocale()).nickname
+		}" just fine, thank you!`,
 	[
 		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
 		"definitely",
@@ -130,6 +134,7 @@ export const phrases: ResponseRepository = [
 	"And that's how Equestria was made!",
 	"Eternal chaos comes with chocolate rain, you guys!",
 	"*Golly*",
+	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands :D",
 	"I think it was Cozy Glow all along.",
 	"I used to wonder what friendship could be.",
 	"I'm not a fan of puppeteers...",
@@ -146,11 +151,15 @@ export const phrases: ResponseRepository = [
 	"*yay*",
 
 	// Popeye
-	"Blow me down!",
-	"I yam what I yam an' tha's all I yam",
+	"Well blow me down! :sailboat:",
+	"I ain't no tailor, but I know what suits me",
+	"I yam what I yam an' that's all what I yam",
 	"I yam disgustipated",
 	"I'm strong to the finich, 'cause I eats me spinach!",
+	"If I'm not me, who am I? And if I'm somebody else, why do I look like me?",
 	"Shiver me timbers!",
+	"That's all I can stands, I can stands no more.",
+	"Where's the entrance to the exit?",
 	"Who's the most remarkable extraordinary fellow?",
 
 	// Star Trek: TNG
@@ -241,7 +250,6 @@ export const phrases: ResponseRepository = [
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
-	"Have you named your shadow?? Mine's called Silhouette Gloom of the Sundown Lands :D",
 	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
@@ -349,7 +357,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 209 of these
+]; // 217 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
@@ -365,7 +373,7 @@ export const questions: ResponseRepository = [
 	"I really don't know what you're on about.",
 	"What is love?",
 	"You called?",
-	"_ _",
+	"_ _", // this produces an empty message
 	"I hear you",
 	"Speak. Your servant hears",
 	"Who dares?",
