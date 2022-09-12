@@ -1,3 +1,4 @@
+import type { DailyRotateFileTransportOptions } from "winston-daily-rotate-file";
 import { getEnv } from "./helpers/environment.js";
 import DailyRotateFile from "winston-daily-rotate-file";
 import winston from "winston";
@@ -29,29 +30,29 @@ const defaultConsoleLogLevel: LogLevel =
 		: "debug");
 
 const logFileFormat = format.combine(format.timestamp(), format.json());
-
-const errorFileTransport = new DailyRotateFile({
-	filename: "error-%DATE%.log", // TODO: Support a user-defined `logs` directory
-	dirname: "./logs",
-	level: "error",
+const dirname = "./logs"; // TODO: Support a user-defined `logs` directory
+const fileTransportOptions: DailyRotateFileTransportOptions = {
+	filename: "%DATE%",
+	dirname,
+	extension: ".log",
 	format: logFileFormat,
 	datePattern: "YYYY-MM-DD-HH",
 	utc: true,
 	frequency: "24h", // rotate daily
 	maxFiles: "30d", // retain 30 days only
 	zippedArchive: true
+};
+
+const errorFileTransport = new DailyRotateFile({
+	...fileTransportOptions,
+	level: "error",
+	filename: "error-%DATE%"
 });
 
 const combinedFileTransport = new DailyRotateFile({
-	filename: "combined-%DATE%.log",
-	dirname: "./logs",
+	...fileTransportOptions,
 	level: "silly",
-	format: logFileFormat,
-	datePattern: "YYYY-MM-DD-HH",
-	utc: true,
-	frequency: "24h", // rotate daily
-	maxFiles: "30d", // retain 30 days only
-	zippedArchive: true
+	filename: "combined-%DATE%"
 });
 
 let hasSetTransportNotices = false;
