@@ -2,10 +2,10 @@ import type Discord from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
 import { allCommands } from "../commands/index.js";
 import { ApplicationCommandType } from "discord.js";
+import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 import { useLogger } from "../logger.js";
-import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 
 const testMode: boolean = false;
 const logger = useLogger();

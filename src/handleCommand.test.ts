@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
+import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
 jest.mock("./helpers/githubMetadata.js");
@@ -81,13 +82,13 @@ describe("Command handler", () => {
 	describe("Options Parser", () => {
 		test("parses empty options from a root command", () => {
 			const options = optionsFromArgs([]); // e.g: /help
-			expect(options).toBeArrayOfSize(0);
+			expectArrayOfLength(options, 0);
 		});
 
 		test("parses one option", () => {
 			const url = "https://youtu.be/9Y8ZGLiqXB8";
 			const options = optionsFromArgs([url]); // e.g: /video <url>
-			expect(options).toBeArrayOfSize(1);
+			expectArrayOfLength(options, 1);
 			expect(options[0]).toStrictEqual({
 				name: url,
 				type: ApplicationCommandOptionType.String,
@@ -100,15 +101,15 @@ describe("Command handler", () => {
 			const subcommand = "get";
 			const key = "cooldown";
 			const options = optionsFromArgs([subcommand, key]); // e.g: /config get <key>
-			expect(options).toBeArrayOfSize(1);
+			expectArrayOfLength(options, 1);
 			expect(options[0]).toStrictEqual({
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
 				options: expect.toBeArrayOfSize(1) as Array<unknown>
 			});
-			expect(options[0]?.options).toBeDefined();
-			expect(options[0]?.options).toStrictEqual([
+			expectDefined(options[0]?.options);
+			expect(options[0].options).toStrictEqual([
 				{
 					name: key,
 					type: ApplicationCommandOptionType.String,
@@ -123,15 +124,15 @@ describe("Command handler", () => {
 			const key = "cooldown";
 			const value = "null";
 			const options = optionsFromArgs([subcommand, key, value]); // e.g: /config set <key> <value>
-			expect(options).toBeArrayOfSize(1);
+			expectArrayOfLength(options, 1);
 			expect(options[0]).toStrictEqual({
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
 				options: expect.toBeArrayOfSize(2) as Array<unknown>
 			});
-			expect(options[0]?.options).toBeDefined();
-			expect(options[0]?.options).toStrictEqual([
+			expectDefined(options[0]?.options);
+			expect(options[0].options).toStrictEqual([
 				{
 					name: key,
 					type: ApplicationCommandOptionType.String,
@@ -162,7 +163,7 @@ describe("Command handler", () => {
 				await handleCommand(mockMessage, logger);
 
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
-				expect(mock).toBeDefined();
+				expectDefined(mock);
 				expect(mock).toHaveBeenCalledOnce();
 
 				// Shouldn't reply privately to the user about the error that doesn't exist
@@ -180,7 +181,7 @@ describe("Command handler", () => {
 				const expectedMin = 1;
 				const expectedMax = 3;
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
-				expect(mock).toBeDefined();
+				expectDefined(mock);
 				expect(mock).not.toHaveBeenCalled();
 
 				// Should reply privately to the user about the error
@@ -201,7 +202,7 @@ describe("Command handler", () => {
 				await handleCommand(mockMessage, logger);
 
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
-				expect(mock).toBeDefined();
+				expectDefined(mock);
 				expect(mock).toHaveBeenCalledOnce();
 
 				// Shouldn't reply privately to the user about the error that doesn't exist
@@ -223,7 +224,7 @@ describe("Command handler", () => {
 
 				const expectedMin = -1;
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
-				expect(mock).toBeDefined();
+				expectDefined(mock);
 				expect(mock).not.toHaveBeenCalled();
 
 				// Should reply privately to the user about the error
@@ -286,7 +287,7 @@ describe("Command handler", () => {
 			await handleCommand(mockMessage, logger);
 
 			const mock = mockCommandDefinitions.get(command.replace("-", ""))?.execute;
-			expect(mock).toBeDefined();
+			expectDefined(mock);
 			expect(mock).toHaveBeenCalledOnce();
 			expect(mock).toHaveBeenCalledWith(
 				expect.toContainEntries([
@@ -337,8 +338,8 @@ describe("Command handler", () => {
 			await handleCommand(mockMessage, logger);
 
 			const mockNowPlaying = mockCommandDefinitions.get("nowplaying");
-			expect(mockNowPlaying).toBeDefined();
-			expect(mockNowPlaying?.execute).toHaveBeenCalledOnce();
+			expectDefined(mockNowPlaying);
+			expect(mockNowPlaying.execute).toHaveBeenCalledOnce();
 		});
 	});
 });

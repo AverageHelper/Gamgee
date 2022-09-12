@@ -1,27 +1,28 @@
 import { addCharactersAround } from "./wrappedText.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 
 describe("Add pre- and postfix", () => {
 	test("adds strikethrough to a normal string", () => {
-		expect(addCharactersAround("test", "~~")).toBe("~~test~~");
+		expectValueEqual(addCharactersAround("test", "~~"), "~~test~~");
 	});
 
 	test("does nothing to stricken text", () => {
-		expect(addCharactersAround("~~test~~", "~~")).toBe("~~test~~");
+		expectValueEqual(addCharactersAround("~~test~~", "~~"), "~~test~~");
 	});
 
 	test("adds strikethrough to left-stricken text", () => {
-		expect(addCharactersAround("~~strike me down", "~~")).toBe("~~~~strike me down~~");
+		expectValueEqual(addCharactersAround("~~strike me down", "~~"), "~~~~strike me down~~");
 	});
 
 	test("adds strikethrough to right-stricken text", () => {
-		expect(addCharactersAround("do it~~", "~~")).toBe("~~do it~~~~");
+		expectValueEqual(addCharactersAround("do it~~", "~~"), "~~do it~~~~");
 	});
 
 	test("does nothing to empty text", () => {
-		expect(addCharactersAround("", "~~")).toBe("");
+		expectValueEqual(addCharactersAround("", "~~"), "");
 	});
 
 	test("prevents a link embed", () => {
-		expect(addCharactersAround("https://example.com", "<", ">")).toBe("<https://example.com>");
+		expectValueEqual(addCharactersAround("https://example.com", "<", ">"), "<https://example.com>");
 	});
 });

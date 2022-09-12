@@ -1,5 +1,6 @@
 import type Discord from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
+import { expectNull } from "../../tests/testUtils/expectations/jest.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
 
 const mockResolveChannel = jest.fn();
@@ -24,19 +25,19 @@ describe("Option Resolver", () => {
 		test("returns null from an empty option", () => {
 			option.value = undefined;
 			const resolved = resolveChannelFromOption(option, guild);
-			expect(resolved).toBeNull();
+			expectNull(resolved);
 		});
 
 		test("returns null from an empty string value", () => {
 			option.value = "";
 			const resolved = resolveChannelFromOption(option, guild);
-			expect(resolved).toBeNull();
+			expectNull(resolved);
 		});
 
 		test("returns null from a malformatted string", () => {
 			option.value = "notachannel";
 			const resolved = resolveChannelFromOption(option, guild);
-			expect(resolved).toBeNull();
+			expectNull(resolved);
 		});
 
 		test("parses a channel ID from a string value", () => {

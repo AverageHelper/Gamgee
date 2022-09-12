@@ -1,3 +1,4 @@
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { getPonyFmTrack } from "./getPonyFmTrack.js";
 import { URL } from "node:url";
 import { VideoError } from "../../errors/VideoError.js";
@@ -25,12 +26,12 @@ describe("Pony.FM track details", () => {
 		"returns correct length for $desc of Pony.fm track",
 		async ({ url }: { desc: string; url: string }) => {
 			const details = await getPonyFmTrack(new URL(url));
-			expect(details).toHaveProperty(
-				"url",
+			expectValueEqual(
+				details.url,
 				"https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine"
 			);
-			expect(details?.duration.seconds).toBeDefined();
-			expect(details?.duration.seconds).toBe(385);
+			expectDefined(details.duration.seconds);
+			expectValueEqual(details.duration.seconds, 385);
 		}
 	);
 });

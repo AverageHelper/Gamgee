@@ -65,7 +65,22 @@
 			},
 			"rules": {
 				"prettier/prettier": "warn",
-				"max-nested-callbacks": "off" // unit tests involve a lot of nested callbacks
+				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
+				"jest/expect-expect": [
+					"warn",
+					{
+						"assertFunctionNames": [
+							"expect",
+							"expectArray",
+							"expectArrayOfLength",
+							"expectDefined",
+							"expectNull",
+							"expectToContain",
+							"expectUndefined",
+							"expectValueEqual"
+						]
+					}
+				]
 			}
 		},
 		{

@@ -1,3 +1,4 @@
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { getYouTubeVideo } from "./getYouTubeVideo.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 import { URL } from "node:url";
@@ -37,9 +38,9 @@ describe("YouTube track details", () => {
 		"returns info for a YouTube link that $desc, $duration seconds long",
 		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
 			const details = await getYouTubeVideo(new URL(url));
-			expect(details).toHaveProperty("url", result);
-			expect(details?.duration.seconds).toBeDefined();
-			expect(details?.duration.seconds).toBe(duration);
+			expectValueEqual(details.url, result);
+			expectDefined(details.duration.seconds);
+			expectValueEqual(details.duration.seconds, duration);
 		}
 	);
 
@@ -47,8 +48,8 @@ describe("YouTube track details", () => {
 		// lofi hip hop radio - beats to relax/study to
 		const url = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
 		const details = await getYouTubeVideo(new URL(url));
-		expect(details).toHaveProperty("url", url);
-		expect(details?.duration.seconds).toBeDefined();
-		expect(details?.duration.seconds).toBe(Number.POSITIVE_INFINITY);
+		expectValueEqual(details.url, url);
+		expectDefined(details.duration.seconds);
+		expectValueEqual(details.duration.seconds, Number.POSITIVE_INFINITY);
 	});
 });

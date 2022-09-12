@@ -1,5 +1,11 @@
 import { getSoundCloudTrack } from "./getSoundCloudTrack.js";
 import { URL } from "node:url";
+import {
+	expectDefined,
+	expectNotNull,
+	expectPositive,
+	expectValueEqual
+} from "../../../tests/testUtils/expectations/jest.js";
 
 describe("SoundCloud track details", () => {
 	const url = "https://soundcloud.com/hwps/no999";
@@ -13,9 +19,9 @@ describe("SoundCloud track details", () => {
 		"returns info for a SoundCloud link that $desc, $duration seconds long",
 		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
 			const details = await getSoundCloudTrack(new URL(url));
-			expect(details).toHaveProperty("url", result);
-			expect(details?.duration.seconds).toBeDefined();
-			expect(details?.duration.seconds).toBe(duration);
+			expectValueEqual(details.url, result);
+			expectDefined(details.duration.seconds);
+			expectValueEqual(details.duration.seconds, duration);
 		},
 		10000
 	);
@@ -30,8 +36,8 @@ describe("SoundCloud track details", () => {
 		"returns info for a link shared from SoundCloud's mobile app: $url ~> $result",
 		async ({ url, result }: { url: string; result: string }) => {
 			const details = await getSoundCloudTrack(new URL(url));
-			expect(details).toHaveProperty("url", result);
-			expect(details?.duration.seconds).toBePositive();
+			expectValueEqual(details.url, result);
+			expectPositive(details.duration.seconds);
 		},
 		10000
 	);
@@ -49,9 +55,9 @@ describe("SoundCloud track details", () => {
 
 			const details = await getVideoDetails(url, null);
 			// URL will be trimmed
-			expect(details).not.toBeNil();
-			expect(details?.duration.seconds).toBeDefined();
-			expect(details?.duration.seconds).toBe(duration);
+			expectNotNull(details);
+			expectDefined(details.duration.seconds);
+			expectValueEqual(details.duration.seconds, duration);
 		},
 		10000
 	);

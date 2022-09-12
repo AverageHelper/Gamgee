@@ -2,6 +2,11 @@ import { benchmark } from "../../../tests/testUtils/benchmark.js";
 import { getBandcampTrack } from "./getBandcampTrack.js";
 import { URL } from "node:url";
 import { VideoError } from "../../errors/VideoError.js";
+import {
+	expectDefined,
+	expectLessThan,
+	expectValueEqual
+} from "../../../tests/testUtils/expectations/jest.js";
 
 describe("Bandcamp track details", () => {
 	test("throws for bandcamp album links", async () => {
@@ -18,9 +23,9 @@ describe("Bandcamp track details", () => {
 		"returns info for Bandcamp track $url, $duration seconds long",
 		async ({ url, duration }: { url: string; duration: number }) => {
 			const details = await getBandcampTrack(new URL(url));
-			expect(details).toHaveProperty("url", url);
-			expect(details?.duration.seconds).toBeDefined();
-			expect(details?.duration.seconds).toBe(duration);
+			expectValueEqual(details.url, url);
+			expectDefined(details.duration.seconds);
+			expectValueEqual(details.duration.seconds, duration);
 		}
 	);
 
@@ -31,11 +36,11 @@ describe("Bandcamp track details", () => {
 		// Sanity: check that this is still the right track
 		const duration = 233;
 		const song = await getBandcampTrack(url);
-		expect(song.duration.seconds).toBe(duration);
+		expectValueEqual(song.duration.seconds, duration);
 
 		// Benchmark the fetch operation
 		const average = await benchmark(() => getBandcampTrack(url));
 
-		expect(average).toBeLessThan(ms);
+		expectLessThan(average, ms);
 	}, 20000);
 });

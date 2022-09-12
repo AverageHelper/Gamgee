@@ -1,5 +1,6 @@
 import type { SupportedLocale } from "../i18n.js";
 import { durationString } from "./durationString.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 
 // We don't test *every* locale we support, just a few edge cases.
 // We mostly want to make sure that `humanize-duration` does
@@ -15,7 +16,7 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' from zero in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 0)).toBe(result);
+			expectValueEqual(durationString(locale, 0), result);
 		}
 	);
 
@@ -28,9 +29,9 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' from small fraction in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 0.01)).toBe(result);
-			expect(durationString(locale, 0.24)).toBe(result);
-			expect(durationString(locale, 0.44)).toBe(result);
+			expectValueEqual(durationString(locale, 0.01), result);
+			expectValueEqual(durationString(locale, 0.24), result);
+			expectValueEqual(durationString(locale, 0.44), result);
 		}
 	);
 
@@ -43,9 +44,9 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' from small fraction in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 0.64)).toBe(result);
-			expect(durationString(locale, 0.84)).toBe(result);
-			expect(durationString(locale, 0.99)).toBe(result);
+			expectValueEqual(durationString(locale, 0.64), result);
+			expectValueEqual(durationString(locale, 0.84), result);
+			expectValueEqual(durationString(locale, 0.99), result);
 		}
 	);
 
@@ -58,7 +59,7 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 3)).toBe(result);
+			expectValueEqual(durationString(locale, 3), result);
 		}
 	);
 
@@ -71,8 +72,8 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 30)).toBe(result);
-			expect(durationString(locale, 30.49)).toBe(result);
+			expectValueEqual(durationString(locale, 30), result);
+			expectValueEqual(durationString(locale, 30.49), result);
 		}
 	);
 
@@ -85,7 +86,7 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 120)).toBe(result);
+			expectValueEqual(durationString(locale, 120), result);
 		}
 	);
 
@@ -98,7 +99,7 @@ describe("Seconds to duration", () => {
 	`(
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
-			expect(durationString(locale, 600)).toBe(result);
+			expectValueEqual(durationString(locale, 600), result);
 		}
 	);
 });
