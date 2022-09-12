@@ -8,11 +8,10 @@ const loggers = new Map<LogLevel, Logger>();
 /**
  * Sets up and returns the default test-time logger.
  *
- * @param level The lowest log level which should be printed to the console.
- *
  * @returns The logger, or a new one if no logger has been set up yet.
  */
-export function useTestLogger(level: LogLevel = "warn"): Logger {
+export function useTestLogger(): Logger {
+	const level: LogLevel = "error";
 	let logger = loggers.get(level);
 
 	if (!logger) {

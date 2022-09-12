@@ -1,4 +1,5 @@
 import type Discord from "discord.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import { logUser } from "./logUser.js";
 
 describe("Log user ID", () => {
@@ -10,6 +11,6 @@ describe("Log user ID", () => {
 	});
 
 	test("shows the user's username", () => {
-		expect(logUser(user)).toBe(`${user.id} (${user.username})`);
+		expectValueEqual(logUser(user), `${user.id} (${user.username})`);
 	});
 });

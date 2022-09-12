@@ -1,27 +1,28 @@
+import { expectNull, expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 
 describe("Channel ID from mention string", () => {
 	test("returns null from an empty string", () => {
-		expect(getChannelIdFromMention("")).toBeNull();
+		expectNull(getChannelIdFromMention(""));
 	});
 
 	test("returns null from badly-formatted string", () => {
-		expect(getChannelIdFromMention("54321")).toBeNull();
+		expectNull(getChannelIdFromMention("54321"));
 	});
 
 	test("returns null from the front half of a mention", () => {
-		expect(getChannelIdFromMention("<#")).toBeNull();
-		expect(getChannelIdFromMention("<#54321")).toBeNull();
+		expectNull(getChannelIdFromMention("<#"));
+		expectNull(getChannelIdFromMention("<#54321"));
 	});
 
 	test("returns null from the back half of a mention", () => {
-		expect(getChannelIdFromMention(">")).toBeNull();
-		expect(getChannelIdFromMention("54321>")).toBeNull();
+		expectNull(getChannelIdFromMention(">"));
+		expectNull(getChannelIdFromMention("54321>"));
 	});
 
 	test("returns the string between valid mention identifiers", () => {
-		expect(getChannelIdFromMention("<#>")).toBeNull();
-		expect(getChannelIdFromMention("<#54321>")).toBe("54321");
-		expect(getChannelIdFromMention("<#percy>")).toBe("percy");
+		expectNull(getChannelIdFromMention("<#>"));
+		expectValueEqual(getChannelIdFromMention("<#54321>"), "54321");
+		expectValueEqual(getChannelIdFromMention("<#percy>"), "percy");
 	});
 });

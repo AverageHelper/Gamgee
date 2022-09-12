@@ -85,7 +85,7 @@ describe("Song request pipeline", () => {
 
 		request = {
 			context,
-			logger: useTestLogger("error"),
+			logger: useTestLogger(),
 			publicPreemptiveResponse: null,
 			queueChannel: {
 				id: QUEUE_CHANNEL_ID,

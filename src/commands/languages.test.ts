@@ -18,7 +18,7 @@ import type { CommandContext } from "./Command.js";
 import { languages } from "./languages.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Language Statistics from GitHub", () => {
 	let context: CommandContext;

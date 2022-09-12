@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expectNull, expectToContain, expectValueEqual } from "./testUtils/expectations/chai";
 import {
 	requireEnv,
 	setIsQueueAdmin,
@@ -36,7 +36,7 @@ describe("Command as admin", function () {
 	describe("unknown input", function () {
 		it("does nothing", async function () {
 			const content = await commandResponseInTestChannel("dunno what this does");
-			expect(content).to.be.null;
+			expectNull(content);
 		});
 	});
 
@@ -59,7 +59,7 @@ describe("Command as admin", function () {
 				for (const key of keys) {
 					it(`allows the tester to set ${key} limits on the queue`, async function () {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
-						expect(content?.toLowerCase()).to.contain(`set to **3`);
+						expectToContain(content?.toLowerCase(), `set to **3`);
 					});
 				}
 			}
@@ -70,7 +70,7 @@ describe("Command as admin", function () {
 
 			it("url request does nothing", async function () {
 				const content = await commandResponseInTestChannel(`sr ${url}`, NO_QUEUE);
-				expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+				expectToContain(content?.toLowerCase(), NO_QUEUE);
 			});
 		});
 
@@ -93,7 +93,7 @@ describe("Command as admin", function () {
 					const response = await waitForMessage(
 						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
 					);
-					expect(response?.content).to.contain("name a text channel");
+					expectToContain(response?.content, "name a text channel");
 				});
 			});
 
@@ -106,7 +106,7 @@ describe("Command as admin", function () {
 				for (const key of keys) {
 					it(`fails to set ${key} limits on the queue`, async function () {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
-						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+						expectToContain(content?.toLowerCase(), NO_QUEUE);
 					});
 				}
 			}
@@ -120,7 +120,7 @@ describe("Command as admin", function () {
 				for (const key of keys) {
 					it(`allows the tester to get the queue's global ${key} limit`, async function () {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key}`);
-						expect(content?.toLowerCase()).to.contain(NO_QUEUE);
+						expectToContain(content?.toLowerCase(), NO_QUEUE);
 					});
 				}
 			}
@@ -131,7 +131,7 @@ describe("Command as admin", function () {
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
 				);
-				expect(response?.content).to.contain("This is a queue now.");
+				expectToContain(response?.content, "This is a queue now.");
 			});
 		});
 	});
@@ -142,17 +142,17 @@ describe("Command as admin", function () {
 
 		it("asks for a song link", async function () {
 			const content = await commandResponseInTestChannel("video", needSongLink);
-			expect(content).to.be.string(needSongLink);
+			expectValueEqual(content, needSongLink);
 		});
 
 		it("returns the title and duration of a song with normal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video ${url}`, info);
-			expect(content).to.be.string(info);
+			expectValueEqual(content, info);
 		});
 
 		it("returns the title and duration of a song with suboptimal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
-			expect(content).to.be.string(info);
+			expectValueEqual(content, info);
 		});
 	});
 });

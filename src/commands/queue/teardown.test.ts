@@ -9,7 +9,7 @@ import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Queue teardown", () => {
 	let context: GuildedCommandContext;

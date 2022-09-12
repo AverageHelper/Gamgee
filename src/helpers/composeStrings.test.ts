@@ -1,4 +1,5 @@
 import type { PartialString } from "./composeStrings.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import {
 	composed,
 	createPartialString,
@@ -16,40 +17,40 @@ describe("String Builder", () => {
 	});
 
 	test("builds an empty string", () => {
-		expect(composed(partial)).toBe("");
+		expectValueEqual(composed(partial), "");
 	});
 
 	test("builds an empty string after empty push", () => {
 		push("", partial);
-		expect(composed(partial)).toBe("");
+		expectValueEqual(composed(partial), "");
 	});
 
 	test("builds a single-character string from init", () => {
 		partial = createPartialString("a");
-		expect(composed(partial)).toBe("a");
+		expectValueEqual(composed(partial), "a");
 	});
 
 	test("builds a single-character string from push", () => {
 		push("a", partial);
-		expect(composed(partial)).toBe("a");
+		expectValueEqual(composed(partial), "a");
 	});
 
 	test("builds the same string after two `result` calls", () => {
 		push("a", partial);
 		composed(partial);
-		expect(composed(partial)).toBe("a");
+		expectValueEqual(composed(partial), "a");
 	});
 
 	test("builds an empty string after clear", () => {
 		push("a", partial);
-		expect(composed(partial)).toBe("a");
+		expectValueEqual(composed(partial), "a");
 		partial = createPartialString();
-		expect(composed(partial)).toBe("");
+		expectValueEqual(composed(partial), "");
 	});
 
 	test("builds a newline from pushNewLine", () => {
 		pushNewLine(partial);
-		expect(composed(partial)).toBe("\n");
+		expectValueEqual(composed(partial), "\n");
 	});
 
 	test("builds a string with spaces", () => {
@@ -57,7 +58,7 @@ describe("String Builder", () => {
 		push("sentence ", partial);
 		push("is ", partial);
 		push("false!", partial);
-		expect(composed(partial)).toBe("This sentence is false!");
+		expectValueEqual(composed(partial), "This sentence is false!");
 	});
 
 	describe("Markdown Formatting", () => {
@@ -65,14 +66,14 @@ describe("String Builder", () => {
 			push("For the ", partial);
 			pushBold("bold", partial);
 			push("!", partial);
-			expect(composed(partial)).toBe("For the **bold**!");
+			expectValueEqual(composed(partial), "For the **bold**!");
 		});
 
 		test("builds a code string", () => {
 			push("Please run the ", partial);
 			pushCode("?help", partial);
 			push(" command.", partial);
-			expect(composed(partial)).toBe("Please run the `?help` command.");
+			expectValueEqual(composed(partial), "Please run the `?help` command.");
 		});
 	});
 });

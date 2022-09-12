@@ -23,7 +23,7 @@ const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Manage the Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";

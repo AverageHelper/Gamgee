@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expectNull, expectToContain } from "./testUtils/expectations/chai";
 import {
 	requireEnv,
 	setIsQueueAdmin,
@@ -32,7 +32,7 @@ describe("Command as pleb", function () {
 	describe("unknown input", function () {
 		it("does nothing", async function () {
 			const content = await commandResponseInTestChannel("dunno what this does");
-			expect(content).to.be.null;
+			expectNull(content);
 		});
 	});
 
@@ -40,7 +40,7 @@ describe("Command as pleb", function () {
 		describe("when the queue is not set up", function () {
 			it("url request does nothing", async function () {
 				const content = await commandResponseInTestChannel(`sr ${url}`, "no queue");
-				expect(content?.toLowerCase()).to.contain("no queue");
+				expectToContain(content?.toLowerCase(), "no queue");
 			});
 		});
 
@@ -75,17 +75,17 @@ describe("Command as pleb", function () {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 
 						// TODO: Check that the request appears in the queue as well
-						expect(content).to.contain(`Submission Accepted!`);
+						expectToContain(content, `Submission Accepted!`);
 					});
 
 					it("`sr` alone provides info on how to use the request command", async function () {
 						const content = await commandResponseInTestChannel("sr", "To submit a song, type");
-						expect(content).to.contain("To submit a song, type");
+						expectToContain(content, "To submit a song, type");
 					});
 				} else {
 					it("url request tells the user the queue is not open", async function () {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "queue is not open");
-						expect(content).to.contain("queue is not open");
+						expectToContain(content, "queue is not open");
 					});
 				}
 			});
@@ -98,17 +98,17 @@ describe("Command as pleb", function () {
 
 		it("asks for a song link", async function () {
 			const content = await commandResponseInTestChannel("video", needSongLink);
-			expect(content).to.contain(needSongLink);
+			expectToContain(content, needSongLink);
 		});
 
 		it("returns the title and duration of a song with normal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video ${url}`, info);
-			expect(content).to.contain(info);
+			expectToContain(content, info);
 		});
 
 		it("returns the title and duration of a song with suboptimal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
-			expect(content).to.contain(info);
+			expectToContain(content, info);
 		});
 	});
 });

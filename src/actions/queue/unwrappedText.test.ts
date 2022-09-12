@@ -1,33 +1,43 @@
+import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { removeCharactersAround } from "./unwrappedText.js";
 
 describe("Remove strikethrough", () => {
 	test("removes strikethrough from normal stricken text", () => {
-		expect(removeCharactersAround("~~test~~", "~~")).toBe("test");
+		expectValueEqual(removeCharactersAround("~~test~~", "~~"), "test");
 	});
 
 	test("removes one strikethrough from over-stricken text", () => {
-		expect(removeCharactersAround("~~~~test~~~~", "~~")).toBe("~~test~~");
-		expect(removeCharactersAround("~~test~~~~", "~~")).toBe("test~~");
-		expect(removeCharactersAround("~~~~test~~", "~~")).toBe("~~test");
+		expectValueEqual(removeCharactersAround("~~~~test~~~~", "~~"), "~~test~~");
+		expectValueEqual(removeCharactersAround("~~test~~~~", "~~"), "test~~");
+		expectValueEqual(removeCharactersAround("~~~~test~~", "~~"), "~~test");
 	});
 
 	test("does nothing to empty text", () => {
-		expect(removeCharactersAround("", "~~")).toBe("");
+		expectValueEqual(removeCharactersAround("", "~~"), "");
 	});
 
 	test("does nothing to unstricken text", () => {
-		expect(removeCharactersAround("not stricken", "~~")).toBe("not stricken");
+		expectValueEqual(removeCharactersAround("not stricken", "~~"), "not stricken");
 	});
 
 	test("does nothing to left-half-stricken text", () => {
-		expect(removeCharactersAround("~~not really stricken", "~~")).toBe("~~not really stricken");
+		expectValueEqual(
+			removeCharactersAround("~~not really stricken", "~~"),
+			"~~not really stricken"
+		);
 	});
 
 	test("does nothing to right-half-stricken text", () => {
-		expect(removeCharactersAround("not really stricken~~", "~~")).toBe("not really stricken~~");
+		expectValueEqual(
+			removeCharactersAround("not really stricken~~", "~~"),
+			"not really stricken~~"
+		);
 	});
 
 	test("allows a link embed", () => {
-		expect(removeCharactersAround("<https://example.com>", "<", ">")).toBe("https://example.com");
+		expectValueEqual(
+			removeCharactersAround("<https://example.com>", "<", ">"),
+			"https://example.com"
+		);
 	});
 });

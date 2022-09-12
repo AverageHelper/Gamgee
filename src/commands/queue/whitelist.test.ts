@@ -19,7 +19,7 @@ import { whitelist } from "./whitelist.js";
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 
-const logger = useTestLogger("error");
+const logger = useTestLogger();
 
 describe("Removing from Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";

@@ -5,15 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- A new `LOG_LEVEL` environment variable lets you choose what log level is forwarded to the console.
+
+### Changed
+- Gamgee now automatically rotates log files daily, retaining only the last 30 days of logs. This should help to keep log bloat down for active instances.
+  - You may wish to delete old plain log files after some time, since these are not rotated.
+  - If you use [`pm2`](https://pm2.io/) to run your instance, you might want to look into [`pm2-logrotate`](https://github.com/keymetrics/pm2-logrotate), whose defaults presently match what Gamgee's logs do.
+- Modularized our test assertions. This may come in handy if ever we need to migrate to a different test runner.
+
 ## [1.8.2] - 2022-09-10
 ### Added
 - Created issue templates!
-- Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md).
+- Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md). Now, the changelog file is the source of truth for versioning Gamgee, and our CI/CD pipeline automatically cuts deployment releases based on that. Much less work for me to do to maintain those!
 
 ### Changed
 - Better Hungarian translations! (Thanks again, [@karcsesz](https://github.com/karcsesz)!)
-- Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is code size and maintenance overhead.
-- Message commands now assert that numbers and strings are correctly formatted. This applies only to `?setprefix` for the moment, which previously would allow an argument longer than 3 characters, whereas the slash command would properly keep the value under 4 characters.
+- Re-did (again) how we parse Bandcamp links. My pseudo-fork of [`url-metadata`](https://www.npmjs.com/package/url-metadata) has been replaced with a combination of [`htmlmetaparser`](https://www.npmjs.com/package/htmlmetaparser) and [`htmlparser2`](https://www.npmjs.com/package/htmlparser2). The speed is virtually identical (as far as I care to benchmark), so users shouldn't notice any difference. The main advantage here is the reduction in code size and maintenance overhead.
+- Message commands now assert that numbers and strings are correctly formatted. This applies only to `?setprefix` for the moment, which previously would allow an argument longer than 3 characters, whereas `/setprefix` would properly keep the value to 3 or fewer characters.
 
 ## [1.8.1] - 2022-08-20
 ### Changed
@@ -342,6 +352,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...HEAD
 [1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...v1.8.0

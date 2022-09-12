@@ -1,4 +1,5 @@
 import type { Range } from "./editMessage.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { positionsOfUriInText, escapeUriInString, stopEscapingUriInString } from "./editMessage.js";
 
 describe("Identifying URIs in strings", () => {
@@ -42,7 +43,7 @@ describe("Suppressing Embeds", () => {
 	`(
 		"suppresses embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
-			expect(escapeUriInString(msg)).toBe(result);
+			expectValueEqual(escapeUriInString(msg), result);
 		}
 	);
 
@@ -60,7 +61,7 @@ describe("Suppressing Embeds", () => {
 	`(
 		"doesn't re-suppress embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
-			expect(escapeUriInString(msg)).toBe(result);
+			expectValueEqual(escapeUriInString(msg), result);
 		}
 	);
 });
@@ -82,7 +83,7 @@ describe("Allowing Embeds", () => {
 	`(
 		"frees embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
-			expect(stopEscapingUriInString(msg)).toBe(result);
+			expectValueEqual(stopEscapingUriInString(msg), result);
 		}
 	);
 
@@ -99,7 +100,7 @@ describe("Allowing Embeds", () => {
 	`(
 		"doesn't re-free embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
-			expect(stopEscapingUriInString(msg)).toBe(result);
+			expectValueEqual(stopEscapingUriInString(msg), result);
 		}
 	);
 });

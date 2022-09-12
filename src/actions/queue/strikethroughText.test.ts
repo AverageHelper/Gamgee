@@ -1,51 +1,52 @@
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 
 describe("Add strikethrough", () => {
 	test("adds strikethrough to a normal string", () => {
-		expect(addStrikethrough("test")).toBe("~~test~~");
+		expectValueEqual(addStrikethrough("test"), "~~test~~");
 	});
 
 	test("does nothing to stricken text", () => {
-		expect(addStrikethrough("~~test~~")).toBe("~~test~~");
+		expectValueEqual(addStrikethrough("~~test~~"), "~~test~~");
 	});
 
 	test("adds strikethrough to left-stricken text", () => {
-		expect(addStrikethrough("~~strike me down")).toBe("~~~~strike me down~~");
+		expectValueEqual(addStrikethrough("~~strike me down"), "~~~~strike me down~~");
 	});
 
 	test("adds strikethrough to right-stricken text", () => {
-		expect(addStrikethrough("do it~~")).toBe("~~do it~~~~");
+		expectValueEqual(addStrikethrough("do it~~"), "~~do it~~~~");
 	});
 
 	test("does nothing to empty text", () => {
-		expect(addStrikethrough("")).toBe("");
+		expectValueEqual(addStrikethrough(""), "");
 	});
 });
 
 describe("Remove strikethrough", () => {
 	test("removes strikethrough from normal stricken text", () => {
-		expect(removeStrikethrough("~~test~~")).toBe("test");
+		expectValueEqual(removeStrikethrough("~~test~~"), "test");
 	});
 
 	test("removes one strikethrough from over-stricken text", () => {
-		expect(removeStrikethrough("~~~~test~~~~")).toBe("~~test~~");
-		expect(removeStrikethrough("~~test~~~~")).toBe("test~~");
-		expect(removeStrikethrough("~~~~test~~")).toBe("~~test");
+		expectValueEqual(removeStrikethrough("~~~~test~~~~"), "~~test~~");
+		expectValueEqual(removeStrikethrough("~~test~~~~"), "test~~");
+		expectValueEqual(removeStrikethrough("~~~~test~~"), "~~test");
 	});
 
 	test("does nothing to empty text", () => {
-		expect(removeStrikethrough("")).toBe("");
+		expectValueEqual(removeStrikethrough(""), "");
 	});
 
 	test("does nothing to unstricken text", () => {
-		expect(removeStrikethrough("not stricken")).toBe("not stricken");
+		expectValueEqual(removeStrikethrough("not stricken"), "not stricken");
 	});
 
 	test("does nothing to left-half-stricken text", () => {
-		expect(removeStrikethrough("~~not really stricken")).toBe("~~not really stricken");
+		expectValueEqual(removeStrikethrough("~~not really stricken"), "~~not really stricken");
 	});
 
 	test("does nothing to right-half-stricken text", () => {
-		expect(removeStrikethrough("not really stricken~~")).toBe("not really stricken~~");
+		expectValueEqual(removeStrikethrough("not really stricken~~"), "not really stricken~~");
 	});
 });
