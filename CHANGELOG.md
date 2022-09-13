@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - If you use [`pm2`](https://pm2.io/) to run your instance, you might want to look into [`pm2-logrotate`](https://github.com/keymetrics/pm2-logrotate), whose defaults presently match what Gamgee's logs do.
 - Modularized our test assertions. This may come in handy if ever we need to migrate to a different test runner.
 
+### Fixed
+- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considered VODs ("live content" with a set duration) the same as normal tracks.
+
 ## [1.8.2] - 2022-09-10
 ### Added
 - Created issue templates!

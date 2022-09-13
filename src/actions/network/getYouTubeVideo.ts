@@ -41,12 +41,13 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 		throw new UnavailableError(url);
 	}
 
-	let seconds: number;
-	if (info.videoDetails.isLiveContent) {
-		seconds = Number.POSITIVE_INFINITY;
-	} else {
-		seconds = Number.parseInt(info.videoDetails.lengthSeconds, 10);
-	}
+	const rawSeconds = Number.parseInt(info.videoDetails.lengthSeconds, 10);
+
+	// Active streams have zero length. VODs do not.
+	const seconds: number =
+		info.videoDetails.isLiveContent && rawSeconds <= 0
+			? Number.POSITIVE_INFINITY //
+			: rawSeconds;
 
 	return {
 		url: info.videoDetails.video_url,
