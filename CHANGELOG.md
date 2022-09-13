@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.8.3] - 2022-09-12
 ### Added
 - A new `LOG_LEVEL` environment variable lets you choose what log level is forwarded to the console.
 
@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - You may wish to delete old plain log files after some time, since these are not rotated.
   - If you use [`pm2`](https://pm2.io/) to run your instance, you might want to look into [`pm2-logrotate`](https://github.com/keymetrics/pm2-logrotate), whose defaults presently match what Gamgee's logs do.
 - Modularized our test assertions. This may come in handy if ever we need to migrate to a different test runner.
+
+### Fixed
+- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considered VODs ("live content" with a set duration) the same as normal tracks.
 
 ## [1.8.2] - 2022-09-10
 ### Added
@@ -352,7 +355,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...HEAD
+[1.8.3]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...v1.8.3
 [1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/AverageHelper/Gamgee/compare/v1.7.1...v1.8.0
