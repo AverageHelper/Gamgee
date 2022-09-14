@@ -24,7 +24,7 @@
 		"test:src": "./node_modules/.bin/jest",
 		"test:src:watch": "npm run test:src -- --watch --coverage=false",
 		"test:e2e": "./node_modules/.bin/concurrently -kn bot,mocha -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
-		"start:test": "DATABASE_FOLDER=./tests/db-test NODE_ENV=test node .",
+		"start:test": "DATABASE_URL=file:./tests/db-test/db.sqlite NODE_ENV=test node .",
 		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha"
 	},
 	"main": "./dist/main.js",

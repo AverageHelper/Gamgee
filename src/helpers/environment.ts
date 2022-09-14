@@ -9,7 +9,7 @@ export type EnvKey =
 	| "CHANNEL_ID"
 	| "CORDE_BOT_ID"
 	| "CORDE_TEST_TOKEN"
-	| "DATABASE_FOLDER"
+	| "DATABASE_URL"
 	| "DISCORD_TOKEN"
 	| "EVENTS_ROLE_ID"
 	| "GUILD_ID"

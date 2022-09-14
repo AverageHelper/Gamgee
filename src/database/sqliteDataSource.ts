@@ -1,8 +1,7 @@
 import { DatabaseLogger } from "./DatabaseLogger.js";
 import { DataSource } from "typeorm";
-import { DEFAULT_DATABASE_FOLDER } from "../constants/database.js";
-import { getEnv } from "../helpers/environment.js";
 import { join as joinPath, normalize as normalizePath } from "node:path";
+import { requireEnv } from "../helpers/environment.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { useLogger } from "../logger.js";
 import * as entities from "./model/index.js";
@@ -10,8 +9,7 @@ import * as migrations from "./migrations/index.js";
 
 const logger = useLogger();
 
-// TODO: Require DATABASE_FOLDER to be specified, so we can bundle the executable together
-const dbFolder = normalizePath(getEnv("DATABASE_FOLDER") ?? DEFAULT_DATABASE_FOLDER);
+const dbFolder = normalizePath(requireEnv("DATABASE_URL"));
 const dbFile = joinPath(dbFolder, "db.sqlite");
 
 logger.debug(`Database: '${dbFolder}'`);
