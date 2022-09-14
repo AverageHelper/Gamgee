@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modularized our test assertions. This may come in handy if ever we need to migrate to a different test runner.
 
 ### Fixed
-- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considered VODs ("live content" with a set duration) the same as normal tracks.
+- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considers VODs (or any "live content" with a set duration) the same as normal tracks.
 
 ## [1.8.2] - 2022-09-10
 ### Added

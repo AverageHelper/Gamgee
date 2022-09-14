@@ -1,6 +1,8 @@
 import type { EntityTarget, EntityManager, Repository, ObjectLiteral } from "typeorm";
 import { dataSource, initialize } from "./sqliteDataSource.js";
 
+// TODO: Use something like Sequelize instead
+
 export async function useRepository<Entity extends ObjectLiteral, T = undefined>(
 	targetOrRepository: EntityTarget<Entity> | Repository<Entity>,
 	cb: (repository: Repository<Entity>) => T | Promise<T>
