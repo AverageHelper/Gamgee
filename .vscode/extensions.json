@@ -4,6 +4,7 @@
 		"dbaeumer.vscode-eslint",
 		"mikestead.dotenv",
 		"Lokalise.i18n-ally",
-		"average.meta-comments"
+		"average.meta-comments",
+		"Prisma.prisma"
 	]
 }
