@@ -1,16 +1,20 @@
 import type Discord from "discord.js";
-import type { EntityManager } from "typeorm";
 import type { Snowflake } from "discord.js";
-import { Channel, Guild, QueueConfig, QueueEntry, User } from "./database/model/index.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
-import { useRepository, useTransaction } from "./database/useDatabase.js";
 import { useLogger } from "./logger.js";
+import { useRepository } from "./database/useDatabase.js";
+import type {
+	QueueConfig as _QueueConfig,
+	QueueConfigToBlacklistedUsers,
+	QueueEntry as _QueueEntry,
+	User
+} from "@prisma/client";
 
 const logger = useLogger();
 
-export type { QueueEntry };
+export type QueueEntry = _QueueEntry & { haveCalledNowPlaying: Array<User> };
 export type UnsentQueueEntry = Omit<
-	QueueEntry,
+	_QueueEntry,
 	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
 
@@ -20,35 +24,38 @@ export type UnsentQueueEntry = Omit<
 
 // ** Queue Config **
 
+type QueueConfig = _QueueConfig & {
+	blacklistedUsers: Array<User>;
+};
+
 /**
  * Retrieves the queue's configuration settings.
  *
  * @param queueChannel The channel that identifies the request queue.
- * @param transaction A database transaction. If not provided, a new one will be created to get the data.
  *
- * @returns a promise that resolves with the current {@link QueueConfig}
+ * @returns a promise that resolves with the queue config for the channel
  * or a default one if none has been set yet.
  */
-export async function getQueueConfig(
-	queueChannel: Discord.TextChannel,
-	transaction?: EntityManager
-): Promise<QueueConfig> {
-	const repo = transaction?.getRepository(QueueConfig) ?? QueueConfig;
-	const channelId = queueChannel.id;
-	const defaultConfig = (): QueueConfig =>
-		new QueueConfig(channelId, {
-			entryDurationSeconds: null,
-			entryDurationMinSeconds: null,
-			queueDurationSeconds: null,
-			cooldownSeconds: null,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
-		});
-
-	return await useRepository(repo, async repo => {
-		const config = await repo.findOneBy({ channelId });
-		return config ?? defaultConfig();
-	});
+export async function getQueueConfig(queueChannel: Discord.TextChannel): Promise<QueueConfig> {
+	const extantConfig = await useRepository("queueConfig", queueConfigs =>
+		queueConfigs.findUnique({
+			where: { channelId: queueChannel.id },
+			include: {
+				blacklistedUsers: {
+					include: { user: true }
+				}
+			}
+		})
+	);
+	return {
+		channelId: queueChannel.id,
+		entryDurationSeconds: extantConfig?.entryDurationSeconds ?? null,
+		entryDurationMinSeconds: extantConfig?.entryDurationMinSeconds ?? null,
+		queueDurationSeconds: extantConfig?.queueDurationSeconds ?? null,
+		cooldownSeconds: extantConfig?.cooldownSeconds ?? null,
+		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null,
+		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? []
+	};
 }
 
 /**
@@ -61,61 +68,41 @@ export async function updateQueueConfig(
 	config: Partial<QueueConfig>,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await useTransaction(async transaction => {
-		const oldConfig = await getQueueConfig(queueChannel, transaction);
+	if (Object.keys(config).length === 0) return; // nothing to store
 
-		let entryDurationSeconds: number | null;
-		if (config.entryDurationSeconds === undefined) {
-			entryDurationSeconds = oldConfig.entryDurationSeconds;
-		} else {
-			entryDurationSeconds = config.entryDurationSeconds;
-		}
+	// Compose updates
+	const update: Partial<_QueueConfig> & {
+		blacklistedUsers?: {
+			set: Array<{ queueConfigsChannelId_userId: QueueConfigToBlacklistedUsers }>;
+		};
+	} = {
+		entryDurationSeconds: config.entryDurationSeconds,
+		entryDurationMinSeconds: config.entryDurationMinSeconds,
+		queueDurationSeconds: config.queueDurationSeconds,
+		cooldownSeconds: config.cooldownSeconds,
+		submissionMaxQuantity: config.submissionMaxQuantity
+	};
 
-		let entryDurationMinSeconds: number | null;
-		if (config.entryDurationMinSeconds === undefined) {
-			entryDurationMinSeconds = oldConfig.entryDurationMinSeconds;
-		} else {
-			entryDurationMinSeconds = config.entryDurationMinSeconds;
-		}
+	if (config.blacklistedUsers !== undefined) {
+		update.blacklistedUsers = {
+			set: config.blacklistedUsers.map(user => ({
+				queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId: user.id }
+			}))
+		};
+	}
 
-		let queueDurationSeconds: number | null;
-		if (config.queueDurationSeconds === undefined) {
-			queueDurationSeconds = oldConfig.queueDurationSeconds ?? null;
-		} else {
-			queueDurationSeconds = config.queueDurationSeconds;
-		}
+	// Update or create the config
+	await useRepository("queueConfig", configs =>
+		configs.upsert({
+			where: { channelId: queueChannel.id },
+			update,
 
-		let cooldownSeconds: number | null;
-		if (config.cooldownSeconds === undefined) {
-			cooldownSeconds = oldConfig.cooldownSeconds;
-		} else {
-			cooldownSeconds = config.cooldownSeconds;
-		}
-
-		let submissionMaxQuantity: number | null;
-		if (config.submissionMaxQuantity === undefined) {
-			submissionMaxQuantity = oldConfig.submissionMaxQuantity;
-		} else {
-			submissionMaxQuantity = config.submissionMaxQuantity;
-		}
-
-		let blacklistedUsers: Array<User>;
-		if (config.blacklistedUsers === undefined) {
-			blacklistedUsers = oldConfig.blacklistedUsers ?? [];
-		} else {
-			blacklistedUsers = config.blacklistedUsers;
-		}
-
-		const newConfig = new QueueConfig(queueChannel.id, {
-			entryDurationSeconds,
-			entryDurationMinSeconds,
-			queueDurationSeconds,
-			cooldownSeconds,
-			submissionMaxQuantity,
-			blacklistedUsers
-		});
-		await transaction.save(newConfig);
-	});
+			create: {
+				channelId: queueChannel.id,
+				...update
+			}
+		})
+	);
 }
 
 // ** Write Song Entries **
@@ -129,42 +116,81 @@ export async function updateQueueConfig(
  * @returns a promise that resolves with the new queue entry
  */
 export async function createEntry(
-	entry: Omit<QueueEntry, "channelId" | "guildId">,
+	entry: Omit<_QueueEntry, "channelId" | "guildId">,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry> {
-	return await useTransaction(async transaction => {
-		const guilds = transaction.getRepository(Guild);
-		const queueConfigs = transaction.getRepository(QueueConfig);
+	// FIXME: These could be done all in one go if we used table relations properly
 
-		// Make sure the guild and channels are in there
-		const guild =
-			(await guilds.findOneBy({ id: queueChannel.guild.id })) ??
-			new Guild(queueChannel.guild.id, false, queueChannel.id, DEFAULT_MESSAGE_COMMAND_PREFIX);
-		await transaction.save(guild);
+	// Make sure the guild config is in there
+	await useRepository("guild", guilds =>
+		guilds.upsert({
+			where: { id: queueChannel.guildId },
+			update: {},
 
-		const channel = new Channel(queueChannel.id, queueChannel.guild.id);
-		await transaction.save(channel);
+			create: {
+				currentQueue: queueChannel.id,
+				id: queueChannel.guildId,
+				isQueueOpen: false,
+				messageCommandPrefix: DEFAULT_MESSAGE_COMMAND_PREFIX
+			}
+		})
+	);
 
-		// Make sure we have at least the default config
-		const defaultConfig = (): QueueConfig =>
-			new QueueConfig(queueChannel.id, {
+	// Make sure the channel is in there
+	await useRepository("channel", channels =>
+		channels.upsert({
+			where: { id: queueChannel.id },
+			update: {},
+
+			create: {
+				guildId: queueChannel.guildId,
+				id: queueChannel.id
+			}
+		})
+	);
+
+	// Make sure we have at least the default queue config
+	await useRepository("queueConfig", queueConfigs =>
+		queueConfigs.upsert({
+			where: { channelId: queueChannel.id },
+			update: {},
+
+			create: {
+				channelId: queueChannel.id,
 				entryDurationSeconds: null,
-				entryDurationMinSeconds: null,
-				queueDurationSeconds: null,
 				cooldownSeconds: null,
 				submissionMaxQuantity: null,
-				blacklistedUsers: []
-			});
-		const channelId = queueChannel.id;
-		const config = (await queueConfigs.findOneBy({ channelId })) ?? defaultConfig();
+				queueDurationSeconds: null,
+				entryDurationMinSeconds: null,
+				blacklistedUsers: undefined
+			}
+		})
+	);
 
-		await transaction.save(config);
+	const newEntry = {
+		channelId: queueChannel.id,
+		guildId: queueChannel.guildId,
+		isDone: entry.isDone,
+		queueMessageId: entry.queueMessageId,
+		seconds: entry.seconds,
+		senderId: entry.senderId,
+		sentAt: entry.sentAt,
+		url: entry.url
+	};
 
-		// Add the entry
-		const queueEntries = transaction.getRepository(QueueEntry);
-		const queueEntry = new QueueEntry(queueChannel.id, queueChannel.guild.id, entry);
-		return await queueEntries.save(queueEntry);
-	});
+	// Add the entry, or update the one we have
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.upsert({
+			where: {
+				queueMessageId: entry.queueMessageId
+			},
+			update: newEntry,
+
+			create: newEntry,
+
+			include: { haveCalledNowPlaying: true }
+		})
+	);
 }
 
 /**
@@ -177,11 +203,9 @@ export async function removeEntryFromMessage(
 	queueMessageId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await useRepository(QueueEntry, repo =>
-		repo.delete({
-			channelId: queueChannel.id,
-			guildId: queueChannel.guild.id,
-			queueMessageId
+	await useRepository("queueEntry", queueEntries =>
+		queueEntries.delete({
+			where: { queueMessageId }
 		})
 	);
 }
@@ -201,14 +225,12 @@ export async function fetchEntryFromMessage(
 	queueMessageId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry | null> {
-	return await useRepository(QueueEntry, async repo => {
-		const doc = await repo.findOneBy({
-			channelId: queueChannel.id,
-			guildId: queueChannel.guild.id,
-			queueMessageId
-		});
-		return doc ?? null;
-	});
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.findUnique({
+			where: { queueMessageId },
+			include: { haveCalledNowPlaying: true }
+		})
+	);
 }
 
 /**
@@ -221,13 +243,14 @@ export async function fetchEntryFromMessage(
 export async function fetchAllEntries(
 	queueChannel: Discord.TextChannel
 ): Promise<Array<QueueEntry>> {
-	return await useRepository(QueueEntry, repo =>
-		repo.find({
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.findMany({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id
 			},
-			order: { sentAt: "ASC" }
+			orderBy: { sentAt: "asc" },
+			include: { haveCalledNowPlaying: true }
 		})
 	);
 }
@@ -239,11 +262,11 @@ export async function fetchAllEntries(
  * @returns a promise that resolves with the number of entries in the queue.
  */
 export async function countAllEntries(queueChannel: Discord.TextChannel): Promise<number> {
-	return await useRepository(QueueEntry, repo =>
-		repo.count({
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.count({
 			where: {
 				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id
+				guildId: queueChannel.guildId
 			}
 		})
 	);
@@ -261,14 +284,15 @@ export async function fetchAllEntriesFrom(
 	senderId: string,
 	queueChannel: Discord.TextChannel
 ): Promise<Array<QueueEntry>> {
-	return await useRepository(QueueEntry, repo =>
-		repo.find({
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.findMany({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
 				senderId
 			},
-			order: { sentAt: "ASC" }
+			orderBy: { sentAt: "asc" },
+			include: { haveCalledNowPlaying: true }
 		})
 	);
 }
@@ -285,17 +309,17 @@ export async function fetchLatestEntryFrom(
 	senderId: string,
 	queueChannel: Discord.TextChannel
 ): Promise<QueueEntry | null> {
-	const entry = await useRepository(QueueEntry, repo =>
-		repo.findOne({
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.findFirst({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
 				senderId
 			},
-			order: { sentAt: "DESC" }
+			orderBy: { sentAt: "desc" },
+			include: { haveCalledNowPlaying: true }
 		})
 	);
-	return entry ?? null;
 }
 
 /**
@@ -311,8 +335,8 @@ export async function countAllEntriesFrom(
 	senderId: string,
 	queueChannel: Discord.TextChannel
 ): Promise<number> {
-	return await useRepository(QueueEntry, repo =>
-		repo.count({
+	return await useRepository("queueEntry", queueEntries =>
+		queueEntries.count({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
@@ -351,15 +375,11 @@ export async function markEntryDone(
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
 	logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
-	await useRepository(QueueEntry, repo =>
-		repo.update(
-			{
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			},
-			{ isDone }
-		)
+	await useRepository("queueEntry", queueEntries =>
+		queueEntries.update({
+			where: { queueMessageId },
+			data: { isDone }
+		})
 	);
 }
 
@@ -368,10 +388,12 @@ export async function markEntryDone(
  * @param queueChannel The channel that identifies the request queue.
  */
 export async function clearEntries(queueChannel: Discord.TextChannel): Promise<void> {
-	await useRepository(QueueEntry, repo =>
-		repo.delete({
-			channelId: queueChannel.id,
-			guildId: queueChannel.guild.id
+	await useRepository("queueEntry", queueEntries =>
+		queueEntries.deleteMany({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id
+			}
 		})
 	);
 }
@@ -391,17 +413,16 @@ export async function getLikeCount(
 	queueMessageId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<number> {
-	logger.debug(queueChannel.id);
-	logger.debug(queueChannel.guild.id);
-	logger.debug(queueMessageId);
-	const entry = await useRepository(QueueEntry, repo =>
-		repo.findOneBy({
-			channelId: queueChannel.id,
-			guildId: queueChannel.guild.id,
-			queueMessageId
+	const entry = await useRepository("queueEntry", queueEntries =>
+		queueEntries.findFirst({
+			where: {
+				channelId: queueChannel.id,
+				guildId: queueChannel.guild.id,
+				queueMessageId
+			},
+			select: { haveCalledNowPlaying: true }
 		})
 	);
-	logger.debug(entry);
 	return entry?.haveCalledNowPlaying.length ?? Number.NaN;
 }
 
@@ -420,35 +441,39 @@ export async function addToHaveCalledNowPlaying(
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
 	logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
-	const entry = await useRepository(QueueEntry, repo =>
-		repo.findOneBy({
-			channelId: queueChannel.id,
-			guildId: queueChannel.guild.id,
-			queueMessageId
-		})
-	);
-	if (!entry) {
-		logger.debug(`Could not find ${queueMessageId} in the queue message database!`);
-		return;
-	}
-	if (userId === entry.senderId) {
-		logger.debug(`User calling is this request's sender, skipping`);
-		return;
-	}
-	if (entry?.haveCalledNowPlaying.includes(userId)) {
-		logger.debug(`User in haveCalledNowPlaying already, skipping...`);
-		return;
-	}
-	entry.haveCalledNowPlaying.push(userId);
-	await useRepository(QueueEntry, repo =>
-		repo.update(
-			{
+	const entry = await useRepository("queueEntry", queueEntries =>
+		queueEntries.findFirst({
+			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
 				queueMessageId
 			},
-			{ haveCalledNowPlaying: entry.haveCalledNowPlaying }
-		)
+			select: { senderId: true, haveCalledNowPlaying: true }
+		})
+	);
+	if (!entry) {
+		logger.debug(`Could not find entry '${queueMessageId}' in the database!`);
+		return;
+	}
+	if (userId === entry.senderId) {
+		logger.debug("User calling is this request's sender, skipping");
+		return;
+	}
+	if (entry?.haveCalledNowPlaying.map(u => u.id).includes(userId)) {
+		logger.debug("User in haveCalledNowPlaying already, skipping...");
+		return;
+	}
+	await useRepository("queueEntry", queueEntries =>
+		queueEntries.update({
+			where: { queueMessageId },
+			data: {
+				haveCalledNowPlaying: {
+					connect: {
+						id: userId
+					}
+				}
+			}
+		})
 	);
 	logger.debug("User added to haveCalledNowPlaying");
 }
@@ -465,27 +490,36 @@ export async function blacklistUser(
 	userId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await useTransaction(async transaction => {
-		const queue = await getQueueConfig(queueChannel, transaction);
-		queue.blacklistedUsers ??= [];
-
-		// The user is already blacklisted
-		if (queue.blacklistedUsers.some(user => user.id === userId)) return;
-		const users = transaction.getRepository(User);
-
-		// Add the user to the blacklist
-		let newUser = await users.findOneBy({ id: userId });
-
-		if (!newUser) {
-			newUser = new User(userId);
-			users.create(newUser);
+	const blacklistedUsers = {
+		connectOrCreate: {
+			where: {
+				queueConfigsChannelId_userId: {
+					queueConfigsChannelId: queueChannel.id,
+					userId
+				}
+			},
+			create: { userId } // the User to create if none were found to match the above reference
 		}
-		if (!queue.blacklistedUsers.some(user => user.id === userId)) {
-			queue.blacklistedUsers.push(newUser);
-		}
+	};
 
-		await transaction.save(queue);
-	});
+	await useRepository("queueConfig", queueConfigs =>
+		queueConfigs.upsert({
+			// If a config is found, update it:
+			where: { channelId: queueChannel.id },
+			update: { blacklistedUsers },
+
+			// If the queue config isn't found, create it:
+			create: {
+				channelId: queueChannel.id,
+				entryDurationSeconds: null,
+				entryDurationMinSeconds: null,
+				queueDurationSeconds: null,
+				cooldownSeconds: null,
+				submissionMaxQuantity: null,
+				blacklistedUsers
+			}
+		})
+	);
 }
 
 /**
@@ -498,11 +532,19 @@ export async function whitelistUser(
 	userId: Snowflake,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await useTransaction(async transaction => {
-		const queue = await getQueueConfig(queueChannel, transaction);
-
-		queue.blacklistedUsers = queue.blacklistedUsers?.filter(user => user.id !== userId);
-		// TODO: Make sure this actually saves. (We used to call `save` on the repo iteself)
-		await transaction.save(queue);
-	});
+	await useRepository("queueConfig", queueConfigs =>
+		queueConfigs.update({
+			where: { channelId: queueChannel.id },
+			data: {
+				blacklistedUsers: {
+					disconnect: {
+						queueConfigsChannelId_userId: {
+							queueConfigsChannelId: queueChannel.id,
+							userId
+						}
+					}
+				}
+			}
+		})
+	);
 }

@@ -44,7 +44,7 @@ const mockChannelSend = jest.fn() as jest.Mock<Promise<unknown>, [string]>;
 // ** Import the unit-under-test
 
 import type { CommandContext } from "../../commands/CommandContext.js";
-import type { QueueConfig, QueueEntry } from "../../database/model/index.js";
+import type { QueueConfig, QueueEntry } from "@prisma/client";
 import type { SongRequest } from "./processSongRequest.js";
 import { processSongRequest } from "./processSongRequest.js";
 import { URL } from "node:url";
@@ -63,7 +63,6 @@ describe("Song request pipeline", () => {
 		const QUEUE_CHANNEL_ID = "queue-channel-1234";
 
 		config = {
-			blacklistedUsers: [],
 			channelId: QUEUE_CHANNEL_ID,
 			cooldownSeconds: null,
 			entryDurationMinSeconds: null,

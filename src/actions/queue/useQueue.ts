@@ -122,11 +122,12 @@ export async function pushEntryToQueue(
 	try {
 		entry = await createEntry(
 			{
-				...newEntry,
+				url: newEntry.url,
+				seconds: newEntry.seconds,
+				senderId: newEntry.senderId,
 				sentAt: new Date(),
 				queueMessageId: queueMessage.id,
-				isDone: false,
-				haveCalledNowPlaying: []
+				isDone: false
 			},
 			queueChannel
 		);

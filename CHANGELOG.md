@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- BREAKING: Replaced the `DATABASE_FOLDER` environment variable with `DATABASE_URL`.
+- BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
+
+### Removed
+- BREAKING: Removed migrations from old v1.x.x versions. You should run Gamgee v1.8.3 at least once if you're coming from an older Gamgee version and want to keep your database.
 
 ## [1.8.3] - 2022-09-12
 ### Added
