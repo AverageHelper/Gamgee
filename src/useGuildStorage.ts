@@ -3,6 +3,7 @@ import type { Role } from "@prisma/client";
 import type { Snowflake } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/index.js";
 import { useRepository } from "./database/useDatabase.js";
 
 /**
@@ -131,13 +132,22 @@ export async function setQueueChannel(
 /** Retrieves the guild's message command prefix. */
 export async function getCommandPrefix(guild: Discord.Guild | null | undefined): Promise<string> {
 	if (!guild || !guild.id) return DEFAULT_MESSAGE_COMMAND_PREFIX;
-	const guildInfo = await useRepository("guild", guilds =>
-		guilds.findUnique({
-			where: { id: guild.id },
-			select: { messageCommandPrefix: true }
-		})
-	);
-	return guildInfo?.messageCommandPrefix ?? DEFAULT_MESSAGE_COMMAND_PREFIX;
+	try {
+		const guildInfo = await useRepository("guild", guilds =>
+			guilds.findUnique({
+				where: { id: guild.id },
+				select: { messageCommandPrefix: true }
+			})
+		);
+		return guildInfo?.messageCommandPrefix ?? DEFAULT_MESSAGE_COMMAND_PREFIX;
+	} catch (error) {
+		if (error instanceof PrismaClientKnownRequestError && error.code === "P2021") {
+			// See https://www.prisma.io/docs/reference/api-reference/error-reference#p2021
+			// Table doesn't exist in the database (yet), so return the default:
+			return DEFAULT_MESSAGE_COMMAND_PREFIX;
+		}
+		throw error;
+	}
 }
 
 /** Sets the guild's message command prefix. */
