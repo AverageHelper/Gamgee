@@ -1,12 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import { requireEnv } from "../helpers/environment.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 
-const dbFolder = requireEnv("DATABASE_URL");
-logger.debug(`Database URL: '${dbFolder}'`);
+const dbFolder = new URL(requireEnv("DATABASE_URL"));
+if (dbFolder.protocol !== "file:")
+	throw new TypeError(`Expected a 'file:' URL for environment variable 'DATABASE_URL'.`);
+
+const path = dbFolder.pathname;
+logger.debug(`Database URL: '${path}'`);
 
 export const dataSource = new PrismaClient();
 
