@@ -23,7 +23,7 @@ export type UnsentQueueEntry = Omit<
 
 // ** Queue Config **
 
-type QueueConfig = _QueueConfig & {
+export type QueueConfig = _QueueConfig & {
 	blacklistedUsers: Array<User>;
 };
 

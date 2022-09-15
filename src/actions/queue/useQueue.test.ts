@@ -104,7 +104,7 @@ describe("Request Queue", () => {
 		await expect(deleteEntryFromMessage(message)).resolves.toBe(entry);
 
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledOnce();
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
+		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -131,8 +131,7 @@ describe("Request Queue", () => {
 				...request,
 				isDone: false,
 				sentAt: expect.toBeValidDate() as Date,
-				queueMessageId: "new-message",
-				haveCalledNowPlaying: [] as Array<Discord.Snowflake>
+				queueMessageId: "new-message"
 			},
 			queueChannel
 		);

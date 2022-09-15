@@ -130,7 +130,7 @@ export async function setQueueChannel(
 
 /** Retrieves the guild's message command prefix. */
 export async function getCommandPrefix(guild: Discord.Guild | null | undefined): Promise<string> {
-	if (!guild) return DEFAULT_MESSAGE_COMMAND_PREFIX;
+	if (!guild || !guild.id) return DEFAULT_MESSAGE_COMMAND_PREFIX;
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },

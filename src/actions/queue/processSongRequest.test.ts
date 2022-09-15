@@ -30,7 +30,7 @@ import {
 	fetchLatestEntryFrom,
 	getQueueConfig
 } from "../../useQueueStorage.js";
-import type { UnsentQueueEntry } from "../../useQueueStorage.js";
+import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 const mockCountAllEntriesFrom = countAllEntriesFrom as jest.Mock<Promise<number>>;
 const mockFetchLatestEntryFrom = fetchLatestEntryFrom as jest.Mock<Promise<QueueEntry | null>>;
 const mockGetQueueConfig = getQueueConfig as jest.Mock<Promise<QueueConfig>>;
@@ -44,7 +44,6 @@ const mockChannelSend = jest.fn() as jest.Mock<Promise<unknown>, [string]>;
 // ** Import the unit-under-test
 
 import type { CommandContext } from "../../commands/CommandContext.js";
-import type { QueueConfig, QueueEntry } from "@prisma/client";
 import type { SongRequest } from "./processSongRequest.js";
 import { processSongRequest } from "./processSongRequest.js";
 import { URL } from "node:url";
@@ -68,7 +67,8 @@ describe("Song request pipeline", () => {
 			entryDurationMinSeconds: null,
 			entryDurationSeconds: null,
 			queueDurationSeconds: null,
-			submissionMaxQuantity: null
+			submissionMaxQuantity: null,
+			blacklistedUsers: []
 		};
 
 		context = {
