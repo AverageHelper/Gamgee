@@ -2,7 +2,6 @@ import type { Command } from "./Command.js";
 
 export * from "./Command.js";
 
-import { config } from "./config/index.js";
 import { cooldown } from "./cooldown.js";
 import { help } from "./help.js";
 import { howto } from "./howto.js";
@@ -49,7 +48,6 @@ function add(command: Command): void {
 	// TODO: Add the command by its localized names as well
 }
 
-add(config);
 add(cooldown);
 add(help);
 add(howto);
