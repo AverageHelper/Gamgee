@@ -1,5 +1,5 @@
 import type { CommandInteractionOption } from "discord.js";
-// import type { QueueConfig } from "../../database/model/QueueConfig.js";
+// import type { QueueConfig } from "@prisma/client";
 import type { Subcommand } from "../Command.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";

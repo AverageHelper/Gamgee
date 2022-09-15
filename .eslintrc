@@ -1,6 +1,6 @@
 {
 	"root": true,
-	"ignorePatterns": ["dist", "node_modules", "src/version.ts", "migrations"],
+	"ignorePatterns": ["dist", "node_modules", "src/version.ts"],
 
 	"extends": [
 		"strictest/eslint",
@@ -46,7 +46,6 @@
 		"@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
 		"@typescript-eslint/array-type": ["warn", { "default": "generic" }],
 		"@typescript-eslint/dot-notation": "off",
-		"new-cap": "off", // Many decorators do not follow normal function conventions
 		"unicorn/catch-error-name": ["warn", { "name": "error" }],
 		"unicorn/import-index": ["error", { "ignoreImports": true }],
 		"unicorn/no-process-exit": "off" // we are a CLI app lol
@@ -100,12 +99,6 @@
 		{
 			"files": ["*.js", "*.cjs"],
 			"parser": "null"
-		},
-		{
-			"files": ["database/migrations/*.ts"],
-			"rules": {
-				"unicorn/filename-case": "off"
-			}
 		},
 		{
 			"files": ["scripts/**/*.ts"],

@@ -4,12 +4,12 @@ import { EnvVariableNotFoundError } from "./EnvVariableNotFoundError.js";
 
 export type EnvKey =
 	| "BOT_ADMIN_ROLE_ID"
-	| "BOT_PREFIX"
+	| "BOT_PREFIX" // used for testing
 	| "BOT_TEST_ID"
 	| "CHANNEL_ID"
 	| "CORDE_BOT_ID"
 	| "CORDE_TEST_TOKEN"
-	| "DATABASE_FOLDER"
+	| "DATABASE_URL"
 	| "DISCORD_TOKEN"
 	| "EVENTS_ROLE_ID"
 	| "GUILD_ID"

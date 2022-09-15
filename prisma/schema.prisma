@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id      String @id
+  guildId String
+
+  @@map("channels")
+}
+
+model Guild {
+  id                   String  @id
+  isQueueOpen          Boolean
+  currentQueue         String?
+  messageCommandPrefix String?
+
+  @@map("guilds")
+}
+
+model QueueConfig {
+  channelId               String                          @id
+  entryDurationSeconds    Int?
+  cooldownSeconds         Int?
+  submissionMaxQuantity   Int?
+  queueDurationSeconds    Int?
+  entryDurationMinSeconds Int?
+  blacklistedUsers        QueueConfigToBlacklistedUsers[]
+
+  @@map("queue-configs")
+}
+
+model QueueConfigToBlacklistedUsers {
+  queueConfigsChannelId String
+  userId                String
+  user                  User        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  queue_configs         QueueConfig @relation(fields: [queueConfigsChannelId], references: [channelId], onDelete: Cascade)
+
+  @@id([queueConfigsChannelId, userId])
+  @@index([queueConfigsChannelId], map: "IDX_101755e5cbc7377bb432f30d58")
+  @@index([userId], map: "IDX_8b53ee35922cb113a6d3102124")
+  @@map("queue-configs_blacklisted_users_user")
+}
+
+model QueueEntry {
+  channelId            String
+  guildId              String
+  queueMessageId       String   @unique(map: "sqlite_autoindex_queue-entries_2")
+  url                  String
+  seconds              Int
+  sentAt               DateTime @id
+  senderId             String
+  isDone               Boolean
+  haveCalledNowPlaying User[]
+
+  @@map("queue-entries")
+}
+
+model Role {
+  id                String  @id
+  guildId           String
+  definesGuildAdmin Boolean
+  definesQueueAdmin Boolean
+
+  @@map("role")
+}
+
+model User {
+  id                          String                          @id
+  blacklistedQueues           QueueConfigToBlacklistedUsers[]
+  didCallNowPlayingForEntries QueueEntry[]
+
+  @@map("user")
+}

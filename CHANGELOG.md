@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- BREAKING: Changed the way database migrations happen. After you update, please run `npm run baseline` if you do not wish your database to be reset. This command adds a field to your database that lets our ORM know that its schema is up to date. You should only have to do this once.
+- BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
+
+### Removed
+- BREAKING: Removed migrations from old v1.x.x versions. You should run Gamgee v1.8.3 at least once if you're updating from an older Gamgee version and want to keep your database.
+
 ## [1.8.3] - 2022-09-12
 ### Added
 - A new `LOG_LEVEL` environment variable lets you choose what log level is forwarded to the console.
@@ -16,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modularized our test assertions. This may come in handy if ever we need to migrate to a different test runner.
 
 ### Fixed
-- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considered VODs ("live content" with a set duration) the same as normal tracks.
+- YouTube VODs were considered infinitely-long, because YouTube's API still calls them "live content." Gamgee now considers VODs (or any "live content" with a set duration) the same as normal tracks.
 
 ## [1.8.2] - 2022-09-10
 ### Added
@@ -355,6 +363,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.3...HEAD
 [1.8.3]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...v1.8.3
 [1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...v1.8.1

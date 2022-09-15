@@ -53,8 +53,7 @@ export async function handleButton(
 		return;
 	}
 
-	const message = await queueChannel.messages.fetch(interaction.message.id);
-	const entry = await fetchEntryFromMessage(interaction.message.id, queueChannel);
+	const entry = await fetchEntryFromMessage(interaction.message.id);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
 		try {
@@ -71,6 +70,8 @@ export async function handleButton(
 	logger.debug(
 		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
 	);
+
+	const message = await queueChannel.messages.fetch(interaction.message.id);
 
 	switch (interaction.customId) {
 		case DONE_BUTTON.id:
@@ -97,7 +98,7 @@ export async function handleButton(
 
 		case DELETE_BUTTON.id: {
 			logger.debug("Deleting entry...");
-			const entry = await deleteEntryFromMessage(message, queueChannel);
+			const entry = await deleteEntryFromMessage(message);
 			if (!entry) {
 				logger.debug("There was no entry to delete.");
 				break;

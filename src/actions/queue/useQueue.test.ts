@@ -93,7 +93,7 @@ describe("Request Queue", () => {
 
 	test("does nothing when a message has nothing to do with a queue entry", async () => {
 		message.id = "not-a-queue-message" as Discord.Snowflake;
-		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBeNull();
+		await expect(deleteEntryFromMessage(message)).resolves.toBeNull();
 
 		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).not.toHaveBeenCalled();
@@ -101,10 +101,10 @@ describe("Request Queue", () => {
 
 	test("deletes a queue entry based on a message", async () => {
 		message.id = queueMessageId;
-		await expect(deleteEntryFromMessage(message, queueChannel)).resolves.toBe(entry);
+		await expect(deleteEntryFromMessage(message)).resolves.toBe(entry);
 
 		expect(mockRemoveEntryFromMessage).toHaveBeenCalledOnce();
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id, queueChannel);
+		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -131,8 +131,7 @@ describe("Request Queue", () => {
 				...request,
 				isDone: false,
 				sentAt: expect.toBeValidDate() as Date,
-				queueMessageId: "new-message",
-				haveCalledNowPlaying: [] as Array<Discord.Snowflake>
+				queueMessageId: "new-message"
 			},
 			queueChannel
 		);
