@@ -79,7 +79,8 @@ export async function updateRole(
 	);
 }
 
-export async function removeRole(roleId: Snowflake, guild: Discord.Guild): Promise<void> {
+/** Removes the role from the database. */
+export async function removeRole(roleId: Snowflake): Promise<void> {
 	if (!roleId) return;
 	await useRepository("role", roles =>
 		roles.delete({

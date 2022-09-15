@@ -1,5 +1,4 @@
-import type Discord from "discord.js";
-import type { Snowflake } from "discord.js";
+import type { Snowflake, TextChannel } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { useLogger } from "./logger.js";
 import { useRepository } from "./database/useDatabase.js";
@@ -36,7 +35,7 @@ type QueueConfig = _QueueConfig & {
  * @returns a promise that resolves with the queue config for the channel
  * or a default one if none has been set yet.
  */
-export async function getQueueConfig(queueChannel: Discord.TextChannel): Promise<QueueConfig> {
+export async function getQueueConfig(queueChannel: TextChannel): Promise<QueueConfig> {
 	const extantConfig = await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.findUnique({
 			where: { channelId: queueChannel.id },
@@ -66,7 +65,7 @@ export async function getQueueConfig(queueChannel: Discord.TextChannel): Promise
  */
 export async function updateQueueConfig(
 	config: Partial<QueueConfig>,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<void> {
 	if (Object.keys(config).length === 0) return; // nothing to store
 
@@ -117,7 +116,7 @@ export async function updateQueueConfig(
  */
 export async function createEntry(
 	entry: Omit<_QueueEntry, "channelId" | "guildId">,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<QueueEntry> {
 	// FIXME: These could be done all in one go if we used table relations properly
 
@@ -197,12 +196,8 @@ export async function createEntry(
  * Removes the queue entry from the database.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
- * @param queueChannel The channel that identifies the request queue.
  */
-export async function removeEntryFromMessage(
-	queueMessageId: Snowflake,
-	queueChannel: Discord.TextChannel
-): Promise<void> {
+export async function removeEntryFromMessage(queueMessageId: Snowflake): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.delete({
 			where: { queueMessageId }
@@ -216,15 +211,11 @@ export async function removeEntryFromMessage(
  * Fetches an entry with the given message ID.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
- * @param queueChannel The channel that identifies the request queue.
  *
  * @returns a promise that resolves with the matching queue entry
  * or `null` if no such entry exists
  */
-export async function fetchEntryFromMessage(
-	queueMessageId: Snowflake,
-	queueChannel: Discord.TextChannel
-): Promise<QueueEntry | null> {
+export async function fetchEntryFromMessage(queueMessageId: Snowflake): Promise<QueueEntry | null> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findUnique({
 			where: { queueMessageId },
@@ -240,9 +231,7 @@ export async function fetchEntryFromMessage(
  * @returns a promise that resolves with the queue's entries,
  * in the order in which they were added.
  */
-export async function fetchAllEntries(
-	queueChannel: Discord.TextChannel
-): Promise<Array<QueueEntry>> {
+export async function fetchAllEntries(queueChannel: TextChannel): Promise<Array<QueueEntry>> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findMany({
 			where: {
@@ -261,7 +250,7 @@ export async function fetchAllEntries(
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the number of entries in the queue.
  */
-export async function countAllEntries(queueChannel: Discord.TextChannel): Promise<number> {
+export async function countAllEntries(queueChannel: TextChannel): Promise<number> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.count({
 			where: {
@@ -282,7 +271,7 @@ export async function countAllEntries(queueChannel: Discord.TextChannel): Promis
  */
 export async function fetchAllEntriesFrom(
 	senderId: string,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<Array<QueueEntry>> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findMany({
@@ -307,7 +296,7 @@ export async function fetchAllEntriesFrom(
  */
 export async function fetchLatestEntryFrom(
 	senderId: string,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<QueueEntry | null> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findFirst({
@@ -333,7 +322,7 @@ export async function fetchLatestEntryFrom(
  */
 export async function countAllEntriesFrom(
 	senderId: string,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<number> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.count({
@@ -349,7 +338,7 @@ export async function countAllEntriesFrom(
 /** Returns the average entry duration of the submissions of the user with the provided ID. */
 export async function averageSubmissionPlaytimeForUser(
 	userId: Snowflake,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<number> {
 	const entries = await fetchAllEntriesFrom(userId, queueChannel);
 	let average = 0;
@@ -367,13 +356,8 @@ export async function averageSubmissionPlaytimeForUser(
  *
  * @param isDone Whether the entry should be marked "done"
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
- * @param queueChannel The channel that identifies the request queue.
  */
-export async function markEntryDone(
-	isDone: boolean,
-	queueMessageId: Snowflake,
-	queueChannel: Discord.TextChannel
-): Promise<void> {
+export async function markEntryDone(isDone: boolean, queueMessageId: Snowflake): Promise<void> {
 	logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.update({
@@ -387,7 +371,7 @@ export async function markEntryDone(
  * Deletes all request entries for this queue from the database.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function clearEntries(queueChannel: Discord.TextChannel): Promise<void> {
+export async function clearEntries(queueChannel: TextChannel): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.deleteMany({
 			where: {
@@ -411,7 +395,7 @@ export async function clearEntries(queueChannel: Discord.TextChannel): Promise<v
  */
 export async function getLikeCount(
 	queueMessageId: Snowflake,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<number> {
 	const entry = await useRepository("queueEntry", queueEntries =>
 		queueEntries.findFirst({
@@ -438,7 +422,7 @@ export async function getLikeCount(
 export async function addToHaveCalledNowPlaying(
 	userId: Snowflake,
 	queueMessageId: Snowflake,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<void> {
 	logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
 	const entry = await useRepository("queueEntry", queueEntries =>
@@ -486,10 +470,7 @@ export async function addToHaveCalledNowPlaying(
  * @param userId The ID of the user to blacklist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function blacklistUser(
-	userId: Snowflake,
-	queueChannel: Discord.TextChannel
-): Promise<void> {
+export async function blacklistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
 	const blacklistedUsers = {
 		connectOrCreate: {
 			where: {
@@ -528,10 +509,7 @@ export async function blacklistUser(
  * @param userId The ID of the user to whitelist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function whitelistUser(
-	userId: Snowflake,
-	queueChannel: Discord.TextChannel
-): Promise<void> {
+export async function whitelistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
 	await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.update({
 			where: { channelId: queueChannel.id },

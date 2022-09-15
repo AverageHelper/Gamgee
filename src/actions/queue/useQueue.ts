@@ -146,8 +146,8 @@ export async function markEntryNotDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(false, queueMessage.id, queueChannel);
-	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	await markEntryDone(false, queueMessage.id);
+	const entry = await fetchEntryFromMessage(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -159,8 +159,8 @@ export async function markEntryDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(true, queueMessage.id, queueChannel);
-	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	await markEntryDone(true, queueMessage.id);
+	const entry = await fetchEntryFromMessage(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -175,7 +175,7 @@ export async function addUserToHaveCalledNowPlaying(
 ): Promise<void> {
 	await addToHaveCalledNowPlaying(user, queueMessage.id, queueChannel);
 
-	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	const entry = await fetchEntryFromMessage(queueMessage.id);
 	if (!entry) return;
 
 	await editMessage(
@@ -190,13 +190,12 @@ export async function addUserToHaveCalledNowPlaying(
  * @returns the entry that was deleted.
  */
 export async function deleteEntryFromMessage(
-	queueMessage: Discord.Message | Discord.PartialMessage,
-	queueChannel: Discord.TextChannel
+	queueMessage: Discord.Message | Discord.PartialMessage
 ): Promise<QueueEntry | null> {
-	const entry = await fetchEntryFromMessage(queueMessage.id, queueChannel);
+	const entry = await fetchEntryFromMessage(queueMessage.id);
 	if (entry === null) return entry;
 
-	await removeEntryFromMessage(queueMessage.id, queueChannel);
+	await removeEntryFromMessage(queueMessage.id);
 	await deleteMessage(queueMessage);
 
 	return entry;
