@@ -23,10 +23,10 @@
 		"build:clean": "rm -rf dist && npm run build",
 		"export-version": "./node_modules/.bin/genversion ./src/version.ts -esd",
 		"test": "npm run test:src && npm run test:e2e",
-		"test:src": "DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\" ./node_modules/.bin/jest",
+		"test:src": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && ./node_modules/.bin/jest",
 		"test:src:watch": "npm run test:src -- --watch --coverage=false",
 		"test:e2e": "./node_modules/.bin/concurrently -kn bot,mocha -s first 'npm run start:test' 'sleep 3 && npm run _test:e2e'",
-		"start:test": "DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\" NODE_ENV=test node .",
+		"start:test": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; export NODE_ENV=test; ./node_modules/.bin/prisma migrate reset --force && node .",
 		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha"
 	},
 	"main": "./dist/main.js",
