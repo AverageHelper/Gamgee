@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- BREAKING: Changed the way database migrations happen. After you update, please run `npm run baseline` if you do not wish your database to be reset. This command adds a field to your database that lets our ORM know that its schema is up to date. You should only have to do this once.
 - BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
 
 ### Removed

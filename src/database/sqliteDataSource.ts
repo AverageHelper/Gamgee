@@ -35,11 +35,6 @@ process.on("message", msg => {
 	}
 });
 
-process.on("SIGINT", () => {
-	// PM2 sends a SIGINT on Unix. We have 1600 ms to clean up and quit.
-	// We let Prisma do this for us, and instead await the beforeExit event.
-	logger.debug("Got a 'SIGINT' signal");
-});
-
+// PM2 sends a SIGINT on Unix. We have 1600 ms to clean up and quit.
 // Prisma's beforeExit event fires after a `SIGINT` signal, but before database shutdown.
 dataSource.$on("beforeExit", onShutdownFinished);

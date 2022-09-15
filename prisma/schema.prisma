@@ -18,7 +18,7 @@ model Guild {
   id                   String  @id
   isQueueOpen          Boolean
   currentQueue         String?
-  messageCommandPrefix String  @default("?")
+  messageCommandPrefix String?
 
   @@map("guilds")
 }
@@ -56,7 +56,7 @@ model QueueEntry {
   sentAt               DateTime @id
   senderId             String
   isDone               Boolean
-  haveCalledNowPlaying String?
+  haveCalledNowPlaying User[]
 
   @@map("queue-entries")
 }
@@ -71,8 +71,9 @@ model Role {
 }
 
 model User {
-  id                String                          @id
-  blacklistedQueues QueueConfigToBlacklistedUsers[]
+  id                          String                          @id
+  blacklistedQueues           QueueConfigToBlacklistedUsers[]
+  didCallNowPlayingForEntries QueueEntry[]
 
   @@map("user")
 }
