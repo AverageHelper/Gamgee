@@ -246,12 +246,12 @@ export async function getAllStoredEntries(queueChannel: TextChannel): Promise<Ar
 }
 
 /**
- * Fetches the number of entries in the queue.
+ * Retrieves the number of queue entries stored in the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the number of entries in the queue.
  */
-export async function countAllEntries(queueChannel: TextChannel): Promise<number> {
+export async function countAllStoredEntries(queueChannel: TextChannel): Promise<number> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.count({
 			where: {

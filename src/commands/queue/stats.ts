@@ -1,6 +1,6 @@
 import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
-import { countAllEntries } from "../../useQueueStorage.js";
+import { countAllStoredEntries } from "../../useQueueStorage.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
@@ -27,7 +27,7 @@ export const stats: Subcommand = {
 
 		// Get the current queue's statistics
 		const [count, playtimeRemaining, playtimeTotal, playtimeAverage] = await Promise.all([
-			countAllEntries(queueChannel),
+			countAllStoredEntries(queueChannel),
 			playtimeRemainingInQueue(queueChannel),
 			playtimeTotalInQueue(queueChannel),
 			playtimeAverageInQueue(queueChannel)

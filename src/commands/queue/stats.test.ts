@@ -5,8 +5,8 @@ jest.mock("../../actions/queue/useQueue");
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { countAllEntries } from "../../useQueueStorage.js";
-const mockCount = countAllEntries as jest.Mock;
+import { countAllStoredEntries } from "../../useQueueStorage.js";
+const mockCountAllStoredEntries = countAllStoredEntries as jest.Mock;
 
 import {
 	playtimeAverageInQueue,
@@ -40,7 +40,7 @@ describe("Queue Statistics", () => {
 			deleteInvocation: mockDeleteInvocation
 		} as unknown as GuildedCommandContext;
 
-		mockCount.mockResolvedValue(0);
+		mockCountAllStoredEntries.mockResolvedValue(0);
 		mockPlaytimeRemaining.mockResolvedValue(0);
 		mockPlaytimeTotal.mockResolvedValue(0);
 		mockPlaytimeAverage.mockResolvedValue(0);
