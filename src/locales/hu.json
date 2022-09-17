@@ -108,7 +108,8 @@
 		},
 		"version": {
 			"description": "Megjeleníti a bot aktuális verzióját.",
-			"name": "verzió"
+			"name": "verzió",
+			"response": "Jelenleg a {version}-t futtatom"
 		},
 		"video": {
 			"description": "Kiírja a videó címét és időtartamát.",
