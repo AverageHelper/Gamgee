@@ -8,8 +8,8 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { whitelistUser } from "../../useQueueStorage.js";
-const mockWhitelistUser = whitelistUser as jest.Mock;
+import { removeUserFromStoredBlacklist } from "../../useQueueStorage.js";
+const mockRemoveUserFromStoredBlacklist = removeUserFromStoredBlacklist as jest.Mock;
 
 import type { GuildedCommandContext } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
@@ -49,7 +49,7 @@ describe("Removing from Queue Blacklist", () => {
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: goodUserId });
 
-		mockWhitelistUser.mockResolvedValue(undefined);
+		mockRemoveUserFromStoredBlacklist.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
 	});
@@ -80,7 +80,7 @@ describe("Removing from Queue Blacklist", () => {
 		mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockWhitelistUser).not.toHaveBeenCalled();
+		expect(mockRemoveUserFromStoredBlacklist).not.toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("whitelist yourself") as string,
@@ -92,22 +92,22 @@ describe("Removing from Queue Blacklist", () => {
 		mockGetUserFromMention.mockResolvedValue(null);
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockWhitelistUser).not.toHaveBeenCalled();
+		expect(mockRemoveUserFromStoredBlacklist).not.toHaveBeenCalled();
 	});
 
 	test("does nothing when there's no queue", async () => {
 		mockGetQueueChannel.mockResolvedValueOnce(null);
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockWhitelistUser).not.toHaveBeenCalled();
+		expect(mockRemoveUserFromStoredBlacklist).not.toHaveBeenCalled();
 	});
 
 	test("calls whitelistUser for queue", async () => {
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		// whitelist effect
-		expect(mockWhitelistUser).toHaveBeenCalledOnce();
-		expect(mockWhitelistUser).toHaveBeenCalledWith(goodUserId, queueChannel);
+		expect(mockRemoveUserFromStoredBlacklist).toHaveBeenCalledOnce();
+		expect(mockRemoveUserFromStoredBlacklist).toHaveBeenCalledWith(goodUserId, queueChannel);
 
 		// response
 		expect(mockReply).toHaveBeenCalledOnce();

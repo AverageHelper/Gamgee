@@ -18,7 +18,6 @@ export type UnsentQueueEntry = Omit<
 >;
 
 // TODO: Break these into separate files where appropriate
-// TODO: Make clear that these functions do not touch Discord's API, only local storage
 // TODO: Only retain user-provided data for at most 90 days
 
 // ** Queue Config **
@@ -472,12 +471,15 @@ export async function saveUserToStoredBlacklist(
 }
 
 /**
- * Removes the user from the queue's blacklist.
+ * Removes the user from the queue's blacklist in the database.
  *
  * @param userId The ID of the user to whitelist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function whitelistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
+export async function removeUserFromStoredBlacklist(
+	userId: Snowflake,
+	queueChannel: TextChannel
+): Promise<void> {
 	await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.update({
 			where: { channelId: queueChannel.id },
