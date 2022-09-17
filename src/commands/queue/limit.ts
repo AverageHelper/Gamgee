@@ -20,7 +20,12 @@ import {
 	resolveStringFromOption
 } from "../../helpers/optionResolvers.js";
 
-type LimitKey = "queue-duration" | "entry-duration" | "entry-duration-min" | "cooldown" | "count";
+type LimitKey =
+	| "queue-duration"
+	| "entry-duration-min"
+	| "entry-duration-max"
+	| "cooldown"
+	| "count";
 
 export interface QueueLimitArg {
 	name: string;
@@ -35,10 +40,10 @@ export interface QueueLimitArg {
 // 			return config.cooldownSeconds;
 // 		case "count":
 // 			return config.submissionMaxQuantity;
-// 		case "entry-duration":
-// 			return config.entryDurationSeconds;
 // 		case "entry-duration-min":
 // 			return config.entryDurationMinSeconds;
+// 		case "entry-duration-max":
+// 			return config.entryDurationSeconds;
 // 		case "queue-duration":
 // 			return config.queueDurationSeconds;
 // 	}
@@ -69,7 +74,7 @@ export const minDurationLimitMeta: QueueLimitArg = {
 
 export const maxDurationLimitMeta: QueueLimitArg = {
 	name: "Max Song Length",
-	value: "entry-duration", // TODO: Rename this to something more sane
+	value: "entry-duration-max",
 	description: "The maximum duration (in seconds) of a song submission.",
 	example: "430"
 };
@@ -173,7 +178,7 @@ export const limit: Subcommand = {
 
 		// Set limits on the queue
 		switch (key) {
-			case "entry-duration": {
+			case "entry-duration-max": {
 				// ** Limit each entry's max duration
 				if (!valueOption) {
 					// Read the current limit

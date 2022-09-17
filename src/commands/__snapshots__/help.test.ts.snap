@@ -35,7 +35,7 @@ exports[`Help command describes all commands 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?setprefix [prefix]\` OR \`?set-prefix\` - Set the prefix used by message commands.
@@ -65,7 +65,7 @@ exports[`Help command describes all commands in de 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?präfixsetzen [präfix]\` OR \`?set-prefix\` - Legen Sie das Präfix fest, das von Nachrichtenbefehlen verwendet wird.
@@ -95,7 +95,7 @@ exports[`Help command describes all commands in en-GB 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?setprefix [prefix]\` OR \`?set-prefix\` - Set the prefix used by message commands.
@@ -125,7 +125,7 @@ exports[`Help command describes all commands in en-US 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?setprefix [prefix]\` OR \`?set-prefix\` - Set the prefix used by message commands.
@@ -155,7 +155,7 @@ exports[`Help command describes all commands in es-ES 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?establecerprefijo [prefijo]\` OR \`?set-prefix\` - Establezca el prefijo utilizado por los comandos de mensajes.
@@ -185,7 +185,7 @@ exports[`Help command describes all commands in fr 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?définirpréfixe [préfixe]\` OR \`?set-prefix\` - Définissez le préfixe utilisé par les commandes de message.
@@ -215,7 +215,7 @@ exports[`Help command describes all commands in hu 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?előtagbeállítás [előtag]\` OR \`?set-prefix\` - Beállítja az üzenetparancsok előtt használt előtagot.
@@ -245,7 +245,7 @@ exports[`Help command describes all commands in pt-BR 1`] = `
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
     \`?quo open\` - Start accepting song requests to the queue.
     \`?quo close\` - Stop accepting song requests to the queue.
-    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
+    \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
     \`?quo restart\` - Empty the queue and start a fresh queue session.
 \`?definirprefixo [prefixo]\` OR \`?set-prefix\` - Defina o prefixo usado pelos comandos de mensagem.

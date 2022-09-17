@@ -198,7 +198,7 @@ describe("Command handler", () => {
 			test("runs if option integer is valid", async () => {
 				const cmd = "limit"; // this command has range constraints on its second option
 				const value = 5;
-				mockMessage.content = `${prefix}${cmd} entry-duration ${value}`;
+				mockMessage.content = `${prefix}${cmd} entry-duration-max ${value}`;
 				await handleCommand(mockMessage, logger);
 
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
@@ -219,7 +219,7 @@ describe("Command handler", () => {
 				${-10}   | ${"below limit"}
 			`("asserts option integer is not $desc", async ({ value }: { value: number }) => {
 				const cmd = "limit"; // this command has range constraints on its second option
-				mockMessage.content = `${prefix}quo ${cmd} entry-duration ${value}`;
+				mockMessage.content = `${prefix}quo ${cmd} entry-duration-max ${value}`;
 				await handleCommand(mockMessage, logger);
 
 				const expectedMin = -1;
