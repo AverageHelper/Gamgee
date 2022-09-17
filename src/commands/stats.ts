@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { averageSubmissionPlaytimeForUser } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
@@ -7,7 +8,6 @@ import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
-	averageSubmissionPlaytimeForUser,
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
 	getStoredQueueConfig

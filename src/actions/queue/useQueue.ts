@@ -11,6 +11,7 @@ import {
 	addToHaveCalledNowPlaying,
 	deleteStoredEntry,
 	getAllStoredEntries,
+	getAllStoredEntriesFromSender,
 	getStoredEntry,
 	markEntryDone,
 	saveNewEntryToDatabase
@@ -139,6 +140,22 @@ export async function pushEntryToQueue(
 	}
 
 	return entry;
+}
+
+/** Returns the average entry duration of the submissions of the user with the provided ID. */
+export async function averageSubmissionPlaytimeForUser(
+	userId: Discord.Snowflake,
+	queueChannel: Discord.TextChannel
+): Promise<number> {
+	const entries = await getAllStoredEntriesFromSender(userId, queueChannel);
+	let average = 0;
+
+	entries.forEach(entry => {
+		average += entry.seconds;
+	});
+	average /= entries.length;
+
+	return average;
 }
 
 /** If the message represents a "done" entry, that entry is unmarked. */

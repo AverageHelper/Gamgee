@@ -263,14 +263,14 @@ export async function countAllStoredEntries(queueChannel: TextChannel): Promise<
 }
 
 /**
- * Fetches all entries by the given user.
+ * Retrieves all entries from the database that were sent by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the user's entries,
  * in the order in which they were added.
  */
-export async function fetchAllEntriesFrom(
+export async function getAllStoredEntriesFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<Array<QueueEntry>> {
@@ -334,22 +334,6 @@ export async function countAllEntriesFrom(
 			}
 		})
 	);
-}
-
-/** Returns the average entry duration of the submissions of the user with the provided ID. */
-export async function averageSubmissionPlaytimeForUser(
-	userId: Snowflake,
-	queueChannel: TextChannel
-): Promise<number> {
-	const entries = await fetchAllEntriesFrom(userId, queueChannel);
-	let average = 0;
-
-	entries.forEach(entry => {
-		average += entry.seconds;
-	});
-	average /= entries.length;
-
-	return average;
 }
 
 /**
