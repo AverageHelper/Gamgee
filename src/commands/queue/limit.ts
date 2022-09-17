@@ -1,6 +1,6 @@
 import type { CommandInteractionOption } from "discord.js";
-// import type { QueueConfig } from "@prisma/client";
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
@@ -8,13 +8,6 @@ import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig, updateStoredQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { t } from "../../i18n.js";
-import {
-	// ActionRowBuilder,
-	ApplicationCommandOptionType
-	// ModalBuilder,
-	// TextInputBuilder,
-	// TextInputStyle
-} from "discord.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
@@ -33,21 +26,6 @@ export interface QueueLimitArg {
 	description: string;
 	example: string;
 }
-
-// function queueLimitValueForMeta(config: QueueConfig, meta: QueueLimitArg): number | null {
-// 	switch (meta.value) {
-// 		case "cooldown":
-// 			return config.cooldownSeconds;
-// 		case "count":
-// 			return config.submissionMaxQuantity;
-// 		case "entry-duration-min":
-// 			return config.entryDurationMinSeconds;
-// 		case "entry-duration-max":
-// 			return config.entryDurationMaxSeconds;
-// 		case "queue-duration":
-// 			return config.queueDurationSeconds;
-// 	}
-// }
 
 // TODO: i18n
 export const countLimitMeta: QueueLimitArg = {
@@ -105,9 +83,6 @@ function isLimitKey(value: unknown): value is LimitKey {
 	);
 }
 
-/** @see https://discordjs.guide/interactions/modals.html#building-and-responding-with-modals */
-// const MAX_INPUT_FIELDS_IN_MODAL = 5;
-
 export const limit: Subcommand = {
 	name: "limit", // TODO: Alias this to "limits"
 	description: "Set a limit value on the queue. (Time in seconds, where applicable)",
@@ -135,31 +110,6 @@ export const limit: Subcommand = {
 		if (!queueChannel) return await reply(t("common.queue.not-set-up", guildLocale));
 
 		const config = await getStoredQueueConfig(queueChannel);
-
-		// TODO: Handle modal interaction
-		// if (type === "interaction" && allLimits.length < MAX_INPUT_FIELDS_IN_MODAL) {
-		// 	const modal = new ModalBuilder() //
-		// 		.setCustomId("queue-limit-config")
-		// 		.setTitle("Queue Limits");
-
-		// 	allLimits.forEach(meta => {
-		// 		const value = queueLimitValueForMeta(config, meta);
-		// 		const input = new TextInputBuilder()
-		// 			.setCustomId(meta.value)
-		// 			.setLabel(meta.name)
-		// 			.setPlaceholder(`e.g.: ${meta.example}`)
-		// 			.setValue(`${value ?? ""}`)
-		// 			.setStyle(TextInputStyle.Short)
-		// 			.setRequired(false)
-		// 			.setMinLength(1)
-		// 			.setMaxLength(17); // <= 1 tril w/o commas, <= 10 quad w/ commas; should be enough
-		// 		const row = new ActionRowBuilder<TextInputBuilder>() //
-		// 			.addComponents(input);
-		// 		modal.addComponents(row);
-		// 	});
-
-		// 	return await context.interaction.showModal(modal);
-		// }
 
 		const keyOption: CommandInteractionOption | undefined = options[0];
 		const valueOption: CommandInteractionOption | undefined = options[1];
