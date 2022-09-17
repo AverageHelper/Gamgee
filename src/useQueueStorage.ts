@@ -338,12 +338,15 @@ export async function countAllStoredEntriesFromSender(
 }
 
 /**
- * Sets the entry's "done" value.
+ * Sets the entry's "done" value in the database.
  *
  * @param isDone Whether the entry should be marked "done"
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  */
-export async function markEntryDone(isDone: boolean, queueMessageId: Snowflake): Promise<void> {
+export async function updateStoredEntryIsDone(
+	isDone: boolean,
+	queueMessageId: Snowflake
+): Promise<void> {
 	logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.update({

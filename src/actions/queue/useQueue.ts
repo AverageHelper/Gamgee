@@ -13,8 +13,8 @@ import {
 	getAllStoredEntries,
 	getAllStoredEntriesFromSender,
 	getStoredEntry,
-	markEntryDone,
-	saveNewEntryToDatabase
+	saveNewEntryToDatabase,
+	updateStoredEntryIsDone
 } from "../../useQueueStorage.js";
 import {
 	composed,
@@ -163,7 +163,7 @@ export async function markEntryNotDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(false, queueMessage.id);
+	await updateStoredEntryIsDone(false, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
@@ -176,7 +176,7 @@ export async function markEntryDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(true, queueMessage.id);
+	await updateStoredEntryIsDone(true, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
