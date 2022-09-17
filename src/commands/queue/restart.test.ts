@@ -7,9 +7,9 @@ jest.mock("../../permissions");
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
 
-import { fetchAllEntries, clearEntries } from "../../useQueueStorage.js";
-const mockGetAllEntries = fetchAllEntries as jest.Mock;
+import { clearEntries, getAllStoredEntries } from "../../useQueueStorage.js";
 const mockQueueClear = clearEntries as jest.Mock;
+const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -35,7 +35,7 @@ describe("Clear queue contents", () => {
 			reply: mockReply
 		} as unknown as GuildedCommandContext;
 
-		mockGetAllEntries.mockResolvedValue([]);
+		mockGetAllStoredEntries.mockResolvedValue([]);
 		mockQueueClear.mockResolvedValue(undefined);
 		mockBulkDeleteMessagesWithIds.mockResolvedValue(true);
 	});
@@ -65,7 +65,7 @@ describe("Clear queue contents", () => {
 				{ queueMessageId: "message3" }
 			];
 			mockGetQueueChannel.mockResolvedValue(queueChannel);
-			mockGetAllEntries.mockResolvedValue(queueEntries);
+			mockGetAllStoredEntries.mockResolvedValue(queueEntries);
 			context = {
 				...context,
 				channel: {

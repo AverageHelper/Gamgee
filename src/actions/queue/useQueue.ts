@@ -10,7 +10,7 @@ import { preferredLocale } from "../../i18n.js";
 import {
 	addToHaveCalledNowPlaying,
 	deleteStoredEntry,
-	fetchAllEntries,
+	getAllStoredEntries,
 	getStoredEntry,
 	markEntryDone,
 	saveNewEntryToDatabase
@@ -75,7 +75,7 @@ function queueMessageFromEntry(
 
 /** Retrieves the playtime (in seconds) of the queue's unfinished entries. */
 export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue
 		.filter(e => !e.isDone)
@@ -87,7 +87,7 @@ export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel
 
 /** Retrieves the total playtime (in seconds) of the queue's entries. */
 export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue.forEach(e => {
 		duration += e.seconds;
@@ -97,7 +97,7 @@ export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): P
 
 /** Retrieves the average playtime (in seconds) of the queue's entries. */
 export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let average = 0;
 	queue.forEach(e => {
 		average += e.seconds;

@@ -3,16 +3,16 @@ jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../useQueueStorage");
 jest.mock("../permissions");
 
-import { fetchAllEntries } from "../useQueueStorage.js";
-const mockGetAllEntries = fetchAllEntries as jest.Mock;
-
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as jest.Mock;
+
+import { getAllStoredEntries } from "../useQueueStorage.js";
+const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-mockGetAllEntries.mockResolvedValue(undefined);
+mockGetAllStoredEntries.mockResolvedValue(undefined);
 
 const mockReply = jest.fn().mockResolvedValue(undefined);
 const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
@@ -41,7 +41,7 @@ describe("Now-Playing", () => {
 			deleteInvocation: mockDeleteMessage
 		} as unknown as GuildedCommandContext;
 
-		mockGetAllEntries.mockResolvedValue([]);
+		mockGetAllStoredEntries.mockResolvedValue([]);
 		mockReplyWithMention.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
@@ -69,7 +69,7 @@ describe("Now-Playing", () => {
 	`(
 		"informs the user if all entries are done or the queue is empty",
 		async ({ values }: { values: Array<QueueEntry> }) => {
-			mockGetAllEntries.mockResolvedValue(values);
+			mockGetAllStoredEntries.mockResolvedValue(values);
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 
@@ -92,7 +92,7 @@ describe("Now-Playing", () => {
 	`(
 		"provides the URL of the most recent not-done song",
 		async ({ values }: { values: Array<QueueEntry> }) => {
-			mockGetAllEntries.mockResolvedValue(values);
+			mockGetAllStoredEntries.mockResolvedValue(values);
 			mockGetQueueChannel.mockResolvedValue({
 				messages: {
 					fetch: jest.fn().mockResolvedValue({

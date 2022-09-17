@@ -226,13 +226,13 @@ export async function getStoredEntry(queueMessageId: Snowflake): Promise<QueueEn
 }
 
 /**
- * Fetches all entries in the queue, in order of appearance.
+ * Retrieves all queue entries, in chronological order, from the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the queue's entries,
  * in the order in which they were added.
  */
-export async function fetchAllEntries(queueChannel: TextChannel): Promise<Array<QueueEntry>> {
+export async function getAllStoredEntries(queueChannel: TextChannel): Promise<Array<QueueEntry>> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findMany({
 			where: {
