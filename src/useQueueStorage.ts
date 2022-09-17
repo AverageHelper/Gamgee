@@ -209,14 +209,14 @@ export async function deleteStoredEntry(queueMessageId: Snowflake): Promise<void
 // ** Read Song Entries **
 
 /**
- * Fetches an entry with the given message ID.
+ * Retrieves an entry from the database with the given message ID.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  *
  * @returns a promise that resolves with the matching queue entry
  * or `null` if no such entry exists
  */
-export async function fetchEntryFromMessage(queueMessageId: Snowflake): Promise<QueueEntry | null> {
+export async function getStoredEntry(queueMessageId: Snowflake): Promise<QueueEntry | null> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findUnique({
 			where: { queueMessageId },

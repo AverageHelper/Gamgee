@@ -11,7 +11,7 @@ import {
 	addToHaveCalledNowPlaying,
 	deleteStoredEntry,
 	fetchAllEntries,
-	fetchEntryFromMessage,
+	getStoredEntry,
 	markEntryDone,
 	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
@@ -147,7 +147,7 @@ export async function markEntryNotDoneInQueue(
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
 	await markEntryDone(false, queueMessage.id);
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -160,7 +160,7 @@ export async function markEntryDoneInQueue(
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
 	await markEntryDone(true, queueMessage.id);
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -175,7 +175,7 @@ export async function addUserToHaveCalledNowPlaying(
 ): Promise<void> {
 	await addToHaveCalledNowPlaying(user, queueMessage.id, queueChannel);
 
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	await editMessage(
@@ -192,7 +192,7 @@ export async function addUserToHaveCalledNowPlaying(
 export async function deleteEntryFromMessage(
 	queueMessage: Discord.Message | Discord.PartialMessage
 ): Promise<QueueEntry | null> {
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (entry === null) return entry;
 
 	await deleteStoredEntry(queueMessage.id);

@@ -3,12 +3,12 @@ jest.mock("../../useQueueStorage");
 
 import {
 	deleteStoredEntry,
-	fetchEntryFromMessage,
+	getStoredEntry,
 	getStoredQueueConfig,
 	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
 const mockDeleteStoredEntry = deleteStoredEntry as jest.Mock;
-const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
+const mockGetStoredEntry = getStoredEntry as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as jest.Mock;
 
@@ -65,7 +65,7 @@ describe("Request Queue", () => {
 
 		forgetJobQueue(`${message.channel.id}_${message.id}`);
 
-		mockFetchEntryFromMessage.mockImplementation(id => {
+		mockGetStoredEntry.mockImplementation(id => {
 			if (id === queueMessageId) {
 				return entry; // some entry
 			}

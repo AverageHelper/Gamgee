@@ -2,9 +2,9 @@ import type Discord from "discord.js";
 import type { Logger } from "./logger.js";
 import { createPartialString, composed, push } from "./helpers/composeStrings.js";
 import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
-import { fetchEntryFromMessage } from "./useQueueStorage.js";
 import { getEnv } from "./helpers/environment.js";
 import { getQueueChannel } from "./actions/queue/getQueueChannel.js";
+import { getStoredEntry } from "./useQueueStorage.js";
 import { getUserWithId } from "./helpers/getUserWithId.js";
 import { isQueueOpen } from "./useGuildStorage.js";
 import { logUser } from "./helpers/logUser.js";
@@ -53,7 +53,7 @@ export async function handleButton(
 		return;
 	}
 
-	const entry = await fetchEntryFromMessage(interaction.message.id);
+	const entry = await getStoredEntry(interaction.message.id);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
 		try {
