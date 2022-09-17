@@ -5,7 +5,7 @@ import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-import { getStoredQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
+import { getStoredQueueConfig, updateStoredQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { t } from "../../i18n.js";
 import {
@@ -192,7 +192,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ entryDurationSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ entryDurationSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration upper limit was ");
 				if (value === null || value <= 0) {
@@ -223,7 +223,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration lower limit was ");
 				if (value === null || value <= 0) {
@@ -252,7 +252,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ queueDurationSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ queueDurationSeconds: value }, queueChannel);
 
 				const response = createPartialString("Queue duration limit was ");
 				if (value === null || value <= 0) {
@@ -282,7 +282,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ cooldownSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ cooldownSeconds: value }, queueChannel);
 
 				const response = createPartialString("Submission cooldown was ");
 				if (value === null || value <= 0) {
@@ -312,7 +312,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ submissionMaxQuantity: value }, queueChannel);
+				await updateStoredQueueConfig({ submissionMaxQuantity: value }, queueChannel);
 
 				const response = createPartialString("Submission count limit per user was ");
 				if (value === null || value <= 0) {

@@ -58,12 +58,13 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
 }
 
 /**
- * Updates the provided properties of a queue's configuration settings.
+ * Updates the provided properties of a queue's configuration settings
+ * in the database.
  *
  * @param config Properties of the queue config to overwrite the current data.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function updateQueueConfig(
+export async function updateStoredQueueConfig(
 	config: Partial<QueueConfig>,
 	queueChannel: TextChannel
 ): Promise<void> {
