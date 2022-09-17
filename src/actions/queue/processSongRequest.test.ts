@@ -66,13 +66,13 @@ describe("Song request pipeline", () => {
 		const QUEUE_CHANNEL_ID = "queue-channel-1234";
 
 		config = {
+			blacklistedUsers: [],
 			channelId: QUEUE_CHANNEL_ID,
 			cooldownSeconds: null,
+			entryDurationMaxSeconds: null,
 			entryDurationMinSeconds: null,
-			entryDurationSeconds: null,
 			queueDurationSeconds: null,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
+			submissionMaxQuantity: null
 		};
 
 		context = {

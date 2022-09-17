@@ -46,13 +46,13 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
 		})
 	);
 	return {
+		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? [],
 		channelId: queueChannel.id,
-		entryDurationSeconds: extantConfig?.entryDurationSeconds ?? null,
+		cooldownSeconds: extantConfig?.cooldownSeconds ?? null,
+		entryDurationMaxSeconds: extantConfig?.entryDurationMaxSeconds ?? null,
 		entryDurationMinSeconds: extantConfig?.entryDurationMinSeconds ?? null,
 		queueDurationSeconds: extantConfig?.queueDurationSeconds ?? null,
-		cooldownSeconds: extantConfig?.cooldownSeconds ?? null,
-		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null,
-		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? []
+		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null
 	};
 }
 
@@ -75,10 +75,10 @@ export async function updateStoredQueueConfig(
 			set: Array<{ queueConfigsChannelId_userId: QueueConfigToBlacklistedUsers }>;
 		};
 	} = {
-		entryDurationSeconds: config.entryDurationSeconds,
+		cooldownSeconds: config.cooldownSeconds,
+		entryDurationMaxSeconds: config.entryDurationMaxSeconds,
 		entryDurationMinSeconds: config.entryDurationMinSeconds,
 		queueDurationSeconds: config.queueDurationSeconds,
-		cooldownSeconds: config.cooldownSeconds,
 		submissionMaxQuantity: config.submissionMaxQuantity
 	};
 
@@ -155,13 +155,13 @@ export async function saveNewEntryToDatabase(
 			update: {},
 
 			create: {
+				blacklistedUsers: undefined,
 				channelId: queueChannel.id,
-				entryDurationSeconds: null,
 				cooldownSeconds: null,
-				submissionMaxQuantity: null,
-				queueDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				entryDurationMinSeconds: null,
-				blacklistedUsers: undefined
+				queueDurationSeconds: null,
+				submissionMaxQuantity: null
 			}
 		})
 	);
@@ -458,13 +458,13 @@ export async function saveUserToStoredBlacklist(
 
 			// If the queue config isn't found, create it:
 			create: {
+				blacklistedUsers,
 				channelId: queueChannel.id,
-				entryDurationSeconds: null,
+				cooldownSeconds: null,
+				entryDurationMaxSeconds: null,
 				entryDurationMinSeconds: null,
 				queueDurationSeconds: null,
-				cooldownSeconds: null,
-				submissionMaxQuantity: null,
-				blacklistedUsers
+				submissionMaxQuantity: null
 			}
 		})
 	);

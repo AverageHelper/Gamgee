@@ -45,10 +45,11 @@ describe("User retrieving their own cooldown", () => {
 			id: "queue-channel"
 		});
 		mockGetStoredQueueConfig.mockResolvedValue({
+			blacklistedUsers: [],
 			cooldownSeconds,
-			entryDurationSeconds: null,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
+			entryDurationMaxSeconds: null,
+			entryDurationMinSeconds: null,
+			submissionMaxQuantity: null
 		});
 		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
@@ -121,7 +122,7 @@ describe("User retrieving their own cooldown", () => {
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
-				entryDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
 				blacklistedUsers: []
 			});
@@ -177,7 +178,7 @@ describe("User retrieving their own cooldown", () => {
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
-				entryDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
 				blacklistedUsers: []
 			});
@@ -195,7 +196,7 @@ describe("User retrieving their own cooldown", () => {
 		let relative = "2 minutes";
 		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds,
-			entryDurationSeconds: null,
+			entryDurationMaxSeconds: null,
 			submissionMaxQuantity,
 			blacklistedUsers: []
 		});

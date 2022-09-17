@@ -86,11 +86,11 @@ describe("Song request via URL", () => {
 	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
 	mockGetStoredQueueConfig.mockResolvedValue({
-		entryDurationSeconds: null,
-		queueDurationSeconds: null,
+		blacklistedUsers: [],
 		cooldownSeconds: 600,
-		submissionMaxQuantity: null,
-		blacklistedUsers: []
+		entryDurationMaxSeconds: null,
+		queueDurationSeconds: null,
+		submissionMaxQuantity: null
 	});
 
 	const mockClient: Discord.Client<true> = {

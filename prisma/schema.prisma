@@ -25,7 +25,7 @@ model Guild {
 
 model QueueConfig {
   channelId               String                          @id
-  entryDurationSeconds    Int?
+  entryDurationMaxSeconds Int?                            @map("entryDurationSeconds")
   cooldownSeconds         Int?
   submissionMaxQuantity   Int?
   queueDurationSeconds    Int?

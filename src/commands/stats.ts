@@ -50,8 +50,8 @@ export const stats: Command = {
 
 		// Average song length
 		const durationMsg = createPartialString(durationString(userLocale, avgDuration));
-		if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-			push(` (limit ${durationString(userLocale, config.entryDurationSeconds)})`, durationMsg);
+		if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
+			push(` (limit ${durationString(userLocale, config.entryDurationMaxSeconds)})`, durationMsg);
 		}
 		embed.addFields({ name: "Average Length of Your Submissions", value: composed(durationMsg) });
 

@@ -76,11 +76,12 @@ describe("Request Queue", () => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
 		mockGetStoredQueueConfig.mockResolvedValue({
+			blacklistedUsers: [],
 			channelId: queueChannel.id,
-			entryDurationSeconds: 430,
 			cooldownSeconds: 960,
-			submissionMaxQuantity: 3,
-			blacklistedUsers: []
+			entryDurationMaxSeconds: 430,
+			entryDurationMinSeconds: 0,
+			submissionMaxQuantity: 3
 		});
 		mockMessageRemoveReaction.mockResolvedValue(undefined);
 		mockChannelSend.mockResolvedValue({

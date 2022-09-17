@@ -47,8 +47,8 @@ export const limits: Command = {
 					}
 					break;
 				case "entry-duration-max":
-					if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-						value = durationString(locale, config.entryDurationSeconds);
+					if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
+						value = durationString(locale, config.entryDurationMaxSeconds);
 					} else {
 						value = "infinite";
 					}

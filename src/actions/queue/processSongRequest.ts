@@ -244,7 +244,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		}
 
 		// ** If the song is too long, reject!
-		const maxDuration = config.entryDurationSeconds;
+		const maxDuration = config.entryDurationMaxSeconds;
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString(
 				ti(

@@ -43,7 +43,7 @@ export interface QueueLimitArg {
 // 		case "entry-duration-min":
 // 			return config.entryDurationMinSeconds;
 // 		case "entry-duration-max":
-// 			return config.entryDurationSeconds;
+// 			return config.entryDurationMaxSeconds;
 // 		case "queue-duration":
 // 			return config.queueDurationSeconds;
 // 	}
@@ -182,7 +182,7 @@ export const limit: Subcommand = {
 				// ** Limit each entry's max duration
 				if (!valueOption) {
 					// Read the current limit
-					const value = config.entryDurationSeconds;
+					const value = config.entryDurationMaxSeconds;
 					if (value === null) {
 						return await reply("There is no upper limit on entry duration.");
 					}
@@ -197,7 +197,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateStoredQueueConfig({ entryDurationSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ entryDurationMaxSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration upper limit was ");
 				if (value === null || value <= 0) {
