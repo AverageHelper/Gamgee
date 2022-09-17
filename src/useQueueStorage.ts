@@ -374,15 +374,16 @@ export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Pr
 // ** Now-playing Invocations **
 
 /**
- * Increments the count of unique `/nowplaying` invocations for the entry.
- * If the user submitted this entry, they are not counted.
- * If the user has already invoked `/nowplaying` for this entry, they are not counted.
+ * Increments the count of unique `/nowplaying` invocations in the database for
+ * the entry in the database. If the user submitted this entry, they are not
+ * counted. If the user has already invoked `/nowplaying` for this entry, they
+ * are not counted.
  *
  * @param userId The ID of the user who invoked `/nowplaying`.
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function addToHaveCalledNowPlaying(
+export async function addToHaveCalledNowPlayingForStoredEntry(
 	userId: Snowflake,
 	queueMessageId: Snowflake,
 	queueChannel: TextChannel

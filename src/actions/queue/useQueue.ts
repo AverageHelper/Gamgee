@@ -8,7 +8,7 @@ import { deleteMessage, editMessage, escapeUriInString } from "../messages/index
 import { durationString } from "../../helpers/durationString.js";
 import { preferredLocale } from "../../i18n.js";
 import {
-	addToHaveCalledNowPlaying,
+	addToHaveCalledNowPlayingForStoredEntry,
 	deleteStoredEntry,
 	getAllStoredEntries,
 	getAllStoredEntriesFromSender,
@@ -190,7 +190,7 @@ export async function addUserToHaveCalledNowPlaying(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await addToHaveCalledNowPlaying(user, queueMessage.id, queueChannel);
+	await addToHaveCalledNowPlayingForStoredEntry(user, queueMessage.id, queueChannel);
 
 	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
