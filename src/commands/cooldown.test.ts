@@ -4,12 +4,12 @@ jest.mock("../useGuildStorage.js");
 
 import {
 	countAllEntriesFrom,
-	fetchLatestEntryFrom,
+	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
 const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -51,7 +51,7 @@ describe("User retrieving their own cooldown", () => {
 			blacklistedUsers: []
 		});
 		mockQueueUserEntryCount.mockResolvedValue(0);
-		mockQueueGetLatestUserEntry.mockResolvedValue(null);
+		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 		mockIsQueueOpen.mockResolvedValue(true);
 	});
 
@@ -111,7 +111,7 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: number;
 		}) => {
 			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-			mockQueueGetLatestUserEntry.mockResolvedValue({
+			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
@@ -167,7 +167,7 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: number;
 		}) => {
 			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-			mockQueueGetLatestUserEntry.mockResolvedValue({
+			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
@@ -200,7 +200,7 @@ describe("User retrieving their own cooldown", () => {
 			blacklistedUsers: []
 		});
 		mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-		mockQueueGetLatestUserEntry.mockResolvedValue({
+		mockGetLatestStoredEntryFromSender.mockResolvedValue({
 			queueMessageId: "message-1",
 			url: "https://example.com",
 			seconds: 500,

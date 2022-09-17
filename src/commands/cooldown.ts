@@ -7,7 +7,7 @@ import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllEntriesFrom,
-	fetchLatestEntryFrom,
+	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
@@ -44,7 +44,7 @@ export const cooldown: Command = {
 
 		// If the queue is open, display the user's limit usage
 		const [latestSubmission, userSubmissionCount] = await Promise.all([
-			fetchLatestEntryFrom(user.id, queueChannel),
+			getLatestStoredEntryFromSender(user.id, queueChannel),
 			countAllEntriesFrom(user.id, queueChannel)
 		]);
 

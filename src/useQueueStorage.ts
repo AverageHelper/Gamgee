@@ -288,14 +288,14 @@ export async function getAllStoredEntriesFromSender(
 }
 
 /**
- * Fetches the lastest entry by the given user.
+ * Retrieves the lastest entry from the database that was sent by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the user's latest entry
  * or `null` if the user has no associated entries.
  */
-export async function fetchLatestEntryFrom(
+export async function getLatestStoredEntryFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<QueueEntry | null> {

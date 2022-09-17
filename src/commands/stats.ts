@@ -9,7 +9,7 @@ import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllEntriesFrom,
-	fetchLatestEntryFrom,
+	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
@@ -43,7 +43,7 @@ export const stats: Command = {
 		}
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
-			fetchLatestEntryFrom(user.id, queueChannel),
+			getLatestStoredEntryFromSender(user.id, queueChannel),
 			countAllEntriesFrom(user.id, queueChannel),
 			averageSubmissionPlaytimeForUser(user.id, queueChannel)
 		]);

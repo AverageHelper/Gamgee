@@ -27,12 +27,14 @@ const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Disc
 
 import {
 	countAllEntriesFrom,
-	fetchLatestEntryFrom,
+	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 const mockCountAllEntriesFrom = countAllEntriesFrom as jest.Mock<Promise<number>>;
-const mockFetchLatestEntryFrom = fetchLatestEntryFrom as jest.Mock<Promise<QueueEntry | null>>;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock<
+	Promise<QueueEntry | null>
+>;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock<Promise<QueueConfig>>;
 
 const mockDeleteInvocation = jest.fn();
@@ -115,7 +117,7 @@ describe("Song request pipeline", () => {
 		mockIsQueueOpen.mockResolvedValue(true);
 		mockSetQueueOpen.mockResolvedValue(undefined);
 		mockCountAllEntriesFrom.mockResolvedValue(0);
-		mockFetchLatestEntryFrom.mockResolvedValue(null);
+		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 		mockDeleteInvocation.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);

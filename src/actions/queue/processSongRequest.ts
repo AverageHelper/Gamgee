@@ -17,7 +17,7 @@ import { DEFAULT_LOCALE, t, ti } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 import {
 	countAllEntriesFrom,
-	fetchLatestEntryFrom,
+	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 
@@ -127,7 +127,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 	try {
 		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
 			getStoredQueueConfig(queueChannel),
-			fetchLatestEntryFrom(senderId, queueChannel),
+			getLatestStoredEntryFromSender(senderId, queueChannel),
 			countAllEntriesFrom(senderId, queueChannel),
 			playtimeTotalInQueue(queueChannel)
 		]);
