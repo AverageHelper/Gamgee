@@ -4,7 +4,7 @@ import { assertUnreachable } from "../helpers/assertUnreachable.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-import { getQueueConfig } from "../useQueueStorage.js";
+import { getStoredQueueConfig } from "../useQueueStorage.js";
 import { localizations, t } from "../i18n.js";
 
 // TODO: i18n
@@ -20,7 +20,7 @@ export const limits: Command = {
 			return await reply(t("common.queue.not-set-up", guildLocale));
 		}
 
-		const config = await getQueueConfig(queueChannel);
+		const config = await getStoredQueueConfig(queueChannel);
 
 		// We call `reply` with `ephemeral: true`, which has different behavior between
 		// slash-command interactions and message commands.

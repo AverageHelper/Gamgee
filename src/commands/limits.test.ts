@@ -2,8 +2,8 @@ jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 
-import { getQueueConfig } from "../useQueueStorage.js";
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
+import { getStoredQueueConfig } from "../useQueueStorage.js";
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -26,7 +26,7 @@ describe("Get Queue Limits", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
 			entryDurationSeconds: null,
 			submissionMaxQuantity: null
@@ -60,7 +60,7 @@ describe("Get Queue Limits", () => {
 			entryDurationSeconds: number | null;
 			submissionMaxQuantity: number | null;
 		}) => {
-			mockGetQueueConfig.mockResolvedValue({
+			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationSeconds,
 				submissionMaxQuantity

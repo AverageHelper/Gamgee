@@ -28,14 +28,14 @@ export type QueueConfig = _QueueConfig & {
 };
 
 /**
- * Retrieves the queue's configuration settings.
+ * Retrieves the queue's configuration settings from the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  *
  * @returns a promise that resolves with the queue config for the channel
  * or a default one if none has been set yet.
  */
-export async function getQueueConfig(queueChannel: TextChannel): Promise<QueueConfig> {
+export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<QueueConfig> {
 	const extantConfig = await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.findUnique({
 			where: { channelId: queueChannel.id },

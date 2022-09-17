@@ -28,12 +28,12 @@ const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Disc
 import {
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
-	getQueueConfig
+	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 const mockCountAllEntriesFrom = countAllEntriesFrom as jest.Mock<Promise<number>>;
 const mockFetchLatestEntryFrom = fetchLatestEntryFrom as jest.Mock<Promise<QueueEntry | null>>;
-const mockGetQueueConfig = getQueueConfig as jest.Mock<Promise<QueueConfig>>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock<Promise<QueueConfig>>;
 
 const mockDeleteInvocation = jest.fn();
 const mockReplyPrivately = jest.fn();
@@ -116,7 +116,7 @@ describe("Song request pipeline", () => {
 		mockSetQueueOpen.mockResolvedValue(undefined);
 		mockCountAllEntriesFrom.mockResolvedValue(0);
 		mockFetchLatestEntryFrom.mockResolvedValue(null);
-		mockGetQueueConfig.mockResolvedValue(config);
+		mockGetStoredQueueConfig.mockResolvedValue(config);
 		mockDeleteInvocation.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
 		mockFollowUp.mockResolvedValue(undefined);
@@ -127,7 +127,7 @@ describe("Song request pipeline", () => {
 		// mock the queue limits to disable cooldown, enable long submissions, enable queue cap
 		const entrySeconds = 100; // 3 of these should fill the queue
 		config.queueDurationSeconds = 250;
-		mockGetQueueConfig.mockResolvedValue(config);
+		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter to consider any URL to be really long
 		mockGetVideoDetails.mockResolvedValue({

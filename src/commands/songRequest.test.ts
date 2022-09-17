@@ -4,9 +4,13 @@ jest.mock("../actions/queue/getQueueChannel.js");
 jest.mock("../actions/queue/useQueue.js");
 jest.mock("../actions/getVideoDetails.js");
 
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
+import {
+	countAllEntriesFrom,
+	fetchLatestEntryFrom,
+	getStoredQueueConfig
+} from "../useQueueStorage.js";
 const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
 
 import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
@@ -81,7 +85,7 @@ describe("Song request via URL", () => {
 	};
 	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
-	mockGetQueueConfig.mockResolvedValue({
+	mockGetStoredQueueConfig.mockResolvedValue({
 		entryDurationSeconds: null,
 		queueDurationSeconds: null,
 		cooldownSeconds: 600,

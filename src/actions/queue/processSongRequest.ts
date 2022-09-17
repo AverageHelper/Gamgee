@@ -18,7 +18,7 @@ import { useLogger } from "../../logger.js";
 import {
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
-	getQueueConfig
+	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 
 export interface SongRequest {
@@ -126,7 +126,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 
 	try {
 		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
-			getQueueConfig(queueChannel),
+			getStoredQueueConfig(queueChannel),
 			fetchLatestEntryFrom(senderId, queueChannel),
 			countAllEntriesFrom(senderId, queueChannel),
 			playtimeTotalInQueue(queueChannel)

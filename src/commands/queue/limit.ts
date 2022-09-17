@@ -5,7 +5,7 @@ import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
+import { getStoredQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { t } from "../../i18n.js";
 import {
@@ -129,7 +129,7 @@ export const limit: Subcommand = {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) return await reply(t("common.queue.not-set-up", guildLocale));
 
-		const config = await getQueueConfig(queueChannel);
+		const config = await getStoredQueueConfig(queueChannel);
 
 		// TODO: Handle modal interaction
 		// if (type === "interaction" && allLimits.length < MAX_INPUT_FIELDS_IN_MODAL) {

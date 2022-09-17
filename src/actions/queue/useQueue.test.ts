@@ -4,12 +4,12 @@ jest.mock("../../useQueueStorage");
 import {
 	createEntry,
 	fetchEntryFromMessage,
-	getQueueConfig,
+	getStoredQueueConfig,
 	removeEntryFromMessage
 } from "../../useQueueStorage.js";
 const mockCreateEntry = createEntry as jest.Mock;
 const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
 
 import { deleteMessage } from "../messages/index.js";
@@ -75,7 +75,7 @@ describe("Request Queue", () => {
 		mockCreateEntry.mockImplementation((entry: UnsentQueueEntry) => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
 			channelId: queueChannel.id,
 			entryDurationSeconds: 430,
 			cooldownSeconds: 960,

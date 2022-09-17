@@ -9,8 +9,8 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { getQueueConfig, blacklistUser } from "../../useQueueStorage.js";
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
+import { getStoredQueueConfig, blacklistUser } from "../../useQueueStorage.js";
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockBlacklistUser = blacklistUser as jest.Mock;
 
 import type Discord from "discord.js";
@@ -57,7 +57,7 @@ describe("Manage the Queue Blacklist", () => {
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: badUserId });
-		mockGetQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
+		mockGetStoredQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
 
 		mockBlacklistUser.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);

@@ -10,7 +10,7 @@ import {
 	averageSubmissionPlaytimeForUser,
 	countAllEntriesFrom,
 	fetchLatestEntryFrom,
-	getQueueConfig
+	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
 // TODO: i18n
@@ -31,7 +31,7 @@ export const stats: Command = {
 			return await replyPrivately(t("common.queue.not-set-up", userLocale));
 		}
 
-		const config = await getQueueConfig(queueChannel);
+		const config = await getStoredQueueConfig(queueChannel);
 
 		// If the queue is open, display the user's limit usage
 		const embed = new EmbedBuilder() //

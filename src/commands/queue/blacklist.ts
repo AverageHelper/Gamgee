@@ -1,6 +1,6 @@
 import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
+import { blacklistUser, getStoredQueueConfig } from "../../useQueueStorage.js";
 import { getCommandPrefix } from "../../useGuildStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { logUser } from "../../helpers/logUser.js";
@@ -47,7 +47,7 @@ export const blacklist: Subcommand = {
 				await reply(":paperclip: Check the list in your DMs");
 			}
 
-			const queueConfig = await getQueueConfig(queueChannel);
+			const queueConfig = await getStoredQueueConfig(queueChannel);
 			const blacklistedUsers = queueConfig.blacklistedUsers?.map(user => user.id) ?? [];
 
 			const prefix =
