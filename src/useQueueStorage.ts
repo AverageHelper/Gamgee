@@ -313,7 +313,8 @@ export async function getLatestStoredEntryFromSender(
 }
 
 /**
- * Fetches the number of entries from the given user in the queue.
+ * Retrieves the number of queue entries stored in the database that were sent
+ * by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
@@ -321,7 +322,7 @@ export async function getLatestStoredEntryFromSender(
  * @returns a promise that resolves with the number of entries in
  * the queue associated with the user.
  */
-export async function countAllEntriesFrom(
+export async function countAllStoredEntriesFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<number> {

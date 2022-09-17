@@ -16,7 +16,7 @@ import { SHRUGGIE } from "../../constants/textResponses.js";
 import { DEFAULT_LOCALE, t, ti } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../../useQueueStorage.js";
@@ -128,7 +128,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
 			getStoredQueueConfig(queueChannel),
 			getLatestStoredEntryFromSender(senderId, queueChannel),
-			countAllEntriesFrom(senderId, queueChannel),
+			countAllStoredEntriesFromSender(senderId, queueChannel),
 			playtimeTotalInQueue(queueChannel)
 		]);
 

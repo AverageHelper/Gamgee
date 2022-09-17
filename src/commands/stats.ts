@@ -8,7 +8,7 @@ import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
@@ -44,7 +44,7 @@ export const stats: Command = {
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
 			getLatestStoredEntryFromSender(user.id, queueChannel),
-			countAllEntriesFrom(user.id, queueChannel),
+			countAllStoredEntriesFromSender(user.id, queueChannel),
 			averageSubmissionPlaytimeForUser(user.id, queueChannel)
 		]);
 

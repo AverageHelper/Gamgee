@@ -3,11 +3,11 @@ jest.mock("../actions/queue/getQueueChannel.js");
 jest.mock("../useGuildStorage.js");
 
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
-const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
 
@@ -50,7 +50,7 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: null,
 			blacklistedUsers: []
 		});
-		mockQueueUserEntryCount.mockResolvedValue(0);
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 		mockIsQueueOpen.mockResolvedValue(true);
 	});
@@ -110,7 +110,7 @@ describe("User retrieving their own cooldown", () => {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
 		}) => {
-			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
+			mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
 			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
@@ -166,7 +166,7 @@ describe("User retrieving their own cooldown", () => {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
 		}) => {
-			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
+			mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
 			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
@@ -199,7 +199,7 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity,
 			blacklistedUsers: []
 		});
-		mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue({
 			queueMessageId: "message-1",
 			url: "https://example.com",

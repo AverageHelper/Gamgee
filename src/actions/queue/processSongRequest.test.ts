@@ -26,12 +26,14 @@ const mockIsQueueOpen = isQueueOpen as jest.Mock<Promise<boolean>, [Discord.Guil
 const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Discord.Guild]>;
 
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
-const mockCountAllEntriesFrom = countAllEntriesFrom as jest.Mock<Promise<number>>;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock<
+	Promise<number>
+>;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock<
 	Promise<QueueEntry | null>
 >;
@@ -116,7 +118,7 @@ describe("Song request pipeline", () => {
 		mockPushEntryToQueue.mockResolvedValue(newEntry);
 		mockIsQueueOpen.mockResolvedValue(true);
 		mockSetQueueOpen.mockResolvedValue(undefined);
-		mockCountAllEntriesFrom.mockResolvedValue(0);
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 		mockDeleteInvocation.mockResolvedValue(undefined);

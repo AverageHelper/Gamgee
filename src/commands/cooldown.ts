@@ -6,7 +6,7 @@ import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
@@ -45,7 +45,7 @@ export const cooldown: Command = {
 		// If the queue is open, display the user's limit usage
 		const [latestSubmission, userSubmissionCount] = await Promise.all([
 			getLatestStoredEntryFromSender(user.id, queueChannel),
-			countAllEntriesFrom(user.id, queueChannel)
+			countAllStoredEntriesFromSender(user.id, queueChannel)
 		]);
 
 		if (!latestSubmission) {

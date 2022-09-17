@@ -5,11 +5,11 @@ jest.mock("../actions/queue/useQueue.js");
 jest.mock("../actions/getVideoDetails.js");
 
 import {
-	countAllEntriesFrom,
+	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
-const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
 
@@ -73,7 +73,7 @@ describe("Song request via URL", () => {
 	const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 
 	mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
-	mockQueueUserEntryCount.mockResolvedValue(0);
+	mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 
 	mockPlaytimeTotal.mockResolvedValue(0);
 	mockGetCommandPrefix.mockResolvedValue(DEFAULT_MESSAGE_COMMAND_PREFIX);
@@ -174,7 +174,7 @@ describe("Song request via URL", () => {
 				senderId: mockMessage1.author.id,
 				isDone: false
 			});
-			mockQueueUserEntryCount.mockResolvedValueOnce(1);
+			mockCountAllStoredEntriesFromSender.mockResolvedValueOnce(1);
 			return Promise.resolve();
 		});
 
