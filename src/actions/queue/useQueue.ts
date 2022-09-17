@@ -9,11 +9,11 @@ import { durationString } from "../../helpers/durationString.js";
 import { preferredLocale } from "../../i18n.js";
 import {
 	addToHaveCalledNowPlaying,
-	createEntry,
 	fetchAllEntries,
 	fetchEntryFromMessage,
+	markEntryDone,
 	removeEntryFromMessage,
-	markEntryDone
+	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
 import {
 	composed,
@@ -120,7 +120,7 @@ export async function pushEntryToQueue(
 
 	let entry: QueueEntry;
 	try {
-		entry = await createEntry(
+		entry = await saveNewEntryToDatabase(
 			{
 				url: newEntry.url,
 				seconds: newEntry.seconds,

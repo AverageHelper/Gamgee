@@ -108,14 +108,14 @@ export async function updateStoredQueueConfig(
 // ** Write Song Entries **
 
 /**
- * Adds the queue entry to the database.
+ * Adds a queue entry to the database.
  *
  * @param entry Properties of the new request entity.
  * @param queueChannel The channel that identifies the request queue.
  *
  * @returns a promise that resolves with the new queue entry
  */
-export async function createEntry(
+export async function saveNewEntryToDatabase(
 	entry: Omit<_QueueEntry, "channelId" | "guildId">,
 	queueChannel: TextChannel
 ): Promise<QueueEntry> {

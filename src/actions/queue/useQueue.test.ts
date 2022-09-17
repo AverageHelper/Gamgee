@@ -2,15 +2,15 @@ jest.mock("../messages");
 jest.mock("../../useQueueStorage");
 
 import {
-	createEntry,
 	fetchEntryFromMessage,
 	getStoredQueueConfig,
-	removeEntryFromMessage
+	removeEntryFromMessage,
+	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
-const mockCreateEntry = createEntry as jest.Mock;
 const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
+const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as jest.Mock;
 
 import { deleteMessage } from "../messages/index.js";
 const mockDeleteMessage = deleteMessage as jest.Mock;
@@ -72,7 +72,7 @@ describe("Request Queue", () => {
 			return null; // not an entry
 		});
 		mockRemoveEntryFromMessage.mockResolvedValue(undefined);
-		mockCreateEntry.mockImplementation((entry: UnsentQueueEntry) => {
+		mockSaveNewEntryToDatabase.mockImplementation((entry: UnsentQueueEntry) => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
 		mockGetStoredQueueConfig.mockResolvedValue({
@@ -125,8 +125,8 @@ describe("Request Queue", () => {
 
 		await flushPromises();
 
-		expect(mockCreateEntry).toHaveBeenCalledOnce();
-		expect(mockCreateEntry).toHaveBeenCalledWith(
+		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledOnce();
+		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledWith(
 			{
 				...request,
 				isDone: false,
