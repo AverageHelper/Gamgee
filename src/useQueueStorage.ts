@@ -360,7 +360,7 @@ export async function updateStoredEntryIsDone(
  * Deletes all request entries for this queue from the database.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function clearEntries(queueChannel: TextChannel): Promise<void> {
+export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.deleteMany({
 			where: {

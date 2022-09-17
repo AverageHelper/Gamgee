@@ -1,7 +1,7 @@
 import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
-import { clearEntries, getAllStoredEntries } from "../../useQueueStorage.js";
+import { deleteStoredEntriesForQueue, getAllStoredEntries } from "../../useQueueStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 
 // TODO: i18n
@@ -26,7 +26,7 @@ export const restart: Subcommand = {
 		if (!didDelete) {
 			return await reply("Something went wrong. I couldn't get that queue cleared, sorry.");
 		}
-		await clearEntries(queueChannel);
+		await deleteStoredEntriesForQueue(queueChannel);
 
 		return await reply("The queue has restarted.");
 	}
