@@ -2,14 +2,14 @@ jest.mock("../messages");
 jest.mock("../../useQueueStorage");
 
 import {
+	deleteStoredEntry,
 	fetchEntryFromMessage,
 	getStoredQueueConfig,
-	removeEntryFromMessage,
 	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
+const mockDeleteStoredEntry = deleteStoredEntry as jest.Mock;
 const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
 const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as jest.Mock;
 
 import { deleteMessage } from "../messages/index.js";
@@ -71,7 +71,7 @@ describe("Request Queue", () => {
 			}
 			return null; // not an entry
 		});
-		mockRemoveEntryFromMessage.mockResolvedValue(undefined);
+		mockDeleteStoredEntry.mockResolvedValue(undefined);
 		mockSaveNewEntryToDatabase.mockImplementation((entry: UnsentQueueEntry) => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
@@ -95,7 +95,7 @@ describe("Request Queue", () => {
 		message.id = "not-a-queue-message" as Discord.Snowflake;
 		await expect(deleteEntryFromMessage(message)).resolves.toBeNull();
 
-		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
+		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).not.toHaveBeenCalled();
 	});
 
@@ -103,8 +103,8 @@ describe("Request Queue", () => {
 		message.id = queueMessageId;
 		await expect(deleteEntryFromMessage(message)).resolves.toBe(entry);
 
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledOnce();
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
+		expect(mockDeleteStoredEntry).toHaveBeenCalledOnce();
+		expect(mockDeleteStoredEntry).toHaveBeenCalledWith(message.id);
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -136,6 +136,6 @@ describe("Request Queue", () => {
 			queueChannel
 		);
 
-		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
+		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
 	});
 });

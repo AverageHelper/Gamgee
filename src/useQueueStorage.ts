@@ -194,11 +194,11 @@ export async function saveNewEntryToDatabase(
 }
 
 /**
- * Removes the queue entry from the database.
+ * Erases the queue entry from the database.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  */
-export async function removeEntryFromMessage(queueMessageId: Snowflake): Promise<void> {
+export async function deleteStoredEntry(queueMessageId: Snowflake): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.delete({
 			where: { queueMessageId }

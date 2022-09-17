@@ -9,10 +9,10 @@ import { durationString } from "../../helpers/durationString.js";
 import { preferredLocale } from "../../i18n.js";
 import {
 	addToHaveCalledNowPlaying,
+	deleteStoredEntry,
 	fetchAllEntries,
 	fetchEntryFromMessage,
 	markEntryDone,
-	removeEntryFromMessage,
 	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
 import {
@@ -195,7 +195,7 @@ export async function deleteEntryFromMessage(
 	const entry = await fetchEntryFromMessage(queueMessage.id);
 	if (entry === null) return entry;
 
-	await removeEntryFromMessage(queueMessage.id);
+	await deleteStoredEntry(queueMessage.id);
 	await deleteMessage(queueMessage);
 
 	return entry;
