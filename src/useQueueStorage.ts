@@ -429,12 +429,16 @@ export async function addToHaveCalledNowPlayingForStoredEntry(
 // ** User Blacklist **
 
 /**
- * Adds the user to the queue's blacklist. That user will not be able to submit song requests.
+ * Adds the user to the queue's blacklist in the database. That user will not
+ * be able to submit song requests.
  *
  * @param userId The ID of the user to blacklist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function blacklistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
+export async function saveUserToStoredBlacklist(
+	userId: Snowflake,
+	queueChannel: TextChannel
+): Promise<void> {
 	const blacklistedUsers = {
 		connectOrCreate: {
 			where: {
