@@ -374,32 +374,6 @@ export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Pr
 // ** Now-playing Invocations **
 
 /**
- * Retrieves the number of users that invoked `/nowplaying` or its variants for an entry,
- * excluding the requesting user if they also invoked that command.
- *
- * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
- * @param queueChannel The channel that identifies the request queue.
- * @returns a promise that resolves with the number of unique `/nowplaying` invocations
- * for the entry.
- */
-export async function getLikeCount(
-	queueMessageId: Snowflake,
-	queueChannel: TextChannel
-): Promise<number> {
-	const entry = await useRepository("queueEntry", queueEntries =>
-		queueEntries.findFirst({
-			where: {
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			},
-			select: { haveCalledNowPlaying: true }
-		})
-	);
-	return entry?.haveCalledNowPlaying.length ?? Number.NaN;
-}
-
-/**
  * Increments the count of unique `/nowplaying` invocations for the entry.
  * If the user submitted this entry, they are not counted.
  * If the user has already invoked `/nowplaying` for this entry, they are not counted.
