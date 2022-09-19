@@ -1,9 +1,9 @@
 import type { VideoDetails } from "../getVideoDetails.js";
+import { fetch } from "../../helpers/fetch.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { URL } from "node:url";
 import { useLogger } from "../../logger.js";
 import { VideoError } from "../../errors/VideoError.js";
-import fetch from "cross-fetch";
 import SoundCloud from "soundcloud-scraper";
 
 const logger = useLogger();
