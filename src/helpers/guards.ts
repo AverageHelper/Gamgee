@@ -4,6 +4,10 @@ export function isNonEmptyArray<T>(array: Array<T>): array is NonEmptyArray<T> {
 	return array.length > 0;
 }
 
+export function isNotNull<T>(tbd: T): tbd is Exclude<T, null> {
+	return tbd !== null;
+}
+
 export function isObject(tbd: unknown): tbd is Record<string, unknown> {
 	return typeof tbd === "object" && tbd !== null && !Array.isArray(tbd);
 }

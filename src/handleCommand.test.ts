@@ -267,6 +267,7 @@ describe("Command handler", () => {
 		test.each`
 			command
 			${"setprefix"}
+			${"cooldown"}
 			${"help"}
 			${"howto"}
 			${"languages"}
@@ -303,6 +304,42 @@ describe("Command handler", () => {
 				])
 			);
 		});
+
+		test.each`
+			localized           | command
+			${"präfixsetzen"}   | ${"setprefix"}
+			${"hilfe"}          | ${"help"}
+			${"ayuda"}          | ${"help"}
+			${"segítség"}       | ${"help"}
+			${"spieltjetzt"}    | ${"nowplaying"}
+			${"jugandoahora"}   | ${"nowplaying"}
+			${"jouemaintenant"} | ${"nowplaying"}
+		`(
+			"calls the $command command from localized name '$localized'",
+			async ({ command, localized }: { command: string; localized: string }) => {
+				mockMessage.content = `${prefix}${localized}`;
+				mockMessage.author.bot = false;
+				await handleCommand(mockMessage, logger);
+
+				const mockCommand = mockCommandDefinitions.get(command.replace("-", ""));
+				const mock = mockCommand?.execute;
+				expectDefined(mock);
+				expect(mock).toHaveBeenCalledOnce();
+				expect(mock).toHaveBeenCalledWith(
+					expect.toContainEntries([
+						["client", mockClient],
+						["message", mockMessage],
+						[
+							"options",
+							command
+								.split(/ +/u)
+								.slice(1)
+								.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+						]
+					])
+				);
+			}
+		);
 
 		test.each`
 			command

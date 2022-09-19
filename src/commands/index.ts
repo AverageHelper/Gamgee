@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { isNotNull } from "../helpers/guards.js";
 
 export * from "./Command.js";
 
@@ -21,31 +22,87 @@ import { video } from "./video.js";
 
 export const allCommands = new Map<string, Command>();
 
+function aliasesForCommand(cmd: Pick<Command, "aliases">): Array<string> {
+	return cmd.aliases ?? [];
+}
+
+function localizationsForCommand(cmd: Pick<Command, "nameLocalizations">): Array<string> {
+	return Array.from(
+		new Set(
+			Object.values(cmd.nameLocalizations ?? {}).filter(isNotNull) //
+		)
+	);
+}
+
 /**
  * Finds the name of the command referenced by the given alias.
  *
  * Returns the provided `alias` if no match is found. The caller
  * should check that the result is an actual command name.
  */
-export function resolveAlias(alias: string): string {
-	for (const [name, command] of allCommands) {
-		const aliases = command.aliases ?? [];
-		if (aliases.includes(alias)) {
-			return name;
-		}
+export function resolveAlias(
+	alias: string,
+	commands: Map<string, Pick<Command, "aliases" | "nameLocalizations">> = allCommands
+): string {
+	for (const [name, command] of commands) {
+		// If found, use the command's primary name
+		const aliases = aliasesForCommand(command);
+		if (aliases.includes(alias)) return name;
+
+		const localizations = localizationsForCommand(command);
+		if (localizations.includes(alias)) return name;
 	}
+	// Return the alias name if we couldn't resolve it
 	return alias;
 }
 
 function add(command: Command): void {
-	if (allCommands.has(command.name)) {
+	const name = command.name;
+	const aliases = aliasesForCommand(command);
+	const localizations = localizationsForCommand(command);
+
+	// Ensure name uniqueness
+	if (allCommands.has(name)) {
 		throw new TypeError(
-			`Failed to add command ${command.name} when a command with that name was already added`
-		); // TODO: i18n
+			`Failed to add command '${name}' when a command with that name was already added`
+		); // TODO: i18n?
 	}
-	// TODO: Check that command aliases are as unique as command names
-	allCommands.set(command.name, command);
-	// TODO: Add the command by its localized names as well
+
+	// Ensure alias uniqueness
+	for (const alias of aliases) {
+		if (allCommands.has(alias)) {
+			throw new TypeError(
+				`Failed to add command with alias '${alias}' when a command with that name (by the name of '${command.name}') was already added`
+			); // TODO: i18n?
+		}
+		for (const command of allCommands.values()) {
+			if (command.aliases?.includes(alias) === true) {
+				throw new TypeError(
+					`Failed to add command with alias '${alias}' when a command with that alias (by the name of '${command.name}') was already added`
+				); // TODO: i18n?
+			}
+		}
+	}
+
+	// Ensure localization uniqueness
+	for (const localization of localizations) {
+		if (allCommands.has(localization)) {
+			throw new TypeError(
+				`Failed to add command with localized name '${localization}' when a command with that name (by the name of '${command.name}') was already added`
+			); // TODO: i18n?
+		}
+		for (const command of allCommands.values()) {
+			const otherLocalizations = localizationsForCommand(command);
+			if (otherLocalizations.includes(localization)) {
+				throw new TypeError(
+					`Failed to add command with localized name '${localization}' when a command with that localization (by the name of '${command.name}') was already added`
+				); // TODO: i18n?
+			}
+		}
+	}
+
+	// Note the command by its name
+	allCommands.set(name, command);
 }
 
 add(cooldown);

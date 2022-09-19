@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support for invoking localized command names with message commands. For example, `?usuarioinfo` now behaves the same as `?userinfo`. Any user can execute a command in any supported language.
+
 ### Changed
 - BREAKING: Changed the way database migrations happen. After you update, please run `npm run baseline` if you do not wish your database to be reset. This command adds a field to your database that lets our ORM know that its schema is up to date. You should only have to do this once.
 - BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
