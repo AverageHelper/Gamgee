@@ -89,8 +89,22 @@ export async function bulkDeleteMessagesWithIds(
 		if (isDiscordError(error) && error.code === 50034) {
 			// Error 50034: You can only bulk delete messages that are under 14 days old.
 			logger.warn(error.message);
-			await Promise.allSettled(messageIds.map(id => deleteMessageWithId(id, channel))); // TODO: Handle these errors
-			return true;
+
+			// Delete manually
+			const results = await Promise.allSettled(
+				messageIds.map(id => deleteMessageWithId(id, channel))
+			);
+			const didFailToDeleteSome = results.some(res => res.status === "rejected");
+			if (didFailToDeleteSome) {
+				logger.info("Some messages could not be deleted:");
+			}
+			for (const result of results) {
+				if (result.status === "rejected") {
+					logger.error(richErrorMessage("Failed to delete a message.", result.reason));
+				}
+			}
+
+			return true; // We give up, if some deletions failed, don't bother blocking anymore
 		}
 
 		logger.error(richErrorMessage(`Failed to delete ${messageIds.length} messages.`, error));
