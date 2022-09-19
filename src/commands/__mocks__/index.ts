@@ -3,23 +3,18 @@ import type { Command } from "../Command.js";
 interface MockCommand {
 	name: Command["name"];
 	aliases?: Command["aliases"];
+	nameLocalizations?: Command["nameLocalizations"];
 	options: Command["options"];
 	execute: jest.Mock;
 }
 
 export { invokeCommand } from "../../actions/invokeCommand.js";
 
-const { allCommands: realAllCommands } =
+const { allCommands: _allCommands, resolveAlias: _resolveAlias } =
 	jest.requireActual<typeof import("../index.js")>("../index");
 
 export function resolveAlias(alias: string): string {
-	for (const [name, command] of allCommands) {
-		const aliases = command.aliases ?? [];
-		if (aliases.includes(alias)) {
-			return name;
-		}
-	}
-	return alias;
+	return _resolveAlias(alias, allCommands);
 }
 
 export const allCommands = new Map<string, MockCommand>();
@@ -29,9 +24,10 @@ function addMock(command: Command): void {
 		name: command.name,
 		aliases: command.aliases,
 		options: command.options,
+		nameLocalizations: command.nameLocalizations,
 		execute: jest.fn().mockResolvedValue(undefined)
 	});
 }
 
 // Add all commands to our mock commands list
-realAllCommands.forEach(cmd => addMock(cmd));
+_allCommands.forEach(cmd => addMock(cmd));

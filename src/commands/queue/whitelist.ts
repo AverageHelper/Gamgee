@@ -2,8 +2,8 @@ import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { logUser } from "../../helpers/logUser.js";
+import { removeUserFromStoredBlacklist } from "../../useQueueStorage.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
-import { whitelistUser } from "../../useQueueStorage.js";
 
 // TODO: i18n
 export const whitelist: Subcommand = {
@@ -48,7 +48,7 @@ export const whitelist: Subcommand = {
 			return await reply({ content: ":x: There's no queue set up yet.", ephemeral: true });
 		}
 
-		await whitelistUser(subject.id, queueChannel);
+		await removeUserFromStoredBlacklist(subject.id, queueChannel);
 		logger.info(`Restored song request permission to user ${logUser(subject)}.`);
 
 		return await reply({

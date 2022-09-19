@@ -108,7 +108,8 @@
 		},
 		"version": {
 			"description": "Muestra la versión actual de la base de código del bot.",
-			"name": "versión"
+			"name": "versión",
+			"response": "Actualmente estoy ejecutando {version}"
 		},
 		"video": {
 			"description": "Responde con el título y la duración del video.",

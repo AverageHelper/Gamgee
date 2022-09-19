@@ -1,26 +1,24 @@
 import type { CommandInteractionOption } from "discord.js";
-// import type { QueueConfig } from "@prisma/client";
 import type { Subcommand } from "../Command.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { assertUnreachable } from "../../helpers/assertUnreachable.js";
 import { composed, createPartialString, push, pushBold } from "../../helpers/composeStrings.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-import { getQueueConfig, updateQueueConfig } from "../../useQueueStorage.js";
+import { getStoredQueueConfig, updateStoredQueueConfig } from "../../useQueueStorage.js";
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import { t } from "../../i18n.js";
-import {
-	// ActionRowBuilder,
-	ApplicationCommandOptionType
-	// ModalBuilder,
-	// TextInputBuilder,
-	// TextInputStyle
-} from "discord.js";
 import {
 	resolveIntegerFromOption,
 	resolveStringFromOption
 } from "../../helpers/optionResolvers.js";
 
-type LimitKey = "queue-duration" | "entry-duration" | "entry-duration-min" | "cooldown" | "count";
+type LimitKey =
+	| "queue-duration"
+	| "entry-duration-min"
+	| "entry-duration-max"
+	| "cooldown"
+	| "count";
 
 export interface QueueLimitArg {
 	name: string;
@@ -28,21 +26,6 @@ export interface QueueLimitArg {
 	description: string;
 	example: string;
 }
-
-// function queueLimitValueForMeta(config: QueueConfig, meta: QueueLimitArg): number | null {
-// 	switch (meta.value) {
-// 		case "cooldown":
-// 			return config.cooldownSeconds;
-// 		case "count":
-// 			return config.submissionMaxQuantity;
-// 		case "entry-duration":
-// 			return config.entryDurationSeconds;
-// 		case "entry-duration-min":
-// 			return config.entryDurationMinSeconds;
-// 		case "queue-duration":
-// 			return config.queueDurationSeconds;
-// 	}
-// }
 
 // TODO: i18n
 export const countLimitMeta: QueueLimitArg = {
@@ -69,7 +52,7 @@ export const minDurationLimitMeta: QueueLimitArg = {
 
 export const maxDurationLimitMeta: QueueLimitArg = {
 	name: "Max Song Length",
-	value: "entry-duration", // TODO: Rename this to something more sane
+	value: "entry-duration-max",
 	description: "The maximum duration (in seconds) of a song submission.",
 	example: "430"
 };
@@ -100,9 +83,6 @@ function isLimitKey(value: unknown): value is LimitKey {
 	);
 }
 
-/** @see https://discordjs.guide/interactions/modals.html#building-and-responding-with-modals */
-// const MAX_INPUT_FIELDS_IN_MODAL = 5;
-
 export const limit: Subcommand = {
 	name: "limit", // TODO: Alias this to "limits"
 	description: "Set a limit value on the queue. (Time in seconds, where applicable)",
@@ -129,32 +109,7 @@ export const limit: Subcommand = {
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) return await reply(t("common.queue.not-set-up", guildLocale));
 
-		const config = await getQueueConfig(queueChannel);
-
-		// TODO: Handle modal interaction
-		// if (type === "interaction" && allLimits.length < MAX_INPUT_FIELDS_IN_MODAL) {
-		// 	const modal = new ModalBuilder() //
-		// 		.setCustomId("queue-limit-config")
-		// 		.setTitle("Queue Limits");
-
-		// 	allLimits.forEach(meta => {
-		// 		const value = queueLimitValueForMeta(config, meta);
-		// 		const input = new TextInputBuilder()
-		// 			.setCustomId(meta.value)
-		// 			.setLabel(meta.name)
-		// 			.setPlaceholder(`e.g.: ${meta.example}`)
-		// 			.setValue(`${value ?? ""}`)
-		// 			.setStyle(TextInputStyle.Short)
-		// 			.setRequired(false)
-		// 			.setMinLength(1)
-		// 			.setMaxLength(17); // <= 1 tril w/o commas, <= 10 quad w/ commas; should be enough
-		// 		const row = new ActionRowBuilder<TextInputBuilder>() //
-		// 			.addComponents(input);
-		// 		modal.addComponents(row);
-		// 	});
-
-		// 	return await context.interaction.showModal(modal);
-		// }
+		const config = await getStoredQueueConfig(queueChannel);
 
 		const keyOption: CommandInteractionOption | undefined = options[0];
 		const valueOption: CommandInteractionOption | undefined = options[1];
@@ -173,11 +128,11 @@ export const limit: Subcommand = {
 
 		// Set limits on the queue
 		switch (key) {
-			case "entry-duration": {
+			case "entry-duration-max": {
 				// ** Limit each entry's max duration
 				if (!valueOption) {
 					// Read the current limit
-					const value = config.entryDurationSeconds;
+					const value = config.entryDurationMaxSeconds;
 					if (value === null) {
 						return await reply("There is no upper limit on entry duration.");
 					}
@@ -192,7 +147,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ entryDurationSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ entryDurationMaxSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration upper limit was ");
 				if (value === null || value <= 0) {
@@ -223,7 +178,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ entryDurationMinSeconds: value }, queueChannel);
 
 				const response = createPartialString("Entry duration lower limit was ");
 				if (value === null || value <= 0) {
@@ -252,7 +207,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ queueDurationSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ queueDurationSeconds: value }, queueChannel);
 
 				const response = createPartialString("Queue duration limit was ");
 				if (value === null || value <= 0) {
@@ -282,7 +237,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ cooldownSeconds: value }, queueChannel);
+				await updateStoredQueueConfig({ cooldownSeconds: value }, queueChannel);
 
 				const response = createPartialString("Submission cooldown was ");
 				if (value === null || value <= 0) {
@@ -312,7 +267,7 @@ export const limit: Subcommand = {
 					return await reply("That doesn't look like an integer. Enter a number value in seconds.");
 				}
 				value = value === null || value <= 0 ? null : value;
-				await updateQueueConfig({ submissionMaxQuantity: value }, queueChannel);
+				await updateStoredQueueConfig({ submissionMaxQuantity: value }, queueChannel);
 
 				const response = createPartialString("Submission count limit per user was ");
 				if (value === null || value <= 0) {

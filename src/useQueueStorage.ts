@@ -18,7 +18,6 @@ export type UnsentQueueEntry = Omit<
 >;
 
 // TODO: Break these into separate files where appropriate
-// TODO: Make clear that these functions do not touch Discord's API, only local storage
 // TODO: Only retain user-provided data for at most 90 days
 
 // ** Queue Config **
@@ -28,14 +27,14 @@ export type QueueConfig = _QueueConfig & {
 };
 
 /**
- * Retrieves the queue's configuration settings.
+ * Retrieves the queue's configuration settings from the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  *
  * @returns a promise that resolves with the queue config for the channel
  * or a default one if none has been set yet.
  */
-export async function getQueueConfig(queueChannel: TextChannel): Promise<QueueConfig> {
+export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<QueueConfig> {
 	const extantConfig = await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.findUnique({
 			where: { channelId: queueChannel.id },
@@ -47,23 +46,24 @@ export async function getQueueConfig(queueChannel: TextChannel): Promise<QueueCo
 		})
 	);
 	return {
+		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? [],
 		channelId: queueChannel.id,
-		entryDurationSeconds: extantConfig?.entryDurationSeconds ?? null,
+		cooldownSeconds: extantConfig?.cooldownSeconds ?? null,
+		entryDurationMaxSeconds: extantConfig?.entryDurationMaxSeconds ?? null,
 		entryDurationMinSeconds: extantConfig?.entryDurationMinSeconds ?? null,
 		queueDurationSeconds: extantConfig?.queueDurationSeconds ?? null,
-		cooldownSeconds: extantConfig?.cooldownSeconds ?? null,
-		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null,
-		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? []
+		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null
 	};
 }
 
 /**
- * Updates the provided properties of a queue's configuration settings.
+ * Updates the provided properties of a queue's configuration settings
+ * in the database.
  *
  * @param config Properties of the queue config to overwrite the current data.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function updateQueueConfig(
+export async function updateStoredQueueConfig(
 	config: Partial<QueueConfig>,
 	queueChannel: TextChannel
 ): Promise<void> {
@@ -75,10 +75,10 @@ export async function updateQueueConfig(
 			set: Array<{ queueConfigsChannelId_userId: QueueConfigToBlacklistedUsers }>;
 		};
 	} = {
-		entryDurationSeconds: config.entryDurationSeconds,
+		cooldownSeconds: config.cooldownSeconds,
+		entryDurationMaxSeconds: config.entryDurationMaxSeconds,
 		entryDurationMinSeconds: config.entryDurationMinSeconds,
 		queueDurationSeconds: config.queueDurationSeconds,
-		cooldownSeconds: config.cooldownSeconds,
 		submissionMaxQuantity: config.submissionMaxQuantity
 	};
 
@@ -107,14 +107,14 @@ export async function updateQueueConfig(
 // ** Write Song Entries **
 
 /**
- * Adds the queue entry to the database.
+ * Adds a queue entry to the database.
  *
  * @param entry Properties of the new request entity.
  * @param queueChannel The channel that identifies the request queue.
  *
  * @returns a promise that resolves with the new queue entry
  */
-export async function createEntry(
+export async function saveNewEntryToDatabase(
 	entry: Omit<_QueueEntry, "channelId" | "guildId">,
 	queueChannel: TextChannel
 ): Promise<QueueEntry> {
@@ -155,13 +155,13 @@ export async function createEntry(
 			update: {},
 
 			create: {
+				blacklistedUsers: undefined,
 				channelId: queueChannel.id,
-				entryDurationSeconds: null,
 				cooldownSeconds: null,
-				submissionMaxQuantity: null,
-				queueDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				entryDurationMinSeconds: null,
-				blacklistedUsers: undefined
+				queueDurationSeconds: null,
+				submissionMaxQuantity: null
 			}
 		})
 	);
@@ -193,11 +193,11 @@ export async function createEntry(
 }
 
 /**
- * Removes the queue entry from the database.
+ * Erases the queue entry from the database.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  */
-export async function removeEntryFromMessage(queueMessageId: Snowflake): Promise<void> {
+export async function deleteStoredEntry(queueMessageId: Snowflake): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.delete({
 			where: { queueMessageId }
@@ -208,14 +208,14 @@ export async function removeEntryFromMessage(queueMessageId: Snowflake): Promise
 // ** Read Song Entries **
 
 /**
- * Fetches an entry with the given message ID.
+ * Retrieves an entry from the database with the given message ID.
  *
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  *
  * @returns a promise that resolves with the matching queue entry
  * or `null` if no such entry exists
  */
-export async function fetchEntryFromMessage(queueMessageId: Snowflake): Promise<QueueEntry | null> {
+export async function getStoredEntry(queueMessageId: Snowflake): Promise<QueueEntry | null> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findUnique({
 			where: { queueMessageId },
@@ -225,13 +225,13 @@ export async function fetchEntryFromMessage(queueMessageId: Snowflake): Promise<
 }
 
 /**
- * Fetches all entries in the queue, in order of appearance.
+ * Retrieves all queue entries, in chronological order, from the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the queue's entries,
  * in the order in which they were added.
  */
-export async function fetchAllEntries(queueChannel: TextChannel): Promise<Array<QueueEntry>> {
+export async function getAllStoredEntries(queueChannel: TextChannel): Promise<Array<QueueEntry>> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findMany({
 			where: {
@@ -245,12 +245,12 @@ export async function fetchAllEntries(queueChannel: TextChannel): Promise<Array<
 }
 
 /**
- * Fetches the number of entries in the queue.
+ * Retrieves the number of queue entries stored in the database.
  *
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the number of entries in the queue.
  */
-export async function countAllEntries(queueChannel: TextChannel): Promise<number> {
+export async function countAllStoredEntries(queueChannel: TextChannel): Promise<number> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.count({
 			where: {
@@ -262,14 +262,14 @@ export async function countAllEntries(queueChannel: TextChannel): Promise<number
 }
 
 /**
- * Fetches all entries by the given user.
+ * Retrieves all entries from the database that were sent by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the user's entries,
  * in the order in which they were added.
  */
-export async function fetchAllEntriesFrom(
+export async function getAllStoredEntriesFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<Array<QueueEntry>> {
@@ -287,14 +287,14 @@ export async function fetchAllEntriesFrom(
 }
 
 /**
- * Fetches the lastest entry by the given user.
+ * Retrieves the lastest entry from the database that was sent by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
  * @returns a promise that resolves with the user's latest entry
  * or `null` if the user has no associated entries.
  */
-export async function fetchLatestEntryFrom(
+export async function getLatestStoredEntryFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<QueueEntry | null> {
@@ -312,7 +312,8 @@ export async function fetchLatestEntryFrom(
 }
 
 /**
- * Fetches the number of entries from the given user in the queue.
+ * Retrieves the number of queue entries stored in the database that were sent
+ * by the given user.
  *
  * @param senderId The ID of the user who submitted entries.
  * @param queueChannel The channel that identifies the request queue.
@@ -320,7 +321,7 @@ export async function fetchLatestEntryFrom(
  * @returns a promise that resolves with the number of entries in
  * the queue associated with the user.
  */
-export async function countAllEntriesFrom(
+export async function countAllStoredEntriesFromSender(
 	senderId: string,
 	queueChannel: TextChannel
 ): Promise<number> {
@@ -335,29 +336,16 @@ export async function countAllEntriesFrom(
 	);
 }
 
-/** Returns the average entry duration of the submissions of the user with the provided ID. */
-export async function averageSubmissionPlaytimeForUser(
-	userId: Snowflake,
-	queueChannel: TextChannel
-): Promise<number> {
-	const entries = await fetchAllEntriesFrom(userId, queueChannel);
-	let average = 0;
-
-	entries.forEach(entry => {
-		average += entry.seconds;
-	});
-	average /= entries.length;
-
-	return average;
-}
-
 /**
- * Sets the entry's "done" value.
+ * Sets the entry's "done" value in the database.
  *
  * @param isDone Whether the entry should be marked "done"
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  */
-export async function markEntryDone(isDone: boolean, queueMessageId: Snowflake): Promise<void> {
+export async function updateStoredEntryIsDone(
+	isDone: boolean,
+	queueMessageId: Snowflake
+): Promise<void> {
 	logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.update({
@@ -371,7 +359,7 @@ export async function markEntryDone(isDone: boolean, queueMessageId: Snowflake):
  * Deletes all request entries for this queue from the database.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function clearEntries(queueChannel: TextChannel): Promise<void> {
+export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.deleteMany({
 			where: {
@@ -385,41 +373,16 @@ export async function clearEntries(queueChannel: TextChannel): Promise<void> {
 // ** Now-playing Invocations **
 
 /**
- * Retrieves the number of users that invoked `/nowplaying` or its variants for an entry,
- * excluding the requesting user if they also invoked that command.
- *
- * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
- * @param queueChannel The channel that identifies the request queue.
- * @returns a promise that resolves with the number of unique `/nowplaying` invocations
- * for the entry.
- */
-export async function getLikeCount(
-	queueMessageId: Snowflake,
-	queueChannel: TextChannel
-): Promise<number> {
-	const entry = await useRepository("queueEntry", queueEntries =>
-		queueEntries.findFirst({
-			where: {
-				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id,
-				queueMessageId
-			},
-			select: { haveCalledNowPlaying: true }
-		})
-	);
-	return entry?.haveCalledNowPlaying.length ?? Number.NaN;
-}
-
-/**
- * Increments the count of unique `/nowplaying` invocations for the entry.
- * If the user submitted this entry, they are not counted.
- * If the user has already invoked `/nowplaying` for this entry, they are not counted.
+ * Increments the count of unique `/nowplaying` invocations in the database for
+ * the entry in the database. If the user submitted this entry, they are not
+ * counted. If the user has already invoked `/nowplaying` for this entry, they
+ * are not counted.
  *
  * @param userId The ID of the user who invoked `/nowplaying`.
  * @param queueMessageId The ID of the message that identifies the entry in the queue channel.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function addToHaveCalledNowPlaying(
+export async function addToHaveCalledNowPlayingForStoredEntry(
 	userId: Snowflake,
 	queueMessageId: Snowflake,
 	queueChannel: TextChannel
@@ -465,12 +428,16 @@ export async function addToHaveCalledNowPlaying(
 // ** User Blacklist **
 
 /**
- * Adds the user to the queue's blacklist. That user will not be able to submit song requests.
+ * Adds the user to the queue's blacklist in the database. That user will not
+ * be able to submit song requests.
  *
  * @param userId The ID of the user to blacklist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function blacklistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
+export async function saveUserToStoredBlacklist(
+	userId: Snowflake,
+	queueChannel: TextChannel
+): Promise<void> {
 	const blacklistedUsers = {
 		connectOrCreate: {
 			where: {
@@ -491,25 +458,28 @@ export async function blacklistUser(userId: Snowflake, queueChannel: TextChannel
 
 			// If the queue config isn't found, create it:
 			create: {
+				blacklistedUsers,
 				channelId: queueChannel.id,
-				entryDurationSeconds: null,
+				cooldownSeconds: null,
+				entryDurationMaxSeconds: null,
 				entryDurationMinSeconds: null,
 				queueDurationSeconds: null,
-				cooldownSeconds: null,
-				submissionMaxQuantity: null,
-				blacklistedUsers
+				submissionMaxQuantity: null
 			}
 		})
 	);
 }
 
 /**
- * Removes the user from the queue's blacklist.
+ * Removes the user from the queue's blacklist in the database.
  *
  * @param userId The ID of the user to whitelist.
  * @param queueChannel The channel that identifies the request queue.
  */
-export async function whitelistUser(userId: Snowflake, queueChannel: TextChannel): Promise<void> {
+export async function removeUserFromStoredBlacklist(
+	userId: Snowflake,
+	queueChannel: TextChannel
+): Promise<void> {
 	await useRepository("queueConfig", queueConfigs =>
 		queueConfigs.update({
 			where: { channelId: queueChannel.id },

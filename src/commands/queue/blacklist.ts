@@ -1,8 +1,8 @@
 import type { Subcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { blacklistUser, getQueueConfig } from "../../useQueueStorage.js";
 import { getCommandPrefix } from "../../useGuildStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
+import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
 import { logUser } from "../../helpers/logUser.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "../../constants/database.js";
 import { sr as parentCommand } from "../songRequest.js";
@@ -47,7 +47,7 @@ export const blacklist: Subcommand = {
 				await reply(":paperclip: Check the list in your DMs");
 			}
 
-			const queueConfig = await getQueueConfig(queueChannel);
+			const queueConfig = await getStoredQueueConfig(queueChannel);
 			const blacklistedUsers = queueConfig.blacklistedUsers?.map(user => user.id) ?? [];
 
 			const prefix =
@@ -106,7 +106,7 @@ export const blacklist: Subcommand = {
 			});
 		}
 
-		await blacklistUser(subject.id, queueChannel);
+		await saveUserToStoredBlacklist(subject.id, queueChannel);
 		logger.info(`Removed song request permission from user ${logUser(subject)}.`);
 
 		return await reply({

@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { averageSubmissionPlaytimeForUser } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
@@ -7,10 +8,9 @@ import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
-	averageSubmissionPlaytimeForUser,
-	countAllEntriesFrom,
-	fetchLatestEntryFrom,
-	getQueueConfig
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
 // TODO: i18n
@@ -31,7 +31,7 @@ export const stats: Command = {
 			return await replyPrivately(t("common.queue.not-set-up", userLocale));
 		}
 
-		const config = await getQueueConfig(queueChannel);
+		const config = await getStoredQueueConfig(queueChannel);
 
 		// If the queue is open, display the user's limit usage
 		const embed = new EmbedBuilder() //
@@ -43,15 +43,15 @@ export const stats: Command = {
 		}
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
-			fetchLatestEntryFrom(user.id, queueChannel),
-			countAllEntriesFrom(user.id, queueChannel),
+			getLatestStoredEntryFromSender(user.id, queueChannel),
+			countAllStoredEntriesFromSender(user.id, queueChannel),
 			averageSubmissionPlaytimeForUser(user.id, queueChannel)
 		]);
 
 		// Average song length
 		const durationMsg = createPartialString(durationString(userLocale, avgDuration));
-		if (config.entryDurationSeconds !== null && config.entryDurationSeconds > 0) {
-			push(` (limit ${durationString(userLocale, config.entryDurationSeconds)})`, durationMsg);
+		if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
+			push(` (limit ${durationString(userLocale, config.entryDurationMaxSeconds)})`, durationMsg);
 		}
 		embed.addFields({ name: "Average Length of Your Submissions", value: composed(durationMsg) });
 

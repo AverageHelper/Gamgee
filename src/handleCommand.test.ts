@@ -198,7 +198,7 @@ describe("Command handler", () => {
 			test("runs if option integer is valid", async () => {
 				const cmd = "limit"; // this command has range constraints on its second option
 				const value = 5;
-				mockMessage.content = `${prefix}${cmd} entry-duration ${value}`;
+				mockMessage.content = `${prefix}${cmd} entry-duration-max ${value}`;
 				await handleCommand(mockMessage, logger);
 
 				const mock = mockCommandDefinitions.get(cmd)?.execute;
@@ -219,7 +219,7 @@ describe("Command handler", () => {
 				${-10}   | ${"below limit"}
 			`("asserts option integer is not $desc", async ({ value }: { value: number }) => {
 				const cmd = "limit"; // this command has range constraints on its second option
-				mockMessage.content = `${prefix}quo ${cmd} entry-duration ${value}`;
+				mockMessage.content = `${prefix}quo ${cmd} entry-duration-max ${value}`;
 				await handleCommand(mockMessage, logger);
 
 				const expectedMin = -1;
@@ -267,6 +267,7 @@ describe("Command handler", () => {
 		test.each`
 			command
 			${"setprefix"}
+			${"cooldown"}
 			${"help"}
 			${"howto"}
 			${"languages"}
@@ -303,6 +304,42 @@ describe("Command handler", () => {
 				])
 			);
 		});
+
+		test.each`
+			localized           | command
+			${"präfixsetzen"}   | ${"setprefix"}
+			${"hilfe"}          | ${"help"}
+			${"ayuda"}          | ${"help"}
+			${"segítség"}       | ${"help"}
+			${"spieltjetzt"}    | ${"nowplaying"}
+			${"jugandoahora"}   | ${"nowplaying"}
+			${"jouemaintenant"} | ${"nowplaying"}
+		`(
+			"calls the $command command from localized name '$localized'",
+			async ({ command, localized }: { command: string; localized: string }) => {
+				mockMessage.content = `${prefix}${localized}`;
+				mockMessage.author.bot = false;
+				await handleCommand(mockMessage, logger);
+
+				const mockCommand = mockCommandDefinitions.get(command.replace("-", ""));
+				const mock = mockCommand?.execute;
+				expectDefined(mock);
+				expect(mock).toHaveBeenCalledOnce();
+				expect(mock).toHaveBeenCalledWith(
+					expect.toContainEntries([
+						["client", mockClient],
+						["message", mockMessage],
+						[
+							"options",
+							command
+								.split(/ +/u)
+								.slice(1)
+								.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+						]
+					])
+				);
+			}
+		);
 
 		test.each`
 			command

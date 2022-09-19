@@ -2,8 +2,8 @@ jest.mock("../useQueueStorage");
 jest.mock("../actions/queue/getQueueChannel");
 jest.mock("../actions/queue/useQueue");
 
-import { getQueueConfig } from "../useQueueStorage.js";
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
+import { getStoredQueueConfig } from "../useQueueStorage.js";
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -26,9 +26,9 @@ describe("Get Queue Limits", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
-			entryDurationSeconds: null,
+			entryDurationMaxSeconds: null,
 			submissionMaxQuantity: null
 		});
 	});
@@ -40,29 +40,29 @@ describe("Get Queue Limits", () => {
 	});
 
 	test.each`
-		cooldownSeconds | entryDurationSeconds | submissionMaxQuantity
-		${null}         | ${null}              | ${null}
-		${42}           | ${null}              | ${null}
-		${null}         | ${42}                | ${null}
-		${null}         | ${null}              | ${42}
-		${42}           | ${42}                | ${null}
-		${null}         | ${42}                | ${42}
-		${42}           | ${null}              | ${42}
-		${42}           | ${42}                | ${42}
+		cooldownSeconds | entryDurationMaxSeconds | submissionMaxQuantity
+		${null}         | ${null}                 | ${null}
+		${42}           | ${null}                 | ${null}
+		${null}         | ${42}                   | ${null}
+		${null}         | ${null}                 | ${42}
+		${42}           | ${42}                   | ${null}
+		${null}         | ${42}                   | ${42}
+		${42}           | ${null}                 | ${42}
+		${42}           | ${42}                   | ${42}
 	`(
 		"shows statistics on queue limits",
 		async ({
 			cooldownSeconds,
-			entryDurationSeconds,
+			entryDurationMaxSeconds,
 			submissionMaxQuantity
 		}: {
 			cooldownSeconds: number | null;
-			entryDurationSeconds: number | null;
+			entryDurationMaxSeconds: number | null;
 			submissionMaxQuantity: number | null;
 		}) => {
-			mockGetQueueConfig.mockResolvedValue({
+			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
-				entryDurationSeconds,
+				entryDurationMaxSeconds,
 				submissionMaxQuantity
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();

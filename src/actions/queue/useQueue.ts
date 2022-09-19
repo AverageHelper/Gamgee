@@ -8,12 +8,13 @@ import { deleteMessage, editMessage, escapeUriInString } from "../messages/index
 import { durationString } from "../../helpers/durationString.js";
 import { preferredLocale } from "../../i18n.js";
 import {
-	addToHaveCalledNowPlaying,
-	createEntry,
-	fetchAllEntries,
-	fetchEntryFromMessage,
-	removeEntryFromMessage,
-	markEntryDone
+	addToHaveCalledNowPlayingForStoredEntry,
+	deleteStoredEntry,
+	getAllStoredEntries,
+	getAllStoredEntriesFromSender,
+	getStoredEntry,
+	saveNewEntryToDatabase,
+	updateStoredEntryIsDone
 } from "../../useQueueStorage.js";
 import {
 	composed,
@@ -75,7 +76,7 @@ function queueMessageFromEntry(
 
 /** Retrieves the playtime (in seconds) of the queue's unfinished entries. */
 export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue
 		.filter(e => !e.isDone)
@@ -87,7 +88,7 @@ export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel
 
 /** Retrieves the total playtime (in seconds) of the queue's entries. */
 export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue.forEach(e => {
 		duration += e.seconds;
@@ -97,7 +98,7 @@ export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): P
 
 /** Retrieves the average playtime (in seconds) of the queue's entries. */
 export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
-	const queue = await fetchAllEntries(queueChannel);
+	const queue = await getAllStoredEntries(queueChannel);
 	let average = 0;
 	queue.forEach(e => {
 		average += e.seconds;
@@ -120,7 +121,7 @@ export async function pushEntryToQueue(
 
 	let entry: QueueEntry;
 	try {
-		entry = await createEntry(
+		entry = await saveNewEntryToDatabase(
 			{
 				url: newEntry.url,
 				seconds: newEntry.seconds,
@@ -141,13 +142,29 @@ export async function pushEntryToQueue(
 	return entry;
 }
 
+/** Returns the average entry duration of the submissions of the user with the provided ID. */
+export async function averageSubmissionPlaytimeForUser(
+	userId: Discord.Snowflake,
+	queueChannel: Discord.TextChannel
+): Promise<number> {
+	const entries = await getAllStoredEntriesFromSender(userId, queueChannel);
+	let average = 0;
+
+	entries.forEach(entry => {
+		average += entry.seconds;
+	});
+	average /= entries.length;
+
+	return average;
+}
+
 /** If the message represents a "done" entry, that entry is unmarked. */
 export async function markEntryNotDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(false, queueMessage.id);
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	await updateStoredEntryIsDone(false, queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -159,8 +176,8 @@ export async function markEntryDoneInQueue(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await markEntryDone(true, queueMessage.id);
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	await updateStoredEntryIsDone(true, queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	const editOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), entry);
@@ -173,9 +190,9 @@ export async function addUserToHaveCalledNowPlaying(
 	queueMessage: Discord.Message | Discord.PartialMessage,
 	queueChannel: Discord.TextChannel
 ): Promise<void> {
-	await addToHaveCalledNowPlaying(user, queueMessage.id, queueChannel);
+	await addToHaveCalledNowPlayingForStoredEntry(user, queueMessage.id, queueChannel);
 
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (!entry) return;
 
 	await editMessage(
@@ -192,10 +209,10 @@ export async function addUserToHaveCalledNowPlaying(
 export async function deleteEntryFromMessage(
 	queueMessage: Discord.Message | Discord.PartialMessage
 ): Promise<QueueEntry | null> {
-	const entry = await fetchEntryFromMessage(queueMessage.id);
+	const entry = await getStoredEntry(queueMessage.id);
 	if (entry === null) return entry;
 
-	await removeEntryFromMessage(queueMessage.id);
+	await deleteStoredEntry(queueMessage.id);
 	await deleteMessage(queueMessage);
 
 	return entry;

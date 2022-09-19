@@ -52,7 +52,7 @@ describe("Command as admin", function () {
 
 			{
 				const keys = [
-					"entry-duration", //
+					"entry-duration-max", //
 					"cooldown",
 					"count"
 				];
@@ -99,7 +99,7 @@ describe("Command as admin", function () {
 
 			{
 				const keys = [
-					"entry-duration", //
+					"entry-duration-max", //
 					"cooldown",
 					"count"
 				];
@@ -113,7 +113,7 @@ describe("Command as admin", function () {
 
 			{
 				const keys = [
-					"entry-duration", //
+					"entry-duration-max", //
 					"cooldown",
 					"count"
 				];

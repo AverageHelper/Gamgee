@@ -51,7 +51,6 @@ export function preferredLocale(guild: Pick<Discord.Guild, "preferredLocale">): 
 	return localeIfSupported(guild.preferredLocale) ?? DEFAULT_LOCALE;
 }
 
-// TODO: Validate that all of our strings files match the master schema
 // TypeScript ensures here that DEFAULT_LOCALE is a valid locale:
 type MessageSchema = typeof vocabulary[typeof DEFAULT_LOCALE];
 

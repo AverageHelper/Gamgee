@@ -2,7 +2,7 @@ import type Discord from "discord.js";
 import type { Command } from "./Command.js";
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
-import { fetchAllEntries } from "../useQueueStorage.js";
+import { getAllStoredEntries } from "../useQueueStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { localizations } from "../i18n.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
@@ -62,7 +62,7 @@ export const nowPlaying: Command = {
 			return await replyPrivately("There's no queue set up right now, so nothing is playing.");
 		}
 
-		const allEntries = await fetchAllEntries(queueChannel);
+		const allEntries = await getAllStoredEntries(queueChannel);
 		const firstNotDone = allEntries.find(entry => !entry.isDone);
 
 		if (!firstNotDone) {

@@ -26,14 +26,18 @@ const mockIsQueueOpen = isQueueOpen as jest.Mock<Promise<boolean>, [Discord.Guil
 const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Discord.Guild]>;
 
 import {
-	countAllEntriesFrom,
-	fetchLatestEntryFrom,
-	getQueueConfig
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
-const mockCountAllEntriesFrom = countAllEntriesFrom as jest.Mock<Promise<number>>;
-const mockFetchLatestEntryFrom = fetchLatestEntryFrom as jest.Mock<Promise<QueueEntry | null>>;
-const mockGetQueueConfig = getQueueConfig as jest.Mock<Promise<QueueConfig>>;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock<
+	Promise<number>
+>;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock<
+	Promise<QueueEntry | null>
+>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock<Promise<QueueConfig>>;
 
 const mockDeleteInvocation = jest.fn();
 const mockReplyPrivately = jest.fn();
@@ -62,13 +66,13 @@ describe("Song request pipeline", () => {
 		const QUEUE_CHANNEL_ID = "queue-channel-1234";
 
 		config = {
+			blacklistedUsers: [],
 			channelId: QUEUE_CHANNEL_ID,
 			cooldownSeconds: null,
+			entryDurationMaxSeconds: null,
 			entryDurationMinSeconds: null,
-			entryDurationSeconds: null,
 			queueDurationSeconds: null,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
+			submissionMaxQuantity: null
 		};
 
 		context = {
@@ -114,9 +118,9 @@ describe("Song request pipeline", () => {
 		mockPushEntryToQueue.mockResolvedValue(newEntry);
 		mockIsQueueOpen.mockResolvedValue(true);
 		mockSetQueueOpen.mockResolvedValue(undefined);
-		mockCountAllEntriesFrom.mockResolvedValue(0);
-		mockFetchLatestEntryFrom.mockResolvedValue(null);
-		mockGetQueueConfig.mockResolvedValue(config);
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
+		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
+		mockGetStoredQueueConfig.mockResolvedValue(config);
 		mockDeleteInvocation.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
 		mockFollowUp.mockResolvedValue(undefined);
@@ -127,7 +131,7 @@ describe("Song request pipeline", () => {
 		// mock the queue limits to disable cooldown, enable long submissions, enable queue cap
 		const entrySeconds = 100; // 3 of these should fill the queue
 		config.queueDurationSeconds = 250;
-		mockGetQueueConfig.mockResolvedValue(config);
+		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter to consider any URL to be really long
 		mockGetVideoDetails.mockResolvedValue({

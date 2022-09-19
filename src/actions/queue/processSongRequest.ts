@@ -16,9 +16,9 @@ import { SHRUGGIE } from "../../constants/textResponses.js";
 import { DEFAULT_LOCALE, t, ti } from "../../i18n.js";
 import { useLogger } from "../../logger.js";
 import {
-	countAllEntriesFrom,
-	fetchLatestEntryFrom,
-	getQueueConfig
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
 } from "../../useQueueStorage.js";
 
 export interface SongRequest {
@@ -126,9 +126,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 
 	try {
 		const [config, latestSubmission, userSubmissionCount, playtimeTotal] = await Promise.all([
-			getQueueConfig(queueChannel),
-			fetchLatestEntryFrom(senderId, queueChannel),
-			countAllEntriesFrom(senderId, queueChannel),
+			getStoredQueueConfig(queueChannel),
+			getLatestStoredEntryFromSender(senderId, queueChannel),
+			countAllStoredEntriesFromSender(senderId, queueChannel),
 			playtimeTotalInQueue(queueChannel)
 		]);
 
@@ -244,7 +244,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		}
 
 		// ** If the song is too long, reject!
-		const maxDuration = config.entryDurationSeconds;
+		const maxDuration = config.entryDurationMaxSeconds;
 		if (maxDuration !== null && maxDuration > 0 && seconds > maxDuration) {
 			const rejection = createPartialString(
 				ti(

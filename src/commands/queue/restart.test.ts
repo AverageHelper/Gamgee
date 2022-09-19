@@ -7,9 +7,9 @@ jest.mock("../../permissions");
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
 
-import { fetchAllEntries, clearEntries } from "../../useQueueStorage.js";
-const mockGetAllEntries = fetchAllEntries as jest.Mock;
-const mockQueueClear = clearEntries as jest.Mock;
+import { deleteStoredEntriesForQueue, getAllStoredEntries } from "../../useQueueStorage.js";
+const mockDeleteStoredEntriesForQueue = deleteStoredEntriesForQueue as jest.Mock;
+const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -35,8 +35,8 @@ describe("Clear queue contents", () => {
 			reply: mockReply
 		} as unknown as GuildedCommandContext;
 
-		mockGetAllEntries.mockResolvedValue([]);
-		mockQueueClear.mockResolvedValue(undefined);
+		mockGetAllStoredEntries.mockResolvedValue([]);
+		mockDeleteStoredEntriesForQueue.mockResolvedValue(undefined);
 		mockBulkDeleteMessagesWithIds.mockResolvedValue(true);
 	});
 
@@ -47,7 +47,7 @@ describe("Clear queue contents", () => {
 
 		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith("No queue is set up. Maybe that's what you wanted...?");
-		expect(mockQueueClear).not.toHaveBeenCalled();
+		expect(mockDeleteStoredEntriesForQueue).not.toHaveBeenCalled();
 	});
 
 	test.each`
@@ -65,7 +65,7 @@ describe("Clear queue contents", () => {
 				{ queueMessageId: "message3" }
 			];
 			mockGetQueueChannel.mockResolvedValue(queueChannel);
-			mockGetAllEntries.mockResolvedValue(queueEntries);
+			mockGetAllStoredEntries.mockResolvedValue(queueEntries);
 			context = {
 				...context,
 				channel: {
@@ -81,14 +81,14 @@ describe("Clear queue contents", () => {
 			expect(mockReply).toHaveBeenCalledWith("The queue has restarted.");
 
 			// Actions
-			expect(mockQueueClear).toHaveBeenCalledOnce();
-			expect(mockQueueClear).toHaveBeenCalledWith(queueChannel);
+			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledOnce();
+			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledWith(queueChannel);
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledOnce();
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledWith(
 				queueEntries.map(entry => entry.queueMessageId),
 				queueChannel
 			);
-			expect(mockQueueClear).toHaveBeenCalledOnce();
+			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledOnce();
 		}
 	);
 
@@ -97,6 +97,6 @@ describe("Clear queue contents", () => {
 
 		await expect(restart.execute(context)).resolves.toBeUndefined(); // don't throw
 
-		expect(mockQueueClear).not.toHaveBeenCalled(); // don't clear
+		expect(mockDeleteStoredEntriesForQueue).not.toHaveBeenCalled(); // don't clear
 	});
 });

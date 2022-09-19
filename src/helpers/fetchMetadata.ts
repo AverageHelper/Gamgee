@@ -1,8 +1,8 @@
 import type { Result } from "htmlmetaparser";
 import type { URL } from "node:url";
+import { fetch } from "./fetch.js";
 import { Handler } from "htmlmetaparser";
 import { Parser } from "htmlparser2";
-import fetch from "cross-fetch";
 
 /**
  * Retrieves metadata about the webpage at the given `url`.

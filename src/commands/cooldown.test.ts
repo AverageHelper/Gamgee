@@ -2,10 +2,14 @@ jest.mock("../useQueueStorage.js");
 jest.mock("../actions/queue/getQueueChannel.js");
 jest.mock("../useGuildStorage.js");
 
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
-const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
-const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
+import {
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
+} from "../useQueueStorage.js";
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
@@ -40,14 +44,15 @@ describe("User retrieving their own cooldown", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
 		});
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
+			blacklistedUsers: [],
 			cooldownSeconds,
-			entryDurationSeconds: null,
-			submissionMaxQuantity: null,
-			blacklistedUsers: []
+			entryDurationMaxSeconds: null,
+			entryDurationMinSeconds: null,
+			submissionMaxQuantity: null
 		});
-		mockQueueUserEntryCount.mockResolvedValue(0);
-		mockQueueGetLatestUserEntry.mockResolvedValue(null);
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
+		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 		mockIsQueueOpen.mockResolvedValue(true);
 	});
 
@@ -63,7 +68,7 @@ describe("User retrieving their own cooldown", () => {
 	});
 
 	test("tells the user when they're blacklisted", async () => {
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
 			blacklistedUsers: [context.user]
 		});
 		await cooldown.execute(context);
@@ -106,8 +111,8 @@ describe("User retrieving their own cooldown", () => {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
 		}) => {
-			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-			mockQueueGetLatestUserEntry.mockResolvedValue({
+			mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
+			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
@@ -115,9 +120,9 @@ describe("User retrieving their own cooldown", () => {
 				senderId: context.user.id,
 				isDone: false
 			});
-			mockGetQueueConfig.mockResolvedValue({
+			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
-				entryDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
 				blacklistedUsers: []
 			});
@@ -162,8 +167,8 @@ describe("User retrieving their own cooldown", () => {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
 		}) => {
-			mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-			mockQueueGetLatestUserEntry.mockResolvedValue({
+			mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
+			mockGetLatestStoredEntryFromSender.mockResolvedValue({
 				queueMessageId: "message-1",
 				url: "https://example.com",
 				seconds: 500,
@@ -171,9 +176,9 @@ describe("User retrieving their own cooldown", () => {
 				senderId: context.user.id,
 				isDone: false
 			});
-			mockGetQueueConfig.mockResolvedValue({
+			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
-				entryDurationSeconds: null,
+				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
 				blacklistedUsers: []
 			});
@@ -189,14 +194,14 @@ describe("User retrieving their own cooldown", () => {
 		const userSubmissions = 1;
 		const absolute = "1618399560";
 		let relative = "2 minutes";
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds,
-			entryDurationSeconds: null,
+			entryDurationMaxSeconds: null,
 			submissionMaxQuantity,
 			blacklistedUsers: []
 		});
-		mockQueueUserEntryCount.mockResolvedValue(userSubmissions);
-		mockQueueGetLatestUserEntry.mockResolvedValue({
+		mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
+		mockGetLatestStoredEntryFromSender.mockResolvedValue({
 			queueMessageId: "message-1",
 			url: "https://example.com",
 			seconds: 500,

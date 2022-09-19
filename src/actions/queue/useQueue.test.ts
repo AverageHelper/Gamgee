@@ -2,15 +2,15 @@ jest.mock("../messages");
 jest.mock("../../useQueueStorage");
 
 import {
-	createEntry,
-	fetchEntryFromMessage,
-	getQueueConfig,
-	removeEntryFromMessage
+	deleteStoredEntry,
+	getStoredEntry,
+	getStoredQueueConfig,
+	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
-const mockCreateEntry = createEntry as jest.Mock;
-const mockFetchEntryFromMessage = fetchEntryFromMessage as jest.Mock;
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
-const mockRemoveEntryFromMessage = removeEntryFromMessage as jest.Mock;
+const mockDeleteStoredEntry = deleteStoredEntry as jest.Mock;
+const mockGetStoredEntry = getStoredEntry as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
+const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as jest.Mock;
 
 import { deleteMessage } from "../messages/index.js";
 const mockDeleteMessage = deleteMessage as jest.Mock;
@@ -65,22 +65,23 @@ describe("Request Queue", () => {
 
 		forgetJobQueue(`${message.channel.id}_${message.id}`);
 
-		mockFetchEntryFromMessage.mockImplementation(id => {
+		mockGetStoredEntry.mockImplementation(id => {
 			if (id === queueMessageId) {
 				return entry; // some entry
 			}
 			return null; // not an entry
 		});
-		mockRemoveEntryFromMessage.mockResolvedValue(undefined);
-		mockCreateEntry.mockImplementation((entry: UnsentQueueEntry) => {
+		mockDeleteStoredEntry.mockResolvedValue(undefined);
+		mockSaveNewEntryToDatabase.mockImplementation((entry: UnsentQueueEntry) => {
 			return Promise.resolve({ ...entry, channelId: queueChannel.id });
 		});
-		mockGetQueueConfig.mockResolvedValue({
+		mockGetStoredQueueConfig.mockResolvedValue({
+			blacklistedUsers: [],
 			channelId: queueChannel.id,
-			entryDurationSeconds: 430,
 			cooldownSeconds: 960,
-			submissionMaxQuantity: 3,
-			blacklistedUsers: []
+			entryDurationMaxSeconds: 430,
+			entryDurationMinSeconds: 0,
+			submissionMaxQuantity: 3
 		});
 		mockMessageRemoveReaction.mockResolvedValue(undefined);
 		mockChannelSend.mockResolvedValue({
@@ -95,7 +96,7 @@ describe("Request Queue", () => {
 		message.id = "not-a-queue-message" as Discord.Snowflake;
 		await expect(deleteEntryFromMessage(message)).resolves.toBeNull();
 
-		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
+		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).not.toHaveBeenCalled();
 	});
 
@@ -103,8 +104,8 @@ describe("Request Queue", () => {
 		message.id = queueMessageId;
 		await expect(deleteEntryFromMessage(message)).resolves.toBe(entry);
 
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledOnce();
-		expect(mockRemoveEntryFromMessage).toHaveBeenCalledWith(message.id);
+		expect(mockDeleteStoredEntry).toHaveBeenCalledOnce();
+		expect(mockDeleteStoredEntry).toHaveBeenCalledWith(message.id);
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
 	});
@@ -125,8 +126,8 @@ describe("Request Queue", () => {
 
 		await flushPromises();
 
-		expect(mockCreateEntry).toHaveBeenCalledOnce();
-		expect(mockCreateEntry).toHaveBeenCalledWith(
+		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledOnce();
+		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledWith(
 			{
 				...request,
 				isDone: false,
@@ -136,6 +137,6 @@ describe("Request Queue", () => {
 			queueChannel
 		);
 
-		expect(mockRemoveEntryFromMessage).not.toHaveBeenCalled();
+		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
 	});
 });

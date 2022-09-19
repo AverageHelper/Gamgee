@@ -4,10 +4,14 @@ jest.mock("../actions/queue/getQueueChannel.js");
 jest.mock("../actions/queue/useQueue.js");
 jest.mock("../actions/getVideoDetails.js");
 
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
-const mockQueueUserEntryCount = countAllEntriesFrom as jest.Mock;
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
-const mockQueueGetLatestUserEntry = fetchLatestEntryFrom as jest.Mock;
+import {
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
+} from "../useQueueStorage.js";
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
 
 import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
 const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
@@ -68,8 +72,8 @@ describe("Song request via URL", () => {
 	const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
 	const mockFollowUp = jest.fn().mockResolvedValue(undefined);
 
-	mockQueueGetLatestUserEntry.mockResolvedValue(null);
-	mockQueueUserEntryCount.mockResolvedValue(0);
+	mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
+	mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 
 	mockPlaytimeTotal.mockResolvedValue(0);
 	mockGetCommandPrefix.mockResolvedValue(DEFAULT_MESSAGE_COMMAND_PREFIX);
@@ -81,12 +85,12 @@ describe("Song request via URL", () => {
 	};
 	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
-	mockGetQueueConfig.mockResolvedValue({
-		entryDurationSeconds: null,
-		queueDurationSeconds: null,
+	mockGetStoredQueueConfig.mockResolvedValue({
+		blacklistedUsers: [],
 		cooldownSeconds: 600,
-		submissionMaxQuantity: null,
-		blacklistedUsers: []
+		entryDurationMaxSeconds: null,
+		queueDurationSeconds: null,
+		submissionMaxQuantity: null
 	});
 
 	const mockClient: Discord.Client<true> = {
@@ -162,7 +166,7 @@ describe("Song request via URL", () => {
 		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1].href}`);
 
 		mockQueuePush.mockImplementationOnce(() => {
-			mockQueueGetLatestUserEntry.mockResolvedValueOnce({
+			mockGetLatestStoredEntryFromSender.mockResolvedValueOnce({
 				queueMessageId: mockMessage1.id,
 				url: urls[0],
 				seconds: 500,
@@ -170,7 +174,7 @@ describe("Song request via URL", () => {
 				senderId: mockMessage1.author.id,
 				isDone: false
 			});
-			mockQueueUserEntryCount.mockResolvedValueOnce(1);
+			mockCountAllStoredEntriesFromSender.mockResolvedValueOnce(1);
 			return Promise.resolve();
 		});
 

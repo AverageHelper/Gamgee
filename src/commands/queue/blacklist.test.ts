@@ -9,9 +9,9 @@ const mockGetUserFromMention = getUserFromMention as jest.Mock;
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import { getQueueConfig, blacklistUser } from "../../useQueueStorage.js";
-const mockGetQueueConfig = getQueueConfig as jest.Mock;
-const mockBlacklistUser = blacklistUser as jest.Mock;
+import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
+const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
+const mockSaveUserToStoredBlacklist = saveUserToStoredBlacklist as jest.Mock;
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
@@ -57,9 +57,9 @@ describe("Manage the Queue Blacklist", () => {
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
 		mockGetUserFromMention.mockResolvedValue({ id: badUserId });
-		mockGetQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
+		mockGetStoredQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
 
-		mockBlacklistUser.mockResolvedValue(undefined);
+		mockSaveUserToStoredBlacklist.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
@@ -70,7 +70,7 @@ describe("Manage the Queue Blacklist", () => {
 			context = { ...context, options: [] };
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
@@ -82,7 +82,7 @@ describe("Manage the Queue Blacklist", () => {
 			context = { ...context, options: [] };
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 			expect(mockReply).toHaveBeenCalledOnce(); // only called when not a '/' command
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
@@ -96,7 +96,7 @@ describe("Manage the Queue Blacklist", () => {
 			mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -110,7 +110,7 @@ describe("Manage the Queue Blacklist", () => {
 			mockGetUserFromMention.mockResolvedValue({ id: ownerId });
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -125,7 +125,7 @@ describe("Manage the Queue Blacklist", () => {
 			mockGetUserFromMention.mockResolvedValue({ id: ownerId });
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -139,22 +139,22 @@ describe("Manage the Queue Blacklist", () => {
 			mockGetUserFromMention.mockResolvedValue(null);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 		});
 
 		test("does nothing when there's no queue", async () => {
 			mockGetQueueChannel.mockResolvedValueOnce(null);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
-			expect(mockBlacklistUser).not.toHaveBeenCalled();
+			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
 		});
 
 		test("calls blacklistUser for queue", async () => {
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			// blacklist effect
-			expect(mockBlacklistUser).toHaveBeenCalledOnce();
-			expect(mockBlacklistUser).toHaveBeenCalledWith(badUserId, queueChannel);
+			expect(mockSaveUserToStoredBlacklist).toHaveBeenCalledOnce();
+			expect(mockSaveUserToStoredBlacklist).toHaveBeenCalledWith(badUserId, queueChannel);
 
 			// response
 			expect(mockReply).toHaveBeenCalledOnce();

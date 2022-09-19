@@ -1,11 +1,15 @@
 import type { Command } from "./Command.js";
 import { composed, createPartialString, push, pushBold } from "../helpers/composeStrings.js";
-import { countAllEntriesFrom, fetchLatestEntryFrom, getQueueConfig } from "../useQueueStorage.js";
 import { durationString } from "../helpers/durationString.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
+import {
+	countAllStoredEntriesFromSender,
+	getLatestStoredEntryFromSender,
+	getStoredQueueConfig
+} from "../useQueueStorage.js";
 
 // TODO: i18n
 export const cooldown: Command = {
@@ -25,7 +29,7 @@ export const cooldown: Command = {
 		if (!queueChannel) return await replyPrivately(t("common.queue.not-set-up", userLocale));
 		if (!isOpen) return await replyPrivately(t("common.queue.not-open", userLocale));
 
-		const config = await getQueueConfig(queueChannel);
+		const config = await getStoredQueueConfig(queueChannel);
 
 		// If the user is blacklisted, they have no limit usage :P
 		if (config.blacklistedUsers?.some(u => u.id === user.id) === true) {
@@ -40,8 +44,8 @@ export const cooldown: Command = {
 
 		// If the queue is open, display the user's limit usage
 		const [latestSubmission, userSubmissionCount] = await Promise.all([
-			fetchLatestEntryFrom(user.id, queueChannel),
-			countAllEntriesFrom(user.id, queueChannel)
+			getLatestStoredEntryFromSender(user.id, queueChannel),
+			countAllStoredEntriesFromSender(user.id, queueChannel)
 		]);
 
 		if (!latestSubmission) {
