@@ -44,7 +44,7 @@ export default defineConfig({
 		defaultHandler(warning);
 	},
 	external: [
-		// Curcular, uses eval
+		// Circular, uses eval
 		"discord.js",
 
 		// Circular
