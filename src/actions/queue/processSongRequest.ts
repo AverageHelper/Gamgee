@@ -22,10 +22,22 @@ import {
 } from "../../useQueueStorage.js";
 
 export interface SongRequest {
+	/** The URL where the track may be found. */
 	songUrl: URL;
+
+	/** The command context of the request. */
 	context: CommandContext;
+
+	/** The queue channel where the request should land if accepted. */
 	queueChannel: TextChannel;
+
+	/**
+	 * The message that contains the original embed, if we sent
+	 * one. If the user sent one, this value should be `null`.
+	 */
 	publicPreemptiveResponse: Message | null;
+
+	/** The place where log messages should be sent. */
 	logger: Logger;
 }
 
