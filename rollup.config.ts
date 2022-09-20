@@ -40,14 +40,13 @@ export default defineConfig({
 		// Weirdness
 		"@prisma/client",
 
+		// Curcular, uses eval
+		"discord.js",
+
 		// Circular
 		"undici",
-		"@discordjs/builders",
-		"@discordjs/rest",
-		"discord.js",
 		"winston-transport",
 		"winston",
-		"async",
 		"yargs"
 	],
 	input: "src/main.ts",
