@@ -1,6 +1,6 @@
 jest.mock("../actions/invokeCommand");
 
-import { assertUserCanRunCommand } from "../actions/invokeCommand.js";
+import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";
 const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
 
 import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
