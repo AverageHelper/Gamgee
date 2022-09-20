@@ -78,6 +78,16 @@ describe("Command as pleb", function () {
 						expectToContain(content, `Submission Accepted!`);
 					});
 
+					it("accepts a song request with embed hidden", async function () {
+						const content = await commandResponseInTestChannel(
+							`sr <${url}>`,
+							"Submission Accepted!"
+						);
+
+						// TODO: Check that the request appears in the queue as well
+						expectToContain(content, `Submission Accepted!`);
+					});
+
 					it("`sr` alone provides info on how to use the request command", async function () {
 						const content = await commandResponseInTestChannel("sr", "To submit a song, type");
 						expectToContain(content, "To submit a song, type");
@@ -85,6 +95,11 @@ describe("Command as pleb", function () {
 				} else {
 					it("url request tells the user the queue is not open", async function () {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "queue is not open");
+						expectToContain(content, "queue is not open");
+					});
+
+					it("url request tells the user the queue is not open even with embed hidden", async function () {
+						const content = await commandResponseInTestChannel(`sr <${url}>`, "queue is not open");
 						expectToContain(content, "queue is not open");
 					});
 				}
@@ -108,6 +123,11 @@ describe("Command as pleb", function () {
 
 		it("returns the title and duration of a song with suboptimal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
+			expectToContain(content, info);
+		});
+
+		it("returns the title and duration of a song with embed hidden", async function () {
+			const content = await commandResponseInTestChannel(`video <${url}>`, info);
 			expectToContain(content, info);
 		});
 	});

@@ -42,6 +42,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 
 import type Discord from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
+import type { ReadonlyTuple } from "type-fest";
 import { ApplicationCommandOptionType } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "../constants/database.js";
 import { sr as songRequest } from "./songRequest.js";
@@ -51,7 +52,7 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 const logger = useTestLogger();
 
 describe("Song request via URL", () => {
-	const urls: [URL, URL, URL, URL, URL, URL, URL, URL, URL, URL] = [
+	const urls: ReadonlyTuple<URL, 10> = [
 		new URL("https://youtu.be/dQw4w9WgXcQ"),
 		new URL("https://youtu.be/9RAQsdTQIcs"),
 		new URL("https://youtu.be/tao1Ic8qVkM"),

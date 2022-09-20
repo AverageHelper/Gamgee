@@ -6,6 +6,7 @@ import { getVideoDetails } from "../actions/getVideoDetails.js";
 import { localizations } from "../i18n.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { stopEscapingUriInString } from "../actions/messages/editMessage.js";
 
 // TODO: i18n
 export const video: Command = {
@@ -33,7 +34,12 @@ export const video: Command = {
 				ephemeral: true
 			});
 		}
-		const urlString: string = resolveStringFromOption(firstOption);
+		const escapedSongUrlString = resolveStringFromOption(firstOption).trim();
+		const shouldHideEmbeds =
+			escapedSongUrlString.startsWith("<") && escapedSongUrlString.endsWith(">");
+		const urlString = shouldHideEmbeds
+			? stopEscapingUriInString(escapedSongUrlString)
+			: escapedSongUrlString;
 
 		const supportedPlatformsList =
 			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
@@ -55,7 +61,12 @@ export const video: Command = {
 
 			if (type === "interaction") {
 				// We haven't had this link embedded yet
-				push(video.url, response);
+				if (shouldHideEmbeds) {
+					// If the user doesn't want it embedded, don't embed
+					push(`<${video.url}>`, response);
+				} else {
+					push(video.url, response);
+				}
 				pushNewLine(response);
 			}
 

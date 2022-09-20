@@ -72,6 +72,11 @@ describe("Command as admin", function () {
 				const content = await commandResponseInTestChannel(`sr ${url}`, NO_QUEUE);
 				expectToContain(content?.toLowerCase(), NO_QUEUE);
 			});
+
+			it("url request with embed hidden does nothing", async function () {
+				const content = await commandResponseInTestChannel(`sr <${url}>`, NO_QUEUE);
+				expectToContain(content?.toLowerCase(), NO_QUEUE);
+			});
 		});
 
 		describe("no queue yet", function () {
@@ -152,6 +157,11 @@ describe("Command as admin", function () {
 
 		it("returns the title and duration of a song with suboptimal spacing", async function () {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
+			expectValueEqual(content, info);
+		});
+
+		it("returns the title and duration of a song with embed hidden", async function () {
+			const content = await commandResponseInTestChannel(`video <${url}>`, info);
 			expectValueEqual(content, info);
 		});
 	});
