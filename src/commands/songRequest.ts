@@ -1,13 +1,13 @@
 import type Discord from "discord.js";
 import type { GuildedCommand } from "./Command.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, hideLinkEmbed } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
-import { sendMessageInChannel } from "../actions/messages/index.js";
+import { sendMessageInChannel, stopEscapingUriInString } from "../actions/messages/index.js";
 import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
 
@@ -80,7 +80,12 @@ export const sr: GuildedCommand = {
 			});
 		}
 
-		const songUrlString: string = resolveStringFromOption(firstOption);
+		const escapedSongUrlString = resolveStringFromOption(firstOption).trim();
+		const shouldHideEmbeds =
+			escapedSongUrlString.startsWith("<") && escapedSongUrlString.endsWith(">");
+		const songUrlString = shouldHideEmbeds
+			? stopEscapingUriInString(escapedSongUrlString)
+			: escapedSongUrlString;
 		let songUrl: URL;
 		let publicPreemptiveResponse: Discord.Message | null = null;
 
@@ -99,8 +104,10 @@ export const sr: GuildedCommand = {
 			// This should match the behavior of context.deleteInvocation() on `?sr`
 			await prepareForLongRunningTasks(true);
 
+			// Post the link. If the user doesn't want embeds, don't embed
+			const href = shouldHideEmbeds ? hideLinkEmbed(songUrl.href) : songUrl.href;
 			publicPreemptiveResponse = await sendMessageInChannel(channel, {
-				content: `${MENTION_SENDER}\n?sr ${songUrl.href}`,
+				content: `${MENTION_SENDER}\n?sr ${href}`,
 				allowedMentions: { users: [], repliedUser: false }
 			});
 		}
@@ -108,6 +115,12 @@ export const sr: GuildedCommand = {
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");
 		requestQueue.process(processSongRequest); // Same function instance, so a nonce call
 
-		requestQueue.createJob({ songUrl, context, queueChannel, publicPreemptiveResponse, logger });
+		requestQueue.createJob({
+			songUrl,
+			context,
+			queueChannel,
+			publicPreemptiveResponse,
+			logger
+		});
 	}
 };
