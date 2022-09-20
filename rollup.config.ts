@@ -7,10 +7,15 @@ import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import typescript from "@rollup/plugin-typescript";
 
+const isProduction = process.env["NODE_ENV"] === "production";
+
 export default defineConfig({
 	plugins: [
 		// Transpile source
-		typescript({ tsconfig: "./tsconfig.prod.json" }), // translate TypeScript to JS
+		typescript({
+			tsconfig: "./tsconfig.prod.json",
+			sourceMap: !isProduction
+		}), // translate TypeScript to JS
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
 		json(), // translate JSON
 
@@ -58,6 +63,6 @@ export default defineConfig({
 		file: "dist/server.js",
 		format: "commonjs",
 		inlineDynamicImports: true,
-		sourcemap: "inline"
+		sourcemap: isProduction ? undefined : "inline"
 	}
 });
