@@ -1,12 +1,12 @@
-import type Discord from "discord.js";
+import type { CommandInteractionOption, Guild, GuildBasedChannel, User } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getChannelFromMention } from "./getChannelFromMention.js";
 import { getUserFromMention } from "./getUserFromMention.js";
 
 export async function resolveUserFromOption(
-	option: Discord.CommandInteractionOption,
-	guild: Discord.Guild
-): Promise<Discord.User | null> {
+	option: CommandInteractionOption,
+	guild: Guild
+): Promise<User | null> {
 	if (option.type === ApplicationCommandOptionType.User) {
 		return option.user ?? null;
 	}
@@ -17,9 +17,9 @@ export async function resolveUserFromOption(
 }
 
 export function resolveChannelFromOption(
-	option: Discord.CommandInteractionOption<"cached">,
-	guild: Discord.Guild
-): Discord.GuildBasedChannel | null {
+	option: CommandInteractionOption<"cached">,
+	guild: Guild
+): GuildBasedChannel | null {
 	if (option.type === ApplicationCommandOptionType.Channel) {
 		const channel = option.channel;
 		if (!channel) return null;
@@ -43,7 +43,7 @@ export function resolveChannelFromOption(
 	return getChannelFromMention(guild, channelMention);
 }
 
-export function resolveStringFromOption(option: Discord.CommandInteractionOption): string {
+export function resolveStringFromOption(option: CommandInteractionOption): string {
 	if (option.type === ApplicationCommandOptionType.String) {
 		return option.value as string;
 	}
@@ -51,7 +51,7 @@ export function resolveStringFromOption(option: Discord.CommandInteractionOption
 	return option.value?.toString() ?? "";
 }
 
-export function resolveIntegerFromOption(option: Discord.CommandInteractionOption): number | null {
+export function resolveIntegerFromOption(option: CommandInteractionOption): number | null {
 	if (option.type === ApplicationCommandOptionType.Integer) {
 		return (option.value as number | undefined) ?? null;
 	}
@@ -63,6 +63,6 @@ export function resolveIntegerFromOption(option: Discord.CommandInteractionOptio
 	return Number.parseInt(value, 10);
 }
 
-export function resolveSubcommandNameFromOption(option: Discord.CommandInteractionOption): string {
+export function resolveSubcommandNameFromOption(option: CommandInteractionOption): string {
 	return option.name;
 }

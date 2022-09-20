@@ -1,5 +1,4 @@
-import type Discord from "discord.js";
-import type { Snowflake } from "discord.js";
+import type { Message, PartialMessage, Snowflake, TextChannel } from "discord.js";
 import { ChannelType } from "discord.js";
 import { isDiscordError } from "../../helpers/isError.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
@@ -17,9 +16,7 @@ const logger = useLogger();
  *
  * @returns a `Promise` that resolves to `true` if the message was deleted successfully.
  */
-export async function deleteMessage(
-	message: Discord.Message | Discord.PartialMessage
-): Promise<boolean> {
+export async function deleteMessage(message: Message | PartialMessage): Promise<boolean> {
 	if (message.channel.type === ChannelType.DM) {
 		logger.debug("Can't delete others' messages in a DM channel.");
 		return false;
@@ -45,7 +42,7 @@ export async function deleteMessage(
  */
 export async function deleteMessageWithId(
 	messageId: Snowflake,
-	channel: Discord.TextChannel
+	channel: TextChannel
 ): Promise<boolean> {
 	try {
 		await channel.messages.delete(messageId);
@@ -68,7 +65,7 @@ export async function deleteMessageWithId(
  */
 export async function bulkDeleteMessagesWithIds(
 	messageIds: Array<Snowflake>,
-	channel: Discord.TextChannel
+	channel: TextChannel
 ): Promise<boolean> {
 	if (messageIds.length === 0) return true;
 

@@ -13,8 +13,8 @@ import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueS
 const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
 const mockSaveUserToStoredBlacklist = saveUserToStoredBlacklist as jest.Mock;
 
-import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
+import type { Snowflake } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { blacklist } from "./blacklist.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
@@ -29,7 +29,7 @@ describe("Manage the Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
 	const queueChannel = { id: queueChannelId };
 
-	const ownerId = "server-owner" as Discord.Snowflake;
+	const ownerId = "server-owner" as Snowflake;
 	const badUserId = "bad-user";
 
 	let context: GuildedCommandContext;

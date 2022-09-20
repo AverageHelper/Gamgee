@@ -1,10 +1,10 @@
-import type Discord from "discord.js";
+import type { Snowflake } from "discord.js";
 import { sendCommand } from "./sendMessage";
 import { requireEnv, useTesterClient } from "./testerClient";
 import { waitForMessage } from "./messageDispatch";
 
-const UUT_ID: Discord.Snowflake = requireEnv("BOT_TEST_ID");
-const TEST_CHANNEL_ID: Discord.Snowflake = requireEnv("CHANNEL_ID");
+const UUT_ID: Snowflake = requireEnv("BOT_TEST_ID");
+const TEST_CHANNEL_ID: Snowflake = requireEnv("CHANNEL_ID");
 
 /**
  * Sends a command message in the test channel, and waits for
@@ -22,7 +22,7 @@ export async function commandResponseInTestChannel(
 	command: string,
 	expectToContain: string | undefined = undefined
 ): Promise<string | null> {
-	const channelId: Discord.Snowflake = TEST_CHANNEL_ID;
+	const channelId: Snowflake = TEST_CHANNEL_ID;
 	return await useTesterClient(async client => {
 		const commandMsg = await sendCommand(client, command, channelId);
 		const message = await waitForMessage(response => {

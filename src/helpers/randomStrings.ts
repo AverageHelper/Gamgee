@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { GuildMember, User } from "discord.js";
 import { randomElementOfArray } from "./randomElementOfArray.js";
 import { useLogger } from "../logger.js";
 import {
@@ -17,10 +17,10 @@ export interface ResponseContext {
 	me: string;
 
 	/** The user who initiated this conversation, e.g. by pinging the bot. */
-	otherUser: Discord.User;
+	otherUser: User;
 
 	/** The guild member, if any, representing the user who initiated this conversation. */
-	otherMember: Discord.GuildMember | null;
+	otherMember: GuildMember | null;
 }
 
 export type SingleResponse = string | ((context: ResponseContext) => string);

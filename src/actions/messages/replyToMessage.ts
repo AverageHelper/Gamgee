@@ -1,5 +1,13 @@
 import type { SupportedLocale } from "../../i18n.js";
-import type Discord from "discord.js";
+import type {
+	CommandInteraction,
+	InteractionReplyOptions,
+	Message,
+	MessageOptions,
+	ReplyMessageOptions,
+	TextBasedChannel,
+	User
+} from "discord.js";
 import { ChannelType, DiscordAPIError } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
 import { getEnv } from "../../helpers/environment.js";
@@ -23,10 +31,7 @@ const logger = useLogger();
  * @returns a `Promise` that resolves with `true` if the send succeeds, or
  * `false` if there was an error.
  */
-export async function sendPrivately(
-	user: Discord.User,
-	content: string
-): Promise<Discord.Message | null> {
+export async function sendPrivately(user: User, content: string): Promise<Message | null> {
 	if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
 		// this is our known tester
 		logger.error(
@@ -49,10 +54,7 @@ export async function sendPrivately(
  * @returns `true` if the DM was successful. `false` if there was an error.
  * This will be the case if the target user has DMs disabled.
  */
-async function sendDM(
-	user: Discord.User,
-	content: string | Discord.MessageOptions
-): Promise<Discord.Message | null> {
+async function sendDM(user: User, content: string | MessageOptions): Promise<Message | null> {
 	try {
 		return await user.send(content);
 	} catch (error) {
@@ -64,7 +66,7 @@ async function sendDM(
 }
 
 function replyMessage(
-	source: Discord.TextBasedChannel | null,
+	source: TextBasedChannel | null,
 	content: string | null | undefined,
 	locale: SupportedLocale
 ): string {
@@ -80,11 +82,11 @@ function replyMessage(
 }
 
 async function sendDMReply(
-	source: Discord.Message,
-	options: string | Discord.ReplyMessageOptions,
+	source: Message,
+	options: string | ReplyMessageOptions,
 	locale: SupportedLocale
-): Promise<Discord.Message | null> {
-	const user: Discord.User = source.author;
+): Promise<Message | null> {
+	const user: User = source.author;
 	try {
 		if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
 			// this is our known tester, no need to i18nlize
@@ -121,8 +123,8 @@ async function sendDMReply(
 }
 
 async function sendEphemeralReply(
-	source: Discord.CommandInteraction,
-	options: string | Discord.InteractionReplyOptions
+	source: CommandInteraction,
+	options: string | InteractionReplyOptions
 ): Promise<boolean> {
 	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
@@ -156,13 +158,13 @@ async function sendEphemeralReply(
  * or a boolean value indicating whether an ephemeral reply succeeded or failed.
  */
 export async function replyPrivately(
-	source: Discord.Message | Discord.CommandInteraction,
-	options: string | Omit<Discord.MessageOptions, "reply" | "flags">,
+	source: Message | CommandInteraction,
+	options: string | Omit<MessageOptions, "reply" | "flags">,
 	preferDMs: boolean,
 	userLocale: SupportedLocale,
 	guildLocale: SupportedLocale
-): Promise<Discord.Message | boolean> {
-	let message: Discord.Message | null;
+): Promise<Message | boolean> {
+	let message: Message | null;
 
 	// If this is a message (no ephemeral reply option)
 	if ("author" in source) {
@@ -215,9 +217,9 @@ export async function replyPrivately(
  * @param content The message to send.
  */
 export async function sendMessageInChannel(
-	channel: Discord.TextBasedChannel,
-	content: string | Discord.MessageOptions
-): Promise<Discord.Message | null> {
+	channel: TextBasedChannel,
+	content: string | MessageOptions
+): Promise<Message | null> {
 	try {
 		return await channel.send(content);
 	} catch (error) {
@@ -237,10 +239,10 @@ export async function sendMessageInChannel(
  * @returns a `Promise` that resolves if the send succeeds.
  */
 export async function reply(
-	message: Discord.Message,
-	content: string | Discord.ReplyMessageOptions,
+	message: Message,
+	content: string | ReplyMessageOptions,
 	shouldMention: boolean = true
-): Promise<Discord.Message | null> {
+): Promise<Message | null> {
 	try {
 		if (shouldMention) {
 			return await message.reply(content);

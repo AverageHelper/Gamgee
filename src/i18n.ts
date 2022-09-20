@@ -44,10 +44,10 @@ export function metadataForLocale(locale: SupportedLocale): LocaleMetadata {
 	return vocabulary[locale].meta;
 }
 
-import type Discord from "discord.js";
+import type { Guild } from "discord.js";
 
 /** Returns the unit's preferred locale, if supported, or the default locale if not. */
-export function preferredLocale(guild: Pick<Discord.Guild, "preferredLocale">): SupportedLocale {
+export function preferredLocale(guild: Pick<Guild, "preferredLocale">): SupportedLocale {
 	return localeIfSupported(guild.preferredLocale) ?? DEFAULT_LOCALE;
 }
 

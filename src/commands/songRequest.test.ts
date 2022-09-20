@@ -40,7 +40,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
-import type Discord from "discord.js";
+import type { Client, GuildMember, Message } from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "../constants/database.js";
@@ -93,14 +93,14 @@ describe("Song request via URL", () => {
 		submissionMaxQuantity: null
 	});
 
-	const mockClient: Discord.Client<true> = {
+	const mockClient: Client<true> = {
 		user: { id: botId }
-	} as unknown as Discord.Client<true>;
+	} as unknown as Client<true>;
 
-	function mockMessage(senderId: string, content: string): Discord.Message {
-		const mockSenderMember: Discord.GuildMember = {
+	function mockMessage(senderId: string, content: string): Message {
+		const mockSenderMember: GuildMember = {
 			user: { id: senderId }
-		} as unknown as Discord.GuildMember;
+		} as unknown as GuildMember;
 
 		return {
 			content,
@@ -131,7 +131,7 @@ describe("Song request via URL", () => {
 					)
 				}
 			}
-		} as unknown as Discord.Message;
+		} as unknown as Message;
 	}
 
 	describe("Song request help", () => {
@@ -232,7 +232,7 @@ describe("Song request via URL", () => {
 	});
 
 	test("submissions enter the queue in order", async () => {
-		const mockMessages: Array<Discord.Message> = [];
+		const mockMessages: Array<Message> = [];
 		urls.forEach((url, i) => {
 			const userId = `user-${i + 1}`;
 			const message = mockMessage(userId, `?sr ${url.href}`);

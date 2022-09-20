@@ -1,4 +1,5 @@
-import Discord from "discord.js";
+import type { Message, MessageEditOptions, PartialMessage } from "discord.js";
+import { MessageFlags, MessageFlagsBitField } from "discord.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 
@@ -15,8 +16,8 @@ const logger = useLogger();
  * @returns a `Promise` that resolves to `true` if the message was edited successfully.
  */
 export async function editMessage(
-	message: Discord.Message | Discord.PartialMessage,
-	options: string | Discord.MessageEditOptions
+	message: Message | PartialMessage,
+	options: string | MessageEditOptions
 ): Promise<boolean> {
 	try {
 		await message.edit(options);
@@ -34,7 +35,7 @@ export async function editMessage(
  * @param suppress Whether embeds are to be suppressed or permitted. Defaults to `true`.
  */
 export async function suppressEmbedsForMessage(
-	message: Discord.Message,
+	message: Message,
 	suppress: boolean = true
 ): Promise<void> {
 	try {
@@ -47,16 +48,16 @@ export async function suppressEmbedsForMessage(
 		}
 
 		// We sent this, so we can edit its content directly.
-		const flags = new Discord.MessageFlagsBitField(message.flags.bitfield);
+		const flags = new MessageFlagsBitField(message.flags.bitfield);
 		if (suppress) {
-			flags.add(Discord.MessageFlags.SuppressEmbeds);
+			flags.add(MessageFlags.SuppressEmbeds);
 			await editMessage(message, {
 				flags,
 				content: escapeUriInString(message.content),
 				allowedMentions: { users: [] }
 			});
 		} else {
-			flags.remove(Discord.MessageFlags.SuppressEmbeds);
+			flags.remove(MessageFlags.SuppressEmbeds);
 			await editMessage(message, {
 				flags,
 				content: stopEscapingUriInString(message.content)

@@ -1,11 +1,11 @@
-import type Discord from "discord.js";
 import type { Logger } from "./logger.js";
+import type { MessageReaction, User } from "discord.js";
 import { getEnv } from "./helpers/environment.js";
 import { logUser } from "./helpers/logUser.js";
 
 export async function handleReactionAdd(
-	reaction: Discord.MessageReaction,
-	user: Discord.User,
+	reaction: MessageReaction,
+	user: User,
 	logger: Logger
 ): Promise<void> {
 	// Ignore bot reactions unless we're being tested

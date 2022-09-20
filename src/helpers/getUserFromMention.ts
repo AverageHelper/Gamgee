@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { Guild, User } from "discord.js";
 import { getUserIdFromMention } from "./getUserIdFromMention.js";
 import { getUserWithId } from "./getUserWithId.js";
 import { logUser } from "./logUser.js";
@@ -14,10 +14,7 @@ const logger = useLogger();
  * @param mention The mention string, in the form `<@!?[0-9]>`.
  * @returns A Discord user, or `null` if the user cannot be found.
  */
-export async function getUserFromMention(
-	guild: Discord.Guild,
-	mention: string
-): Promise<Discord.User | null> {
+export async function getUserFromMention(guild: Guild, mention: string): Promise<User | null> {
 	const userId = getUserIdFromMention(mention);
 	if (userId === null) return null;
 

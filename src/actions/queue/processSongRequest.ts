@@ -1,6 +1,6 @@
-import type Discord from "discord.js";
 import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
+import type { Message, TextChannel } from "discord.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "node:url";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
@@ -24,8 +24,8 @@ import {
 export interface SongRequest {
 	songUrl: URL;
 	context: CommandContext;
-	queueChannel: Discord.TextChannel;
-	publicPreemptiveResponse: Discord.Message | null;
+	queueChannel: TextChannel;
+	publicPreemptiveResponse: Message | null;
 	logger: Logger;
 }
 
@@ -69,7 +69,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 }
 
 interface SongAcceptance {
-	queueChannel: Discord.TextChannel;
+	queueChannel: TextChannel;
 	context: CommandContext;
 	entry: UnsentQueueEntry;
 	logger: Logger;

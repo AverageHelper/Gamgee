@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { Guild, GuildBasedChannel } from "discord.js";
 import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 import { useLogger } from "../logger.js";
 
@@ -11,10 +11,7 @@ const logger = useLogger();
  * @param mention The mention string, in the form `<#[0-9]>`.
  * @returns A Discord channel, or `null` if the user cannot be determined from the provided `mention` string.
  */
-export function getChannelFromMention(
-	guild: Discord.Guild,
-	mention: string
-): Discord.GuildBasedChannel | null {
+export function getChannelFromMention(guild: Guild, mention: string): GuildBasedChannel | null {
 	const channelId = getChannelIdFromMention(mention);
 	if (channelId === null) return null;
 

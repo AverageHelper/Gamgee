@@ -1,4 +1,11 @@
-import type Discord from "discord.js";
+import type {
+	Message,
+	MessageEditOptions,
+	MessageOptions,
+	PartialMessage,
+	Snowflake,
+	TextChannel
+} from "discord.js";
 import type { MessageButton } from "../../buttons.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { SupportedLocale } from "../../i18n.js";
@@ -34,7 +41,7 @@ import {
 function queueMessageFromEntry(
 	locale: SupportedLocale,
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
-): Discord.MessageOptions & Discord.MessageEditOptions {
+): MessageOptions & MessageEditOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
 	push(" requested a song that's ", partialContent);
@@ -75,7 +82,7 @@ function queueMessageFromEntry(
 }
 
 /** Retrieves the playtime (in seconds) of the queue's unfinished entries. */
-export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+export async function playtimeRemainingInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue
@@ -87,7 +94,7 @@ export async function playtimeRemainingInQueue(queueChannel: Discord.TextChannel
 }
 
 /** Retrieves the total playtime (in seconds) of the queue's entries. */
-export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+export async function playtimeTotalInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
 	queue.forEach(e => {
@@ -97,7 +104,7 @@ export async function playtimeTotalInQueue(queueChannel: Discord.TextChannel): P
 }
 
 /** Retrieves the average playtime (in seconds) of the queue's entries. */
-export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel): Promise<number> {
+export async function playtimeAverageInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let average = 0;
 	queue.forEach(e => {
@@ -110,7 +117,7 @@ export async function playtimeAverageInQueue(queueChannel: Discord.TextChannel):
 /** Adds an entry to the queue cache and sends the entry to the queue channel. */
 export async function pushEntryToQueue(
 	newEntry: UnsentQueueEntry,
-	queueChannel: Discord.TextChannel
+	queueChannel: TextChannel
 ): Promise<QueueEntry> {
 	const messageOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), {
 		...newEntry,
@@ -144,8 +151,8 @@ export async function pushEntryToQueue(
 
 /** Returns the average entry duration of the submissions of the user with the provided ID. */
 export async function averageSubmissionPlaytimeForUser(
-	userId: Discord.Snowflake,
-	queueChannel: Discord.TextChannel
+	userId: Snowflake,
+	queueChannel: TextChannel
 ): Promise<number> {
 	const entries = await getAllStoredEntriesFromSender(userId, queueChannel);
 	let average = 0;
@@ -160,8 +167,8 @@ export async function averageSubmissionPlaytimeForUser(
 
 /** If the message represents a "done" entry, that entry is unmarked. */
 export async function markEntryNotDoneInQueue(
-	queueMessage: Discord.Message | Discord.PartialMessage,
-	queueChannel: Discord.TextChannel
+	queueMessage: Message | PartialMessage,
+	queueChannel: TextChannel
 ): Promise<void> {
 	await updateStoredEntryIsDone(false, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
@@ -173,8 +180,8 @@ export async function markEntryNotDoneInQueue(
 
 /** If the message represents a "not done" entry, that entry is marked "done". */
 export async function markEntryDoneInQueue(
-	queueMessage: Discord.Message | Discord.PartialMessage,
-	queueChannel: Discord.TextChannel
+	queueMessage: Message | PartialMessage,
+	queueChannel: TextChannel
 ): Promise<void> {
 	await updateStoredEntryIsDone(true, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
@@ -186,9 +193,9 @@ export async function markEntryDoneInQueue(
 
 /** Add the given user to the haveCalledNowPlaying field of the queue entry if they aren't already on it. */
 export async function addUserToHaveCalledNowPlaying(
-	user: Discord.Snowflake,
-	queueMessage: Discord.Message | Discord.PartialMessage,
-	queueChannel: Discord.TextChannel
+	user: Snowflake,
+	queueMessage: Message | PartialMessage,
+	queueChannel: TextChannel
 ): Promise<void> {
 	await addToHaveCalledNowPlayingForStoredEntry(user, queueMessage.id, queueChannel);
 
@@ -207,7 +214,7 @@ export async function addUserToHaveCalledNowPlaying(
  * @returns the entry that was deleted.
  */
 export async function deleteEntryFromMessage(
-	queueMessage: Discord.Message | Discord.PartialMessage
+	queueMessage: Message | PartialMessage
 ): Promise<QueueEntry | null> {
 	const entry = await getStoredEntry(queueMessage.id);
 	if (entry === null) return entry;

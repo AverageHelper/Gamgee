@@ -1,5 +1,5 @@
-import type Discord from "discord.js";
 import type { GuildedCommand } from "./Command.js";
+import type { Message } from "discord.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
@@ -82,7 +82,7 @@ export const sr: GuildedCommand = {
 
 		const songUrlString: string = resolveStringFromOption(firstOption);
 		let songUrl: URL;
-		let publicPreemptiveResponse: Discord.Message | null = null;
+		let publicPreemptiveResponse: Message | null = null;
 
 		try {
 			songUrl = new URL(songUrlString);

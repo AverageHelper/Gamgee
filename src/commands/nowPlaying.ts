@@ -1,5 +1,5 @@
-import type Discord from "discord.js";
 import type { Command } from "./Command.js";
+import type { TextChannel } from "discord.js";
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { getAllStoredEntries } from "../useQueueStorage.js";
@@ -55,7 +55,7 @@ export const nowPlaying: Command = {
 	async execute({ guild, user, logger, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
-		const queueChannel: Discord.TextChannel | null = await getQueueChannel(guild);
+		const queueChannel: TextChannel | null = await getQueueChannel(guild);
 
 		if (!queueChannel) {
 			logger.debug("There is no queue channel for this guild.");

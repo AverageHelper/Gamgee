@@ -1,5 +1,11 @@
-import type Discord from "discord.js";
-import type { Snowflake } from "discord.js";
+import type {
+	Guild,
+	GuildChannelResolvable,
+	GuildMember,
+	PermissionResolvable,
+	Snowflake,
+	User
+} from "discord.js";
 
 /**
  * Returns `true` if the given user has the named roles in the provided guild.
@@ -12,9 +18,9 @@ import type { Snowflake } from "discord.js";
  * named role in the provided guild.
  */
 export async function userHasRoleInGuild(
-	user: Discord.GuildMember,
+	user: GuildMember,
 	roleId: Snowflake,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<boolean> {
 	const adminRole = await guild.roles.fetch(roleId);
 	// TODO: Test that user IDs match their guild member IDs
@@ -32,9 +38,9 @@ export async function userHasRoleInGuild(
  * named role in the provided channel.
  */
 export function userHasPermissionInChannel(
-	user: Discord.GuildMember,
-	permission: Discord.PermissionResolvable,
-	channel: Discord.GuildChannelResolvable
+	user: GuildMember,
+	permission: PermissionResolvable,
+	channel: GuildChannelResolvable
 ): boolean {
 	return user //
 		.permissionsIn(channel)
@@ -52,9 +58,9 @@ export function userHasPermissionInChannel(
  * of the named roles in the provided guild.
  */
 export async function userHasOneOfRoles(
-	user: Discord.User,
+	user: User,
 	roleIds: ReadonlyArray<Snowflake>,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<boolean> {
 	const adminRoles = await Promise.all(
 		roleIds.map(roleId => guild.roles.fetch(roleId)) //

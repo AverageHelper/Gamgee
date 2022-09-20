@@ -1,9 +1,9 @@
-import type Discord from "discord.js";
+import type { User } from "discord.js";
 import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import { logUser } from "./logUser.js";
 
 describe("Log user ID", () => {
-	const user = {} as unknown as Discord.User;
+	const user = {} as unknown as User;
 
 	beforeEach(() => {
 		user.username = "BobJoe";

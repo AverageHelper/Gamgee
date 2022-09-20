@@ -1,5 +1,5 @@
+import type { Channel, Guild, TextChannel } from "discord.js";
 import type { CommandContext } from "../../commands/index.js";
-import type Discord from "discord.js";
 import { ChannelType } from "discord.js";
 import { getQueueChannelId } from "../../useGuildStorage.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
@@ -9,15 +9,13 @@ const logger = useLogger();
 
 // TODO: i18n
 
-async function getQueueChannelFromCommand(
-	context: CommandContext
-): Promise<Discord.TextChannel | null> {
+async function getQueueChannelFromCommand(context: CommandContext): Promise<TextChannel | null> {
 	if (!context.guild) return null;
 
 	const queueChannelId = await getQueueChannelId(context.guild);
 	if (queueChannelId === null || !queueChannelId) return null;
 
-	let queueChannel: Discord.Channel | null;
+	let queueChannel: Channel | null;
 	try {
 		queueChannel = await context.client.channels.fetch(queueChannelId);
 	} catch (error) {
@@ -41,13 +39,13 @@ async function getQueueChannelFromCommand(
 	return queueChannel;
 }
 
-async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.TextChannel | null> {
+async function getQueueChannelFromGuild(guild: Guild): Promise<TextChannel | null> {
 	const queueChannelId = await getQueueChannelId(guild);
 	if (queueChannelId === null || !queueChannelId) {
 		return null;
 	}
 
-	let queueChannel: Discord.Channel | null;
+	let queueChannel: Channel | null;
 	try {
 		queueChannel = await guild.client.channels.fetch(queueChannelId);
 	} catch (error) {
@@ -75,8 +73,8 @@ async function getQueueChannelFromGuild(guild: Discord.Guild): Promise<Discord.T
  * @returns the guild's queue channel, or `null` if it has none.
  */
 export async function getQueueChannel(
-	source: CommandContext | Discord.Guild | null
-): Promise<Discord.TextChannel | null> {
+	source: CommandContext | Guild | null
+): Promise<TextChannel | null> {
 	if (!source) return null;
 	if ("type" in source) return await getQueueChannelFromCommand(source);
 	return await getQueueChannelFromGuild(source);

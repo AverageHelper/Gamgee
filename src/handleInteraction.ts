@@ -1,5 +1,5 @@
-import type Discord from "discord.js";
 import type { CommandContext } from "./commands/index.js";
+import type { CommandInteraction, DMChannel, GuildMember, GuildTextBasedChannel } from "discord.js";
 import type { Logger } from "./logger.js";
 import { allCommands } from "./commands/index.js";
 import { ChannelType } from "discord.js";
@@ -18,7 +18,7 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * @param logger The place to write system messages.
  */
 export async function handleInteraction(
-	interaction: Discord.CommandInteraction,
+	interaction: CommandInteraction,
 	logger: Logger
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
@@ -45,14 +45,14 @@ export async function handleInteraction(
 			)}`
 		);
 
-		let member: Discord.GuildMember | null;
+		let member: GuildMember | null;
 		if (interaction.inCachedGuild()) {
 			member = interaction.member;
 		} else {
 			member = (await interaction.guild?.members.fetch(interaction.user)) ?? null;
 		}
 
-		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+		let channel: GuildTextBasedChannel | DMChannel | null;
 		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
 			channel = await interaction.channel.fetch();
 		} else {

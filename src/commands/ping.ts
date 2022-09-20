@@ -1,5 +1,5 @@
-import type Discord from "discord.js";
 import type { Command } from "./Command.js";
+import type { Message } from "discord.js";
 import { localizations } from "../i18n.js";
 import { randomPhrase, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
@@ -21,7 +21,7 @@ export const ping: Command = {
 			randomPhrase()
 		);
 
-		let testMessage: Discord.Message;
+		let testMessage: Message;
 		let responseTime: number;
 
 		// FIXME: Ping seems to report slower for messages vs interactions. This is probably to do with the extra API work we do around message parsing. Best fix that

@@ -13,17 +13,17 @@ import type { VideoDetails } from "../getVideoDetails.js";
 import { getVideoDetails } from "../getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock<Promise<VideoDetails | null>>;
 
+import type { Guild, TextChannel } from "discord.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 const mockPlaytimeTotalInQueue = playtimeTotalInQueue as jest.Mock<Promise<number>>;
 const mockPushEntryToQueue = pushEntryToQueue as jest.Mock<
 	Promise<QueueEntry>,
-	[UnsentQueueEntry, Discord.TextChannel]
+	[UnsentQueueEntry, TextChannel]
 >;
 
-import type Discord from "discord.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as jest.Mock<Promise<boolean>, [Discord.Guild]>;
-const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Discord.Guild]>;
+const mockIsQueueOpen = isQueueOpen as jest.Mock<Promise<boolean>, [Guild]>;
+const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Guild]>;
 
 import {
 	countAllStoredEntriesFromSender,
@@ -94,9 +94,9 @@ describe("Song request pipeline", () => {
 				id: QUEUE_CHANNEL_ID,
 				guild: {
 					id: GUILD_ID
-				} as unknown as Discord.Guild,
+				} as unknown as Guild,
 				send: mockChannelSend
-			} as unknown as Discord.TextChannel,
+			} as unknown as TextChannel,
 			songUrl: new URL("https://localhost:9999/")
 		};
 

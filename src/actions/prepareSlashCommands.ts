@@ -1,4 +1,10 @@
-import type Discord from "discord.js";
+import type {
+	ApplicationCommand,
+	ApplicationCommandData,
+	ApplicationCommandDataResolvable,
+	Client,
+	Guild
+} from "discord.js";
 import type { Command, GuildedCommand, GlobalCommand } from "../commands/index.js";
 import { allCommands } from "../commands/index.js";
 import { ApplicationCommandType } from "discord.js";
@@ -18,7 +24,7 @@ function pluralOf(value: number | Array<unknown>): "" | "s" {
 	return value.length === 1 ? "" : PLURAL;
 }
 
-async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
+async function resetCommandsForGuild(guild: Guild): Promise<void> {
 	logger.debug(`Clearing commands for guild ${guild.id}...`);
 	if (!testMode) {
 		try {
@@ -33,10 +39,10 @@ async function resetCommandsForGuild(guild: Discord.Guild): Promise<void> {
 function discordCommandPayloadFromCommand(
 	cmd: Command,
 	log: boolean = true
-): Discord.ApplicationCommandDataResolvable {
+): ApplicationCommandDataResolvable {
 	if (log) logger.verbose(`\t'/${cmd.name}'  (requires guild, any privilege)`);
 
-	const payload: Discord.ApplicationCommandData = {
+	const payload: ApplicationCommandData = {
 		description: cmd.description,
 		type: cmd.type ?? ApplicationCommandType.ChatInput,
 		name: cmd.name // TODO: Repeat for command aliases
@@ -83,7 +89,7 @@ function discordCommandPayloadFromCommand(
 
 async function prepareUnprivilegedCommands(
 	unprivilegedCommands: Array<GuildedCommand>,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<number> {
 	logger.verbose(
 		`Creating ${unprivilegedCommands.length} unprivileged command${pluralOf(unprivilegedCommands)}:`
@@ -100,7 +106,7 @@ async function prepareUnprivilegedCommands(
 
 async function preparePrivilegedCommands(
 	privilegedCommands: Array<GuildedCommand>,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<number> {
 	// See https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-using-default-permissions for the new way to do this
 
@@ -110,7 +116,7 @@ async function preparePrivilegedCommands(
 	const results = await Promise.allSettled(
 		privilegedCommands.map(async cmd => {
 			try {
-				let appCommand: Discord.ApplicationCommand | undefined;
+				let appCommand: ApplicationCommand | undefined;
 				const permissions = cmd.permissions
 					? Array.isArray(cmd.permissions)
 						? cmd.permissions.join(", ")
@@ -151,7 +157,7 @@ async function preparePrivilegedCommands(
 }
 
 async function prepareCommandsForGuild(
-	guild: Discord.Guild,
+	guild: Guild,
 	guildCommands: Array<GuildedCommand>
 ): Promise<void> {
 	await resetCommandsForGuild(guild);
@@ -178,7 +184,7 @@ async function prepareCommandsForGuild(
 
 async function prepareGuildedCommands(
 	guildCommands: Array<GuildedCommand>,
-	client: Discord.Client<true>
+	client: Client<true>
 ): Promise<void> {
 	const oAuthGuilds = await client.guilds.fetch();
 	const guilds = await Promise.all(oAuthGuilds.map(async g => await g.fetch()));
@@ -193,7 +199,7 @@ async function prepareGuildedCommands(
 
 async function prepareGlobalCommands(
 	globalCommands: Array<GlobalCommand>,
-	client: Discord.Client<true>
+	client: Client<true>
 ): Promise<void> {
 	logger.verbose(
 		`${globalCommands.length} command${pluralOf(
@@ -209,7 +215,7 @@ async function prepareGlobalCommands(
 	logger.verbose(`Set ${globalCommands.length} global command${pluralOf(globalCommands)}.`);
 }
 
-export async function prepareSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
+export async function prepareSlashCommandsThenExit(client: Client<true>): Promise<void> {
 	logger.warn(
 		"Discord has changed the way command permissions work. Every command will by default be visible. Use the Integrations submenu in Server Settings to change this."
 	);
@@ -240,7 +246,7 @@ export async function prepareSlashCommandsThenExit(client: Discord.Client<true>)
 	process.exit(0);
 }
 
-export async function revokeSlashCommandsThenExit(client: Discord.Client<true>): Promise<void> {
+export async function revokeSlashCommandsThenExit(client: Client<true>): Promise<void> {
 	logger.info("Unregistering global commands...");
 	if (!testMode) {
 		await client.application?.commands.set([]);

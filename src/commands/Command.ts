@@ -1,5 +1,11 @@
-import type Discord from "discord.js";
-import type { ApplicationCommandType, ApplicationCommandOptionType } from "discord.js";
+import type {
+	ApplicationCommandOption,
+	ApplicationCommandOptionType,
+	ApplicationCommandSubCommandData,
+	ApplicationCommandType,
+	ChatInputApplicationCommandData,
+	Guild
+} from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
 import type { CommandPermission, PermissionAlias } from "./CommandPermission.js";
 
@@ -9,12 +15,12 @@ export * from "./CommandPermission.js";
 type PermissionAliasList = Array<PermissionAlias>;
 
 type PermissionGenerator = (
-	guild: Discord.Guild
+	guild: Guild
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-interface BaseCommand extends Discord.ChatInputApplicationCommandData {
+interface BaseCommand extends ChatInputApplicationCommandData {
 	aliases?: Array<string>;
-	options?: NonEmptyArray<Discord.ApplicationCommandOption | Subcommand>;
+	options?: NonEmptyArray<ApplicationCommandOption | Subcommand>;
 	type?: ApplicationCommandType.ChatInput;
 
 	/**
@@ -72,7 +78,7 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = GlobalCommand | GuildedCommand;
 
-interface BaseSubcommand extends Discord.ApplicationCommandSubCommandData {
+interface BaseSubcommand extends ApplicationCommandSubCommandData {
 	type: ApplicationCommandOptionType.Subcommand;
 }
 
