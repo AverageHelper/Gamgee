@@ -14,13 +14,13 @@ export default defineConfig({
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
 		json(), // translate JSON
 
-		// // Find external dependencies
+		// Find external dependencies
 		nodeResolve({
 			exportConditions: ["node"],
 			preferBuiltins: true
 		}),
 
-		// // Minify output
+		// Minify output
 		process.env["NODE_ENV"] === "production" ? terser() : null,
 
 		// Statistics
@@ -32,14 +32,18 @@ export default defineConfig({
 		// They usually relate to modules that were transpiled from
 		// TypeScript, and check their context by querying the value
 		// of global `this`.
+		// TODO: PR @averagehelper/job-queue to fix this
 		if (warning.code === "THIS_IS_UNDEFINED") return;
+
+		// Ignore "Use of eval is strongly discouraged" warnings from
+		// prisma. Their `eval` calls are fairly tame, though this should
+		// be audited with each update.
+		const evalWhitelist = ["@prisma/client"];
+		if (warning.code === "EVAL" && evalWhitelist.some(e => warning.loc?.file?.includes(e))) return;
 
 		defaultHandler(warning);
 	},
 	external: [
-		// Weirdness
-		"@prisma/client",
-
 		// Curcular, uses eval
 		"discord.js",
 
