@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2022-09-21
 ### Added
 - Support for invoking localized command names with message commands. For example, `?usuarioinfo` now behaves the same as `?userinfo`. Any user can execute a command in any supported language.
 
@@ -373,7 +373,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v1.8.3...HEAD
+[2.0.0]: https://github.com/AverageHelper/Gamgee/compare/v1.8.3...v2.0.0
 [1.8.3]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...v1.8.3
 [1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/AverageHelper/Gamgee/compare/v1.8.0...v1.8.1
