@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
 - Renamed the `entry-duration` queue limit ID to `entry-duration-max`. This makes more sense alongside the `entry-duration-min` limit ID.
 - Since [Node 18 supports a built-in `fetch` API](https://dev.to/andrewbaisden/the-nodejs-18-fetch-api-72m), we'll use that when its available. We fall back to `cross-fetch` otherwise.
+- Clarified the descriptions of queue limits. They used to specify that time values are in seconds, but we format the number nicely with appropriate units that usually _aren't_ seconds.
 - The build output is now a single file, dist/server.js.
 - Updated [`discord.js`](https://github.com/discordjs/discord.js) to version [14.4.0](https://github.com/discordjs/discord.js/releases/tag/14.4.0).
 

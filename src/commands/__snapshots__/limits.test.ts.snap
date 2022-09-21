@@ -12,19 +12,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	none",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	infinite",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -46,19 +46,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	42 seconds",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	infinite",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -80,19 +80,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	none",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	42 seconds",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -114,19 +114,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	none",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	infinite",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -148,19 +148,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	42 seconds",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	42 seconds",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -182,19 +182,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	none",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	42 seconds",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -216,19 +216,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	42 seconds",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	infinite",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
@@ -250,19 +250,19 @@ Object {
         },
         Object {
           "name": "Submission Cooldown:	42 seconds",
-          "value": "The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+          "value": "The minimum amount of time that each user must wait between their own submissions.",
         },
         Object {
           "name": "Min Song Length:	0",
-          "value": "The minimum duration (in seconds) of a song submission.",
+          "value": "The minimum duration of a song submission.",
         },
         Object {
           "name": "Max Song Length:	42 seconds",
-          "value": "The maximum duration (in seconds) of a song submission.",
+          "value": "The maximum duration of a song submission.",
         },
         Object {
           "name": "Total Queue Length:	infinite",
-          "value": "The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+          "value": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
         },
       ],
       "title": "Queue Limits",
