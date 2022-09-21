@@ -3,8 +3,8 @@ import type {
 	CommandInteraction,
 	InteractionReplyOptions,
 	Message,
-	MessageOptions,
-	ReplyMessageOptions,
+	MessageCreateOptions,
+	MessageReplyOptions,
 	TextBasedChannel,
 	User
 } from "discord.js";
@@ -54,7 +54,7 @@ export async function sendPrivately(user: User, content: string): Promise<Messag
  * @returns `true` if the DM was successful. `false` if there was an error.
  * This will be the case if the target user has DMs disabled.
  */
-async function sendDM(user: User, content: string | MessageOptions): Promise<Message | null> {
+async function sendDM(user: User, content: string | MessageCreateOptions): Promise<Message | null> {
 	try {
 		return await user.send(content);
 	} catch (error) {
@@ -83,7 +83,7 @@ function replyMessage(
 
 async function sendDMReply(
 	source: Message,
-	options: string | ReplyMessageOptions,
+	options: string | MessageReplyOptions,
 	locale: SupportedLocale
 ): Promise<Message | null> {
 	const user: User = source.author;
@@ -159,7 +159,7 @@ async function sendEphemeralReply(
  */
 export async function replyPrivately(
 	source: Message | CommandInteraction,
-	options: string | Omit<MessageOptions, "reply" | "flags">,
+	options: string | Omit<MessageCreateOptions, "reply" | "flags">,
 	preferDMs: boolean,
 	userLocale: SupportedLocale,
 	guildLocale: SupportedLocale
@@ -218,7 +218,7 @@ export async function replyPrivately(
  */
 export async function sendMessageInChannel(
 	channel: TextBasedChannel,
-	content: string | MessageOptions
+	content: string | MessageCreateOptions
 ): Promise<Message | null> {
 	try {
 		return await channel.send(content);
@@ -240,7 +240,7 @@ export async function sendMessageInChannel(
  */
 export async function reply(
 	message: Message,
-	content: string | ReplyMessageOptions,
+	content: string | MessageReplyOptions,
 	shouldMention: boolean = true
 ): Promise<Message | null> {
 	try {

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed the `entry-duration` queue limit ID to `entry-duration-max`. This makes more sense alongside the `entry-duration-min` limit ID.
 - Since [Node 18 supports a built-in `fetch` API](https://dev.to/andrewbaisden/the-nodejs-18-fetch-api-72m), we'll use that when its available. We fall back to `cross-fetch` otherwise.
 - The build output is now a single file, dist/server.js.
+- Updated [`discord.js`](https://github.com/discordjs/discord.js) to version [14.4.0](https://github.com/discordjs/discord.js/releases/tag/14.4.0).
 
 ### Removed
 - BREAKING: Removed migrations from old v1.x.x versions. You should **run Gamgee v1.8.3** at least once if you're updating from an older Gamgee version and want to keep your database.

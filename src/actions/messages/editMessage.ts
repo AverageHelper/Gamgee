@@ -1,5 +1,4 @@
 import type { Message, MessageEditOptions, PartialMessage } from "discord.js";
-import { MessageFlags, MessageFlagsBitField } from "discord.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 
@@ -48,18 +47,15 @@ export async function suppressEmbedsForMessage(
 		}
 
 		// We sent this, so we can edit its content directly.
-		const flags = new MessageFlagsBitField(message.flags.bitfield);
 		if (suppress) {
-			flags.add(MessageFlags.SuppressEmbeds);
 			await editMessage(message, {
-				flags,
+				flags: ["SuppressEmbeds"],
 				content: escapeUriInString(message.content),
 				allowedMentions: { users: [] }
 			});
 		} else {
-			flags.remove(MessageFlags.SuppressEmbeds);
 			await editMessage(message, {
-				flags,
+				flags: [],
 				content: stopEscapingUriInString(message.content)
 			});
 		}

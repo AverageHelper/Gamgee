@@ -1,7 +1,7 @@
 import type {
 	Message,
+	MessageCreateOptions,
 	MessageEditOptions,
-	MessageOptions,
 	PartialMessage,
 	Snowflake,
 	TextChannel
@@ -41,7 +41,7 @@ import {
 function queueMessageFromEntry(
 	locale: SupportedLocale,
 	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
-): MessageOptions & MessageEditOptions {
+): MessageCreateOptions & MessageEditOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
 	push(" requested a song that's ", partialContent);
