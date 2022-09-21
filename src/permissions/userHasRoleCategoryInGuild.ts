@@ -1,18 +1,17 @@
 import type { RoleCategory } from "./RoleCategories.js";
+import type { Guild, Snowflake, User } from "discord.js";
+import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
+import { userHasOneOfRoles } from "./userHasOneOfRoles.js";
 import {
 	ROLE_CATEGORY_OWNER,
 	ROLE_CATEGORY_QUEUE_ADMIN,
 	ROLE_CATEGORY_GUILD_ADMIN
 } from "./RoleCategories.js";
-import type Discord from "discord.js";
-import type { Snowflake } from "discord.js";
-import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
-import { userHasOneOfRoles } from "./userHasOneOfRoles.js";
 
 export async function userHasRoleCategoryInGuild(
-	user: Discord.User,
+	user: User,
 	category: RoleCategory,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<boolean> {
 	const isOwner = user.id === guild.ownerId;
 

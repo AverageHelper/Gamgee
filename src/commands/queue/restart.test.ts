@@ -14,8 +14,8 @@ const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 const mockGetQueueChannel = getQueueChannel as jest.Mock;
 
-import type Discord from "discord.js";
 import type { GuildedCommandContext } from "../Command.js";
+import type { TextChannel } from "discord.js";
 import { restart } from "./restart.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
@@ -70,7 +70,7 @@ describe("Clear queue contents", () => {
 				...context,
 				channel: {
 					id: channelId
-				} as unknown as Discord.TextChannel
+				} as unknown as TextChannel
 			};
 
 			await expect(restart.execute(context)).resolves.toBeUndefined();

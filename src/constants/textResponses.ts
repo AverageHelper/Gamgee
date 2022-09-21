@@ -262,6 +262,7 @@ export const phrases: ResponseRepository = [
 	"I don't like this can we change the topic plz ty",
 	"I don't like your tone.",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
+	({ otherUser: u }) => `I agree, ${u.username}. Wise words`,
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
 	"I just wasted three seconds of your life.",
@@ -357,7 +358,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 216 of these
+]; // 217 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

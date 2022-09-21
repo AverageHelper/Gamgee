@@ -1,20 +1,19 @@
 import type { DailyRotateFileTransportOptions } from "winston-daily-rotate-file";
+import type { Logger } from "winston";
+import { createLogger, format, transports } from "winston";
 import { getEnv } from "./helpers/environment.js";
 import DailyRotateFile from "winston-daily-rotate-file";
-import winston from "winston";
 
 const logLevels = ["silly", "debug", "verbose", "info", "warn", "error"] as const;
 export type LogLevel = typeof logLevels[number];
+export type { Logger };
 
 function isLogLevel(tbd: unknown): tbd is LogLevel {
 	return logLevels.includes(tbd as LogLevel);
 }
 
-export type Logger = winston.Logger;
-
 // TODO: Separate logger for each guild. Guild-specific logs should go into a subfolder, with the usual rotate configs within. System-level logs should be treated no differently from before. (Maybe use `defaultMeta` instead?)
 const loggers = new Map<LogLevel, Logger>();
-const format = winston.format;
 
 // Let the admin decide what level to log to console, or default to a case tree based on NODE_ENV
 const rawLogLevel = getEnv("LOG_LEVEL");
@@ -67,7 +66,7 @@ export function useLogger(): Logger {
 	let logger = loggers.get(consoleLogLevel);
 
 	if (!logger) {
-		logger = winston.createLogger({
+		logger = createLogger({
 			level: "silly",
 			format: format.json(),
 			// defaultMeta: { service: "user-service" },
@@ -86,7 +85,7 @@ export function useLogger(): Logger {
 		// eslint-disable-next-line no-constant-condition
 		if (true || nodeEnv !== "test") {
 			logger.add(
-				new winston.transports.Console({
+				new transports.Console({
 					format: format.cli(),
 					level: consoleLogLevel
 				})

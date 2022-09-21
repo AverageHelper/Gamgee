@@ -1,19 +1,32 @@
-import type Discord from "discord.js";
+import type {
+	Client,
+	CommandInteraction,
+	CommandInteractionOption,
+	DMChannel,
+	Guild,
+	GuildMember,
+	GuildTextBasedChannel,
+	InteractionReplyOptions,
+	LocaleString,
+	Message,
+	ReplyMessageOptions,
+	User
+} from "discord.js";
 import type { Logger } from "../logger.js";
 import type { SupportedLocale } from "../i18n.js";
 import { ChannelType } from "discord.js";
 
-export type MessageCommandInteractionOption = Discord.CommandInteractionOption;
+export type MessageCommandInteractionOption = CommandInteractionOption;
 
 interface BaseCommandContext {
 	/** Gamgee's Discord client. */
-	readonly client: Discord.Client<true>;
+	readonly client: Client<true>;
 
 	/** A logger to use to submit informative debug messages. */
 	readonly logger: Logger;
 
 	/** The guild in which the command was invoked. */
-	readonly guild: Discord.Guild | null;
+	readonly guild: Guild | null;
 
 	/**
 	 * The guild's preferred locale. If that locale is unknown or unsupported,
@@ -22,16 +35,16 @@ interface BaseCommandContext {
 	readonly guildLocale: SupportedLocale;
 
 	/** The guild's preferred locale. We might not have translations for this locale. */
-	readonly guildLocaleRaw: Discord.LocaleString | null;
+	readonly guildLocaleRaw: LocaleString | null;
 
 	/** The channel in which the command was invoked. */
-	readonly channel: Discord.GuildTextBasedChannel | Discord.DMChannel | null;
+	readonly channel: GuildTextBasedChannel | DMChannel | null;
 
 	/** The user which invoked the command. */
-	readonly user: Discord.User;
+	readonly user: User;
 
 	/** The guild member which invoked the command. */
-	readonly member: Discord.GuildMember | null;
+	readonly member: GuildMember | null;
 
 	/** The UNIX time at which the command was invoked. */
 	readonly createdTimestamp: number;
@@ -64,9 +77,9 @@ interface BaseCommandContext {
 	 */
 	replyPrivately: (
 		options:
-			| string
-			| Omit<Discord.ReplyMessageOptions, "flags">
-			| Omit<Discord.InteractionReplyOptions, "flags">,
+			| string //
+			| Omit<ReplyMessageOptions, "flags">
+			| Omit<InteractionReplyOptions, "flags">,
 		viaDM?: true
 	) => Promise<void>;
 
@@ -74,8 +87,8 @@ interface BaseCommandContext {
 	reply: (
 		options:
 			| string
-			| Omit<Discord.ReplyMessageOptions, "flags">
-			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
+			| Omit<ReplyMessageOptions, "flags">
+			| (Omit<InteractionReplyOptions, "flags"> & {
 					shouldMention?: boolean;
 			  })
 	) => Promise<void>;
@@ -89,11 +102,11 @@ interface BaseCommandContext {
 	followUp: (
 		options:
 			| string
-			| Omit<Discord.ReplyMessageOptions, "flags">
-			| (Omit<Discord.InteractionReplyOptions, "flags"> & {
+			| Omit<ReplyMessageOptions, "flags">
+			| (Omit<InteractionReplyOptions, "flags"> & {
 					reply?: boolean;
 			  })
-	) => Promise<Discord.Message | boolean>;
+	) => Promise<Message | boolean>;
 }
 
 /**
@@ -103,7 +116,7 @@ export interface MessageCommandContext extends BaseCommandContext {
 	readonly type: "message";
 
 	/** The message that contains the command invocation. */
-	readonly message: Discord.Message;
+	readonly message: Message;
 
 	/** The options that were passed into the command. */
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
@@ -131,7 +144,7 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	readonly type: "interaction";
 
 	/** The interaction that represents the command invocation. */
-	readonly interaction: Discord.CommandInteraction;
+	readonly interaction: CommandInteraction;
 
 	/**
 	 * The user's preferred locale.
@@ -146,7 +159,7 @@ export interface InteractionCommandContext extends BaseCommandContext {
 	 * The user's preferred locale, if known. Always `null` in message contexts.
 	 * We might not have translations for this locale.
 	 */
-	readonly userLocaleRaw: Discord.LocaleString;
+	readonly userLocaleRaw: LocaleString;
 }
 
 /**
@@ -158,9 +171,9 @@ export type CommandContext = MessageCommandContext | InteractionCommandContext;
  * Information relevant to a command invocation.
  */
 export type GuildedCommandContext = CommandContext & {
-	readonly guild: Discord.Guild;
-	readonly member: Discord.GuildMember;
-	readonly channel: Discord.GuildTextBasedChannel | null;
+	readonly guild: Guild;
+	readonly member: GuildMember;
+	readonly channel: GuildTextBasedChannel | null;
 };
 
 export function isGuildedCommandContext(tbd: CommandContext): tbd is GuildedCommandContext {

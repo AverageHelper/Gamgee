@@ -1,7 +1,7 @@
 jest.mock("../useGuildStorage");
 jest.mock("../permissions");
 
-import type Discord from "discord.js";
+import type { Guild, GuildMember, Role } from "discord.js";
 import type {
 	CommandContext,
 	CommandPermission,
@@ -18,7 +18,7 @@ const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
 import { userHasRoleInGuild } from "../permissions/index.js";
 const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock<
 	Promise<boolean>,
-	[user: Discord.GuildMember, roleId: string, guild: Discord.Guild]
+	[user: GuildMember, roleId: string, guild: Guild]
 >;
 
 const mockExecute = jest.fn<Promise<void>, Array<unknown>>().mockResolvedValue(undefined);
@@ -45,7 +45,7 @@ describe("Invoke Command", () => {
 			id: "the-guild",
 			ownerId: callerId,
 			roles: {
-				async fetch(id: string): Promise<Discord.Role | null> {
+				async fetch(id: string): Promise<Role | null> {
 					// Promise.reject(new Error("You shouldn't get here"))
 					const doesHave = await mockUserHasRoleInGuild(member, id, guild);
 					return {
@@ -53,15 +53,15 @@ describe("Invoke Command", () => {
 						members: {
 							has: () => doesHave
 						}
-					} as unknown as Discord.Role;
+					} as unknown as Role;
 				}
 			}
-		} as unknown as Discord.Guild;
+		} as unknown as Guild;
 
 		const member = {
 			id: callerId,
 			guild
-		} as unknown as Discord.GuildMember;
+		} as unknown as GuildMember;
 
 		context = {
 			user: {
@@ -106,7 +106,7 @@ describe("Invoke Command", () => {
 	describe("Permission Guards", () => {
 		const mockPermissions = jest.fn<
 			Array<CommandPermission> | Promise<Array<CommandPermission>>,
-			[guild: Discord.Guild]
+			[guild: Guild]
 		>();
 
 		beforeEach(() => {
@@ -116,7 +116,7 @@ describe("Invoke Command", () => {
 				guild: {
 					id: "the-guild",
 					ownerId: callerId
-				} as unknown as Discord.Guild
+				} as unknown as Guild
 			};
 			command.permissions = mockPermissions;
 

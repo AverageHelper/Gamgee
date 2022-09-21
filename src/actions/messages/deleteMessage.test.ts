@@ -1,11 +1,11 @@
-import type Discord from "discord.js";
+import type { TextChannel } from "discord.js";
 import { bulkDeleteMessagesWithIds } from "./deleteMessage.js";
 
 const mockBulkDelete = jest.fn();
 const mockSingleDelete = jest.fn();
 
 describe("Bulk Message Delete", () => {
-	let channel: Discord.TextChannel;
+	let channel: TextChannel;
 
 	beforeEach(() => {
 		channel = {
@@ -13,7 +13,7 @@ describe("Bulk Message Delete", () => {
 			messages: {
 				delete: mockSingleDelete
 			}
-		} as unknown as Discord.TextChannel;
+		} as unknown as TextChannel;
 
 		mockBulkDelete.mockImplementation((ids: Array<string>) => {
 			// Discord balks when we try <2 || >100 IDs

@@ -1,6 +1,6 @@
-import type Discord from "discord.js";
 import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
+import type { Message, TextChannel } from "discord.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
 import type { URL } from "node:url";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
@@ -29,13 +29,13 @@ export interface SongRequest {
 	context: CommandContext;
 
 	/** The queue channel where the request should land if accepted. */
-	queueChannel: Discord.TextChannel;
+	queueChannel: TextChannel;
 
 	/**
 	 * The message that contains the original embed, if we sent
 	 * one. If the user sent one, this value should be `null`.
 	 */
-	publicPreemptiveResponse: Discord.Message | null;
+	publicPreemptiveResponse: Message | null;
 
 	/** The place where log messages should be sent. */
 	logger: Logger;
@@ -81,7 +81,7 @@ async function reject_public(context: CommandContext, reason: string): Promise<v
 }
 
 interface SongAcceptance {
-	queueChannel: Discord.TextChannel;
+	queueChannel: TextChannel;
 	context: CommandContext;
 	entry: UnsentQueueEntry;
 	logger: Logger;

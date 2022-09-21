@@ -1,5 +1,4 @@
-import type Discord from "discord.js";
-import type { Guild, Snowflake } from "discord.js";
+import type { Guild, User, Snowflake } from "discord.js";
 
 /**
  * Retrieves a user with the provided `userId` from the given `guild`.
@@ -9,6 +8,6 @@ import type { Guild, Snowflake } from "discord.js";
  *
  * @returns a `Promise` which resolves with the user.
  */
-export async function getUserWithId(guild: Guild, userId: Snowflake): Promise<Discord.User> {
+export async function getUserWithId(guild: Guild, userId: Snowflake): Promise<User> {
 	return (await guild.members.fetch(userId)).user;
 }

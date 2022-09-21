@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { Guild, User } from "discord.js";
 import { ROLE_CATEGORY_OWNER } from "./RoleCategories.js";
 import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild.js";
 
@@ -11,6 +11,6 @@ import { userHasRoleCategoryInGuild } from "./userHasRoleCategoryInGuild.js";
  * @returns a `Promise` that resolves to `true` if the
  * user owns the provided guild
  */
-export async function userOwnsGuild(user: Discord.User, guild: Discord.Guild): Promise<boolean> {
+export async function userOwnsGuild(user: User, guild: Guild): Promise<boolean> {
 	return await userHasRoleCategoryInGuild(user, ROLE_CATEGORY_OWNER, guild);
 }

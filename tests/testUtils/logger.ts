@@ -1,4 +1,4 @@
-import winston from "winston";
+import * as winston from "winston";
 
 export type Logger = winston.Logger;
 export type LogLevel = "silly" | "debug" | "verbose" | "info" | "warn" | "error";

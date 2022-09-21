@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: "gamgee",
-			script: "./dist/main.js",
+			script: "./dist/server.js",
 			cwd: __dirname,
 			source_map_support: true,
 			watch: ["dist"],

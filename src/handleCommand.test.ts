@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { Client, GuildMember, Message } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
@@ -35,15 +35,15 @@ describe("Command handler", () => {
 	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
 	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
 
-	const mockClient: Discord.Client<true> = {
+	const mockClient: Client<true> = {
 		user: { id: botId },
 		isReady: () => true
-	} as unknown as Discord.Client<true>;
-	const mockSenderMember: Discord.GuildMember = {
+	} as unknown as Client<true>;
+	const mockSenderMember: GuildMember = {
 		user: { id: "another-user" }
-	} as unknown as Discord.GuildMember;
+	} as unknown as GuildMember;
 
-	const mockMessage: Discord.Message = {
+	const mockMessage: Message = {
 		content: "",
 		author: {
 			bot: false,
@@ -71,7 +71,7 @@ describe("Command handler", () => {
 				)
 			}
 		}
-	} as unknown as Discord.Message;
+	} as unknown as Message;
 
 	beforeEach(() => {
 		mockMessage.content = "Some words";

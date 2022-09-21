@@ -1,17 +1,21 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+import de from "./locales/de.json";
+import enGB from "./locales/en-GB.json";
+import enUS from "./locales/en-US.json";
+import esES from "./locales/es-ES.json";
+import fr from "./locales/fr.json";
+import hu from "./locales/hu.json";
+import ptBR from "./locales/pt-BR.json";
 
 // ** Install language files here **
 const vocabulary = {
-	de: require("./locales/de.json") as typeof import("./locales/de.json"),
-	"en-GB": require("./locales/en-GB.json") as typeof import("./locales/en-GB.json"),
-	"en-US": require("./locales/en-US.json") as typeof import("./locales/en-US.json"),
-	"es-ES": require("./locales/es-ES.json") as typeof import("./locales/es-ES.json"),
-	fr: require("./locales/fr.json") as typeof import("./locales/fr.json"),
-	hu: require("./locales/hu.json") as typeof import("./locales/hu.json"),
-	"pt-BR": require("./locales/pt-BR.json") as typeof import("./locales/pt-BR.json")
+	de,
+	"en-GB": enGB,
+	"en-US": enUS,
+	"es-ES": esES,
+	fr,
+	hu,
+	"pt-BR": ptBR
 } as const;
-
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 export const DEFAULT_LOCALE = "en-US";
 
@@ -44,10 +48,10 @@ export function metadataForLocale(locale: SupportedLocale): LocaleMetadata {
 	return vocabulary[locale].meta;
 }
 
-import type Discord from "discord.js";
+import type { Guild } from "discord.js";
 
 /** Returns the unit's preferred locale, if supported, or the default locale if not. */
-export function preferredLocale(guild: Pick<Discord.Guild, "preferredLocale">): SupportedLocale {
+export function preferredLocale(guild: Pick<Guild, "preferredLocale">): SupportedLocale {
 	return localeIfSupported(guild.preferredLocale) ?? DEFAULT_LOCALE;
 }
 

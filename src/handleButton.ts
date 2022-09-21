@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { ButtonInteraction } from "discord.js";
 import type { Logger } from "./logger.js";
 import { createPartialString, composed, push } from "./helpers/composeStrings.js";
 import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
@@ -24,10 +24,7 @@ import {
  * @param interaction The Discord interaction to handle.
  * @param logger The logger to talk to about what's going on.
  */
-export async function handleButton(
-	interaction: Discord.ButtonInteraction,
-	logger: Logger
-): Promise<void> {
+export async function handleButton(interaction: ButtonInteraction, logger: Logger): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
 		interaction.user.bot &&

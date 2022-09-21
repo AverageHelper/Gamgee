@@ -18,7 +18,7 @@ const mockDeleteMessage = deleteMessage as jest.Mock;
 const mockChannelSend = jest.fn();
 const mockMessageRemoveReaction = jest.fn();
 
-import type Discord from "discord.js";
+import type { Guild, Message, Snowflake, TextChannel } from "discord.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
 import { flushPromises } from "../../../tests/testUtils/flushPromises.js";
 import { forgetJobQueue } from "@averagehelper/job-queue";
@@ -27,25 +27,25 @@ import { deleteEntryFromMessage, pushEntryToQueue } from "./useQueue.js";
 
 describe("Request Queue", () => {
 	const guildId = "the-guild";
-	const queueMessageId = "queue-message" as Discord.Snowflake;
-	const entrySenderId = "some-user" as Discord.Snowflake;
+	const queueMessageId = "queue-message" as Snowflake;
+	const entrySenderId = "some-user" as Snowflake;
 	const entryUrl = "the-entry-url";
 
-	let queueChannel: Discord.TextChannel;
-	let message: Discord.Message;
+	let queueChannel: TextChannel;
+	let message: Message;
 	let entry: QueueEntry;
 
 	beforeEach(() => {
 		const guild = {
 			id: guildId,
 			preferredLocale: DEFAULT_LOCALE
-		} as unknown as Discord.Guild;
+		} as unknown as Guild;
 
 		queueChannel = {
 			id: "queue-channel",
 			guild,
 			send: mockChannelSend
-		} as unknown as Discord.TextChannel;
+		} as unknown as TextChannel;
 
 		message = {
 			id: queueMessageId,
@@ -56,7 +56,7 @@ describe("Request Queue", () => {
 				id: entrySenderId
 			},
 			guild
-		} as unknown as Discord.Message;
+		} as unknown as Message;
 
 		entry = {
 			senderId: entrySenderId,
@@ -93,7 +93,7 @@ describe("Request Queue", () => {
 	});
 
 	test("does nothing when a message has nothing to do with a queue entry", async () => {
-		message.id = "not-a-queue-message" as Discord.Snowflake;
+		message.id = "not-a-queue-message" as Snowflake;
 		await expect(deleteEntryFromMessage(message)).resolves.toBeNull();
 
 		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
@@ -113,7 +113,7 @@ describe("Request Queue", () => {
 	const request: UnsentQueueEntry = {
 		url: "song-url",
 		seconds: 43,
-		senderId: "sender" as Discord.Snowflake
+		senderId: "sender" as Snowflake
 	};
 
 	test("stores queue entries", async () => {

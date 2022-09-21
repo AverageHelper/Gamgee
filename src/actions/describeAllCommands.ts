@@ -1,9 +1,14 @@
-import type Discord from "discord.js";
+import type {
+	ApplicationCommandChoicesData,
+	ApplicationCommandNonOptionsData,
+	ApplicationCommandOption,
+	ApplicationCommandOptionData
+} from "discord.js";
 import type { Command, CommandContext, Subcommand } from "../commands/index.js";
 import type { PartialString } from "../helpers/composeStrings.js";
 import type { SupportedLocale } from "../i18n.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { assertUserCanRunCommand } from "./invokeCommand.js";
+import { assertUserCanRunCommand } from "./assertUserCanRunCommand.js";
 import { getCommandPrefix } from "../useGuildStorage.js";
 import { isGuildedCommandContext } from "../commands/CommandContext.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "../constants/database.js";
@@ -143,10 +148,10 @@ export async function describeAllCommands(
 
 function describeParameters(
 	options: Array<
-		| Discord.ApplicationCommandOption
-		| Discord.ApplicationCommandOptionData
-		| Discord.ApplicationCommandChoicesData
-		| Discord.ApplicationCommandNonOptionsData
+		| ApplicationCommandOption
+		| ApplicationCommandOptionData
+		| ApplicationCommandChoicesData
+		| ApplicationCommandNonOptionsData
 		| Subcommand
 	>,
 	cmdDesc: PartialString,
@@ -155,7 +160,7 @@ function describeParameters(
 	options
 		?.filter(optn => optn.type !== ApplicationCommandOptionType.Subcommand)
 		?.forEach(o => {
-			const option = o as Discord.ApplicationCommandChoicesData;
+			const option = o as ApplicationCommandChoicesData;
 
 			// Describe the parameter
 			const subDesc = createPartialString();

@@ -1,5 +1,5 @@
-import type Discord from "discord.js";
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
+import type { DMChannel, GuildTextBasedChannel, Message } from "discord.js";
 import type { Logger } from "./logger.js";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import { ApplicationCommandOptionType, ChannelType } from "discord.js";
@@ -69,7 +69,7 @@ interface QueryMessage {
  * @returns The command query. The first argument is the command name, and the rest are arguments.
  */
 export async function queryFromMessage(
-	message: Discord.Message,
+	message: Message,
 	logger: Logger
 ): Promise<QueryMessage | null> {
 	const client = message.client;
@@ -196,7 +196,7 @@ export function optionsFromArgs(
 }
 
 /** Resolves guild member information for the bot and for the user who invoked the interaction. */
-async function responseContext(message: Discord.Message): Promise<ResponseContext> {
+async function responseContext(message: Message): Promise<ResponseContext> {
 	let me: string;
 	const otherUser = message.author;
 	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
@@ -219,7 +219,7 @@ async function responseContext(message: Discord.Message): Promise<ResponseContex
  * @param message The Discord message to handle.
  * @param logger The place to write system messages.
  */
-export async function handleCommand(message: Discord.Message, logger: Logger): Promise<void> {
+export async function handleCommand(message: Message, logger: Logger): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
 		message.author.bot &&
@@ -296,7 +296,7 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 			)}`
 		);
 
-		let channel: Discord.GuildTextBasedChannel | Discord.DMChannel;
+		let channel: GuildTextBasedChannel | DMChannel;
 		if (message.channel?.type === ChannelType.DM && message.channel.partial) {
 			channel = await message.channel.fetch();
 		} else {
@@ -381,7 +381,17 @@ export async function handleCommand(message: Discord.Message, logger: Logger): P
 		if (messageContainsWord("hello")) {
 			wrapped = randomGreeting();
 		} else if (
-			messageContainsOneOfWords(["hug", "hug?", "hugs", "hugs?", "*hugs", "hugs*", "*hugs*"])
+			messageContainsOneOfWords([
+				"hug",
+				"hug?",
+				"hugs",
+				"hugs?",
+				"*hugs",
+				"hugs*",
+				"*hugs*",
+				"hugs,",
+				"hug"
+			])
 		) {
 			wrapped = randomHug();
 		} else {

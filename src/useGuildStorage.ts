@@ -1,6 +1,5 @@
-import type Discord from "discord.js";
+import type { Guild, Snowflake, TextChannel } from "discord.js";
 import type { Role } from "@prisma/client";
-import type { Snowflake } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
 import { useRepository } from "./database/useDatabase.js";
@@ -9,7 +8,7 @@ import { useRepository } from "./database/useDatabase.js";
  * Retrives the list of Discord Role IDs whose members have permission to manage
  * the guild's queue limits, content, and open status.
  */
-export async function getQueueAdminRoles(guild: Discord.Guild): Promise<Array<Snowflake>> {
+export async function getQueueAdminRoles(guild: Guild): Promise<Array<Snowflake>> {
 	const storedAdminRoles = (
 		await useRepository("role", roles =>
 			roles.findMany({
@@ -32,7 +31,7 @@ export async function getQueueAdminRoles(guild: Discord.Guild): Promise<Array<Sn
  * Retrieves the list of Discord Role IDs whose members have
  * permission to manage the guild.
  */
-export async function getGuildAdminRoles(guild: Discord.Guild): Promise<Array<Snowflake>> {
+export async function getGuildAdminRoles(guild: Guild): Promise<Array<Snowflake>> {
 	return (
 		await useRepository("role", roles =>
 			roles.findMany({
@@ -54,7 +53,7 @@ export async function getGuildAdminRoles(guild: Discord.Guild): Promise<Array<Sn
 export async function updateRole(
 	roleId: Snowflake,
 	attrs: Partial<Pick<Role, "definesGuildAdmin" | "definesQueueAdmin">>,
-	guild: Discord.Guild
+	guild: Guild
 ): Promise<void> {
 	if (!roleId) return;
 	if (Object.keys(attrs).length === 0) return; // nothing to update
@@ -90,7 +89,7 @@ export async function removeRole(roleId: Snowflake): Promise<void> {
 }
 
 /** Retrieves the guild's queue channel ID, if it exists. */
-export async function getQueueChannelId(guild: Discord.Guild): Promise<Snowflake | null> {
+export async function getQueueChannelId(guild: Guild): Promise<Snowflake | null> {
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },
@@ -102,8 +101,8 @@ export async function getQueueChannelId(guild: Discord.Guild): Promise<Snowflake
 
 /** Sets the guild's queue channel. */
 export async function setQueueChannel(
-	channel: Discord.TextChannel | Snowflake | null,
-	guild: Discord.Guild
+	channel: TextChannel | Snowflake | null,
+	guild: Guild
 ): Promise<void> {
 	let currentQueue: Snowflake | null;
 
@@ -129,7 +128,7 @@ export async function setQueueChannel(
 }
 
 /** Retrieves the guild's message command prefix. */
-export async function getCommandPrefix(guild: Discord.Guild | null | undefined): Promise<string> {
+export async function getCommandPrefix(guild: Guild | null | undefined): Promise<string> {
 	if (!guild || !guild.id) return DEFAULT_MESSAGE_COMMAND_PREFIX;
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
@@ -141,10 +140,7 @@ export async function getCommandPrefix(guild: Discord.Guild | null | undefined):
 }
 
 /** Sets the guild's message command prefix. */
-export async function setCommandPrefix(
-	guild: Discord.Guild,
-	messageCommandPrefix: string
-): Promise<void> {
+export async function setCommandPrefix(guild: Guild, messageCommandPrefix: string): Promise<void> {
 	if (!messageCommandPrefix) throw new TypeError("New prefix cannot be empty");
 
 	await useRepository("guild", guilds =>
@@ -163,7 +159,7 @@ export async function setCommandPrefix(
 }
 
 /** Get's the queue's current open status. */
-export async function isQueueOpen(guild: Discord.Guild): Promise<boolean> {
+export async function isQueueOpen(guild: Guild): Promise<boolean> {
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },
@@ -174,7 +170,7 @@ export async function isQueueOpen(guild: Discord.Guild): Promise<boolean> {
 }
 
 /** Sets the guild's queue-open status. */
-export async function setQueueOpen(isQueueOpen: boolean, guild: Discord.Guild): Promise<void> {
+export async function setQueueOpen(isQueueOpen: boolean, guild: Guild): Promise<void> {
 	await useRepository("guild", async guilds => {
 		const guildInfo = await guilds.findUnique({ where: { id: guild.id } });
 		if (isQueueOpen && !(guildInfo?.currentQueue ?? "")) {

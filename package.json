@@ -4,8 +4,8 @@
 	"description": "A Discord bot for managing a song request queue.",
 	"private": true,
 	"scripts": {
-		"start": "NODE_ENV=development ./node_modules/.bin/nodemon --inspect dist/main.js",
-		"setup": "npm ci && npm run export-version && npm run build:clean && npm run baseline && npm run migrate && npm run commands:deploy",
+		"start": "NODE_ENV=development ./node_modules/.bin/nodemon --inspect dist/server.js",
+		"setup": "npm ci && npm run export-version && npm run build:only --production && npm run baseline && npm run migrate && npm run commands:deploy",
 		"commands:deploy": "node . --deploy-commands",
 		"commands:revoke": "node . --revoke-commands",
 		"release": "./node_modules/.bin/ts-node -P tsconfig.test.json ./scripts/release.ts",
@@ -19,8 +19,7 @@
 		"lintonly": "./node_modules/.bin/eslint . --ext .ts",
 		"prebuild": "npm run lint",
 		"build": "npm run build:only",
-		"build:only": "./node_modules/.bin/tsc -p tsconfig.prod.json",
-		"build:clean": "rm -rf dist && npm run build",
+		"build:only": "./node_modules/.bin/rollup --config rollup.config.ts --configPlugin typescript",
 		"export-version": "./node_modules/.bin/genversion ./src/version.ts -esd",
 		"test": "npm run test:src && npm run test:e2e",
 		"test:src": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && ./node_modules/.bin/jest",
@@ -29,7 +28,7 @@
 		"start:test": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; export NODE_ENV=test; ./node_modules/.bin/prisma migrate reset --force && node .",
 		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha"
 	},
-	"main": "./dist/main.js",
+	"main": "./dist/server.js",
 	"type": "commonjs",
 	"engines": {
 		"node": ">=16.10"
@@ -68,6 +67,10 @@
 		"ytdl-core": "4.11.2"
 	},
 	"devDependencies": {
+		"@rollup/plugin-commonjs": "22.0.2",
+		"@rollup/plugin-json": "4.1.0",
+		"@rollup/plugin-node-resolve": "14.1.0",
+		"@rollup/plugin-typescript": "8.5.0",
 		"@types/chai": "4.3.3",
 		"@types/humanize-duration": "3.27.1",
 		"@types/jest": "28.1.6",
@@ -99,6 +102,10 @@
 		"nodemon": "2.0.19",
 		"prettier": "2.7.1",
 		"prisma": "4.3.1",
+		"rollup": "2.79.0",
+		"rollup-plugin-analyzer": "4.0.0",
+		"rollup-plugin-terser": "7.0.2",
+		"rollup-plugin-visualizer": "5.8.1",
 		"semver": "7.3.7",
 		"ts-jest": "28.0.7",
 		"ts-node": "10.9.1",

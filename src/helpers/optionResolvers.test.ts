@@ -1,4 +1,4 @@
-import type Discord from "discord.js";
+import type { CommandInteractionOption, Guild } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { expectNull } from "../../tests/testUtils/expectations/jest.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
@@ -6,15 +6,15 @@ import { resolveChannelFromOption } from "./optionResolvers.js";
 const mockResolveChannel = jest.fn();
 
 describe("Option Resolver", () => {
-	let guild: Discord.Guild;
-	let option: Discord.CommandInteractionOption;
+	let guild: Guild;
+	let option: CommandInteractionOption;
 
 	beforeEach(() => {
 		guild = {
 			channels: {
 				resolve: mockResolveChannel
 			}
-		} as unknown as Discord.Guild;
+		} as unknown as Guild;
 		option = {
 			name: "option",
 			type: ApplicationCommandOptionType.String
