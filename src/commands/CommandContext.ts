@@ -9,7 +9,7 @@ import type {
 	InteractionReplyOptions,
 	LocaleString,
 	Message,
-	ReplyMessageOptions,
+	MessageReplyOptions,
 	User
 } from "discord.js";
 import type { Logger } from "../logger.js";
@@ -78,7 +78,7 @@ interface BaseCommandContext {
 	replyPrivately: (
 		options:
 			| string //
-			| Omit<ReplyMessageOptions, "flags">
+			| Omit<MessageReplyOptions, "flags">
 			| Omit<InteractionReplyOptions, "flags">,
 		viaDM?: true
 	) => Promise<void>;
@@ -87,7 +87,7 @@ interface BaseCommandContext {
 	reply: (
 		options:
 			| string
-			| Omit<ReplyMessageOptions, "flags">
+			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
 					shouldMention?: boolean;
 			  })
@@ -102,7 +102,7 @@ interface BaseCommandContext {
 	followUp: (
 		options:
 			| string
-			| Omit<ReplyMessageOptions, "flags">
+			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
 					reply?: boolean;
 			  })
