@@ -1,4 +1,4 @@
-jest.mock("../actions/invokeCommand");
+jest.mock("../actions/assertUserCanRunCommand");
 
 import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";
 const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
