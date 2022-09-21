@@ -38,22 +38,21 @@ export const countLimitMeta: QueueLimitArg = {
 export const cooldownLimitMeta: QueueLimitArg = {
 	name: "Submission Cooldown",
 	value: "cooldown",
-	description:
-		"The minimum amount of time (in seconds) that each user must wait between their own submissions.",
+	description: "The minimum amount of time that each user must wait between their own submissions.",
 	example: "1800"
 };
 
 export const minDurationLimitMeta: QueueLimitArg = {
 	name: "Min Song Length",
 	value: "entry-duration-min",
-	description: "The minimum duration (in seconds) of a song submission.",
+	description: "The minimum duration of a song submission.",
 	example: "0"
 };
 
 export const maxDurationLimitMeta: QueueLimitArg = {
 	name: "Max Song Length",
 	value: "entry-duration-max",
-	description: "The maximum duration (in seconds) of a song submission.",
+	description: "The maximum duration of a song submission.",
 	example: "430"
 };
 
@@ -61,7 +60,7 @@ export const totalQueueLengthLimitMeta: QueueLimitArg = {
 	name: "Total Queue Length",
 	value: "queue-duration",
 	description:
-		"The maximum duration (in seconds) that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
+		"The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
 	example: "10800"
 };
 
@@ -95,7 +94,7 @@ export const limit: Subcommand = {
 		},
 		{
 			name: "value",
-			description: "The new value to set for the key.",
+			description: "The new value to set for the limit. Time values are given in seconds.",
 			type: ApplicationCommandOptionType.Integer,
 			minValue: -1
 		}
