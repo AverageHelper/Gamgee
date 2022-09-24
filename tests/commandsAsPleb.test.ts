@@ -13,6 +13,7 @@ const QUEUE_COMMAND = "quo";
 
 describe("Command as pleb", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
+	const fullUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
 	beforeEach(async function () {
 		const title = this.test?.fullTitle();
@@ -20,6 +21,7 @@ describe("Command as pleb", function () {
 
 		await setIsQueueCreator(true);
 		await setIsQueueAdmin(true);
+		await commandResponseInTestChannel(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`, "set up");
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} restart`, "queue");
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} limit entry-duration-max 0`, "removed");
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} teardown`, "deleted");
@@ -75,7 +77,7 @@ describe("Command as pleb", function () {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 
 						// TODO: Check that the request appears in the queue as well
-						expectToContain(content, `Submission Accepted!`);
+						expectToContain(content, "Submission Accepted!");
 					});
 
 					it("accepts a song request with embed hidden", async function () {
@@ -85,12 +87,22 @@ describe("Command as pleb", function () {
 						);
 
 						// TODO: Check that the request appears in the queue as well
-						expectToContain(content, `Submission Accepted!`);
+						expectToContain(content, "Submission Accepted!");
 					});
 
 					it("`sr` alone provides info on how to use the request command", async function () {
 						const content = await commandResponseInTestChannel("sr", "To submit a song, type");
 						expectToContain(content, "To submit a song, type");
+					});
+
+					it("`nowplaying` sends the track info to DMs", async function () {
+						await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
+
+						// This has had isues before, when the database doesn't know the user.
+						// New users should always be able to run this command.
+						// TODO: Have a second test robot run this command and see what happens. Sould succeed, but fail if we reintroduce the old bug
+						const content = await commandResponseInTestChannel("nowplaying", "(DM to");
+						expectToContain(content, fullUrl);
 					});
 				} else {
 					it("url request tells the user the queue is not open", async function () {
