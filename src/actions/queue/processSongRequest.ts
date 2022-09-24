@@ -66,12 +66,17 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 	}
 }
 
-async function reject_public(context: CommandContext, reason: string): Promise<void> {
+async function reject_public(request: SongRequest, reason: string): Promise<void> {
+	const context = request.context;
 	await context.followUp({ content: `:hammer: <@!${context.user.id}> ${reason}`, reply: false });
 	if (context.type === "message") {
 		// Can't suppress other users' embeds, but we *can* delete the message
 		await deleteMessage(context.message);
 	} else {
+		if (request.publicPreemptiveResponse) {
+			// delete the mock invocation
+			await deleteMessage(request.publicPreemptiveResponse);
+		}
 		try {
 			await context.interaction.editReply("Done.");
 		} catch (error) {
@@ -151,7 +156,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 					sender
 				)} is one of them.`
 			);
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
+			logger.verbose(`Rejected request from user ${logUser(sender)}: The user is blacklisted`);
 			return await reject_private(request, t("commands.sr.responses.not-allowed", userLocale));
 		}
 
@@ -168,7 +173,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				{ max: `**${maxSubs}**` },
 				userLocale
 			);
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
+			logger.verbose(
+				`Rejected request from user ${logUser(sender)}: The user has submitted enough songs already`
+			);
 			return await reject_private(request, reason);
 		}
 
@@ -203,7 +210,9 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				},
 				userLocale
 			);
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
+			logger.verbose(
+				`Rejected request from user ${logUser(sender)}: The user is still under cooldown`
+			);
 			return await reject_private(request, reason);
 		}
 
@@ -216,10 +225,12 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const song = await songInfoPromise; // we need this info now
 		if (song === null) {
 			logger.verbose("Could not find the requested song.");
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
+			logger.verbose(
+				`Rejected request from user ${logUser(sender)}: Couldn't find '${songUrl.href}'`
+			);
 			// FIXME: This response is too generic. Present something more actionable based on why the song can't be found
 			return await reject_public(
-				context,
+				request,
 				`${t("commands.sr.responses.song-not-found", guildLocale)} ${SHRUGGIE}\n${t(
 					"commands.sr.responses.try-supported-platform",
 					guildLocale
@@ -251,8 +262,8 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			);
 			pushNewLine(rejection);
 			push(t("commands.sr.responses.try-longer-song", guildLocale), rejection);
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
-			return await reject_public(context, composed(rejection));
+			logger.verbose(`Rejected request from user ${logUser(sender)}: Song is too short`);
+			return await reject_public(request, composed(rejection));
 		}
 
 		// ** If the song is too long, reject!
@@ -270,8 +281,8 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			);
 			pushNewLine(rejection);
 			push(t("commands.sr.responses.try-shorter-song", guildLocale), rejection);
-			logger.verbose(`Rejected request from user ${logUser(sender)}.`);
-			return await reject_public(context, composed(rejection));
+			logger.verbose(`Rejected request from user ${logUser(sender)}: Song is too long`);
+			return await reject_public(request, composed(rejection));
 		}
 
 		// ** If, by the time we got here, the queue has closed, reject!
@@ -350,7 +361,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 	} catch (error) {
 		logger.error(richErrorMessage("Failed to process song request", error));
 		return await reject_public(
-			context,
+			request,
 			`${t("commands.sr.responses.query-returned-error", guildLocale)} :shrug:`
 		);
 	}

@@ -13,7 +13,7 @@ import type { VideoDetails } from "../getVideoDetails.js";
 import { getVideoDetails } from "../getVideoDetails.js";
 const mockGetVideoDetails = getVideoDetails as jest.Mock<Promise<VideoDetails | null>>;
 
-import type { Guild, TextChannel } from "discord.js";
+import type { Guild, Message, TextChannel } from "discord.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
 const mockPlaytimeTotalInQueue = playtimeTotalInQueue as jest.Mock<Promise<number>>;
 const mockPushEntryToQueue = pushEntryToQueue as jest.Mock<
@@ -47,7 +47,7 @@ const mockChannelSend = jest.fn() as jest.Mock<Promise<unknown>, [string]>;
 
 // ** Import the unit-under-test
 
-import type { CommandContext } from "../../commands/CommandContext.js";
+import type { CommandContext, MessageCommandContext } from "../../commands/CommandContext.js";
 import type { SongRequest } from "./processSongRequest.js";
 import { processSongRequest } from "./processSongRequest.js";
 import { URL } from "node:url";
@@ -80,7 +80,10 @@ describe("Song request pipeline", () => {
 			deleteInvocation: mockDeleteInvocation,
 			replyPrivately: mockReplyPrivately,
 			followUp: mockFollowUp,
-			message: { content: "This is a message object. Trust me, bro" },
+			message: {
+				id: "some-message-1234",
+				content: "This is a message object. Trust me, bro"
+			},
 			user: {
 				id: "the-user"
 			}
@@ -127,13 +130,54 @@ describe("Song request pipeline", () => {
 		mockChannelSend.mockResolvedValue(undefined);
 	});
 
+	test("(message) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
+		// mock the queue's duration max
+		config.entryDurationMaxSeconds = 10;
+		mockGetStoredQueueConfig.mockResolvedValue(config);
+
+		// mock the video getter for a long song
+		const entrySeconds = 100;
+		mockGetVideoDetails.mockResolvedValue({
+			title: "Long Song",
+			duration: { seconds: entrySeconds },
+			url: newEntry.url
+		});
+
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
+
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
+		expect(mockDeleteMessage).toHaveBeenCalledWith((context as MessageCommandContext).message);
+	});
+
+	test("(interaction) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
+		// mock the queue's duration max
+		config.entryDurationMaxSeconds = 10;
+		mockGetStoredQueueConfig.mockResolvedValue(config);
+
+		// mock the video getter for a long song
+		const entrySeconds = 100;
+		mockGetVideoDetails.mockResolvedValue({
+			title: "Long Song",
+			duration: { seconds: entrySeconds },
+			url: newEntry.url
+		});
+
+		context = { ...context, type: "interaction" } as unknown as CommandContext;
+		request.context = context;
+		request.publicPreemptiveResponse = { id: "a-message" } as unknown as Message;
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
+
+		expect(mockDeleteMessage).toHaveBeenCalledOnce();
+		expect(mockDeleteMessage).toHaveBeenCalledWith(request.publicPreemptiveResponse);
+	});
+
 	test("closes the queue automatically just as entries exceed queue-length limits", async () => {
 		// mock the queue limits to disable cooldown, enable long submissions, enable queue cap
-		const entrySeconds = 100; // 3 of these should fill the queue
 		config.queueDurationSeconds = 250;
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter to consider any URL to be really long
+		const entrySeconds = 100; // 3 of these should fill the queue
 		mockGetVideoDetails.mockResolvedValue({
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
@@ -157,15 +201,15 @@ describe("Song request pipeline", () => {
 		});
 
 		// These should fit, then close the queue
-		await processSongRequest(request);
-		await processSongRequest(request);
-		await processSongRequest(request);
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
 
 		expect(mockReplyPrivately).not.toHaveBeenCalled(); // no rejections yet
 
 		// These should not fit now that the queue is closed
-		await processSongRequest(request);
-		await processSongRequest(request);
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
+		await expect(processSongRequest(request)).resolves.toBeUndefined();
 
 		// expect the queue close command to have been fired, and only 3 entries pushed
 		expect(mockPushEntryToQueue).toHaveBeenCalledTimes(3); // 3 successful pushes
