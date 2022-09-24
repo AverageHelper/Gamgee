@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Submissions made with `/sr` are now hidden properly when the submission is rejected, matching the behavior of `?sr`.
 
+## [2.0.1] - 2022-09-24
+### Fixed
+- Fixed issue that caused `/nowplaying` to fail for some users.
+
 ## [2.0.0] - 2022-09-21
 ### Added
 - Support for invoking localized command names with message commands. For example, `?usuarioinfo` now behaves the same as `?userinfo`. Any user can execute a command in any supported language.
@@ -377,7 +381,8 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/AverageHelper/Gamgee/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/AverageHelper/Gamgee/compare/v1.8.3...v2.0.0
 [1.8.3]: https://github.com/AverageHelper/Gamgee/compare/v1.8.2...v1.8.3
 [1.8.2]: https://github.com/AverageHelper/Gamgee/compare/v1.8.1...v1.8.2
