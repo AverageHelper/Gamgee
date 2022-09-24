@@ -415,8 +415,9 @@ export async function addToHaveCalledNowPlayingForStoredEntry(
 			where: { queueMessageId },
 			data: {
 				haveCalledNowPlaying: {
-					connect: {
-						id: userId
+					connectOrCreate: {
+						where: { id: userId },
+						create: { id: userId }
 					}
 				}
 			}
