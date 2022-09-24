@@ -41,23 +41,30 @@ export default defineConfig({
 		if (warning.code === "THIS_IS_UNDEFINED") return;
 
 		// Ignore "Use of eval is strongly discouraged" warnings from
-		// prisma. Their `eval` calls are fairly tame, though this should
-		// be audited with each update.
-		const evalWhitelist = ["@prisma/client"];
+		// certain packages. Their `eval` calls are fairly tame, though
+		// they should be audited with every update.
+		const evalWhitelist = [
+			"@prisma/client", //
+			"discord.js"
+		];
 		if (warning.code === "EVAL" && evalWhitelist.some(e => warning.loc?.file?.includes(e))) return;
+
+		const circularWhitelist = [
+			"async", //
+			"undici",
+			"winston-transport",
+			"winston",
+			"yargs"
+		];
+		if (
+			warning.code === "CIRCULAR_DEPENDENCY" &&
+			circularWhitelist.some(d => warning.importer?.includes(d))
+		)
+			return;
 
 		defaultHandler(warning);
 	},
-	external: [
-		// Circular, uses eval
-		"discord.js",
-
-		// Circular
-		"undici",
-		"winston-transport",
-		"winston",
-		"yargs"
-	],
+	external: ["discord.js"],
 	input: "src/main.ts",
 	output: {
 		file: "dist/server.js",
