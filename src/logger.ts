@@ -68,7 +68,7 @@ export function useLogger(): Logger {
 	if (!logger) {
 		logger = createLogger({
 			level: "silly",
-			format: format.json(),
+			format: format.combine(format.timestamp(), format.json()),
 			// defaultMeta: { service: "user-service" },
 			transports: [
 				//

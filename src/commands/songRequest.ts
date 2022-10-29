@@ -5,6 +5,7 @@ import { ApplicationCommandOptionType, hideLinkEmbed } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
+import { logUser } from "../helpers/logUser.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { sendMessageInChannel, stopEscapingUriInString } from "../actions/messages/index.js";
@@ -47,7 +48,7 @@ export const sr: GuildedCommand = {
 
 		const MENTION_SENDER = `<@!${user.id}>`;
 
-		logger.debug(`Got song request message at ${createdTimestamp}`);
+		logger.debug(`Got song request message at ${createdTimestamp} from ${logUser(user)}`);
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
 			await context.followUp({

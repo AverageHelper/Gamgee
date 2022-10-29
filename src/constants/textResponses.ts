@@ -331,12 +331,14 @@ export const phrases: ResponseRepository = [
 	"That's par for the course",
 	// eslint-disable-next-line deprecation/deprecation
 	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
+	["The queue is now open! :tada:\n...\n||just kidding||", "", "... Did I get you?"],
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",
 	"(This message will be in a separate message)",
 	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
 	"\\*thoughtful phrase\\*",
 	() => `To talk to a customer, please press \`${randomInt(9)}\``,
+	"Today is the tomorrow you were promised yesterday",
 	"Truly inspirational!",
 	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
@@ -358,7 +360,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 217 of these
+]; // 219 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
