@@ -1,6 +1,6 @@
 import type { URL } from "node:url";
 import type { VideoDetails } from "../getVideoDetails.js";
-import { fetch } from "../../helpers/fetch.js";
+import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { isObject, isString } from "../../helpers/guards.js";
 import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
 
@@ -85,7 +85,7 @@ function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
  * @returns a `Promise` that resolves with the track details.
  */
 async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
-	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`);
+	const response = await fetchWithTimeout(`https://pony.fm/api/v1/tracks/${trackId}`);
 	if (response.status === 200) {
 		try {
 			const responseParsed = (await response.json()) as unknown;
