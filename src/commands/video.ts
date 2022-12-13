@@ -26,7 +26,7 @@ export const video: Command = {
 	],
 	requiresGuild: false,
 	async execute(context) {
-		const { guildLocale, logger, options, type, reply } = context;
+		const { guildLocale, logger, options, type, reply, prepareForLongRunningTasks } = context;
 		const firstOption = options[0];
 		if (!firstOption) {
 			return await reply({
@@ -49,6 +49,7 @@ export const video: Command = {
 				: "supported platform";
 
 		try {
+			await prepareForLongRunningTasks(); // in case we need to wait on a timeout error, lol
 			const video = await getVideoDetails(urlString);
 			if (video === null) {
 				return await reply({

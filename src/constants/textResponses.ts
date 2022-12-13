@@ -164,16 +164,24 @@ export const phrases: ResponseRepository = [
 
 	// Star Trek: TNG
 	"Darmok on the ocean",
+	"Darmok and Jalad at Tanagra",
 	"Darmok and Jalad on the ocean",
 	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
+	"Mirab, with sails unfurled",
 	"Rai and Jiri at Lungha. Rai of Lowani. Lowani under two moons. Jiri of Umbaya. Umbaya of crossed roads. At Lungha. Lungha, her sky gray.",
 	"Shaka, when the walls fell",
 	"Sokath, his eyes open!",
 	"Tanagra, on the ocean. Darmok at Tanagra.",
 	"Tea, Earl Grey, hot",
+	"Temba, at rest",
+	"Temba, his arms open",
 	"Temba, his arms wide",
-	"The river Temarc... in winter",
+	"The river Temarc, in winter",
+	"The beast at Tanagra",
+	"Uzani, his army with fists closed",
+	"Uzani, his army with fists open",
 	"You know, back when I was in the academy, we would follow every toast with a song!",
+	"Zinda, his face black, his eyes red",
 
 	// Wonka
 	"A little nonsense now and then is relished by the wisest men.",
@@ -183,7 +191,7 @@ export const phrases: ResponseRepository = [
 	"So shines a good deed in a weary world.",
 	"Strike that. Reverse it.",
 	"The suspense is terrible. I hope it'll last",
-	"There's no earthly way of knowing. which direction they are going.",
+	"There's no earthly way of knowing, which direction they are going.",
 	"We are the music makers and we are the dreamers of the dreams.",
 
 	// Wurtz
@@ -360,7 +368,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 219 of these
+]; // 227 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
