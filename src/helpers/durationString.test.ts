@@ -1,4 +1,5 @@
 import type { SupportedLocale } from "../i18n.js";
+import "../../tests/testUtils/leakedHandles.js";
 import { durationString } from "./durationString.js";
 import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 

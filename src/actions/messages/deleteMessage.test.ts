@@ -1,4 +1,5 @@
 import type { TextChannel } from "discord.js";
+import "../../../tests/testUtils/leakedHandles.js";
 import { bulkDeleteMessagesWithIds } from "./deleteMessage.js";
 
 const mockBulkDelete = jest.fn();

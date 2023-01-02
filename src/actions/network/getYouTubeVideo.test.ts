@@ -1,3 +1,4 @@
+import "../../../tests/testUtils/leakedHandles.js";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { getYouTubeVideo } from "./getYouTubeVideo.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";

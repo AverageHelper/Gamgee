@@ -1,4 +1,5 @@
 import type { Client, GuildMember, Message } from "discord.js";
+import "../tests/testUtils/leakedHandles.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";

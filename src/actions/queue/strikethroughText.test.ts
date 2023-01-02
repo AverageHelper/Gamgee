@@ -1,3 +1,5 @@
+import "../../../tests/testUtils/leakedHandles.js";
+
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText.js";
 import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 

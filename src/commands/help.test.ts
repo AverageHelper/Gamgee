@@ -1,3 +1,5 @@
+import "../../tests/testUtils/leakedHandles.js";
+
 jest.mock("../actions/assertUserCanRunCommand");
 
 import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";

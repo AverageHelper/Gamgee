@@ -1,4 +1,5 @@
 import type { Range } from "./editMessage.js";
+import "../../../tests/testUtils/leakedHandles.js";
 import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { positionsOfUriInText, escapeUriInString, stopEscapingUriInString } from "./editMessage.js";
 

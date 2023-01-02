@@ -1,4 +1,5 @@
 import type { User } from "discord.js";
+import "../../tests/testUtils/leakedHandles.js";
 import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import { logUser } from "./logUser.js";
 

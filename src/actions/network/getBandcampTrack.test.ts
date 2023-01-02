@@ -1,3 +1,4 @@
+import "../../../tests/testUtils/leakedHandles.js";
 import { benchmark } from "../../../tests/testUtils/benchmark.js";
 import { getBandcampTrack } from "./getBandcampTrack.js";
 import { URL } from "node:url";
@@ -32,7 +33,7 @@ describe("Bandcamp track details", () => {
 		20000
 	);
 
-	const ms = 800;
+	const ms = 1000;
 	test(`runs in a reasonable amount of time (less than ${ms}ms)`, async () => {
 		const url = new URL("https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul");
 

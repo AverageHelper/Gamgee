@@ -1,3 +1,5 @@
+import "../../tests/testUtils/leakedHandles.js";
+
 jest.mock("../helpers/githubMetadata.js");
 import { gitHubMetadata } from "../helpers/githubMetadata.js";
 const mockGitHubMetadata = gitHubMetadata as jest.Mock;

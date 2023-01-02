@@ -1,3 +1,4 @@
+import "../../../tests/testUtils/leakedHandles.js";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { getPonyFmTrack } from "./getPonyFmTrack.js";
 import { URL } from "node:url";

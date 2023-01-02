@@ -1,3 +1,5 @@
+import "../../tests/testUtils/leakedHandles.js";
+
 jest.mock("../useGuildStorage");
 jest.mock("../permissions");
 

@@ -1,3 +1,5 @@
+import "../../tests/testUtils/leakedHandles.js";
+
 jest.mock("../useQueueStorage.js");
 jest.mock("../actions/queue/getQueueChannel.js");
 jest.mock("../useGuildStorage.js");

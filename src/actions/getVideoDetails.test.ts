@@ -1,3 +1,5 @@
+import "../../tests/testUtils/leakedHandles.js";
+
 jest.mock("./network/getBandcampTrack.js");
 jest.mock("./network/getPonyFmTrack.js");
 jest.mock("./network/getSoundCloudTrack.js");

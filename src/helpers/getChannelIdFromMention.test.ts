@@ -1,3 +1,4 @@
+import "../../tests/testUtils/leakedHandles.js";
 import { expectNull, expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 

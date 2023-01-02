@@ -1,3 +1,4 @@
+import "../../../tests/testUtils/leakedHandles.js";
 import { getSoundCloudTrack } from "./getSoundCloudTrack.js";
 import { URL } from "node:url";
 import {
