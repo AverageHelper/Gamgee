@@ -54,5 +54,5 @@ describe("YouTube track details", () => {
 		expectValueEqual(details.url, url);
 		expectDefined(details.duration.seconds);
 		expectValueEqual(details.duration.seconds, Number.POSITIVE_INFINITY);
-	});
+	}, 20000);
 });
