@@ -23,7 +23,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build
-      - run: npm run test:src
       - name: Run npm run test:src
         uses: ArtiomTr/jest-coverage-report-action@v2.1.1
         with:
