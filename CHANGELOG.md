@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Clarified the header to the results from `/test`.
+- Only fetch message data when the event returned a partial message. (Reduces processing time for message commands).
 
 ## [2.0.3] - 2022-10-29
 ### Changed
