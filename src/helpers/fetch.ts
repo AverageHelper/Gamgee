@@ -20,7 +20,7 @@ export const fetch: typeof globalThis.fetch = async (input, init) => {
  * after the given `timeoutSeconds` have elapsed.
  *
  * @param timeoutSeconds The number of seconds to wait before attempting to
- * abort the request. The default value is `10`.
+ * abort the request. The default value is `50`.
  */
 export async function fetchWithTimeout(
 	input: Parameters<typeof globalThis.fetch>[0],
