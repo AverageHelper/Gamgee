@@ -27,7 +27,6 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2.1.1
         with:
           test-script: npm run test:src
-          coverage-file: ./coverage/coverage-final.json
         env:
           CI: true
           NODE_ENV: "test"
