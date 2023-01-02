@@ -23,14 +23,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build
-      - run: npm run test:src
+      - name: npm run test:src
+        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
+        with:
+          test-script: npm run test:src
         env:
           CI: true
           NODE_ENV: "test"
-      - name: Report test coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
-        with:
-          skip-step: all # we already ran the tests, no need to run again
 
   integration:
     runs-on: ubuntu-latest
