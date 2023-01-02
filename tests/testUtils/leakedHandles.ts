@@ -4,6 +4,6 @@
 import leakedHandles = require("leaked-handles");
 
 leakedHandles.set({
-	fullStack: true, // use full stack traces
-	debugSockets: true // pretty print tcp thrown exceptions.
+	fullStack: true,
+	debugSockets: true
 });

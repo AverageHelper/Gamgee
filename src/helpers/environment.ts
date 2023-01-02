@@ -7,6 +7,7 @@ export type EnvKey =
 	| "BOT_PREFIX" // used for testing
 	| "BOT_TEST_ID"
 	| "CHANNEL_ID"
+	| "CI"
 	| "CORDE_BOT_ID"
 	| "CORDE_TEST_TOKEN"
 	| "DATABASE_URL"
