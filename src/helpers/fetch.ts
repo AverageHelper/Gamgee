@@ -24,7 +24,7 @@ export const fetch: typeof globalThis.fetch = async (input, init) => {
  */
 export async function fetchWithTimeout(
 	input: Parameters<typeof globalThis.fetch>[0],
-	timeoutSeconds: number = 30,
+	timeoutSeconds: number = 50,
 	init: Omit<Parameters<typeof globalThis.fetch>[1], "signal"> = {}
 ): ReturnType<typeof globalThis.fetch> {
 	// Abort the request after the given timeout
