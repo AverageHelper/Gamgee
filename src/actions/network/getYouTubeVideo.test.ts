@@ -15,7 +15,7 @@ describe("YouTube track details", () => {
 		async ({ url, error }: { url: string; error: Error }) => {
 			await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
 		},
-		10000
+		20000
 	);
 
 	const url = "https://www.youtube.com/watch?v=9Y8ZGLiqXB8";
@@ -42,7 +42,8 @@ describe("YouTube track details", () => {
 			expectValueEqual(details.url, result);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		}
+		},
+		20000
 	);
 
 	test("returns infinite duration for a livestream", async () => {

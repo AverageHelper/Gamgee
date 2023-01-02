@@ -7,8 +7,8 @@ import { Parser } from "htmlparser2";
 /**
  * Retrieves metadata about the webpage at the given `url`.
  */
-export async function fetchMetadata(url: URL): Promise<Result> {
-	const result = await fetchWithTimeout(url);
+export async function fetchMetadata(url: URL, timeoutSeconds?: number): Promise<Result> {
+	const result = await fetchWithTimeout(url, timeoutSeconds);
 	const html = await result.text();
 
 	return await new Promise((resolve, reject) => {

@@ -261,7 +261,7 @@ describe("Command handler", () => {
 					logger.debug("mockCommandDefinitions", mockCommandDefinitions);
 				expect.assertions(mockCommandDefinitions.size);
 			},
-			10000
+			20000
 		);
 
 		test.each`

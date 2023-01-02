@@ -14,8 +14,8 @@ import { VideoError } from "../../errors/index.js";
  * that metadata.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getBandcampTrack(url: URL): Promise<VideoDetails> {
-	const metadata = await fetchMetadata(url);
+export async function getBandcampTrack(url: URL, timeoutSeconds?: number): Promise<VideoDetails> {
+	const metadata = await fetchMetadata(url, timeoutSeconds);
 
 	type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 	const jsonld = metadata.jsonld ?? [];
