@@ -84,8 +84,14 @@ function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
  * @throws a `VideoError` if the track info couldn't be found for the provided ID.
  * @returns a `Promise` that resolves with the track details.
  */
-async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPIResponse> {
-	const response = await fetchWithTimeout(`https://pony.fm/api/v1/tracks/${trackId}`);
+async function getPonyFmTrackInfoFromId(
+	trackId: number,
+	timeoutSeconds?: number
+): Promise<PonyFmTrackAPIResponse> {
+	const response = await fetchWithTimeout(
+		`https://pony.fm/api/v1/tracks/${trackId}`,
+		timeoutSeconds
+	);
 	if (response.status === 200) {
 		try {
 			const responseParsed = (await response.json()) as unknown;
@@ -121,7 +127,7 @@ async function getPonyFmTrackInfoFromId(trackId: number): Promise<PonyFmTrackAPI
  * @throws a `VideoError` if the track info couldn't be found for the provided URL.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
+export async function getPonyFmTrack(url: URL, timeoutSeconds?: number): Promise<VideoDetails> {
 	// Full link looks like this: https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine
 	// Short link looks like this: https://pony.fm/t46025
 
@@ -140,7 +146,7 @@ export async function getPonyFmTrack(url: URL): Promise<VideoDetails> {
 	if (Number.isNaN(trackId)) {
 		throw new InvalidPonyFmUrlError(url);
 	}
-	const trackData = await getPonyFmTrackInfoFromId(trackId);
+	const trackData = await getPonyFmTrackInfoFromId(trackId, timeoutSeconds);
 
 	return {
 		url: trackData.url,
