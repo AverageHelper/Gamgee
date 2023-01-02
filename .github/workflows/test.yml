@@ -24,14 +24,14 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test:src
+      - name: Run npm run test:src
+        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
+        with:
+          test-script: npm run test:src
+          coverage-file: ./coverage/coverage-final.json
         env:
           CI: true
           NODE_ENV: "test"
-      - name: Report test coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
-        with:
-          skip-step: all # don't re-run unit tests
-          coverage-file: ./coverage/coverage-final.json
 
   integration:
     runs-on: ubuntu-latest
