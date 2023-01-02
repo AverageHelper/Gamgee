@@ -72,3 +72,6 @@ jobs:
           QUEUE_ADMIN_ROLE_ID: ${{ secrets.QUEUE_ADMIN_ROLE_ID }}
           QUEUE_CREATOR_ROLE_ID: ${{ secrets.QUEUE_CREATOR_ROLE_ID }}
           BOT_PREFIX: "?"
+
+      - name: Report test coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
