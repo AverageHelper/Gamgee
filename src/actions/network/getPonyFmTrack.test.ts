@@ -7,7 +7,7 @@ import { VideoError } from "../../errors/VideoError.js";
 describe("Pony.FM track details", () => {
 	const TIMEOUT = 50; // seconds
 
-	test.each`
+	test.skip.each`
 		desc                         | url
 		${"album link"}              | ${"https://pony.fm/albums/4761-heroes-the-label-compilation"}
 		${"artist page"}             | ${"https://pony.fm/skyshard"}
@@ -24,7 +24,7 @@ describe("Pony.FM track details", () => {
 		20000
 	);
 
-	test.each`
+	test.skip.each`
 		desc                      | url
 		${"long link"}            | ${"https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine"}
 		${"incomplete long link"} | ${"https://pony.fm/tracks/46025-beneath-the-sea-ft-"}

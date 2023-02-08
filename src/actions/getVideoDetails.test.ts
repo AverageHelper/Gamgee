@@ -116,17 +116,22 @@ describe("Video details", () => {
 			mockGetYouTubeVideo.mockImplementationOnce(getYouTubeVideo);
 		});
 
-		test.each`
-			platform                    | url                                                                                 | duration
-			${"Bandcamp"}               | ${"https://4everfreebrony.bandcamp.com/track/wandering-eyes-2018-2 Text and stuff"} | ${216}
-			${"Bandcamp custom-domain"} | ${"https://forestrainmedia.com/track/bad-wolf Text and stuff"}                      | ${277}
-			${"Pony.fm (attempt 1)"}    | ${"https://pony.fm/t46025 Text and stuff"}                                          | ${385}
-			${"Pony.fm (attempt 2)"}    | ${"https://pony.fm/t27293 Text and stuff"}                                          | ${251}
-			${"SoundCloud"}             | ${"https://soundcloud.com/hwps/no999 Text and stuff"}                               | ${95}
-			${"YouTube"}                | ${"https://youtu.be/9Y8ZGLiqXB8 Text and stuff"}                                    | ${346}
-		`(
-			"returns video data for a $platform link that has extra info",
-			async ({ url, duration }: { url: string; duration: number }) => {
+		const urls = [
+			[
+				"Bandcamp",
+				"https://4everfreebrony.bandcamp.com/track/wandering-eyes-2018-2 Text and stuff",
+				216
+			],
+			["Bandcamp custom-domain", "https://forestrainmedia.com/track/bad-wolf Text and stuff", 277],
+			// TODO: Uncomment these once Pony.fm is fixed
+			// ["Pony.fm (attempt 1)", "https://pony.fm/t46025 Text and stuff", 385],
+			// ["Pony.fm (attempt 2)", "https://pony.fm/t27293 Text and stuff", 251],
+			["SoundCloud", "https://soundcloud.com/hwps/no999 Text and stuff", 95],
+			["YouTube", "https://youtu.be/9Y8ZGLiqXB8 Text and stuff", 346]
+		] as const;
+		test.each(urls)(
+			"returns video data for a %s link that has extra info",
+			async (_, url, duration) => {
 				const details = await getVideoDetails(url, logger);
 				// URL will be trimmed
 				expectNotNull(details);
