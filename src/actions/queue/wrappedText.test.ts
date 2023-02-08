@@ -1,3 +1,5 @@
+import "../../../tests/testUtils/leakedHandles.js";
+
 import { addCharactersAround } from "./wrappedText.js";
 import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 

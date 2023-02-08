@@ -1,4 +1,5 @@
 import type { Command } from "../Command.js";
+import "../../../tests/testUtils/leakedHandles.js";
 
 interface MockCommand {
 	name: Command["name"];

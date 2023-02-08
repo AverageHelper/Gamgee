@@ -97,7 +97,7 @@
 				"cannot-run-concurrent-invocations": "Stand by, someone just ran this command...",
 				"preamble-failure": "Erm, something went wrong. Best look into this:",
 				"preamble-success": "I ran the numbers, and it looks like we're all good!",
-				"results-header": "Test Results",
+				"results-header": "Test Results by Platform",
 				"see-on-github": "See the {list} on our GitHub.",
 				"supported-platforms": "list of supported platforms"
 			}

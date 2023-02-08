@@ -1,3 +1,5 @@
+import "../../../tests/testUtils/leakedHandles.js";
+
 jest.mock("../../actions/messages/index.js");
 jest.mock("../getVideoDetails.js");
 jest.mock("./useQueue.js");

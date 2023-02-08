@@ -1,3 +1,5 @@
+import "../../../tests/testUtils/leakedHandles.js";
+
 import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { removeCharactersAround } from "./unwrappedText.js";
 

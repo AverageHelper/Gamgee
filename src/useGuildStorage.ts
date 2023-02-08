@@ -2,6 +2,7 @@ import type { Guild, Snowflake, TextChannel } from "discord.js";
 import type { Role } from "@prisma/client";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
+import { NotFoundError as RowNotFoundError } from "@prisma/client/runtime/index.js";
 import { useRepository } from "./database/useDatabase.js";
 
 /**
@@ -172,13 +173,18 @@ export async function isQueueOpen(guild: Guild): Promise<boolean> {
 /** Sets the guild's queue-open status. */
 export async function setQueueOpen(isQueueOpen: boolean, guild: Guild): Promise<void> {
 	await useRepository("guild", async guilds => {
-		const guildInfo = await guilds.findUnique({ where: { id: guild.id } });
-		if (isQueueOpen && !(guildInfo?.currentQueue ?? "")) {
+		try {
+			// Attempt to update row
+			await guilds.update({
+				where: { id: guild.id },
+				data: { isQueueOpen }
+			});
+		} catch (error) {
+			// Throw unknown errors
+			if (!(error instanceof RowNotFoundError)) throw error;
+
+			// Handle Prisma error about unknown row
 			throw new Error("Cannot open a queue without a queue to open.");
 		}
-		await guilds.update({
-			where: { id: guild.id },
-			data: { isQueueOpen }
-		});
 	});
 }

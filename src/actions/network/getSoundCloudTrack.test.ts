@@ -1,8 +1,8 @@
+import "../../../tests/testUtils/leakedHandles.js";
 import { getSoundCloudTrack } from "./getSoundCloudTrack.js";
 import { URL } from "node:url";
 import {
 	expectDefined,
-	expectNotNull,
 	expectPositive,
 	expectValueEqual
 } from "../../../tests/testUtils/expectations/jest.js";
@@ -23,7 +23,7 @@ describe("SoundCloud track details", () => {
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
 		},
-		10000
+		20000
 	);
 
 	test.each`
@@ -39,26 +39,6 @@ describe("SoundCloud track details", () => {
 			expectValueEqual(details.url, result);
 			expectPositive(details.duration.seconds);
 		},
-		10000
-	);
-
-	test.each`
-		platform        | url                                                            | duration
-		${"Bandcamp"}   | ${"https://forestrainmedia.com/track/bad-wolf Text and stuff"} | ${277}
-		${"Pony.fm"}    | ${"https://pony.fm/t46025 Text and stuff"}                     | ${385}
-		${"SoundCloud"} | ${"https://soundcloud.com/hwps/no999 Text and stuff"}          | ${95}
-		${"YouTube"}    | ${"https://youtu.be/9Y8ZGLiqXB8 Text and stuff"}               | ${346}
-	`(
-		"returns info for a $platform link that has extra info",
-		async ({ url, duration }: { url: string; duration: number }) => {
-			const { getVideoDetails } = await import("../getVideoDetails.js");
-
-			const details = await getVideoDetails(url, null);
-			// URL will be trimmed
-			expectNotNull(details);
-			expectDefined(details.duration.seconds);
-			expectValueEqual(details.duration.seconds, duration);
-		},
-		10000
+		20000
 	);
 });

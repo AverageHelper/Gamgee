@@ -1,3 +1,4 @@
+import "../tests/testUtils/leakedHandles.js";
 import { expectUndefined, expectValueEqual } from "../tests/testUtils/expectations/jest.js";
 import { localizations, t } from "./i18n.js";
 

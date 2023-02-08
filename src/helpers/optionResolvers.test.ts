@@ -1,4 +1,5 @@
 import type { CommandInteractionOption, Guild } from "discord.js";
+import "../../tests/testUtils/leakedHandles.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { expectNull } from "../../tests/testUtils/expectations/jest.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";

@@ -1,5 +1,6 @@
 import "source-map-support/register.js";
 import "reflect-metadata";
+import type { Message, PartialMessage } from "discord.js";
 import { ActivityType, Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleButton } from "./handleButton.js";
@@ -77,13 +78,30 @@ try {
 
 			// Register interaction listeners
 			client.on("messageCreate", async msg => {
-				const allowedMsgTypes = [MessageType.Default, MessageType.Reply];
-				if (!allowedMsgTypes.includes(msg.type) || msg.author.id === client.user.id) return;
+				// Fetch the message if it's partial
+				let message: Message | PartialMessage = msg;
+				if (message.partial) {
+					logger.debug("Message was partial. Fetching...");
+					message = await msg.fetch();
+				}
+
+				// Ignore if the message is from ourself
+				if (message.author.id === client.user.id) return;
+
+				// Ignore if the message isn't a plain message
+				const allowedMsgTypes: ReadonlyArray<MessageType> = [
+					MessageType.Default,
+					MessageType.Reply
+				];
+				if (!allowedMsgTypes.includes(message.type)) {
+					const allowed = allowedMsgTypes.join(", ");
+					logger.debug(`Skipping message of unknown type ${message.type} (allowed: [${allowed}])`);
+					return;
+				}
 				try {
-					const message = await msg.fetch();
 					await handleCommand(message, logger);
 				} catch (error) {
-					const msgDescription = JSON.stringify(msg, undefined, 2);
+					const msgDescription = JSON.stringify(message, undefined, 2);
 					logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
 				}
 			});

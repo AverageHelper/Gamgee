@@ -1,3 +1,4 @@
+import "../../tests/testUtils/leakedHandles.js";
 import { expectDefined, expectToContain } from "../../tests/testUtils/expectations/jest.js";
 import { richErrorMessage } from "./richErrorMessage.js";
 

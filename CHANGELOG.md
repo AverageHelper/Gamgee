@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2023-02-08
+### Changed
+- Clarified the header to the results from `/test`.
+- Reduced processing time for message commands by reducing the cases in which we fetch message data from Discord.
+- Time-out HTTP requests after 50 seconds.
+- More resilience to slow responses from media providers.
+- Reduced the number of round-trip database calls when opening the queue.
+
 ## [2.0.3] - 2022-10-29
 ### Changed
 - More thorough logging, especially around song request messages. This should help us debug some timing issues.
@@ -388,6 +396,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
+[2.0.4]: https://github.com/AverageHelper/Gamgee/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AverageHelper/Gamgee/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/AverageHelper/Gamgee/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/AverageHelper/Gamgee/compare/v2.0.0...v2.0.1

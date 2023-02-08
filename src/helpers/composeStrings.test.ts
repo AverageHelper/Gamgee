@@ -1,4 +1,5 @@
 import type { PartialString } from "./composeStrings.js";
+import "../../tests/testUtils/leakedHandles.js";
 import { expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
 import {
 	composed,
