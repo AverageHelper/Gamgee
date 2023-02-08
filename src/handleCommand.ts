@@ -384,8 +384,10 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 			messageContainsOneOfWords([
 				"hug",
 				"hug?",
+				"hug!",
 				"hugs",
 				"hugs?",
+				"hugs!",
 				"*hugs",
 				"hugs*",
 				"*hugs*",

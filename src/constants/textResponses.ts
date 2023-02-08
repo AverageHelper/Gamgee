@@ -189,7 +189,7 @@ export const phrases: ResponseRepository = [
 	"If you want to view paradise, simply look around and view it.",
 	"It happens every time. They all become blueberries",
 	"So shines a good deed in a weary world.",
-	"Strike that. Reverse it.",
+	"Strike that. Reverse it. Thank you.",
 	"The suspense is terrible. I hope it'll last",
 	"There's no earthly way of knowing, which direction they are going.",
 	"We are the music makers and we are the dreamers of the dreams.",
@@ -233,7 +233,7 @@ export const phrases: ResponseRepository = [
 	],
 	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
 	"Did you know: I'm pretty good at chess, I have won `0` games so far! :nerd:",
-	'Discord is weird. "Slash commands," for example. What\'s up with that?',
+	'Discord is weird. "Slash commands" for example. What\'s up with that?',
 	"Do I know you?",
 	"Do you know how painful my training was? The song _Never Gonna Give You Up_ by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
 	[
@@ -347,6 +347,7 @@ export const phrases: ResponseRepository = [
 	"\\*thoughtful phrase\\*",
 	() => `To talk to a customer, please press \`${randomInt(9)}\``,
 	"Today is the tomorrow you were promised yesterday",
+	"Today's been a long week.",
 	"Truly inspirational!",
 	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
@@ -368,7 +369,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 227 of these
+]; // 228 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
