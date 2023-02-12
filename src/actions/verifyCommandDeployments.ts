@@ -13,25 +13,28 @@ export async function verifyCommandDeployments(
 	logger: Logger
 ): Promise<void> {
 	const globalDiff = await diffGlobalCommandDeployments(client);
-	if (globalDiff) {
-		const issue = globalDiff.issue;
-		const expected = globalDiff.expected;
-		const actual = globalDiff.actual;
-		switch (issue) {
-			case "content":
-				logger.warn(
-					`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
-				);
-				break;
-			case "length":
-				logger.warn(
-					`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`
-				);
-				break;
-			default:
-				/* istanbul ignore next */
-				assertUnreachable(issue);
-		}
+	if (!globalDiff) {
+		logger.info("All commands deployed properly!");
+		return;
+	}
+
+	const issue = globalDiff.issue;
+	const expected = globalDiff.expected;
+	const actual = globalDiff.actual;
+	switch (issue) {
+		case "content":
+			logger.warn(
+				`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
+			);
+			break;
+		case "length":
+			logger.warn(
+				`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`
+			);
+			break;
+		default:
+			/* istanbul ignore next */
+			assertUnreachable(issue);
 	}
 
 	const guildedDiff = await diffGuildCommandDeployments(client);
