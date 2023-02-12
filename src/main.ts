@@ -2,20 +2,19 @@ import "source-map-support/register.js";
 import "reflect-metadata";
 import type { Message, PartialMessage } from "discord.js";
 import { ActivityType, Client, GatewayIntentBits, MessageType, Partials } from "discord.js";
+import { deployCommands } from "./actions/deployCommands.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
 import { handleButton } from "./handleButton.js";
 import { handleCommand } from "./handleCommand.js";
 import { handleInteraction } from "./handleInteraction.js";
 import { handleReactionAdd } from "./handleReactionAdd.js";
 import { hideBin } from "yargs/helpers";
+import { revokeCommands } from "./actions/revokeCommands.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { useLogger } from "./logger.js";
+import { verifyCommandDeployments } from "./actions/verifyCommandDeployments.js";
 import { version as gamgeeVersion } from "./version.js";
 import yargs from "yargs";
-import {
-	prepareSlashCommandsThenExit,
-	revokeSlashCommandsThenExit
-} from "./actions/prepareSlashCommands.js";
 
 const args = yargs(hideBin(process.argv))
 	.option("deploy-commands", {
@@ -132,7 +131,9 @@ try {
 				url: "https://github.com/AverageHelper/Gamgee"
 			});
 
-			// TODO: Verify that the deployed command list is up-to-date
+			// Sanity check for commands
+			logger.info("Verifying command deployments...");
+			await verifyCommandDeployments(client, logger);
 		}
 
 		if (getEnv("NODE_ENV") === "test") {
@@ -143,9 +144,13 @@ try {
 		}
 
 		if (args["deploy-commands"]) {
-			await prepareSlashCommandsThenExit(client);
+			await deployCommands(client, logger);
+			client.destroy();
+			process.exit(0);
 		} else if (args["revoke-commands"]) {
-			await revokeSlashCommandsThenExit(client);
+			await revokeCommands(client, logger);
+			client.destroy();
+			process.exit(0);
 		}
 	});
 
