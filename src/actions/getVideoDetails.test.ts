@@ -138,7 +138,7 @@ describe("Video details", () => {
 				expectDefined(details.duration.seconds);
 				expectValueEqual(details.duration.seconds, duration);
 			},
-			20000
+			30000
 		);
 	});
 });

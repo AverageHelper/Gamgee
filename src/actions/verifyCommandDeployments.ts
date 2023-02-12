@@ -13,28 +13,25 @@ export async function verifyCommandDeployments(
 	logger: Logger
 ): Promise<void> {
 	const globalDiff = await diffGlobalCommandDeployments(client);
-	if (!globalDiff) {
-		logger.info("All commands deployed properly!");
-		return;
-	}
-
-	const issue = globalDiff.issue;
-	const expected = globalDiff.expected;
-	const actual = globalDiff.actual;
-	switch (issue) {
-		case "content":
-			logger.warn(
-				`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
-			);
-			break;
-		case "length":
-			logger.warn(
-				`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`
-			);
-			break;
-		default:
-			/* istanbul ignore next */
-			assertUnreachable(issue);
+	if (globalDiff) {
+		const issue = globalDiff.issue;
+		const expected = globalDiff.expected;
+		const actual = globalDiff.actual;
+		switch (issue) {
+			case "content":
+				logger.warn(
+					`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
+				);
+				break;
+			case "length":
+				logger.warn(
+					`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`
+				);
+				break;
+			default:
+				/* istanbul ignore next */
+				assertUnreachable(issue);
+		}
 	}
 
 	const guildedDiff = await diffGuildCommandDeployments(client);
@@ -59,6 +56,10 @@ export async function verifyCommandDeployments(
 				assertUnreachable(issue);
 		}
 	}
+
+	if (!globalDiff && !guildedDiff) {
+		logger.info("All commands deployed properly!");
+	}
 }
 
 async function diffGuildCommandDeployments(
@@ -73,7 +74,8 @@ async function diffGuildCommandDeployments(
 		.sort(sortAlphabetically);
 
 	for (const guild of guilds) {
-		const actualCommandNames = (await guild.commands.fetch())
+		const guildCommands = await guild.commands.fetch();
+		const actualCommandNames = Array.from(guildCommands.values())
 			.map(c => c.name)
 			.sort(sortAlphabetically);
 
@@ -101,8 +103,8 @@ async function diffGlobalCommandDeployments(client: Client<true>): Promise<Diff 
 
 interface Diff {
 	readonly issue: "length" | "content";
-	expected: string | number;
-	actual: string | number;
+	readonly expected: string | number;
+	readonly actual: string | number;
 }
 
 function diffArrays(expected: Array<string>, actual: Array<string>): Diff | null {

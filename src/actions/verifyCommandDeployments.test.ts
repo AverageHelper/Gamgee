@@ -1,15 +1,19 @@
-import type { ApplicationCommandDataResolvable, Client } from "discord.js";
+import type { ApplicationCommandDataResolvable, Client, OAuth2Guild } from "discord.js";
 import type { Logger } from "../logger.js";
 import type { Command } from "../commands/index.js";
-import { verifyCommandDeployments } from "./verifyCommandDeployments.js";
+import { Collection } from "discord.js";
 import { deployableCommand } from "./deployCommands.js";
 
-const mockAllCommands = new Map<string, Command>();
-jest.mock("../commands/index.js", () => ({ allCommands: mockAllCommands }));
+jest.mock("../commands/index.js", () => ({ allCommands: new Map<string, Command>() }));
+import { allCommands as mockAllCommands } from "../commands/index.js";
+
+import { verifyCommandDeployments } from "./verifyCommandDeployments.js";
 
 // Mock the logger to track output
+const mockLoggerInfo = jest.fn();
 const mockLoggerWarn = jest.fn();
 const mockLogger = {
+	info: mockLoggerInfo,
 	warn: mockLoggerWarn
 } as unknown as Logger;
 
@@ -29,7 +33,7 @@ describe("Verify command deployments", () => {
 			execute: () => undefined
 		},
 
-		// Guild-bound Commands
+		// Guild-only Commands
 		{
 			name: "arthur",
 			description: " ",
@@ -54,30 +58,28 @@ describe("Verify command deployments", () => {
 			}
 		},
 		guilds: {
-			fetch: () =>
-				Promise.resolve(
-					new Map([
-						[
-							"guild1",
-							{
-								fetch: (): unknown =>
-									Promise.resolve({
-										id: "guild1",
-										commands: {
-											fetch: mockFetchGuildCommands
-										}
-									})
-							}
-						]
-					])
-				)
+			fetch: jest.fn().mockResolvedValue(
+				new Collection<string, OAuth2Guild>([
+					[
+						"guild1",
+						{
+							fetch: jest.fn().mockResolvedValue({
+								id: "guild1",
+								commands: {
+									fetch: mockFetchGuildCommands
+								}
+							})
+						} as unknown as OAuth2Guild
+					]
+				])
+			)
 		}
 	} as unknown as Client<true>;
 
 	beforeEach(() => {
 		mockAllCommands.clear();
-		const deployedGlobal = new Map<string, ApplicationCommandDataResolvable>();
-		const deployedGuild = new Map<string, ApplicationCommandDataResolvable>();
+		const deployedGlobal = new Collection<string, ApplicationCommandDataResolvable>();
+		const deployedGuild = new Collection<string, ApplicationCommandDataResolvable>();
 		mockFetchApplicationCommands.mockResolvedValue(deployedGlobal);
 		mockFetchGuildCommands.mockResolvedValue(deployedGuild);
 
@@ -92,10 +94,11 @@ describe("Verify command deployments", () => {
 	});
 
 	describe("Guild commands", () => {
-		test("does nothing if the actual commands match expectations", async () => {
+		test("logs an ok message if the actual commands match expectations", async () => {
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchGuildCommands).toHaveBeenCalledOnce();
 			expect(mockLoggerWarn).not.toHaveBeenCalled();
+			expect(mockLoggerInfo).toHaveBeenCalledOnce();
 		});
 
 		test("logs a warning if the number of commands differs", async () => {
@@ -103,6 +106,7 @@ describe("Verify command deployments", () => {
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchGuildCommands).toHaveBeenCalledOnce();
+			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
 				expect.stringContaining("commands in guild 'guild1' differ")
 			);
@@ -120,6 +124,7 @@ describe("Verify command deployments", () => {
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchGuildCommands).toHaveBeenCalledOnce();
+			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
 				expect.stringContaining("commands in guild 'guild1' differ")
 			);
@@ -130,9 +135,10 @@ describe("Verify command deployments", () => {
 	});
 
 	describe("Global commands", () => {
-		test("does nothing if the actual commands match expectations", async () => {
+		test("logs an ok message if the actual commands match expectations", async () => {
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchApplicationCommands).toHaveBeenCalledOnce();
+			expect(mockLoggerInfo).toHaveBeenCalledOnce();
 			expect(mockLoggerWarn).not.toHaveBeenCalled();
 		});
 
@@ -141,6 +147,7 @@ describe("Verify command deployments", () => {
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchApplicationCommands).toHaveBeenCalledOnce();
+			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(expect.stringContaining("commands differ"));
 			expect(mockLoggerWarn).toHaveBeenCalledWith(expect.stringContaining("Expected 1"));
 		});
@@ -156,6 +163,7 @@ describe("Verify command deployments", () => {
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchApplicationCommands).toHaveBeenCalledOnce();
+			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(expect.stringContaining("commands differ"));
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
 				expect.stringContaining("Expected a command named 'marvin'")

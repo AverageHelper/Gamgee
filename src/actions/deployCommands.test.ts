@@ -6,9 +6,7 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 const logger = useTestLogger();
 
 const mockAllCommands = new Map<string, Command>();
-jest.mock("../../commands", () => ({
-	allCommands: mockAllCommands
-}));
+jest.mock("../commands/index.js", () => ({ allCommands: mockAllCommands }));
 
 jest.mock("./revokeCommands");
 import { revokeCommands } from "./revokeCommands.js";
