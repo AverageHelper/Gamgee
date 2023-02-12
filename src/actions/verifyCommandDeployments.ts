@@ -34,7 +34,7 @@ export async function verifyCommandDeployments(
 		}
 	}
 
-	const guildedDiff = await diffGuildCommandDeployments(client);
+	const guildedDiff = await diffGuildCommandDeployments(client, logger);
 	if (guildedDiff) {
 		const issue = guildedDiff.issue;
 		const expected = guildedDiff.expected;
@@ -63,10 +63,13 @@ export async function verifyCommandDeployments(
 }
 
 async function diffGuildCommandDeployments(
-	client: Client<true>
+	client: Client<true>,
+	logger: Logger
 ): Promise<(Diff & { guild: Guild }) | null> {
 	const oAuthGuilds = await client.guilds.fetch();
 	const guilds = await Promise.all(oAuthGuilds.map(g => g.fetch()));
+
+	logger.verbose(`I'm part of ${guilds.length} guild(s)`);
 
 	const expectedCommandNames = Array.from(allCommands.values())
 		.filter(c => c.requiresGuild)
