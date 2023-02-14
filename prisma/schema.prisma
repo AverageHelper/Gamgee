@@ -8,29 +8,66 @@ datasource db {
 }
 
 model Channel {
-  id      String @id
+  /// The Snowflake string that identifies the channel in its guild.
+  id String @id
+
+  /// The Snowflake string that identifies the guild to which this channel belongs.
   guildId String
 
   @@map("channels")
 }
 
 model Guild {
-  id                   String  @id
-  isQueueOpen          Boolean
-  currentQueue         String?
+  /// The Snowflake string that identifies the guild on Discord's platform.
+  id String @id
+
+  /// Whether the queue should accept new entries.
+  isQueueOpen Boolean
+
+  /// The Snowflake string that identifies the guild's queue channel.
+  currentQueue String?
+
+  /// The prefix that defines a command message from a normal message.
+  /// `?` for example.
   messageCommandPrefix String?
 
   @@map("guilds")
 }
 
 model QueueConfig {
-  channelId               String                          @id
-  entryDurationMaxSeconds Int?                            @map("entryDurationSeconds")
-  cooldownSeconds         Int?
-  submissionMaxQuantity   Int?
-  queueDurationSeconds    Int?
+  /// The Snowflake string that identifies the queue channel in its
+  /// guild. We assume (perhaps erroneously) that all of Discord's
+  /// channel IDs are unique across their platform.
+  channelId String @id
+
+  /// The minimum number of seconds that each user must wait between
+  /// their submissions. This cooldown counts from the entry's `sentAt`
+  /// column. The cooldown does not apply to "rejected" submissions.
+  /// Defaults to zero.
+  cooldownSeconds Int?
+
+  /// The upper limit to each user's total number of submittions in
+  /// this queue. Each user's count is reset when this queue's contents
+  /// are reset. This limit does not apply to "rejected" submissions.
+  /// Defaults to infinity
+  submissionMaxQuantity Int?
+
+  /// The upper limit for the total duration of this queue if all of
+  /// its media entries were played end to end.
+  queueDurationSeconds Int?
+
+  /// The upper limit for each entry's media duration in this queue.
+  /// Defaults to infinity.
+  entryDurationMaxSeconds Int? @map("entryDurationSeconds")
+
+  /// The lower limit for each entry's media duration in this queue.
+  /// Defaults to zero.
   entryDurationMinSeconds Int?
-  blacklistedUsers        QueueConfigToBlacklistedUsers[]
+
+  /// The list of users who should not be permitted to submit to
+  /// this queue. By default, all users are permitted to submit
+  /// media requests to the queue.
+  blacklistedUsers QueueConfigToBlacklistedUsers[]
 
   @@map("queue-configs")
 }
@@ -48,14 +85,35 @@ model QueueConfigToBlacklistedUsers {
 }
 
 model QueueEntry {
-  channelId            String
-  guildId              String
-  queueMessageId       String   @unique(map: "sqlite_autoindex_queue-entries_2")
-  url                  String
-  seconds              Int
-  sentAt               DateTime @id
-  senderId             String
-  isDone               Boolean
+  /// The Snowflake string of the guild to which the entry belongs.
+  guildId String
+
+  /// The Snowflake string of the queue channel to which the entry
+  /// belongs.
+  channelId String
+
+  /// The Snowflake string of this entry's message proxy in the
+  /// queue channel.
+  queueMessageId String @unique(map: "sqlite_autoindex_queue-entries_2")
+
+  /// The URL to the requested media item.
+  url String
+
+  /// The playtime of the requested media, in seconds.
+  seconds Int
+
+  /// The time the entry entered the database. Should be unique,
+  /// so as to keep a strict ordering and match the queue channel.
+  sentAt DateTime @id
+
+  /// The Snowflake string that identifies the user which sent the request.
+  senderId String
+
+  /// Whether the entry is considered "done" (finished, played, consumed, etc.)
+  /// and should be ignored for time tracking purposes.
+  isDone Boolean
+
+  /// The list of users who have requested the link to the media.
   haveCalledNowPlaying User[]
 
   @@map("queue-entries")
@@ -71,8 +129,14 @@ model Role {
 }
 
 model User {
-  id                          String                          @id
-  blacklistedQueues           QueueConfigToBlacklistedUsers[]
+  /// The Snowflake string that identifies the user (NOT the guild member)
+  /// on Discord's platform.
+  id String @id
+
+  /// The list of queues in which the user is not allowed to submit requests.
+  blacklistedQueues QueueConfigToBlacklistedUsers[]
+
+  /// The list of entries for which the user has requested the URL.
   didCallNowPlayingForEntries QueueEntry[]
 
   @@map("user")

@@ -12,7 +12,14 @@
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:prettier/recommended"
 	],
-	"plugins": ["prettier", "unicorn", "promise", "@typescript-eslint", "deprecation"],
+	"plugins": [
+		"prettier",
+		"unicorn",
+		"promise",
+		"@typescript-eslint",
+		"deprecation",
+		"file-progress"
+	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"project": "./tsconfig.prod.json",
@@ -22,6 +29,7 @@
 		"node": true
 	},
 	"rules": {
+		"file-progress/activate": 1,
 		"deprecation/deprecation": "warn",
 		"prettier/prettier": "warn",
 		"no-constant-condition": "warn",
