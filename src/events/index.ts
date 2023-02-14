@@ -57,7 +57,7 @@ export function registerEventHandlers(client: Client): void {
 			client.on(eventName, (...args) => eventHandler.execute(...args, logger));
 		}
 
-		logger.info(
+		logger.debug(
 			`Registered event handler ${eventHandler.once === true ? "once" : "on"}(${eventName})`
 		);
 	});
