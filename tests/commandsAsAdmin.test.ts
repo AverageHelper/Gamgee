@@ -10,7 +10,7 @@ import {
 	sendMessageWithDefaultClient,
 	sendCommandWithDefaultClient,
 	useTesterClient
-} from "./discordUtils/index";
+} from "./discordUtils";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
@@ -49,6 +49,10 @@ describe("Command as admin", function () {
 					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
 					NEW_QUEUE
 				);
+				await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
+					"is allowed"
+				);
 			});
 
 			{
@@ -64,6 +68,68 @@ describe("Command as admin", function () {
 					});
 				}
 			}
+
+			it("can manage the blacklist", async function () {
+				// read blacklist, should be empty
+				const firstCheck = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist`,
+					"Song Request Blacklist for"
+				);
+				expectToContain(firstCheck, "Nobody");
+
+				// add to blacklist
+				const firstAdd = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
+					"is no longer allowed"
+				);
+				expectToContain(firstAdd, `<@!${UUT_ID}> is no longer allowed`);
+
+				// read blacklist, should contain user
+				const secondCheck = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist`,
+					"Song Request Blacklist for"
+				);
+				expectToContain(secondCheck, userMention(UUT_ID));
+
+				// add to blacklist again, should have no duplicates
+				const secondAdd = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
+					"is no longer allowed"
+				);
+				expectToContain(secondAdd, `<@!${UUT_ID}> is no longer allowed`);
+
+				const thirdCheck = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist`,
+					"Song Request Blacklist for"
+				);
+				expectToContain(
+					thirdCheck,
+					userMention(UUT_ID) // TODO: Make sure this is the only match
+				);
+
+				// remove from blacklist
+				const remove = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
+					"is allowed"
+				);
+				expectToContain(remove, `<@!${UUT_ID}> is allowed`);
+
+				// read blacklist, should be empty again
+				const fourthCheck = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} blacklist`,
+					"Song Request Blacklist for"
+				);
+				expectToContain(fourthCheck, "Nobody");
+			});
+
+			it("removes a user from the blacklist when the blacklist was already empty", async function () {
+				const expected = "is allowed to submit song requests";
+				const content = await commandResponseInTestChannel(
+					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
+					expected
+				);
+				expectToContain(content, expected);
+			});
 		});
 
 		describe("when the queue is not set up", function () {

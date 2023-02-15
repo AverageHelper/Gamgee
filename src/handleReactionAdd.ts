@@ -9,7 +9,7 @@ export async function handleReactionAdd(
 	logger: Logger
 ): Promise<void> {
 	// Ignore bot reactions unless we're being tested
-	if (user.bot && getEnv("NODE_ENV") !== "test") {
+	if (user.bot && getEnv("NODE_ENV") !== "test-mocha") {
 		logger.silly(
 			`Momma always said not to follow strangers. It's rude. bot: ${user.bot ? "true" : "false"}`
 		);

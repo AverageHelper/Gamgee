@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - We now verify on startup that all commands were deployed.
 
+### Fixed
+- Crashes related to blacklist management
+
 ## [2.0.4] - 2023-02-08
 ### Changed
 - Clarified the header to the results from `/test`.

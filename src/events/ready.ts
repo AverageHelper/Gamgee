@@ -45,7 +45,7 @@ export const ready = onEvent("ready", {
 		logger.info("Setting user activity");
 		setActivity(client);
 
-		if (getEnv("NODE_ENV") === "test") {
+		if (getEnv("NODE_ENV")?.startsWith("test") === true) {
 			// Don't log the tag in test mode, people might see that!
 			logger.info(`Logged in as ${client.user.username}`);
 		} else {

@@ -2,7 +2,7 @@ import type { Guild, Snowflake, TextChannel } from "discord.js";
 import type { Role } from "@prisma/client";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
-import { NotFoundError as RowNotFoundError } from "@prisma/client/runtime/index.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
 import { useRepository } from "./database/useDatabase.js";
 
 /**
@@ -181,7 +181,7 @@ export async function setQueueOpen(isQueueOpen: boolean, guild: Guild): Promise<
 			});
 		} catch (error) {
 			// Throw unknown errors
-			if (!(error instanceof RowNotFoundError)) throw error;
+			if (!(error instanceof PrismaClientKnownRequestError) || error.code !== "P2025") throw error;
 
 			// Handle Prisma error about unknown row
 			throw new Error("Cannot open a queue without a queue to open.");

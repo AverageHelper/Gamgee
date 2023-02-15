@@ -6,7 +6,7 @@ import {
 	setIsQueueCreator,
 	commandResponseInTestChannel,
 	sendMessageWithDefaultClient
-} from "./discordUtils/index";
+} from "./discordUtils";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
@@ -77,6 +77,8 @@ describe("Command as pleb", function () {
 				});
 
 				if (isOpen) {
+					// TODO: Test blacklist behavior
+
 					it("accepts a song request", async function () {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 

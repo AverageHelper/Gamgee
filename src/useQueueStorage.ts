@@ -1,13 +1,8 @@
+import type { QueueConfig as _QueueConfig, QueueEntry as _QueueEntry, User } from "@prisma/client";
 import type { Snowflake, TextChannel } from "discord.js";
-import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
 import { useLogger } from "./logger.js";
 import { useRepository } from "./database/useDatabase.js";
-import type {
-	QueueConfig as _QueueConfig,
-	QueueConfigToBlacklistedUsers,
-	QueueEntry as _QueueEntry,
-	User
-} from "@prisma/client";
 
 const logger = useLogger();
 
@@ -60,21 +55,21 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
  * Updates the provided properties of a queue's configuration settings
  * in the database.
  *
+ * Does not modify the `blacklistedUsers` column. If you wish to do that,
+ * use either {@link saveUserToStoredBlacklist} or
+ * {@link removeUserFromStoredBlacklist}.
+ *
  * @param config Properties of the queue config to overwrite the current data.
  * @param queueChannel The channel that identifies the request queue.
  */
 export async function updateStoredQueueConfig(
-	config: Partial<QueueConfig>,
+	config: Partial<_QueueConfig>,
 	queueChannel: TextChannel
 ): Promise<void> {
 	if (Object.keys(config).length === 0) return; // nothing to store
 
 	// Compose updates
-	const update: Partial<_QueueConfig> & {
-		blacklistedUsers?: {
-			set: Array<{ queueConfigsChannelId_userId: QueueConfigToBlacklistedUsers }>;
-		};
-	} = {
+	const update: Partial<_QueueConfig> = {
 		cooldownSeconds: config.cooldownSeconds,
 		entryDurationMaxSeconds: config.entryDurationMaxSeconds,
 		entryDurationMinSeconds: config.entryDurationMinSeconds,
@@ -82,20 +77,11 @@ export async function updateStoredQueueConfig(
 		submissionMaxQuantity: config.submissionMaxQuantity
 	};
 
-	if (config.blacklistedUsers !== undefined) {
-		update.blacklistedUsers = {
-			set: config.blacklistedUsers.map(user => ({
-				queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId: user.id }
-			}))
-		};
-	}
-
 	// Update or create the config
 	await useRepository("queueConfig", configs =>
 		configs.upsert({
 			where: { channelId: queueChannel.id },
 			update,
-
 			create: {
 				channelId: queueChannel.id,
 				...update
@@ -107,7 +93,9 @@ export async function updateStoredQueueConfig(
 // ** Write Song Entries **
 
 /**
- * Adds a queue entry to the database.
+ * Adds a queue entry to the database. Does NOT check for adjacent concerns,
+ * like whether the guild has a config, whether that config marks the queue
+ * as "open", or whether the queue's config and limits are defined.
  *
  * @param entry Properties of the new request entity.
  * @param queueChannel The channel that identifies the request queue.
@@ -118,23 +106,6 @@ export async function saveNewEntryToDatabase(
 	entry: Omit<_QueueEntry, "channelId" | "guildId">,
 	queueChannel: TextChannel
 ): Promise<QueueEntry> {
-	// FIXME: These could be done all in one go if we used table relations properly
-
-	// Make sure the guild config is in there
-	await useRepository("guild", guilds =>
-		guilds.upsert({
-			where: { id: queueChannel.guildId },
-			update: {},
-
-			create: {
-				currentQueue: queueChannel.id,
-				id: queueChannel.guildId,
-				isQueueOpen: false,
-				messageCommandPrefix: DEFAULT_MESSAGE_COMMAND_PREFIX
-			}
-		})
-	);
-
 	// Make sure the channel is in there
 	await useRepository("channel", channels =>
 		channels.upsert({
@@ -144,24 +115,6 @@ export async function saveNewEntryToDatabase(
 			create: {
 				guildId: queueChannel.guildId,
 				id: queueChannel.id
-			}
-		})
-	);
-
-	// Make sure we have at least the default queue config
-	await useRepository("queueConfig", queueConfigs =>
-		queueConfigs.upsert({
-			where: { channelId: queueChannel.id },
-			update: {},
-
-			create: {
-				blacklistedUsers: undefined,
-				channelId: queueChannel.id,
-				cooldownSeconds: null,
-				entryDurationMaxSeconds: null,
-				entryDurationMinSeconds: null,
-				queueDurationSeconds: null,
-				submissionMaxQuantity: null
 			}
 		})
 	);
@@ -447,25 +400,27 @@ export async function saveUserToStoredBlacklist(
 					userId
 				}
 			},
-			create: { userId } // the User to create if none were found to match the above reference
+			create: {
+				user: {
+					connectOrCreate: {
+						where: { id: userId },
+						create: { id: userId }
+					}
+				}
+			}
 		}
 	};
 
-	await useRepository("queueConfig", queueConfigs =>
-		queueConfigs.upsert({
+	await useRepository("queueConfig", configs =>
+		configs.upsert({
 			// If a config is found, update it:
 			where: { channelId: queueChannel.id },
 			update: { blacklistedUsers },
 
 			// If the queue config isn't found, create it:
 			create: {
-				blacklistedUsers,
 				channelId: queueChannel.id,
-				cooldownSeconds: null,
-				entryDurationMaxSeconds: null,
-				entryDurationMinSeconds: null,
-				queueDurationSeconds: null,
-				submissionMaxQuantity: null
+				blacklistedUsers
 			}
 		})
 	);
@@ -481,19 +436,18 @@ export async function removeUserFromStoredBlacklist(
 	userId: Snowflake,
 	queueChannel: TextChannel
 ): Promise<void> {
-	await useRepository("queueConfig", queueConfigs =>
-		queueConfigs.update({
-			where: { channelId: queueChannel.id },
-			data: {
-				blacklistedUsers: {
-					disconnect: {
-						queueConfigsChannelId_userId: {
-							queueConfigsChannelId: queueChannel.id,
-							userId
-						}
-					}
-				}
+	await useRepository("queueConfigToBlacklistedUsers", async relation => {
+		try {
+			// Delete the relation, easy as that:
+			await relation.delete({
+				where: { queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId } }
+			});
+		} catch (error) {
+			if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+				// Nothing to delete here! Move along
+			} else {
+				throw error;
 			}
-		})
-	);
+		}
+	});
 }
