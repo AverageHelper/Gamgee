@@ -5,7 +5,6 @@ import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
 import { logUser } from "../../helpers/logUser.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "../../constants/database.js";
-import { quo as parentCommand } from "./index.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import { whitelist } from "./whitelist.js";
 import {
@@ -32,6 +31,7 @@ export const blacklist: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
+		const { quo: parentCommand } = await import("./index.js");
 		const { type, guild, user, options, logger, reply, replyPrivately, deleteInvocation } = context;
 
 		const queueChannel = await getQueueChannel(guild);
