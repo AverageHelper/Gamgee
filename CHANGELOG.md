@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2023-02-24
+### Fixed
+- Startup loop under PM2 when the `NODE_ENV` environment variable is't available.
+
 ## [2.0.5] - 2023-02-14
 ### Added
 - We now verify on startup that all commands were deployed.
@@ -406,6 +410,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
+[2.0.6]: https://github.com/AverageHelper/Gamgee/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/AverageHelper/Gamgee/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/AverageHelper/Gamgee/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/AverageHelper/Gamgee/compare/v2.0.2...v2.0.3

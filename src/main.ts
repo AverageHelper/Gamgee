@@ -1,6 +1,6 @@
 import "source-map-support/register.js";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
-import { requireEnv } from "./helpers/environment.js";
+import { getEnv, requireEnv } from "./helpers/environment.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { registerEventHandlers } from "./events/index.js";
 import { useLogger } from "./logger.js";
@@ -46,7 +46,7 @@ export async function _main(logger = useLogger()): Promise<void> {
 
 /* istanbul ignore next */
 // Not Constantinople
-if (requireEnv("NODE_ENV") !== "test") {
+if (getEnv("NODE_ENV") !== "test") {
 	// Jest will never hit this without hax, but Mocha should:
 	void _main();
 }
