@@ -1,5 +1,5 @@
 import type { Subcommand } from "../Command.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { getCommandPrefix } from "../../useGuildStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
@@ -64,7 +64,7 @@ export const blacklist: Subcommand = {
 			}
 
 			blacklistedUsers.forEach(userId => {
-				push(` - <@${userId}>`, replyMsg);
+				push(` - ${userMention(userId)}`, replyMsg);
 				pushNewLine(replyMsg);
 			});
 

@@ -1,3 +1,4 @@
+import { channelMention, userMention } from "discord.js";
 import { expectNull, expectToContain, expectValueEqual } from "./testUtils/expectations/chai";
 import {
 	requireEnv,
@@ -45,7 +46,7 @@ describe("Command as admin", function () {
 			beforeEach(async function () {
 				await setIsQueueCreator(true);
 				await commandResponseInTestChannel(
-					`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`,
+					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
 					NEW_QUEUE
 				);
 			});
@@ -132,7 +133,9 @@ describe("Command as admin", function () {
 
 			it("allows the tester to set up a queue", async function () {
 				await setIsQueueCreator(true);
-				await sendCommandWithDefaultClient(`${QUEUE_COMMAND} setup <#${QUEUE_CHANNEL_ID}>`);
+				await sendCommandWithDefaultClient(
+					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`
+				);
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
 				);

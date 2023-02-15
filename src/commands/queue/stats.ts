@@ -1,5 +1,5 @@
 import type { Subcommand } from "../Command.js";
-import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, channelMention, EmbedBuilder } from "discord.js";
 import { countAllStoredEntries } from "../../useQueueStorage.js";
 import { durationString } from "../../helpers/durationString.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
@@ -45,7 +45,7 @@ export const stats: Subcommand = {
 
 		const embed = new EmbedBuilder() //
 			.setTitle("Queue Statistics")
-			.setDescription(`<#${queueChannel.id}>`);
+			.setDescription(channelMention(queueChannel.id));
 
 		try {
 			embed.addFields({ name: "Total Entries", value: `${count}` });

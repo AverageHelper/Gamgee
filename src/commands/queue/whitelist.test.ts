@@ -14,7 +14,7 @@ import { removeUserFromStoredBlacklist } from "../../useQueueStorage.js";
 const mockRemoveUserFromStoredBlacklist = removeUserFromStoredBlacklist as jest.Mock;
 
 import type { GuildedCommandContext } from "../Command.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import { whitelist } from "./whitelist.js";
 
@@ -39,7 +39,7 @@ describe("Removing from Queue Blacklist", () => {
 			options: [
 				{
 					name: "user",
-					value: `<@${goodUserId}>`,
+					value: userMention(goodUserId),
 					type: ApplicationCommandOptionType.String
 				}
 			],

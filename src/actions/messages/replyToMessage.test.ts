@@ -1,4 +1,5 @@
 import type { CommandInteraction, Message, User } from "discord.js";
+import { channelMention } from "discord.js";
 import { DEFAULT_LOCALE } from "../../i18n.js";
 import { replyPrivately, sendPrivately } from "./replyToMessage.js";
 
@@ -124,7 +125,7 @@ describe("Message replies", () => {
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith(
-				`(Reply from <#${message.channel.id}>)\n${content}`
+				`(Reply from ${channelMention(message.channel.id)})\n${content}`
 			);
 		});
 
@@ -136,7 +137,7 @@ describe("Message replies", () => {
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith({
-				content: `(Reply from <#${message.channel.id}>)\n`
+				content: `(Reply from ${channelMention(message.channel.id)})\n`
 			});
 		});
 
@@ -149,7 +150,7 @@ describe("Message replies", () => {
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith({
-				content: `(Reply from <#${message.channel.id}>)\n${content}`
+				content: `(Reply from ${channelMention(message.channel.id)})\n${content}`
 			});
 		});
 
@@ -164,7 +165,7 @@ describe("Message replies", () => {
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith(
-				`(Reply from <#${message.channel.id}>)\n${content}`
+				`(Reply from ${channelMention(message.channel.id)})\n${content}`
 			);
 			expect(mockChannelSend).toHaveBeenCalledOnce();
 			expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("tried to DM you"));

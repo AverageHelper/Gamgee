@@ -1,5 +1,5 @@
 import type { Subcommand } from "../Command.js";
-import { ApplicationCommandOptionType, ChannelType } from "discord.js";
+import { ApplicationCommandOptionType, channelMention, ChannelType } from "discord.js";
 import { resolveChannelFromOption } from "../../helpers/optionResolvers.js";
 import { setQueueChannel } from "../../useGuildStorage.js";
 
@@ -54,7 +54,7 @@ export const setup: Subcommand = {
 			newQueueChannel.send("This is a queue now. :smiley:")
 		]);
 		return await reply({
-			content: `New queue set up in <#${newQueueChannel.id}>`,
+			content: `New queue set up in ${channelMention(newQueueChannel.id)}`,
 			ephemeral: true
 		});
 	}
