@@ -133,7 +133,7 @@ export async function pushEntryToQueue(
 				url: newEntry.url,
 				seconds: newEntry.seconds,
 				senderId: newEntry.senderId,
-				sentAt: new Date(),
+				sentAt: new Date(), // this call should be linearized with other such calls, so that we never have a duplicate date. Useful to keep ordering consistent between queue channel and db.
 				queueMessageId: queueMessage.id,
 				isDone: false
 			},

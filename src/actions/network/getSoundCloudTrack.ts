@@ -1,5 +1,5 @@
 import type { VideoDetails } from "../getVideoDetails.js";
-import { fetch } from "../../helpers/fetch.js";
+import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { URL } from "node:url";
 import { useLogger } from "../../logger.js";
@@ -26,8 +26,7 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 	// (*.app.goo.gl links come from the app, and redirect to the song page)
 	let parsedUrl: URL;
 	try {
-		// FIXME: This makes the function take twice as long to run
-		const response = await fetch(url.href, { redirect: "follow" });
+		const response = await fetchWithTimeout(url.href, undefined, { redirect: "follow" });
 		parsedUrl = new URL(response.url);
 	} catch (error) {
 		logger?.debug(

@@ -1,23 +1,45 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { videoInfo, getInfoOptions } from "ytdl-core";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
-import { getYouTubeVideo } from "./getYouTubeVideo.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 import { URL } from "node:url";
 
+// Mock ytdl
+jest.mock("ytdl-core", () => ({
+	validateURL: jest.requireActual<typeof import("ytdl-core")>("ytdl-core").validateURL,
+	getBasicInfo: jest.fn()
+}));
+import { getBasicInfo } from "ytdl-core";
+const mockGetBasicInfo = getBasicInfo as jest.Mock<
+	Promise<videoInfo>,
+	[url: string, options?: getInfoOptions]
+>;
+
+// Import the unit under test
+import { getYouTubeVideo } from "./getYouTubeVideo.js";
+
 describe("YouTube track details", () => {
+	beforeEach(() => {
+		mockGetBasicInfo.mockRejectedValue(new Error("Please mock a response."));
+	});
+
 	test.each`
-		desc                                 | url                                                                            | error
-		${"SoundCloud URL"}                  | ${"https://soundcloud.com/sparkeemusic/deadmau5-strobe-sparkee-nudisco-remix"} | ${InvalidYouTubeUrlError}
-		${"unavailable video (9Y8ZGLiqXba)"} | ${"https://youtu.be/9Y8ZGLiqXba"}                                              | ${UnavailableError}
-		${"unavailable video (dmneTS-Gows)"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}                               | ${UnavailableError}
-		${"too-short URL"}                   | ${"https://www.youtube.com/watch?v=9Y8ZGL"}                                    | ${InvalidYouTubeUrlError}
-	`(
-		"throws with $desc",
-		async ({ url, error }: { url: string; error: Error }) => {
-			await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
-		},
-		20000
-	);
+		id               | url
+		${"9Y8ZGLiqXba"} | ${"https://youtu.be/9Y8ZGLiqXba"}
+		${"dmneTS-Gows"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}
+	`("throws with unavailable video ($id)", async ({ url }: { url: string }) => {
+		const error = new UnavailableError(new URL(url));
+		mockGetBasicInfo.mockRejectedValue(error);
+		await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
+	});
+
+	test.each`
+		desc                | url                                                                            | error
+		${"SoundCloud URL"} | ${"https://soundcloud.com/sparkeemusic/deadmau5-strobe-sparkee-nudisco-remix"} | ${InvalidYouTubeUrlError}
+		${"too-short URL"}  | ${"https://www.youtube.com/watch?v=9Y8ZGL"}                                    | ${InvalidYouTubeUrlError}
+	`("throws with $desc", async ({ url, error }: { url: string; error: typeof Error }) => {
+		// should throw due to a local check, shouldn't have to mock the network response here
+		await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
+	});
 
 	const url = "https://www.youtube.com/watch?v=9Y8ZGLiqXB8";
 
@@ -39,20 +61,44 @@ describe("YouTube track details", () => {
 	`(
 		"returns info for a YouTube link that $desc, $duration seconds long",
 		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
+			// These links *should* work on real YouTube, but we shouldn't hit the network while testing
+			mockGetBasicInfo.mockResolvedValue({
+				videoDetails: {
+					availableCountries: [
+						/* ... */ "US" /* ... */ // truncated for testing purposes
+					],
+					lengthSeconds: `${duration}`,
+					isLiveContent: true,
+					video_url: result,
+					title: "sample"
+				}
+			} as unknown as videoInfo);
+
 			const details = await getYouTubeVideo(new URL(url));
 			expectValueEqual(details.url, result);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		},
-		20000
+		}
 	);
 
 	test("returns infinite duration for a livestream", async () => {
 		// lofi hip hop radio - beats to relax/study to
 		const url = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
+		mockGetBasicInfo.mockResolvedValue({
+			videoDetails: {
+				availableCountries: [
+					/* ... */ "US" /* ... */ // truncated for testing purposes
+				],
+				lengthSeconds: "0",
+				isLiveContent: true,
+				video_url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+				title: "lofi hip hop radio - beats to relax/study to"
+			}
+		} as unknown as videoInfo);
+
 		const details = await getYouTubeVideo(new URL(url));
 		expectValueEqual(details.url, url);
 		expectDefined(details.duration.seconds);
 		expectValueEqual(details.duration.seconds, Number.POSITIVE_INFINITY);
-	}, 20000);
+	});
 });

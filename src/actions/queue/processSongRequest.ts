@@ -355,6 +355,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				)}**  :checkered_flag:\n\n========`,
 				reply: false
 			});
+			// TODO: Add a parenthetical here about the amount of free time remaining on the queue
 		}
 
 		// Handle fetch errors

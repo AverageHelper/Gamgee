@@ -64,7 +64,7 @@ export async function deleteMessageWithId(
  * @returns A `Promise` that resolves to `true` if the messages were deleted successfully.
  */
 export async function bulkDeleteMessagesWithIds(
-	messageIds: Array<Snowflake>,
+	messageIds: ReadonlyArray<Snowflake>,
 	channel: TextChannel
 ): Promise<boolean> {
 	if (messageIds.length === 0) return true;

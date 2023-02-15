@@ -19,12 +19,12 @@ const loggers = new Map<LogLevel, Logger>();
 const rawLogLevel = getEnv("LOG_LEVEL");
 const consoleLogLevel = isLogLevel(rawLogLevel) ? rawLogLevel : null;
 
-const nodeEnv = getEnv("NODE_ENV");
+const nodeEnv = getEnv("NODE_ENV") ?? "";
 const defaultConsoleLogLevel: LogLevel =
 	consoleLogLevel ??
 	(nodeEnv === "production" //
 		? "info"
-		: nodeEnv === "test"
+		: nodeEnv.startsWith("test")
 		? "error"
 		: "debug");
 

@@ -80,6 +80,7 @@ export const quo: Command = {
 			}
 		}
 
+		// TODO: Print clickable slash command references instead
 		const response = createPartialString("The possible subcommands are:");
 		Object.values(namedSubcommands).forEach(command => {
 			pushNewLine(response);

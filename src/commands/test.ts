@@ -88,6 +88,7 @@ export const test: Command = {
 	requiresGuild: false,
 	async execute({ userLocale, prepareForLongRunningTasks, replyPrivately }) {
 		if (isTesting) {
+			// TODO: Scope this to the user, instead of globally
 			await replyPrivately(
 				t("commands.test.responses.cannot-run-concurrent-invocations", userLocale)
 			);

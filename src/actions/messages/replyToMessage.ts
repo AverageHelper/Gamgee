@@ -8,7 +8,7 @@ import type {
 	TextBasedChannel,
 	User
 } from "discord.js";
-import { ChannelType, DiscordAPIError } from "discord.js";
+import { channelMention, ChannelType, DiscordAPIError } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
 import { getEnv } from "../../helpers/environment.js";
 import { logUser } from "../../helpers/logUser.js";
@@ -73,7 +73,7 @@ function replyMessage(
 	const msg = createPartialString();
 	if (source && source.type !== ChannelType.DM) {
 		push("(", msg);
-		push(ti("common.reply-from-channel", { channel: `<#${source.id}>` }, locale), msg);
+		push(ti("common.reply-from-channel", { channel: channelMention(source.id) }, locale), msg);
 		push(")", msg);
 		pushNewLine(msg);
 	}

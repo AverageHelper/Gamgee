@@ -1,7 +1,138 @@
-import type { Range } from "./editMessage.js";
 import "../../../tests/testUtils/leakedHandles.js";
+import type { Message } from "discord.js";
+import type { Range } from "./editMessage.js";
 import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
-import { positionsOfUriInText, escapeUriInString, stopEscapingUriInString } from "./editMessage.js";
+import {
+	editMessage,
+	escapeUriInString,
+	positionsOfUriInText,
+	stopEscapingUriInString,
+	suppressEmbedsForMessage
+} from "./editMessage.js";
+
+const mockEdit = jest.fn();
+
+describe("editing messages", () => {
+	const message = {
+		edit: mockEdit
+	} as unknown as Message;
+	const newValue = "new new new";
+
+	test("calls the `edit` meethod of the given message", async () => {
+		expectValueEqual(await editMessage(message, newValue), true);
+		expect(mockEdit).toHaveBeenCalledOnce();
+		expect(mockEdit).toHaveBeenCalledWith(newValue);
+	});
+
+	test("returns false when the message edit fails", async () => {
+		jest.spyOn(global.console, "error").mockImplementation(() => undefined);
+
+		mockEdit.mockRejectedValueOnce(new Error("This is a test"));
+		expectValueEqual(await editMessage(message, newValue), false);
+		expect(mockEdit).toHaveBeenCalledOnce();
+		expect(mockEdit).toHaveBeenCalledWith(newValue);
+
+		jest.restoreAllMocks();
+	});
+});
+
+describe("Suppress embeds", () => {
+	const mockSuppressEmbeds = jest.fn();
+
+	const meId = "self-1234";
+	const otherId = "other-1234";
+	let message: Message;
+
+	describe("on our own message", () => {
+		beforeEach(() => {
+			message = {
+				content: "old old old",
+				suppressEmbeds: mockSuppressEmbeds,
+				edit: mockEdit,
+				client: {
+					user: {
+						id: meId
+					}
+				},
+				author: {
+					id: meId
+				}
+			} as unknown as Message;
+		});
+
+		test("edits the message content directly to suppress embeds", async () => {
+			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
+			expect(mockSuppressEmbeds).not.toHaveBeenCalled();
+			expect(mockEdit).toHaveBeenCalledOnce();
+			expect(mockEdit).toHaveBeenCalledWith({
+				flags: ["SuppressEmbeds"],
+				content: message.content,
+				allowedMentions: { users: [] }
+			});
+		});
+
+		test("edits the message content directly to unsuppress embeds", async () => {
+			await expect(suppressEmbedsForMessage(message, false)).resolves.toBeUndefined();
+			expect(mockSuppressEmbeds).not.toHaveBeenCalled();
+			expect(mockEdit).toHaveBeenCalledOnce();
+			expect(mockEdit).toHaveBeenCalledWith({
+				flags: [],
+				content: message.content
+			});
+		});
+
+		test("doesn't throw if message edit fails", async () => {
+			jest.spyOn(global.console, "error").mockImplementation(() => undefined);
+			mockEdit.mockRejectedValueOnce(new Error("This is a test"));
+
+			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
+			await expect(suppressEmbedsForMessage(message, false)).resolves.toBeUndefined();
+
+			jest.restoreAllMocks();
+		});
+	});
+
+	describe("on message not our own", () => {
+		beforeEach(() => {
+			message = {
+				suppressEmbeds: mockSuppressEmbeds,
+				client: {
+					user: {
+						id: meId
+					}
+				},
+				author: {
+					id: otherId
+				}
+			} as unknown as Message;
+		});
+
+		test("the `suppress`` parameter defaults to `true`", async () => {
+			await expect(suppressEmbedsForMessage(message)).resolves.toBeUndefined();
+			expect(mockSuppressEmbeds).toHaveBeenCalledOnce();
+			expect(mockSuppressEmbeds).toHaveBeenCalledWith(true);
+			expect(mockEdit).not.toHaveBeenCalled();
+		});
+
+		test("calls the suppressEmbeds method of the message if the sender is not us", async () => {
+			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
+			expect(mockSuppressEmbeds).toHaveBeenCalledOnce();
+			expect(mockSuppressEmbeds).toHaveBeenCalledWith(true);
+			expect(mockEdit).not.toHaveBeenCalled();
+		});
+
+		test("doesn't throw if message edit fails", async () => {
+			jest.spyOn(global.console, "error").mockImplementation(() => undefined);
+			mockSuppressEmbeds.mockRejectedValueOnce(new Error("This is a test"));
+			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
+
+			mockSuppressEmbeds.mockRejectedValueOnce(new Error("This is a test"));
+			await expect(suppressEmbedsForMessage(message, false)).resolves.toBeUndefined();
+
+			jest.restoreAllMocks();
+		});
+	});
+});
 
 describe("Identifying URIs in strings", () => {
 	test.each`

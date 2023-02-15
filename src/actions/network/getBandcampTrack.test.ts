@@ -1,20 +1,36 @@
-import "../../../tests/testUtils/leakedHandles.js";
-import { benchmark } from "../../../tests/testUtils/benchmark.js";
-import { getBandcampTrack } from "./getBandcampTrack.js";
+import type { Result } from "htmlmetaparser";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { URL } from "node:url";
 import { VideoError } from "../../errors/VideoError.js";
-import {
-	expectDefined,
-	expectLessThan,
-	expectValueEqual
-} from "../../../tests/testUtils/expectations/jest.js";
+
+// Mock fetchMetadata
+jest.mock("../../helpers/fetchMetadata.js");
+import { fetchMetadata } from "../../helpers/fetchMetadata.js";
+const mockFetchMetadata = fetchMetadata as jest.Mock<
+	Promise<Result>,
+	[url: URL, timeoutSeconds?: number]
+>;
+
+// Import the unit under test
+import { getBandcampTrack } from "./getBandcampTrack.js";
 
 describe("Bandcamp track details", () => {
-	const TIMEOUT = 50; // seconds
+	beforeEach(() => {
+		mockFetchMetadata.mockRejectedValue(new Error("Please mock a response."));
+	});
 
 	test("throws for bandcamp album links", async () => {
+		// It's an album, so no duration
 		const url = "https://poniesatdawn.bandcamp.com/album/memories";
-		await expect(() => getBandcampTrack(new URL(url), TIMEOUT)).rejects.toThrow(VideoError);
+		mockFetchMetadata.mockResolvedValue({
+			jsonld: [
+				{
+					name: "sample"
+				}
+			]
+		} as unknown as Result);
+
+		await expect(() => getBandcampTrack(new URL(url))).rejects.toThrow(VideoError);
 	});
 
 	test.each`
@@ -25,26 +41,19 @@ describe("Bandcamp track details", () => {
 	`(
 		"returns info for Bandcamp track $url, $duration seconds long",
 		async ({ url, duration }: { url: string; duration: number }) => {
-			const details = await getBandcampTrack(new URL(url), TIMEOUT);
+			mockFetchMetadata.mockResolvedValue({
+				jsonld: [
+					{
+						name: "sample",
+						duration: `0H${Math.floor(duration / 60)}M${duration % 60}S`
+					}
+				]
+			} as unknown as Result);
+
+			const details = await getBandcampTrack(new URL(url));
 			expectValueEqual(details.url, url);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		},
-		20000
+		}
 	);
-
-	const ms = 1000;
-	test(`runs in a reasonable amount of time (less than ${ms}ms)`, async () => {
-		const url = new URL("https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul");
-
-		// Sanity: check that this is still the right track
-		const duration = 233;
-		const song = await getBandcampTrack(url, TIMEOUT);
-		expectValueEqual(song.duration.seconds, duration);
-
-		// Benchmark the fetch operation
-		const average = await benchmark(() => getBandcampTrack(url, TIMEOUT));
-
-		expectLessThan(average, ms);
-	}, 20000);
 });

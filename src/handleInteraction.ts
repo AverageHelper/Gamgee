@@ -24,7 +24,7 @@ export async function handleInteraction(
 	// Don't respond to bots unless we're being tested
 	if (
 		interaction.user.bot &&
-		(interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
+		(interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test-mocha")
 	) {
 		logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
 		return;

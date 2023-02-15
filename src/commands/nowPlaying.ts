@@ -6,6 +6,7 @@ import { getAllStoredEntries } from "../useQueueStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { localizations } from "../i18n.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
+import { userMention } from "discord.js";
 
 const uncertainties = [
 	"There's a good chance",
@@ -88,7 +89,7 @@ export const nowPlaying: Command = {
 		push(randomCurrent(), response);
 		push(" ", response);
 
-		push(`<@${firstNotDone.senderId}>'s submission: `, response);
+		push(`${userMention(firstNotDone.senderId)}'s submission: `, response);
 		push(firstNotDone.url, response);
 		// TODO: Also read out the song's title. Store this in the database as it comes in.
 

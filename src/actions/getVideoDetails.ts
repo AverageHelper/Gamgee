@@ -35,7 +35,7 @@ export async function getVideoDetails(
 		const url: URL =
 			typeof urlOrString === "string" ? new URL(urlOrString.split(/\s+/u)[0] ?? "") : urlOrString;
 		return await Promise.any([
-			getYouTubeVideo(url), //
+			getYouTubeVideo(url),
 			getSoundCloudTrack(url),
 			getBandcampTrack(url),
 			getPonyFmTrack(url)

@@ -223,7 +223,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 	// Don't respond to bots unless we're being tested
 	if (
 		message.author.bot &&
-		(message.author.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
+		(message.author.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test-mocha")
 	) {
 		logger.debug("Momma always said not to talk to strangers. They could be *bots* ");
 		return;

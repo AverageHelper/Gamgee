@@ -1,6 +1,6 @@
 import type { CommandInteractionOption, Guild } from "discord.js";
 import "../../tests/testUtils/leakedHandles.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, channelMention } from "discord.js";
 import { expectNull } from "../../tests/testUtils/expectations/jest.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
 
@@ -43,7 +43,7 @@ describe("Option Resolver", () => {
 
 		test("parses a channel ID from a string value", () => {
 			const channelId = "resolveme";
-			option.value = `<#${channelId}>`;
+			option.value = channelMention(channelId);
 			resolveChannelFromOption(option, guild);
 
 			expect(mockResolveChannel).toHaveBeenCalledOnce();
@@ -52,7 +52,7 @@ describe("Option Resolver", () => {
 
 		test("resolves a channel from a string value", () => {
 			const channel = { id: "resolveme" };
-			option.value = `<#${channel.id}>`;
+			option.value = channelMention(channel.id);
 			mockResolveChannel.mockReturnValue(channel);
 
 			const resolved = resolveChannelFromOption(option, guild);

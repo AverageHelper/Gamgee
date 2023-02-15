@@ -1,6 +1,6 @@
 import type { Client, GuildMember, Message } from "discord.js";
 import "../tests/testUtils/leakedHandles.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
@@ -151,10 +151,10 @@ describe("Command handler", () => {
 	});
 
 	describe.each`
-		prefix             | desc
-		${PREFIX}          | ${"command prefix"}
-		${`<@${botId}> `}  | ${"username-mention"}
-		${`<@!${botId}> `} | ${"nickname-mention"}
+		prefix                      | desc
+		${PREFIX}                   | ${"command prefix"}
+		${`${userMention(botId)} `} | ${"username-mention"}
+		${`<@!${botId}> `}          | ${"nickname-mention"}
 	`("using $desc", ({ prefix }: { prefix: string }) => {
 		describe("Option Constraints", () => {
 			test("runs if option string is valid", async () => {

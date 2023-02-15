@@ -24,6 +24,7 @@
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";
+import { Faces } from "discord.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
 import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
@@ -34,7 +35,7 @@ import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 
-export const SHRUGGIE = "¯\\_(ツ)_/¯";
+export const SHRUGGIE = Faces.Shrug;
 
 // NOTE: disabling ESLint here because we don't need
 // to have `: void` declarations sprinkled in the
@@ -96,6 +97,7 @@ export const phrases: ResponseRepository = [
 	// I18N
 	`Can _you_ speak in ${locales.length} different languages? I didn't think so :p`,
 	`Can you speak more than ${locales.length} different languages? Pretty great if you can, I was just wondering ^^`,
+	[`Can _you_ speak ${locales.length} languages too?`, "Just curious ^^"],
 	() =>
 		`I think I speak "${
 			metadataForLocale(randomSupportedLocale()).nickname
@@ -369,7 +371,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 228 of these
+]; // 229 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

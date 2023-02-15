@@ -28,7 +28,7 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 	// Don't respond to bots unless we're being tested
 	if (
 		interaction.user.bot &&
-		(interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test")
+		(interaction.user.id !== getEnv("CORDE_BOT_ID") || getEnv("NODE_ENV") !== "test-mocha")
 	) {
 		logger.silly("Momma always said not to talk to strangers. They could be *bots* ");
 		return;
@@ -112,14 +112,14 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 
 			logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
 			const rejection = createPartialString();
-			push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection);
+			push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection); // TODO: i18n
 			push(entry.url, rejection);
 
 			await sendPrivately(user, composed(rejection));
 
 			if (await isQueueOpen(guild)) {
 				await timeoutSeconds(2);
-				await sendPrivately(user, "You can resubmit another song if you'd like to. :slight_smile:");
+				await sendPrivately(user, "You can submit another song if you'd like to. :slight_smile:"); // TODO: i18n
 			}
 			break;
 		}

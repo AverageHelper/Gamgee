@@ -1,11 +1,10 @@
 import type { Subcommand } from "../Command.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { getCommandPrefix } from "../../useGuildStorage.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
 import { logUser } from "../../helpers/logUser.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "../../constants/database.js";
-import { sr as parentCommand } from "../songRequest.js";
 import { resolveUserFromOption } from "../../helpers/optionResolvers.js";
 import { whitelist } from "./whitelist.js";
 import {
@@ -32,6 +31,7 @@ export const blacklist: Subcommand = {
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
+		const { quo: parentCommand } = await import("./index.js");
 		const { type, guild, user, options, logger, reply, replyPrivately, deleteInvocation } = context;
 
 		const queueChannel = await getQueueChannel(guild);
@@ -54,7 +54,7 @@ export const blacklist: Subcommand = {
 				type === "interaction" ? SLASH_COMMAND_INTENT_PREFIX : await getCommandPrefix(guild);
 			const guildName = guild.name.trim();
 
-			const replyMsg = createPartialString();
+			const replyMsg = createPartialString(); // TODO: i18n
 
 			push(`**Song Request Blacklist for *${guildName}***`, replyMsg);
 			pushNewLine(replyMsg);
@@ -64,7 +64,7 @@ export const blacklist: Subcommand = {
 			}
 
 			blacklistedUsers.forEach(userId => {
-				push(` - <@${userId}>`, replyMsg);
+				push(` - ${userMention(userId)}`, replyMsg);
 				pushNewLine(replyMsg);
 			});
 
@@ -92,11 +92,11 @@ export const blacklist: Subcommand = {
 
 		const subject = await resolveUserFromOption(firstOption, guild);
 		if (!subject) {
-			return await reply({ content: ":x: I don't know who that is.", ephemeral: true });
+			return await reply({ content: ":x: I don't know who that is.", ephemeral: true }); // TODO: i18n
 		}
 
 		if (subject.id === user.id) {
-			return await reply({ content: ":x: You can't blacklist yourself, silly!", ephemeral: true });
+			return await reply({ content: ":x: You can't blacklist yourself, silly!", ephemeral: true }); // TODO: i18n
 		}
 
 		if (subject.id === guild.ownerId) {
@@ -113,6 +113,6 @@ export const blacklist: Subcommand = {
 			content: `:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`,
 			shouldMention: false,
 			ephemeral: true
-		});
+		}); // TODO: i18n
 	}
 };

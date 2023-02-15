@@ -1,7 +1,8 @@
 // FIXME: For some reason, tests can't see the types for leaked-handles, and I can't be bothered to fix that rn
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { set as configureObserver } from "leaked-handles";
+import * as leakedHandles from "leaked-handles";
+const { set: configureObserver } = leakedHandles;
 
 configureObserver({
 	fullStack: true,
