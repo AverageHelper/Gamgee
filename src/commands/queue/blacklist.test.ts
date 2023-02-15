@@ -76,7 +76,7 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
-				expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
+				expect.stringContaining(`?quo ${blacklist.name} <user mention>`)
 			);
 		});
 
@@ -88,7 +88,7 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledOnce(); // only called when not a '/' command
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
-				expect.stringContaining(`?sr ${blacklist.name} <user mention>`)
+				expect.stringContaining(`?quo ${blacklist.name} <user mention>`)
 			);
 		});
 	});
