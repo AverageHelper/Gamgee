@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - We now verify on startup that all commands were deployed.
 
+### Changed
+- Round the output of `/cooldown` _upward_ to the next second, rather than _strictly_ to the nearest second. The actual cooldown time is unchanged. This new rounding only means that folks who time their next subission to the second based on `/cooldown` will be less likely to be 0-1 seconds early.
+
 ### Fixed
 - Crashes related to blacklist management
 

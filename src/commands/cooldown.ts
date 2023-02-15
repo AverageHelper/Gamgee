@@ -66,9 +66,7 @@ export const cooldown: Command = {
 				return await replyPrivately(msgSubmitImmediately);
 			}
 
-			const absolute = Math.round(
-				latestTimestamp / MILLISECONDS_IN_SECOND + config.cooldownSeconds
-			);
+			const absolute = Math.ceil(latestTimestamp / MILLISECONDS_IN_SECOND + config.cooldownSeconds);
 			const relative = durationString(userLocale, timeToWait);
 
 			const msg = createPartialString("You may submit in ");
