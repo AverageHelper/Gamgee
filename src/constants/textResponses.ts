@@ -24,7 +24,6 @@
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";
-import { Faces } from "discord.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
 import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
@@ -35,7 +34,7 @@ import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 
-export const SHRUGGIE = Faces.Shrug;
+export const SHRUGGIE = "¯\\_(ツ)_/¯"; // The `Faces.Shrug` constant from discord.js has incorrect escapes
 
 // NOTE: disabling ESLint here because we don't need
 // to have `: void` declarations sprinkled in the
