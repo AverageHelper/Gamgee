@@ -10,7 +10,18 @@ export const open: GuildedSubcommand = {
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "queue-admin"],
-	async execute({ guild, channel, type, reply, followUp, deleteInvocation }) {
+	async execute({
+		guild,
+		channel,
+		type,
+		createdTimestamp,
+		logger,
+		reply,
+		followUp,
+		deleteInvocation
+	}) {
+		logger.debug(`Got queue-open request at ${createdTimestamp}`);
+
 		const [queueChannel] = await Promise.all([
 			getQueueChannel(guild), //
 			deleteInvocation()
@@ -28,6 +39,7 @@ export const open: GuildedSubcommand = {
 		}
 
 		await setQueueOpen(true, guild);
+		logger.debug(`Opened queue at ${Date.now()}`);
 
 		const queueIsCurrent = channel?.id === queueChannel.id;
 		await queueChannel.send("This queue is now open! :smiley:");

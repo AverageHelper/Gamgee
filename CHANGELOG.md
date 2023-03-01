@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - `/sr` now presents song request embeds more quickly.
+- `/quo open` now logs the timestamp at which the queue was opened.
 
 ### Security
 - Updated vulnerable dependencies.
