@@ -8,9 +8,13 @@ import { localizations, t } from "../i18n.js";
 import { logUser } from "../helpers/logUser.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
-import { sendMessageInChannel, stopEscapingUriInString } from "../actions/messages/index.js";
 import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
+import {
+	deleteMessage,
+	sendMessageInChannel,
+	stopEscapingUriInString
+} from "../actions/messages/index.js";
 
 // TODO: i18n
 export const sr: GuildedCommand = {
@@ -39,7 +43,6 @@ export const sr: GuildedCommand = {
 			options,
 			createdTimestamp,
 			logger,
-			type,
 			reply,
 			replyPrivately,
 			prepareForLongRunningTasks,
@@ -49,19 +52,61 @@ export const sr: GuildedCommand = {
 		const MENTION_SENDER = `<@!${user.id}>`;
 
 		logger.debug(`Got song request message at ${createdTimestamp} from ${logUser(user)}`);
-		const queueChannel = await getQueueChannel(guild);
-		if (!queueChannel) {
-			await context.followUp({
-				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
-				reply: false
-			});
-			return;
-		}
 
 		const firstOption = options[0];
 		if (!firstOption) {
 			const { howto } = await import("./howto.js");
 			return await howto.execute(context);
+		}
+
+		const escapedSongUrlString = resolveStringFromOption(firstOption).trim();
+		const shouldHideEmbeds =
+			escapedSongUrlString.startsWith("<") && escapedSongUrlString.endsWith(">");
+
+		const songUrlString = shouldHideEmbeds
+			? stopEscapingUriInString(escapedSongUrlString)
+			: escapedSongUrlString;
+		let songUrl: URL;
+		let publicPreemptiveResponse: Promise<Message | null> = Promise.resolve(null);
+
+		try {
+			songUrl = new URL(songUrlString);
+		} catch (error) {
+			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
+			// TODO: Be more specific. What kind of error?
+			return await reply(
+				`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?` // TODO: I18N
+			);
+		}
+
+		if (channel && context.type === "interaction") {
+			// The link hasn't been embedded yet, so embed it (unless the user has said not to do that)
+			// This means we'll need to remember this message to delete it if the submission gets rejected
+			// This should match the behavior of context.deleteInvocation() on `?sr`
+			const href = shouldHideEmbeds ? hideLinkEmbed(songUrl.href) : songUrl.href;
+			publicPreemptiveResponse = sendMessageInChannel(channel, {
+				content: `${MENTION_SENDER}\n?${sr.name} ${href}`,
+				allowedMentions: { users: [], repliedUser: false }
+			});
+
+			await prepareForLongRunningTasks(true);
+		}
+
+		const queueChannel = await getQueueChannel(guild);
+		if (!queueChannel) {
+			// Delete the preemptive message, if it exists
+			const p = await publicPreemptiveResponse;
+			if (p) {
+				await deleteMessage(p);
+			} else {
+				await deleteInvocation();
+			}
+
+			await context.followUp({
+				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
+				reply: false
+			});
+			return;
 		}
 
 		if (channel?.id === queueChannel.id) {
@@ -74,43 +119,17 @@ export const sr: GuildedCommand = {
 
 		const isOpen = await isQueueOpen(guild);
 		if (!isOpen) {
-			const locale = type === "interaction" ? userLocale : guildLocale;
-			return await reply({
-				content: `:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", locale)}`,
-				ephemeral: true
-			});
-		}
+			// Delete the preemptive message, if it exists
+			const p = await publicPreemptiveResponse;
+			if (p) {
+				await deleteMessage(p);
+			} else {
+				await deleteInvocation();
+			}
 
-		const escapedSongUrlString = resolveStringFromOption(firstOption).trim();
-		const shouldHideEmbeds =
-			escapedSongUrlString.startsWith("<") && escapedSongUrlString.endsWith(">");
-		const songUrlString = shouldHideEmbeds
-			? stopEscapingUriInString(escapedSongUrlString)
-			: escapedSongUrlString;
-		let songUrl: URL;
-		let publicPreemptiveResponse: Message | null = null;
-
-		try {
-			songUrl = new URL(songUrlString);
-		} catch (error) {
-			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
-			return await reply(
-				`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?`
+			return await replyPrivately(
+				`:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", userLocale)}`
 			);
-		}
-
-		if (channel && context.type === "interaction") {
-			// The link hasn't been embedded yet, so embed it
-			// This means we'll need to remember this message to delete it if the submission gets rejected
-			// This should match the behavior of context.deleteInvocation() on `?sr`
-			await prepareForLongRunningTasks(true);
-
-			// Post the link. If the user doesn't want embeds, don't embed
-			const href = shouldHideEmbeds ? hideLinkEmbed(songUrl.href) : songUrl.href;
-			publicPreemptiveResponse = await sendMessageInChannel(channel, {
-				content: `${MENTION_SENDER}\n?sr ${href}`,
-				allowedMentions: { users: [], repliedUser: false }
-			});
 		}
 
 		const requestQueue = useJobQueue<SongRequest>("urlRequest");
@@ -123,5 +142,6 @@ export const sr: GuildedCommand = {
 			publicPreemptiveResponse,
 			logger
 		});
+		logger.debug(`Enqueued request for processing at ${Date.now()} from ${logUser(user)}`);
 	}
 };
