@@ -83,6 +83,14 @@ export const phrases: ResponseRepository = [
 	"Hey, get out of my sandwich",
 	"I like trains",
 
+	// Columbo
+	"A little early in the evening for this burglar, isn't it, Commissioner?",
+	"Can we talk off the record?",
+	"I know no one is allowed to pass, that's what the other three guards told me. But I'd like to look around",
+	"I think that the most interesting investigation is always the one that you're working on at the moment.",
+	"Oh, there's just one more thing...",
+	"The eyewitness is you.",
+
 	// Deltarune
 	"Don't have anythings better to do.",
 	"Ho ho ho, i lost and confused.",
@@ -101,6 +109,7 @@ export const phrases: ResponseRepository = [
 		`I think I speak "${
 			metadataForLocale(randomSupportedLocale()).nickname
 		}" just fine, thank you!`,
+	'I think I speak "randomSupportedLocale()" just fine, thank you!',
 	[
 		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
 		"definitely",
@@ -130,6 +139,20 @@ export const phrases: ResponseRepository = [
 		`Time. Space. Reality. It's more than a linear path. It's a prism of endless possibility. Where a single choice can branch out into infinite realities, creating alternate worlds from the ones you know. Each a reflection of what could have been. Some heroes will rise, others will fall. And nothing will be the same. I am ${me}. I am your guide through these vast new realities. Follow me and dare to face the unknown, and ponder the question... *${
 			randomBoolean() ? "What if" : "Who asked"
 		}?*`,
+
+	// Pokémon
+	() =>
+		`${randomElementOfArray([
+			"Vaporeon",
+			"Jolteon",
+			"Flareon",
+			"Espeon",
+			"Umbreon",
+			"Leafeon",
+			"Glaceon",
+			"Sylveon",
+			"Eevee"
+		])} best eeveelution`,
 
 	// Pony
 	"And that's how Equestria was made!",
@@ -315,6 +338,10 @@ export const phrases: ResponseRepository = [
 	"Second star to the right, and straight on until closing time",
 	"So anyways, I started blasting",
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
+	[
+		"So, I'll press this button, then this button, then this button, then this button, then this—",
+		"OH NO NOT THAT BUTTON"
+	],
 	() =>
 		`So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||${randomElementOfArray(
 			[
@@ -357,6 +384,7 @@ export const phrases: ResponseRepository = [
 	"What's the matter?",
 	"Where it is, or anything else relevant",
 	"Why do they call it oven when you of in the cold food of out hot eat the food?",
+	"Without is with out, but with is without out.",
 	"Wow, that's a lot of words. Too bad I'm not reading them",
 	"yesn't",
 	["yggrfygiryigrehirehjirgejhigeuijgejirhg", "Whoops! Sorry, I dropped my keyboard :sweat_smile:"],
@@ -370,7 +398,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 229 of these
+]; // 239 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**
