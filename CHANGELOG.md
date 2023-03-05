@@ -10,9 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/sr` now presents song request embeds more quickly.
 - `/quo open` now logs the timestamp at which the queue was opened.
 
-### Security
-- Updated vulnerable dependencies.
-
 ## [2.0.6] - 2023-02-24
 ### Fixed
 - Startup loop under PM2 when the `NODE_ENV` environment variable is't available.
