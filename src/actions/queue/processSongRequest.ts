@@ -81,7 +81,7 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 			await deleteMessage(publicPreemptiveResponse);
 		}
 		try {
-			await context.interaction.editReply("Done.");
+			await context.interaction.editReply(t("commands.sr.responses.finished", context.userLocale));
 		} catch (error) {
 			logger.error(error);
 		}

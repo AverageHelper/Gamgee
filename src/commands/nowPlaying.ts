@@ -1,51 +1,32 @@
 import type { Command } from "./Command.js";
 import type { TextChannel } from "discord.js";
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
-import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { getAllStoredEntries } from "../useQueueStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-import { localizations } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 import { userMention } from "discord.js";
 
-const uncertainties = [
-	"There's a good chance",
-	"I'm like 85% sure",
-	"Very likely,",
-	"I think",
-	"The DJ told me"
-];
-let lastUncertainty: string | null = null;
+const responses = [
+	"commands.nowplaying.responses.almost-sure",
+	"commands.nowplaying.responses.dj-says",
+	"commands.nowplaying.responses.good-chance",
+	"commands.nowplaying.responses.i-think",
+	"commands.nowplaying.responses.likely"
+] as const;
+let lastResponse: Response | null = null;
 
-function randomUncertainty(): string {
-	let random = randomElementOfArray(uncertainties) ?? "";
-	while (random === lastUncertainty) {
-		random = randomElementOfArray(uncertainties) ?? "";
+type Response = GetArrayElementType<typeof responses>;
+
+function randomResponse(): Response {
+	let random = randomElementOfArray(responses) ?? "";
+	while (random === lastResponse) {
+		random = randomElementOfArray(responses) ?? "";
 	}
-	lastUncertainty = random;
+	lastResponse = random;
 	return random;
 }
 
-const current = [
-	"it's",
-	"they're playing",
-	"you're hearing",
-	"this is",
-	"we're hearing",
-	"they're playing"
-];
-let lastCurrent: string | null = null;
-
-function randomCurrent(): string {
-	let random = randomElementOfArray(current) ?? "";
-	while (random === lastCurrent) {
-		random = randomElementOfArray(current) ?? "";
-	}
-	lastCurrent = random;
-	return random;
-}
-
-// TODO: i18n
 export const nowPlaying: Command = {
 	name: "nowplaying",
 	nameLocalizations: localizations("commands.nowplaying.name"),
@@ -53,14 +34,14 @@ export const nowPlaying: Command = {
 	description: "Reveal the current song in the queue (or my best guess).",
 	descriptionLocalizations: localizations("commands.nowplaying.description"),
 	requiresGuild: true,
-	async execute({ guild, user, logger, replyPrivately, deleteInvocation }) {
+	async execute({ guild, user, userLocale, logger, replyPrivately, deleteInvocation }) {
 		await deleteInvocation();
 
 		const queueChannel: TextChannel | null = await getQueueChannel(guild);
 
 		if (!queueChannel) {
 			logger.debug("There is no queue channel for this guild.");
-			return await replyPrivately("There's no queue set up right now, so nothing is playing.");
+			return await replyPrivately(t("commands.nowplaying.responses.no-queue", userLocale));
 		}
 
 		const allEntries = await getAllStoredEntries(queueChannel);
@@ -68,9 +49,7 @@ export const nowPlaying: Command = {
 
 		if (!firstNotDone) {
 			logger.debug(`The song queue is currently empty.`);
-			return await replyPrivately(
-				"There's probably nothing playing right now. (If there is, I can't hear it)"
-			);
+			return await replyPrivately(t("commands.nowplaying.responses.no-song", userLocale));
 		}
 
 		logger.debug(`The oldest unplayed song is at ${firstNotDone.url}.`);
@@ -81,18 +60,12 @@ export const nowPlaying: Command = {
 			queueChannel
 		);
 
-		const response = createPartialString();
+		const usermention = userMention(firstNotDone.senderId);
+		const url = firstNotDone.url;
+		const response = ti(randomResponse(), { usermention, url }, userLocale);
 
-		push(randomUncertainty(), response);
-		push(" ", response);
-
-		push(randomCurrent(), response);
-		push(" ", response);
-
-		push(`${userMention(firstNotDone.senderId)}'s submission: `, response);
-		push(firstNotDone.url, response);
 		// TODO: Also read out the song's title. Store this in the database as it comes in.
 
-		return await replyPrivately(composed(response), true);
+		return await replyPrivately(response, true);
 	}
 };

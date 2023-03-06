@@ -1,5 +1,5 @@
 import type { Command } from "./Command.js";
-import { localizations, translate } from "../i18n.js";
+import { localizations, t as translate } from "../i18n.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 
 export const t: Command = {

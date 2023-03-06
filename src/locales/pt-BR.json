@@ -7,7 +7,16 @@
 	"commands": {
 		"cooldown": {
 			"description": "Descubra quando você pode enviar novamente.",
-			"name": "cooldown"
+			"name": "cooldown",
+			"responses": {
+				"blacklisted": "Você pode enviar assim que for removido da lista negra. Sinto muito",
+				"immediately": "Você pode enviar agora mesmo!",
+				"later": "Você pode enviar em {relative}, às {absolute}, horário local",
+				"submissions-all-exhausted": "Você usou todos os seus envios da noite!",
+				"submissions-1-exhausted": "Você usou sua única finalização da noite!",
+				"submissions-2-exhausted": "Você usou os dois envios da noite!",
+				"submissions-all-ct-exhausted": "Você usou todos os {count} envios da noite!"
+			}
 		},
 		"help": {
 			"description": "Imprima uma mensagem de ajuda útil.",
@@ -24,15 +33,75 @@
 		},
 		"limits": {
 			"description": "Exibe os limites de envio da fila de músicas.",
-			"name": "limites"
+			"name": "limites",
+			"values": {
+				"cooldown": {
+					"description": "A quantidade mínima de tempo que cada usuário deve esperar entre seus próprios envios.",
+					"name": "Cooldown de envio de música"
+				},
+				"count": {
+					"description": "O número máximo de envios que cada usuário pode enviar.",
+					"name": "Número de envios de músicas"
+				},
+				"entry-duration-max": {
+					"description": "A duração máxima de uma música carregada.",
+					"name": "Duração máxima da música"
+				},
+				"entry-duration-min": {
+					"description": "A duração mínima do envio de uma música.",
+					"name": "Duração mínima da música"
+				},
+				"queue-duration": {
+					"description": "A duração máxima que a fila deve levar se todas as suas entradas forem reproduzidas de ponta a ponta. A fila será fechada automaticamente quando um envio fizer com que a fila exceda esse limite.",
+					"name": "Comprimento Total da Fila"
+				}
+			},
+			"responses": {
+				"infinite": "infinita",
+				"none": "nenhum",
+				"title": "Limites de Fila",
+				"use-cooldown-cmd": "Use {cooldown} para ver seu tempo de espera"
+			}
 		},
 		"nowplaying": {
 			"description": "Mostrar a música atual na fila (ou meu melhor palpite).",
-			"name": "agorajogando"
+			"name": "agorajogando",
+			"responses": {
+				"almost-sure": "Tenho 85% de certeza de que esta é a apresentação de {usermention}: {url}",
+				"dj-says": "O DJ me disse que esta é a apresentação de {usermention}: {url}",
+				"good-chance": "Há uma boa chance de esta ser a apresentação de {usermention}: {url}",
+				"i-think": "Eu acho que esta é a apresentação de {usermention}: {url}",
+				"likely": "Muito provavelmente, esta é a submissão de {usermention}: {url}",
+				"no-queue": "Não há nenhuma fila configurada no momento, então nada está sendo reproduzido.",
+				"no-song": "Provavelmente não há nada tocando agora. (Se houver, não consigo ouvir)"
+			}
 		},
 		"ping": {
 			"description": "Ping meu servidor host para verificar a latência.",
-			"name": "ping"
+			"name": "ping",
+			"responses": {
+				"pong": "Pong! Resposta enviada em {time}. A latência da API é de {latency}"
+			}
+		},
+		"queue-admin": {
+			"description": "Comandos administrativos para gerenciar a fila de músicas.",
+			"name": "quo",
+			"options": {
+				"open": {
+					"description": "Comece a aceitar pedidos de música para a fila.",
+					"name": "abrir",
+					"responses": {
+						"ack": "Reconheço.",
+						"already-open": "A fila já estava aberta!",
+						"no-queue": "Não há fila para abrir. Você já configurou um?",
+						"the-queue-now-open": "A fila já está aberta!",
+						"this-queue-now-open": "Esta fila já está aberta!"
+					}
+				}
+			},
+			"responses": {
+				"list-possible-subcommands": "Os possíveis subcomandos são:"
+			}
 		},
 		"setprefix": {
 			"description": "Defina o prefixo usado pelos comandos de mensagem.",
@@ -64,6 +133,7 @@
 				"rejections": {
 					"allotment-expended": "Você usou todos os {max} envios atribuídos.",
 					"cooldown": "Você já enviou uma música nos últimos {duration}. Você deve esperar {remaining} antes de enviar novamente.",
+					"queue-channel-submission-not-implemented": "A solicitação de músicas no canal de fila ainda não foi implementada.",
 					"too-long": "Essa música é muito longa. O limite é de {limit}, mas este é de {actual}.",
 					"too-short": "Essa música é muito curta. O limite é de {limit}, mas este é de {actual}."
 				},
@@ -80,7 +150,16 @@
 		},
 		"stats": {
 			"description": "Obtenha suas estatísticas de filas pessoais.",
-			"name": "estatísticas"
+			"name": "estatísticas",
+			"responses": {
+				"title": "Estatísticas pessoais",
+				"average-sub-duration": "Duração média de seus pedidos de música",
+				"blacklisted": "Na lista negra",
+				"cooldown-remaining": "Tempo Restante em Cooldown",
+				"queue-empty": "A fila está vazia. Você não tem estatísticas no momento.",
+				"total-subs": "Total de músicas enviadas por você",
+				"value-limit": "{value} (limite {limit})"
+			}
 		},
 		"t": {
 			"description": "Mostre-me digitando aqui.",
@@ -104,7 +183,15 @@
 		},
 		"userinfo": {
 			"description": "Retorna algumas informações sobre você.",
-			"name": "usuárioinfo"
+			"name": "usuárioinfo",
+			"responses": {
+				"statement": "Sua localidade é {ulocale} ({therefore}) e a localidade do servidor é {glocale}",
+				"statement-sans-guild": "Sua localidade é {ulocale} ({therefore})",
+				"supported": "suportado",
+				"unknown": "desconhecido",
+				"unsupported": "não é compatível, então usaremos {default}",
+				"assume": "então assumiremos {default}"
+			}
 		},
 		"version": {
 			"description": "Exiba a versão atual da base de código do bot.",
@@ -113,7 +200,13 @@
 		},
 		"video": {
 			"description": "Responda com o título e a duração do vídeo.",
-			"name": "vídeo"
+			"name": "vídeo",
+			"responses": {
+				"generic-fetch-error": "Essa consulta de vídeo me deu um erro.",
+				"include-link": "Você vai ter que adicionar um link de música para isso.",
+				"no-info": "Eu não poderia obter uma música disso. Tente um link de uma {supported-platform}.",
+				"supported-platform": "plataforma suportada"
+			}
 		}
 	},
 	"common": {

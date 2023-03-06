@@ -134,8 +134,6 @@ export function t<K extends string>(
 	return undefined; // we're stumped, return nothing
 }
 
-export { t as translate };
-
 import { composed, createPartialString, push } from "./helpers/composeStrings.js";
 import { randomElementOfArray } from "./helpers/randomElementOfArray.js";
 

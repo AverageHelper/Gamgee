@@ -16,7 +16,6 @@ import {
 	stopEscapingUriInString
 } from "../actions/messages/index.js";
 
-// TODO: i18n
 export const sr: GuildedCommand = {
 	name: "sr",
 	nameLocalizations: localizations("commands.sr.name"),
@@ -75,7 +74,7 @@ export const sr: GuildedCommand = {
 			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
 			// TODO: Be more specific. What kind of error?
 			return await reply(
-				`:hammer: ${MENTION_SENDER} That request gave me an error. Try again maybe?` // TODO: I18N
+				`:hammer: ${MENTION_SENDER} ${t("commands.sr.responses.query-returned-error", guildLocale)}`
 			);
 		}
 
@@ -112,7 +111,9 @@ export const sr: GuildedCommand = {
 		if (channel?.id === queueChannel.id) {
 			await Promise.all([
 				deleteInvocation(),
-				replyPrivately("Requesting songs in the queue channel has not been implemented yet.") // TODO: I18N
+				replyPrivately(
+					t("commands.sr.responses.rejections.queue-channel-submission-not-implemented", userLocale)
+				)
 			]);
 			return;
 		}

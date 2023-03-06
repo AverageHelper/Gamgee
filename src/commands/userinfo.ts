@@ -1,50 +1,45 @@
 import type { Command } from "./Command.js";
-import { DEFAULT_LOCALE, isSupportedLocale, localizations } from "../i18n.js";
-import {
-	composed,
-	createPartialString,
-	push,
-	pushCode,
-	pushSpace
-} from "../helpers/composeStrings.js";
+import { code } from "../helpers/composeStrings.js";
+import { DEFAULT_LOCALE, isSupportedLocale, localizations, t, ti } from "../i18n.js";
 
-// TODO: i18n
 export const userinfo: Command = {
 	name: "userinfo",
 	nameLocalizations: localizations("commands.userinfo.name"),
 	description: "Returns some information about you.",
 	descriptionLocalizations: localizations("commands.userinfo.description"),
 	requiresGuild: false,
-	async execute({ guildLocaleRaw, userLocaleRaw, deleteInvocation, replyPrivately }) {
+	async execute({ guildLocaleRaw, userLocaleRaw, userLocale, deleteInvocation, replyPrivately }) {
 		// TODO: Create an embed with some user details
 
 		await deleteInvocation();
 
-		const response = createPartialString("Your locale is ");
-		pushCode(userLocaleRaw ?? "unknown", response);
-		pushSpace(response);
-		if (userLocaleRaw) {
-			if (isSupportedLocale(userLocaleRaw)) {
-				push("(supported)", response);
-			} else {
-				push(
-					isSupportedLocale(userLocaleRaw) ? "(supported)" : `(not supported, so we'll go with `,
-					response
-				);
-				pushCode(DEFAULT_LOCALE, response);
-				push(")", response);
-			}
-		} else {
-			push(`(so we'll assume `, response);
-			pushCode(DEFAULT_LOCALE, response);
-			push(")", response);
-		}
+		const ulocale = code(userLocaleRaw ?? t("commands.userinfo.responses.unknown", userLocale));
+		const therefore = userLocaleRaw
+			? isSupportedLocale(userLocaleRaw)
+				? t("commands.userinfo.responses.supported", userLocale)
+				: ti(
+						"commands.userinfo.responses.unsupported",
+						{ default: code(DEFAULT_LOCALE) },
+						userLocale
+				  )
+			: ti("commands.userinfo.responses.assume", { default: code(DEFAULT_LOCALE) }, userLocale);
 
+		let response: string;
 		if (guildLocaleRaw) {
-			push(", and the server's locale is ", response);
-			pushCode(guildLocaleRaw, response);
+			const glocale = code(guildLocaleRaw);
+			response = `${ti(
+				"commands.userinfo.responses.statement",
+				{ ulocale, therefore, glocale },
+				userLocale
+			)}`;
+		} else {
+			response = `${ti(
+				"commands.userinfo.responses.statement-sans-guild",
+				{ ulocale, therefore },
+				userLocale
+			)}`;
 		}
 
-		await replyPrivately(composed(response));
+		await replyPrivately(response);
 	}
 };

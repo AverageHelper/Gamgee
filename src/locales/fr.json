@@ -7,7 +7,16 @@
 	"commands": {
 		"cooldown": {
 			"description": "Découvrez quand vous pourrez soumettre à nouveau.",
-			"name": "cooldown"
+			"name": "cooldown",
+			"responses": {
+				"blacklisted": "Vous pouvez soumettre une fois que vous êtes retiré de la liste noire. Je suis désolé",
+				"immediately": "Vous pouvez soumettre dès maintenant !",
+				"later": "Vous pouvez soumettre en {relative}, à {absolute} heure locale",
+				"submissions-all-exhausted": "Vous avez utilisé toutes vos soumissions pour la nuit!",
+				"submissions-1-exhausted": "Vous avez utilisé votre seule soumission pour la nuit!",
+				"submissions-2-exhausted": "Vous avez utilisé vos deux soumissions pour la nuit!",
+				"submissions-all-ct-exhausted": "Vous avez utilisé vos {count} soumissions pour la soirée!"
+			}
 		},
 		"help": {
 			"description": "Imprime un message d'aide utile.",
@@ -24,15 +33,75 @@
 		},
 		"limits": {
 			"description": "Affiche les limites de soumission de la file d'attente de chansons.",
-			"name": "limites"
+			"name": "limites",
+			"values": {
+				"cooldown": {
+					"description": "Le temps minimum que chaque utilisateur doit attendre entre ses propres soumissions.",
+					"name": "Délai de soumission"
+				},
+				"count": {
+					"description": "Le nombre maximum de soumissions que chaque utilisateur peut soumettre.",
+					"name": "Nombre de soumissions"
+				},
+				"entry-duration-max": {
+					"description": "La durée maximale d'une soumission de chanson.",
+					"name": "Longueur maximale de la chanson"
+				},
+				"entry-duration-min": {
+					"description": "La durée minimale d'une soumission de chanson.",
+					"name": "Durée minimale de la chanson"
+				},
+				"queue-duration": {
+					"description": "La durée maximale que la file d'attente devrait prendre si toutes ses entrées étaient lues de bout en bout. La file d'attente se fermera automatiquement lorsqu'une soumission amène la file d'attente à dépasser cette limite.",
+					"name": "Longueur totale de la file d'attente"
+				}
+			},
+			"responses": {
+				"infinite": "infinie",
+				"none": "sans",
+				"title": "Limites de file d'attente",
+				"use-cooldown-cmd": "Utilisez {cooldown} pour voir votre temps de recharge"
+			}
 		},
 		"nowplaying": {
 			"description": "Révèle la chanson actuelle dans la file d'attente (ou ma meilleure estimation).",
-			"name": "jouemaintenant"
+			"name": "jouemaintenant",
+			"responses": {
+				"almost-sure": "Je suis sûr à 85 % que c'est la soumission de {usermention}: {url}",
+				"dj-says": "Le DJ m'a dit que c'était la soumission de {usermention}: {url}",
+				"good-chance": "Il y a de fortes chances que ce soit la soumission de {usermention}: {url}",
+				"i-think": "Je pense que c'est la soumission de {usermention}: {url}",
+				"likely": "Très probablement, c'est la soumission de {usermention}: {url}",
+				"no-queue": "Il n'y a pas de file d'attente configurée pour le moment, donc rien ne joue.",
+				"no-song": "Il n'y a probablement rien qui joue en ce moment. (S'il y en a, je ne peux pas l'entendre)"
+			}
 		},
 		"ping": {
 			"description": "Ping mon serveur hôte pour vérifier la latence.",
-			"name": "ping"
+			"name": "ping",
+			"responses": {
+				"pong": "Pong! Réponse envoyée en {time}. La latence de l'API est de {latency}"
+			}
+		},
+		"queue-admin": {
+			"description": "Commandes administratives pour gérer la file d'attente des chansons.",
+			"name": "quo",
+			"options": {
+				"open": {
+					"description": "Commencez à accepter les demandes de chansons dans la file d'attente.",
+					"name": "ouvrir",
+					"responses": {
+						"ack": "J'accuse réception",
+						"already-open": "La file d'attente est déjà ouverte!",
+						"no-queue": "Il n'y a pas de file d'attente à ouvrir. En avez-vous déjà créé un?",
+						"the-queue-now-open": "La file d'attente est désormais ouverte!",
+						"this-queue-now-open": "Cette file d'attente est maintenant ouverte!"
+					}
+				}
+			},
+			"responses": {
+				"list-possible-subcommands": "Les sous-commandes possibles sont:"
+			}
 		},
 		"setprefix": {
 			"description": "Définissez le préfixe utilisé par les commandes de message.",
@@ -64,6 +133,7 @@
 				"rejections": {
 					"allotment-expended": "Vous avez utilisé les {max} soumissions qui vous était allouées.",
 					"cooldown": "Vous avez déjà soumis une chanson dans les dernières {duration}. Vous devez attendre {remaining} avant de soumettre à nouveau.",
+					"queue-channel-submission-not-implemented": "La demande de chansons dans le canal de file d'attente n'a pas encore été implémentée.",
 					"too-long": "Cette chanson est trop longue. La limite est de {limit}, mais celle-ci dure {actual}.",
 					"too-short": "Cette chanson est trop courte. La limite est de {limit}, mais celle-ci dure {actual}."
 				},
@@ -80,7 +150,16 @@
 		},
 		"stats": {
 			"description": "Obtenez vos statistiques de votre file d'attente personnelle.",
-			"name": "statistiques"
+			"name": "statistiques",
+			"responses": {
+				"title": "Statistiques personnelles",
+				"average-sub-duration": "Durée moyenne de vos soumissions",
+				"blacklisted": "Liste noire",
+				"cooldown-remaining": "Temps de recharge restant",
+				"queue-empty": "La file d'attente est vide. Vous n'avez pas de statistiques pour le moment.",
+				"total-subs": "Total des soumissions de votre part",
+				"value-limit": "{value} (limite {limit})"
+			}
 		},
 		"t": {
 			"description": "Montre que je suis en train d'écrire.",
@@ -104,7 +183,15 @@
 		},
 		"userinfo": {
 			"description": "Retourne quelques informations sur vous.",
-			"name": "infoutilisateur"
+			"name": "infoutilisateur",
+			"responses": {
+				"statement": "Vos paramètres régionaux sont {ulocale} ({therefore}) et les paramètres régionaux du serveur sont {glocale}",
+				"statement-sans-guild": "Vos paramètres régionaux sont {ulocale} ({therefore})",
+				"supported": "prise en charge",
+				"unknown": "inconnue",
+				"unsupported": "non pris en charge, nous allons donc utiliser {default}",
+				"assume": "nous supposerons donc {default}"
+			}
 		},
 		"version": {
 			"description": "Affiche la version actuelle de la base du code du bot.",
@@ -113,7 +200,13 @@
 		},
 		"video": {
 			"description": "Répond avec le titre et la durée de la vidéo.",
-			"name": "vidéo"
+			"name": "vidéo",
+			"responses": {
+				"generic-fetch-error": "Cette requête vidéo m'a donné une erreur.",
+				"include-link": "Vous allez devoir ajouter un lien de chanson à cela.",
+				"no-info": "Je n'ai pas pu en tirer une chanson. Essayez un lien d'une {supported-platform}.",
+				"supported-platform": "plate-forme prise en charge"
+			}
 		}
 	},
 	"common": {

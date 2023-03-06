@@ -2,11 +2,13 @@ import type { GuildedSubcommand } from "../Command.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
+import { localizations, t } from "../../i18n.js";
 
-// TODO: i18n
 export const open: GuildedSubcommand = {
 	name: "open",
+	nameLocalizations: localizations("commands.queue-admin.options.open.name"),
 	description: "Start accepting song requests to the queue.",
+	descriptionLocalizations: localizations("commands.queue-admin.options.open.description"),
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "queue-admin"],
@@ -16,6 +18,8 @@ export const open: GuildedSubcommand = {
 		type,
 		createdTimestamp,
 		logger,
+		guildLocale,
+		userLocale,
 		reply,
 		followUp,
 		deleteInvocation
@@ -29,25 +33,43 @@ export const open: GuildedSubcommand = {
 
 		if (!queueChannel) {
 			return await reply({
-				content: "There's no queue to open. Have you set one up yet?",
+				content: t("commands.queue-admin.options.open.responses.no-queue", userLocale),
 				ephemeral: true
 			});
 		}
 		const isAlreadyOpen = await isQueueOpen(guild);
 		if (isAlreadyOpen) {
-			return await reply({ content: "The queue's already open! :smiley:", ephemeral: true });
+			const message = t("commands.queue-admin.options.open.responses.already-open", userLocale);
+			return await reply({
+				content: `${message} :smiley:`,
+				ephemeral: true
+			});
 		}
 
 		await setQueueOpen(true, guild);
 		logger.debug(`Opened queue at ${Date.now()}`);
 
 		const queueIsCurrent = channel?.id === queueChannel.id;
-		await queueChannel.send("This queue is now open! :smiley:");
+		await queueChannel.send(
+			`${t(
+				"commands.queue-admin.options.open.responses.this-queue-now-open",
+				guildLocale
+			)} :smiley:`
+		);
 		if (!queueIsCurrent) {
 			if (type === "interaction") {
-				await reply({ content: "Got it!", ephemeral: true });
+				await reply({
+					content: t("commands.queue-admin.options.open.responses.ack", userLocale),
+					ephemeral: true
+				});
 			}
-			await followUp({ content: "The queue is now open! :smiley:", reply: false });
+			await followUp({
+				content: `${t(
+					"commands.queue-admin.options.open.responses.the-queue-now-open",
+					guildLocale
+				)} :smiley:`,
+				reply: false
+			});
 		}
 	}
 };

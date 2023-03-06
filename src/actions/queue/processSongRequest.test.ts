@@ -94,7 +94,7 @@ describe("Song request pipeline", () => {
 		request = {
 			context,
 			logger: useTestLogger(),
-			publicPreemptiveResponse: null,
+			publicPreemptiveResponse: Promise.resolve(null),
 			queueChannel: {
 				id: QUEUE_CHANNEL_ID,
 				guild: {
@@ -166,11 +166,11 @@ describe("Song request pipeline", () => {
 
 		context = { ...context, type: "interaction" } as unknown as CommandContext;
 		request.context = context;
-		request.publicPreemptiveResponse = { id: "a-message" } as unknown as Message;
+		request.publicPreemptiveResponse = Promise.resolve({ id: "a-message" } as unknown as Message);
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
 
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith(request.publicPreemptiveResponse);
+		expect(mockDeleteMessage).toHaveBeenCalledWith(await request.publicPreemptiveResponse);
 	});
 
 	test("closes the queue automatically just as entries exceed queue-length limits", async () => {

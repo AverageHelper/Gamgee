@@ -1,13 +1,13 @@
 import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
 import { assertUnreachable } from "../helpers/assertUnreachable.js";
+import { code } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig } from "../useQueueStorage.js";
-import { localizations, t } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 
-// TODO: i18n
 export const limits: Command = {
 	name: "limits",
 	nameLocalizations: localizations("commands.limits.name"),
@@ -32,25 +32,31 @@ export const limits: Command = {
 			: cooldownCommand.name;
 
 		// Read out the existing limits
-		const embed = new EmbedBuilder() //
-			.setTitle("Queue Limits")
-			.setDescription(`Use \`/${cooldownName}\` to see your cooldown time`);
+		const embed = new EmbedBuilder()
+			.setTitle(t("commands.limits.responses.title", locale))
+			.setDescription(
+				ti(
+					"commands.limits.responses.use-cooldown-cmd",
+					{ cooldown: code(`/${cooldownName}`) },
+					locale
+				)
+			);
 
-		allLimits.forEach(key => {
+		allLimits(locale).forEach(key => {
 			let value: string;
 			switch (key.value) {
 				case "cooldown":
 					if (config.cooldownSeconds !== null && config.cooldownSeconds > 0) {
 						value = durationString(locale, config.cooldownSeconds);
 					} else {
-						value = "none";
+						value = t("commands.limits.responses.none", locale);
 					}
 					break;
 				case "entry-duration-max":
 					if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
 						value = durationString(locale, config.entryDurationMaxSeconds);
 					} else {
-						value = "infinite";
+						value = t("commands.limits.responses.infinite", locale);
 					}
 					break;
 				case "entry-duration-min":
@@ -64,14 +70,14 @@ export const limits: Command = {
 					if (config.queueDurationSeconds !== null && config.queueDurationSeconds > 0) {
 						value = durationString(locale, config.queueDurationSeconds);
 					} else {
-						value = "infinite";
+						value = t("commands.limits.responses.infinite", locale);
 					}
 					break;
 				case "count":
 					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
 						value = `${config.submissionMaxQuantity}`;
 					} else {
-						value = "infinite";
+						value = t("commands.limits.responses.infinite", locale);
 					}
 					break;
 				default:
