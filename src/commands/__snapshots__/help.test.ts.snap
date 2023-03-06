@@ -58,12 +58,12 @@ exports[`Help command describes all commands in de 1`] = `
 \`?grenzen\` - Zeigen Sie die Einreichungslimits der Song-Warteschlange an.
 \`?spieltjetzt\` OR \`?now-playing\` - Zeigen Sie den aktuellen Song in der Warteschlange an (oder meine beste Vermutung).
 \`?ping\` - Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.
-\`?quo\` - Administrative commands to manage the song queue.
+\`?quo\` - Verwaltungsbefehle zum Verwalten der Song-Warteschlange.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo offen\` - Beginnen Sie mit dem Akzeptieren von Songanfragen in die Warteschlange.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
@@ -148,12 +148,12 @@ exports[`Help command describes all commands in es-ES 1`] = `
 \`?limites\` - Muestra los límites de envío de la cola de canciones.
 \`?jugandoahora\` OR \`?now-playing\` - Muestra la canción actual en la cola (o mi mejor suposición).
 \`?ping\` - Haga ping a mi servidor host para comprobar la latencia.
-\`?quo\` - Administrative commands to manage the song queue.
+\`?quo\` - Comandos administrativos para gestionar la cola de canciones.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo abre\` - Comienza a aceptar solicitudes de canciones en la cola.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
@@ -178,12 +178,12 @@ exports[`Help command describes all commands in fr 1`] = `
 \`?limites\` - Affiche les limites de soumission de la file d'attente de chansons.
 \`?jouemaintenant\` OR \`?now-playing\` - Révèle la chanson actuelle dans la file d'attente (ou ma meilleure estimation).
 \`?ping\` - Ping mon serveur hôte pour vérifier la latence.
-\`?quo\` - Administrative commands to manage the song queue.
+\`?quo\` - Commandes administratives pour gérer la file d'attente des chansons.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo ouvrir\` - Commencez à accepter les demandes de chansons dans la file d'attente.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
@@ -208,12 +208,12 @@ exports[`Help command describes all commands in hu 1`] = `
 \`?határok\` - Kiírja a várólista beküldési korlátait.
 \`?mitjátszik\` OR \`?now-playing\` - Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).
 \`?ping\` - Pingeli a szerveremet a válaszidő ellenőrzéséhez.
-\`?quo\` - Administrative commands to manage the song queue.
+\`?quo\` - Adminisztratív parancsok a dalsor kezeléséhez.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo nyisd\` - Kezdje el elfogadni a dalkérelmeket a sorba.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
@@ -238,12 +238,12 @@ exports[`Help command describes all commands in pt-BR 1`] = `
 \`?limites\` - Exibe os limites de envio da fila de músicas.
 \`?agorajogando\` OR \`?now-playing\` - Mostrar a música atual na fila (ou meu melhor palpite).
 \`?ping\` - Ping meu servidor host para verificar a latência.
-\`?quo\` - Administrative commands to manage the song queue.
+\`?quo\` - Comandos administrativos para gerenciar a fila de músicas.
     \`?quo setup [channel]\` - Set a channel as the 'queue' channel.
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo open\` - Start accepting song requests to the queue.
+    \`?quo abrir\` - Comece a aceitar pedidos de música para a fila.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
