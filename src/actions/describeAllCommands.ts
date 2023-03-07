@@ -64,7 +64,7 @@ function localizedDescription(
  */
 export async function describeAllCommands(
 	context: CommandContext,
-	commands: Map<string, Command>,
+	commands: ReadonlyMap<string, Command>,
 	locale: SupportedLocale
 ): Promise<string> {
 	const COMMAND_PREFIX =
