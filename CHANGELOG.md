@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Finish translating common commands.
+- Complete translations for common commands.
 
 ### Changed
 - `/sr` now presents song request embeds more quickly.
