@@ -19,7 +19,7 @@ type PermissionGenerator = (
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
 interface BaseCommand extends ChatInputApplicationCommandData {
-	aliases?: Array<string>;
+	aliases?: ReadonlyArray<string>;
 	options?: NonEmptyArray<ApplicationCommandOption | Subcommand>;
 	type?: ApplicationCommandType.ChatInput;
 

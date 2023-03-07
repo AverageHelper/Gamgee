@@ -80,7 +80,7 @@ async function prepareGuildedCommands(
 
 async function prepareCommandsForGuild(
 	guild: Guild,
-	guildCommands: Array<GuildedCommand>,
+	guildCommands: ReadonlyArray<GuildedCommand>,
 	logger: Logger
 ): Promise<void> {
 	const commandBuilders = guildCommands;

@@ -1,4 +1,4 @@
-import type { Command } from "./Command.js";
+import type { GuildedCommand } from "./Command.js";
 import type { TextChannel } from "discord.js";
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 import { getAllStoredEntries } from "../useQueueStorage.js";
@@ -27,7 +27,7 @@ function randomResponse(): Response {
 	return random;
 }
 
-export const nowPlaying: Command = {
+export const nowPlaying: GuildedCommand = {
 	name: "nowplaying",
 	nameLocalizations: localizations("commands.nowplaying.name"),
 	aliases: ["now-playing"],

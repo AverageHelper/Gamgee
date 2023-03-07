@@ -34,7 +34,9 @@ export function pushCode(str: string, partial: PartialString): void {
 	push(code(str), partial);
 }
 
-export function code<S extends string>(str: S): `\`${S}\`` {
+export type Code<S extends string> = `\`${S}\``;
+
+export function code<S extends string>(str: S): Code<S> {
 	return `\`${str}\``;
 }
 

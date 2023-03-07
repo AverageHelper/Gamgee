@@ -365,7 +365,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 	// Some helpers for parsing intents
 	const messageContainsWord = (str: string): boolean =>
 		query.map(s => s.toLowerCase()).includes(str);
-	const messageContainsOneOfWords = (strs: Array<string>): boolean =>
+	const messageContainsOneOfWords = (strs: ReadonlyArray<string>): boolean =>
 		query.map(s => s.toLowerCase()).some(s => strs.includes(s));
 
 	if (invocationMethod === "bot-mention") {

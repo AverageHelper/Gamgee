@@ -70,7 +70,7 @@ describe("Now-Playing", () => {
 		${[{ isDone: true }, { isDone: true }, { isDone: true }]}
 	`(
 		"informs the user if all entries are done or the queue is empty",
-		async ({ values }: { values: Array<QueueEntry> }) => {
+		async ({ values }: { values: ReadonlyArray<QueueEntry> }) => {
 			mockGetAllStoredEntries.mockResolvedValue(values);
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
@@ -93,7 +93,7 @@ describe("Now-Playing", () => {
 		${[{ isDone: false, url: "first!", senderId: "me" }, { isDone: true }, { isDone: false }]}
 	`(
 		"provides the URL of the most recent not-done song",
-		async ({ values }: { values: Array<QueueEntry> }) => {
+		async ({ values }: { values: ReadonlyArray<QueueEntry> }) => {
 			mockGetAllStoredEntries.mockResolvedValue(values);
 			mockGetQueueChannel.mockResolvedValue({
 				messages: {

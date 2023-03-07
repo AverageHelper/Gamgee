@@ -5,7 +5,8 @@ import { Collection } from "discord.js";
 import { deployableCommand } from "./deployCommands.js";
 
 jest.mock("../commands/index.js", () => ({ allCommands: new Map<string, Command>() }));
-import { allCommands as mockAllCommands } from "../commands/index.js";
+import { allCommands as _mockAllCommands } from "../commands/index.js";
+const mockAllCommands = _mockAllCommands as Map<string, Command>;
 
 import { verifyCommandDeployments } from "./verifyCommandDeployments.js";
 

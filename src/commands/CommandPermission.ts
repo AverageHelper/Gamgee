@@ -91,7 +91,7 @@ export function rolePermission(roleId: Snowflake, permission: boolean = true): C
 export type PermissionAlias = "owner" | "admin" | "queue-admin";
 
 export async function resolvePermissions(
-	aliases: Array<PermissionAlias>,
+	aliases: ReadonlyArray<PermissionAlias>,
 	guild: Guild
 ): Promise<Array<CommandPermission>> {
 	const result: Array<CommandPermission> = [];

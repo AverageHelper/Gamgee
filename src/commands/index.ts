@@ -20,10 +20,11 @@ import { userinfo } from "./userinfo.js";
 import { version } from "./version.js";
 import { video } from "./video.js";
 
-export const allCommands = new Map<string, Command>();
+const _allCommands = new Map<string, Command>();
+export const allCommands: ReadonlyMap<string, Command> = _allCommands;
 
 function aliasesForCommand(cmd: Pick<Command, "aliases">): Array<string> {
-	return cmd.aliases ?? [];
+	return cmd.aliases?.slice() ?? [];
 }
 
 function localizationsForCommand(cmd: Pick<Command, "nameLocalizations">): Array<string> {
@@ -42,7 +43,7 @@ function localizationsForCommand(cmd: Pick<Command, "nameLocalizations">): Array
  */
 export function resolveAlias(
 	alias: string,
-	commands: Map<string, Pick<Command, "aliases" | "nameLocalizations">> = allCommands
+	commands: ReadonlyMap<string, Pick<Command, "aliases" | "nameLocalizations">> = allCommands
 ): string {
 	for (const [name, command] of commands) {
 		// If found, use the command's primary name
@@ -102,7 +103,7 @@ function add(command: Command): void {
 	}
 
 	// Note the command by its name
-	allCommands.set(name, command);
+	_allCommands.set(name, command);
 }
 
 add(cooldown);
