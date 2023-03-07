@@ -100,7 +100,7 @@
 				}
 			},
 			"responses": {
-				"list-possible-subcommands": "Die möglichen Unterbefehle sind:"
+				"list-possible-subcommands": "Meinten Sie:"
 			}
 		},
 		"setprefix": {

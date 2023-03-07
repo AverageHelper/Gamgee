@@ -100,7 +100,7 @@
 				}
 			},
 			"responses": {
-				"list-possible-subcommands": "A lehetséges alparancsok a következők:"
+				"list-possible-subcommands": "Úgy értetted:"
 			}
 		},
 		"setprefix": {
