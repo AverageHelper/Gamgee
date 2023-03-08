@@ -9,32 +9,44 @@ import {
 	phrases,
 	questions
 } from "../constants/textResponses.js";
+import isFunction from "lodash/isFunction";
+import { isString } from "./guards.js";
 
 const logger = useLogger();
 
 export interface ResponseContext {
 	/** The bot's display name. */
-	me: string;
+	readonly me: string;
 
 	/** The user who initiated this conversation, e.g. by pinging the bot. */
-	otherUser: User;
+	readonly otherUser: User;
 
 	/** The guild member, if any, representing the user who initiated this conversation. */
-	otherMember: GuildMember | null;
+	readonly otherMember: GuildMember | null;
 }
 
 export type SingleResponse = string | ((context: ResponseContext) => string);
-export type MultipleResponse = [SingleResponse, SingleResponse, ...Array<SingleResponse>];
+export type MultipleResponse = Readonly<
+	[SingleResponse, SingleResponse, ...ReadonlyArray<SingleResponse>]
+>;
+
+function isSingleResponse(tbd: unknown): tbd is SingleResponse {
+	return isString(tbd) || isFunction(tbd);
+}
+
+function isMultipleResponse(tbd: unknown): tbd is MultipleResponse {
+	return Array.isArray(tbd) && tbd.every(isSingleResponse) && tbd.length >= 2;
+}
 
 export type Response = SingleResponse | MultipleResponse;
 
-export type ResponseRepository = [Response, ...NonEmptyArray<Response>];
+export type ResponseRepository = readonly [Response, ...Readonly<NonEmptyArray<Response>>];
 
 /** Gets the response as a string. */
 export function unwrappingFirstWith(context: ResponseContext, response: Response): string {
 	if (typeof response === "string") {
 		return response;
-	} else if (Array.isArray(response)) {
+	} else if (isMultipleResponse(response)) {
 		return response
 			.map(partial => {
 				if (typeof partial === "string") return partial;
@@ -60,7 +72,7 @@ export async function unwrappingWith(
 		await handler(response);
 
 		return;
-	} else if (Array.isArray(response)) {
+	} else if (isMultipleResponse(response)) {
 		// It's an array
 		for (const resp of response) {
 			if (typeof resp === "string") {

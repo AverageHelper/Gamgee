@@ -23,23 +23,23 @@ import {
 
 export interface SongRequest {
 	/** The URL where the track may be found. */
-	songUrl: URL;
+	readonly songUrl: URL;
 
 	/** The command context of the request. */
-	context: CommandContext;
+	readonly context: CommandContext;
 
 	/** The queue channel where the request should land if accepted. */
-	queueChannel: TextChannel;
+	readonly queueChannel: TextChannel;
 
 	/**
 	 * A `Promise` that resolves with the message that contains
 	 * the original embed, if _we_ sent one. If the user sent one,
 	 * this value should resolve to `null`.
 	 */
-	publicPreemptiveResponse: Promise<Message | null>;
+	readonly publicPreemptiveResponse: Promise<Message | null>;
 
 	/** The place where log messages should be sent. */
-	logger: Logger;
+	readonly logger: Logger;
 }
 
 const logger = useLogger();
@@ -89,10 +89,10 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 }
 
 interface SongAcceptance {
-	queueChannel: TextChannel;
-	context: CommandContext;
-	entry: UnsentQueueEntry;
-	logger: Logger;
+	readonly queueChannel: TextChannel;
+	readonly context: CommandContext;
+	readonly entry: UnsentQueueEntry;
+	readonly logger: Logger;
 }
 
 /**

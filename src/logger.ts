@@ -5,7 +5,7 @@ import { getEnv } from "./helpers/environment.js";
 import DailyRotateFile from "winston-daily-rotate-file";
 
 const logLevels = ["silly", "debug", "verbose", "info", "warn", "error"] as const;
-export type LogLevel = typeof logLevels[number];
+export type LogLevel = (typeof logLevels)[number];
 export type { Logger };
 
 function isLogLevel(tbd: unknown): tbd is LogLevel {

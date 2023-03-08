@@ -56,7 +56,7 @@ export function preferredLocale(guild: Pick<Guild, "preferredLocale">): Supporte
 }
 
 // TypeScript ensures here that DEFAULT_LOCALE is a valid locale:
-type MessageSchema = typeof vocabulary[typeof DEFAULT_LOCALE];
+type MessageSchema = (typeof vocabulary)[typeof DEFAULT_LOCALE];
 
 // ** I18N Utilities **
 
@@ -148,14 +148,14 @@ import { randomElementOfArray } from "./helpers/randomElementOfArray.js";
  */
 export function ti<K extends string>(
 	keypath: K,
-	values: Record<string, string>,
+	values: Readonly<Record<string, string>>,
 	locale: SupportedLocale
 ): Get<MessageSchema, K> extends string ? string : undefined;
 
 // FIXME: We shouldn't need to overload this
 export function ti<K extends string>(
 	keypath: K,
-	values: Record<string, string>,
+	values: Readonly<Record<string, string>>,
 	locale: SupportedLocale
 ): string | undefined {
 	const rawText: string | undefined = t(keypath, locale);

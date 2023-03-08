@@ -30,7 +30,7 @@ declare module "leaked-handles" {
 	/**
 	 * Set configuration options.
 	 */
-	export function set(opts: SetOptions): void;
+	export function set(opts: Readonly<SetOptions>): void;
 
 	export function printHandles(): void;
 }
