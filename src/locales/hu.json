@@ -67,13 +67,13 @@
 			"description": "Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).",
 			"name": "mitjátszik",
 			"responses": {
-				"almost-sure": "85%-ban biztos vagyok benne, hogy ez {usermention} beadványa: {url}",
-				"dj-says": "A DJ azt mondta nekem, hogy ez {usermention} beadványa: {url}",
-				"good-chance": "Jó esély van rá, hogy ez {usermention} beadványa: {url}",
-				"i-think": "Szerintem ez {usermention} beadványa: {url}",
-				"likely": "Nagyon valószínű, hogy ez {usermention} beadványa: {url}",
-				"no-queue": "Jelenleg nincs sor beállítva, így semmi sem játszik le.",
-				"no-song": "Valószínűleg most nem játszik semmi. (Ha van, nem hallom)"
+				"almost-sure": "Úgy 85%-ban vagyok benne biztos, hogy ezt {usermention} küldte be: {url}",
+				"dj-says": "Megkérdeztem a DJ-t, szerinte ezt {usermention} küldte be: {url}",
+				"good-chance": "Jó esély van rá, hogy ez {usermention}-é: {url}",
+				"i-think": "Szerintem ezt {usermention} küldte be: {url}",
+				"likely": "Nagyon valószínű, hogy ezt {usermention} küldte be: {url}",
+				"no-queue": "Jelenleg nincs sor itt beállítva, így semmi sincs a lemezjátszón.",
+				"no-song": "Most semmi nem hallható. (Ha mégis, akkor beszélnem kell az orvosommal)"
 			}
 		},
 		"ping": {
