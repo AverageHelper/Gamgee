@@ -27,7 +27,7 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2.1.1
         with:
           skip-step: install # we already ran `npm ci`
-          test-script: npm run test:src
+          test-script: npm run test:src -- --coverage=false
         env:
           CI: true
           NODE_ENV: "test"
