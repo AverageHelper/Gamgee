@@ -189,8 +189,8 @@
 				"statement-sans-guild": "Az Ön területi beállítása {ulocale} ({therefore})",
 				"supported": "támogatott",
 				"unknown": "ismeretlen",
-				"unsupported": "nem támogatott, ezért az {default} t választjuk",
-				"assume": "ezért feltételezzük, hogy {default}"
+				"unsupported": "nem támogatott, ezért legyen {default}",
+				"assume": "ezért legyen {default}"
 			}
 		},
 		"version": {
