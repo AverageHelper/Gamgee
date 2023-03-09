@@ -153,11 +153,11 @@
 			"name": "statisztika",
 			"responses": {
 				"title": "Személyes statisztika",
-				"average-sub-duration": "Beküldésének átlagos időtartama",
-				"blacklisted": "Feketelistás",
-				"cooldown-remaining": "A lehűlésből hátralévő idő",
+				"average-sub-duration": "Beküldött dalainak átlagos időtartama",
+				"blacklisted": "Tiltólistán van",
+				"cooldown-remaining": "A következő beküldési lehetőségéig hátralévő idő",
 				"queue-empty": "A sor üres. Jelenleg nincsenek statisztikái.",
-				"total-subs": "Öntől származó beküldések összesen",
+				"total-subs": "Összesen beküldött dalok",
 				"value-limit": "{value} (korlát {limit})"
 			}
 		},
