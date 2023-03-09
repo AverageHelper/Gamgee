@@ -59,8 +59,8 @@
 			"responses": {
 				"infinite": "végtelen",
 				"none": "semmi",
-				"title": "Sorkorlátok",
-				"use-cooldown-cmd": "A {cooldown} segítségével megtekintheti a lehűlési időt"
+				"title": "Beküldési korlátok",
+				"use-cooldown-cmd": "A {cooldown} segítségével megtekintheti, mennyi idő múlva tud újra beküldeni"
 			}
 		},
 		"nowplaying": {
