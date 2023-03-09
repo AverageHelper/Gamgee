@@ -133,7 +133,7 @@
 				"rejections": {
 					"allotment-expended": "Felhasználta mind a(z) {max} lehetőségét.",
 					"cooldown": "Már küldött be dalt az elmúlt {duration}-ban/ben. Várnia kell {remaining}-(e)t, mielőtt újra küldhet.",
-					"queue-channel-submission-not-implemented": "A dalok lekérése a várólista csatornában még nem valósult meg.",
+					"queue-channel-submission-not-implemented": "Még nem vagyok képes a várólistából dalkéréseket fogadni.",
 					"too-long": "Ez a dal túl hosszú. A határ {limit}, de ez {actual} hosszú.",
 					"too-short": "Ez a dal túl rövid. A határ {limit}, de ez {actual} hosszú."
 				},
