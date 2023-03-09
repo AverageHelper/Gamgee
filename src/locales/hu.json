@@ -40,8 +40,8 @@
 					"name": "Beküldés Cooldown"
 				},
 				"count": {
-					"description": "Az egyes felhasználók által beküldhető anyagok maximális száma.",
-					"name": "Beadványok száma"
+					"description": "Az egyes felhasználók által beküldhető dalok maximális száma.",
+					"name": "Beküldhető dalok száma"
 				},
 				"entry-duration-max": {
 					"description": "A beküldött dal maximális időtartama.",
