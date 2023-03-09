@@ -10,11 +10,13 @@ This project started out as a simple Discord bot to play around with APIs and th
 
 ## Authors & Contributors
 
-- [**AverageHelper**](https://github.com/AverageHelper) - _Creator_
-- [**ajnrules**](https://github.com/ajnrules) - _Contributor_
-- [**bendai94**](https://github.com/bendai94) - _Contributor_
-- [**karcsesz**](https://github.com/karcsesz) - _Contributor_
-- [**vayandas**](https://github.com/vayandas) - _Contributor_
+In order to highlight new contributors, these users are listed reverse-chronoligically, in order of when contributions were provided:
+
+- [**vayandas**](https://github.com/vayandas)
+- [**karcsesz**](https://github.com/karcsesz)
+- [**bendai94**](https://github.com/bendai94)
+- [**ajnrules**](https://github.com/ajnrules)
+- [**AverageHelper**](https://github.com/AverageHelper)
 
 ## Prerequisites
 
