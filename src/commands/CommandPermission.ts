@@ -1,15 +1,16 @@
 import type { ApplicationCommandPermissions, Guild, Snowflake } from "discord.js";
+import type { PermissionAliasList } from "./Command.js";
 import { ApplicationCommandPermissionType } from "discord.js";
 import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
 
-export interface CommandPermission extends ApplicationCommandPermissions {
+export interface CommandPermission extends Readonly<ApplicationCommandPermissions> {
 	/** The `id` of the role or user */
-	id: Snowflake;
+	readonly id: Snowflake;
 
-	type: ApplicationCommandPermissionType;
+	readonly type: ApplicationCommandPermissionType;
 
 	/** `true` to allow, `false` to disallow */
-	permission: boolean;
+	readonly permission: boolean;
 }
 
 /**
@@ -88,7 +89,17 @@ export function rolePermission(roleId: Snowflake, permission: boolean = true): C
 	};
 }
 
-export type PermissionAlias = "owner" | "admin" | "queue-admin";
+const permissionAliases = ["owner", "admin", "queue-admin"] as const;
+
+export type PermissionAlias = (typeof permissionAliases)[number];
+
+export function isPermissionAlias(tbd: unknown): tbd is PermissionAlias {
+	return permissionAliases.includes(tbd as PermissionAlias);
+}
+
+export function isPermissionAliasList(tbd: unknown): tbd is PermissionAliasList {
+	return Array.isArray(tbd) && tbd.every(isPermissionAlias);
+}
 
 export async function resolvePermissions(
 	aliases: ReadonlyArray<PermissionAlias>,

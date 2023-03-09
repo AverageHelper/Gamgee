@@ -1,12 +1,13 @@
 import type { DailyRotateFileTransportOptions } from "winston-daily-rotate-file";
-import type { Logger } from "winston";
+import type { Logger as _Logger } from "winston";
+import type { ReadonlyDeep } from "type-fest";
 import { createLogger, format, transports } from "winston";
 import { getEnv } from "./helpers/environment.js";
 import DailyRotateFile from "winston-daily-rotate-file";
 
 const logLevels = ["silly", "debug", "verbose", "info", "warn", "error"] as const;
 export type LogLevel = (typeof logLevels)[number];
-export type { Logger };
+export type Logger = ReadonlyDeep<_Logger>;
 
 function isLogLevel(tbd: unknown): tbd is LogLevel {
 	return logLevels.includes(tbd as LogLevel);

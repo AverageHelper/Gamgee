@@ -2,7 +2,7 @@ import type { Command, CommandPermission, Subcommand } from "../commands/index.j
 import type { GuildMember, GuildTextBasedChannel } from "discord.js";
 import { ApplicationCommandPermissionType } from "discord.js";
 import { assertUnreachable } from "../helpers/assertUnreachable.js";
-import { resolvePermissions } from "../commands/CommandPermission.js";
+import { isPermissionAliasList, resolvePermissions } from "../commands/CommandPermission.js";
 import { useLogger } from "../logger.js";
 import {
 	userHasPermissionInChannel,
@@ -40,8 +40,8 @@ export async function assertUserCanRunCommand(
 	}
 
 	const guild = channel?.guild;
-	const permissions: Array<CommandPermission> = guild
-		? Array.isArray(command.permissions)
+	const permissions: ReadonlyArray<CommandPermission> = guild
+		? isPermissionAliasList(command.permissions)
 			? await resolvePermissions(command.permissions, guild)
 			: await command.permissions(guild)
 		: [];

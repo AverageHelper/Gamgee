@@ -133,7 +133,7 @@ export function deployableCommand(cmd: Command): ApplicationCommandDataResolvabl
 	}
 
 	if (cmd.options) {
-		payload.options = cmd.options;
+		payload.options = cmd.options.slice();
 	}
 	// TODO: Set defaultMemberPermissions and dmPermission
 

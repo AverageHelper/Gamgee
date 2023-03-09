@@ -6,9 +6,11 @@ import { useRepository } from "./database/useDatabase.js";
 
 const logger = useLogger();
 
-export type QueueEntry = _QueueEntry & { haveCalledNowPlaying: Array<User> };
+export type QueueEntry = Readonly<_QueueEntry> & {
+	readonly haveCalledNowPlaying: ReadonlyArray<Readonly<User>>;
+};
 export type UnsentQueueEntry = Omit<
-	_QueueEntry,
+	Readonly<_QueueEntry>,
 	"queueMessageId" | "isDone" | "channelId" | "guildId" | "sentAt" | "haveCalledNowPlaying"
 >;
 
@@ -17,8 +19,8 @@ export type UnsentQueueEntry = Omit<
 
 // ** Queue Config **
 
-export type QueueConfig = _QueueConfig & {
-	blacklistedUsers: Array<User>;
+export type QueueConfig = Readonly<_QueueConfig> & {
+	readonly blacklistedUsers: ReadonlyArray<Readonly<User>>;
 };
 
 /**
@@ -63,7 +65,7 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
  * @param queueChannel The channel that identifies the request queue.
  */
 export async function updateStoredQueueConfig(
-	config: Partial<_QueueConfig>,
+	config: Partial<Readonly<_QueueConfig>>,
 	queueChannel: TextChannel
 ): Promise<void> {
 	if (Object.keys(config).length === 0) return; // nothing to store
@@ -103,7 +105,7 @@ export async function updateStoredQueueConfig(
  * @returns a promise that resolves with the new queue entry
  */
 export async function saveNewEntryToDatabase(
-	entry: Omit<_QueueEntry, "channelId" | "guildId">,
+	entry: Omit<Readonly<_QueueEntry>, "channelId" | "guildId">,
 	queueChannel: TextChannel
 ): Promise<QueueEntry> {
 	// Make sure the channel is in there

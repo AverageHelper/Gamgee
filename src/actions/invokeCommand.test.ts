@@ -3,13 +3,8 @@ import "../../tests/testUtils/leakedHandles.js";
 jest.mock("../useGuildStorage");
 jest.mock("../permissions");
 
+import type { CommandContext, CommandPermission, GuildedCommand } from "../commands/index.js";
 import type { Guild, GuildMember, Role } from "discord.js";
-import type {
-	CommandContext,
-	CommandPermission,
-	GlobalCommand,
-	GuildedCommand
-} from "../commands/index.js";
 import { ApplicationCommandPermissionType } from "discord.js";
 import { invokeCommand } from "./invokeCommand.js";
 
@@ -87,7 +82,7 @@ describe("Invoke Command", () => {
 
 	describe("Guild Guards", () => {
 		test("always executes if the command does not require a guild", async () => {
-			(command as unknown as GlobalCommand).requiresGuild = false;
+			(command as { requiresGuild: boolean }).requiresGuild = false;
 			(context as { guild: null }).guild = null;
 			(context as { channel: null }).channel = null;
 			(context as { member: null }).member = null;
@@ -112,7 +107,6 @@ describe("Invoke Command", () => {
 		>();
 
 		beforeEach(() => {
-			command.requiresGuild = true;
 			context = {
 				...context,
 				guild: {
@@ -120,13 +114,13 @@ describe("Invoke Command", () => {
 					ownerId: callerId
 				} as unknown as Guild
 			};
-			command.permissions = mockPermissions;
+			command = { ...command, requiresGuild: true, permissions: mockPermissions };
 
 			mockPermissions.mockResolvedValue([]);
 		});
 
 		test("always executes if the command does not define permission requirements", async () => {
-			command.permissions = undefined;
+			command = { ...command, permissions: undefined };
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 			expect(mockExecute).toHaveBeenCalledOnce();
 			expect(mockExecute).toHaveBeenCalledWith(context);
@@ -146,7 +140,7 @@ describe("Invoke Command", () => {
 			"executes for owner if access == true ($type-based perm declaration)",
 			async ({ type }: { type: string }) => {
 				if (type === "array") {
-					command.permissions = ["owner"];
+					command = { ...command, permissions: ["owner"] };
 				} else {
 					mockPermissions.mockResolvedValueOnce([
 						{
@@ -170,7 +164,7 @@ describe("Invoke Command", () => {
 			"does not execute for owner if access == false ($type-based perm declaration)",
 			async ({ type }: { type: string }) => {
 				if (type === "array") {
-					command.permissions = [];
+					command = { ...command, permissions: [] };
 				} else {
 					mockPermissions.mockResolvedValueOnce([
 						{
@@ -193,7 +187,7 @@ describe("Invoke Command", () => {
 			"does not execute for admin if admins are to be permitted ($type-based perm declaration)",
 			async ({ type }: { type: string }) => {
 				if (type === "array") {
-					command.permissions = ["admin"];
+					command = { ...command, permissions: ["admin"] };
 				} else {
 					mockPermissions.mockResolvedValueOnce([
 						{
@@ -231,7 +225,7 @@ describe("Invoke Command", () => {
 			"executes for queue admin if admins are to be permitted ($type-based perm declaration)",
 			async ({ type }: { type: string }) => {
 				if (type === "array") {
-					command.permissions = ["queue-admin"];
+					command = { ...command, permissions: ["queue-admin"] };
 				} else {
 					mockPermissions.mockResolvedValueOnce([
 						{

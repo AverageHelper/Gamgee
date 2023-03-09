@@ -12,16 +12,20 @@ import type { CommandPermission, PermissionAlias } from "./CommandPermission.js"
 export * from "./CommandContext.js";
 export * from "./CommandPermission.js";
 
-type PermissionAliasList = Array<PermissionAlias>;
+export type PermissionAliasList = ReadonlyArray<PermissionAlias>;
 
-type PermissionGenerator = (
+export type PermissionGenerator = (
 	guild: Guild
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-interface BaseCommand extends ChatInputApplicationCommandData {
-	aliases?: ReadonlyArray<string>;
-	options?: NonEmptyArray<ApplicationCommandOption | Subcommand>;
-	type?: ApplicationCommandType.ChatInput;
+interface BaseCommand
+	extends Omit<
+		ChatInputApplicationCommandData,
+		"options" | "type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
+	> {
+	readonly aliases?: ReadonlyArray<string>;
+	readonly options?: Readonly<NonEmptyArray<ApplicationCommandOption | Subcommand>>;
+	readonly type?: ApplicationCommandType.ChatInput;
 
 	/**
 	 * Deprecated commands are hidden from normal `/help` output,
@@ -32,17 +36,17 @@ interface BaseCommand extends ChatInputApplicationCommandData {
 	 * invocations this as opportunities to educate users about
 	 * the command's alternatives, if any.
 	 */
-	deprecated?: boolean;
+	readonly deprecated?: boolean;
 }
 
 export interface GlobalCommand extends BaseCommand {
 	/** Whether the command requires a guild present to execute. */
-	requiresGuild: false;
+	readonly requiresGuild: false;
 
 	/** Permission overwrites for user or guild command access. */
-	permissions?: undefined;
-	defaultMemberPermissions?: undefined;
-	dmPermission?: undefined;
+	readonly permissions?: undefined;
+	readonly defaultMemberPermissions?: undefined;
+	readonly dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -50,19 +54,19 @@ export interface GlobalCommand extends BaseCommand {
 	 *
 	 * @param context Contextual information about the command invocation.
 	 */
-	execute: (context: CommandContext) => void | Promise<void>;
+	readonly execute: (context: CommandContext) => void | Promise<void>;
 }
 
 export interface GuildedCommand extends BaseCommand {
 	/** Whether the command requires a guild present to execute. */
-	requiresGuild: true;
+	readonly requiresGuild: true;
 
 	/** Permission overwrites for user or guild command access. */
-	permissions?: PermissionGenerator | PermissionAliasList;
+	readonly permissions?: PermissionGenerator | PermissionAliasList;
 
 	// TODO: Unblock these and use them instead of the above `permissions` value
-	defaultMemberPermissions?: undefined;
-	dmPermission?: undefined;
+	readonly defaultMemberPermissions?: undefined;
+	readonly dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -70,7 +74,7 @@ export interface GuildedCommand extends BaseCommand {
 	 *
 	 * @param context Contextual information about the command invocation.
 	 */
-	execute: (context: GuildedCommandContext) => void | Promise<void>;
+	readonly execute: (context: GuildedCommandContext) => void | Promise<void>;
 }
 
 /**
@@ -78,18 +82,22 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = GlobalCommand | GuildedCommand;
 
-interface BaseSubcommand extends ApplicationCommandSubCommandData {
-	type: ApplicationCommandOptionType.Subcommand;
+interface BaseSubcommand
+	extends Omit<
+		ApplicationCommandSubCommandData,
+		"type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
+	> {
+	readonly type: ApplicationCommandOptionType.Subcommand;
 }
 
 export interface GlobalSubcommand extends BaseSubcommand {
 	/** Whether the subcommand requires a guild present to execute. */
-	requiresGuild: false;
+	readonly requiresGuild: false;
 
 	/** Permission overwrites for user or guild subcommand access. */
-	permissions?: undefined;
-	defaultMemberPermissions?: undefined;
-	dmPermission?: undefined;
+	readonly permissions?: undefined;
+	readonly defaultMemberPermissions?: undefined;
+	readonly dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -97,19 +105,19 @@ export interface GlobalSubcommand extends BaseSubcommand {
 	 *
 	 * @param context Contextual information about the command invocation.
 	 */
-	execute: (context: CommandContext) => void | Promise<void>;
+	readonly execute: (context: CommandContext) => void | Promise<void>;
 }
 
 export interface GuildedSubcommand extends BaseSubcommand {
 	/** Whether the subcommand requires a guild present to execute. */
-	requiresGuild: true;
+	readonly requiresGuild: true;
 
 	/** Permission overwrites for user or guild subcommand access. */
-	permissions?: PermissionGenerator | PermissionAliasList;
+	readonly permissions?: PermissionGenerator | PermissionAliasList;
 
 	// TODO: Unblock these and use them instead of the above `permissions` value
-	defaultMemberPermissions?: undefined;
-	dmPermission?: undefined;
+	readonly defaultMemberPermissions?: undefined;
+	readonly dmPermission?: undefined;
 
 	/**
 	 * The command implementation. Receives contextual information about the
@@ -117,7 +125,7 @@ export interface GuildedSubcommand extends BaseSubcommand {
 	 *
 	 * @param context Contextual information about the command invocation.
 	 */
-	execute: (context: GuildedCommandContext) => void | Promise<void>;
+	readonly execute: (context: GuildedCommandContext) => void | Promise<void>;
 }
 
 export type Subcommand = GlobalSubcommand | GuildedSubcommand;
