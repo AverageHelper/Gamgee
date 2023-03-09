@@ -9,13 +9,13 @@
 			"description": "Tudja meg, mikor küldhet új dalt.",
 			"name": "cooldown",
 			"responses": {
-				"blacklisted": "Nem küldhet be egyetlen dalt sem. Ön feketelistára került. Sajnálom",
-				"immediately": "Azonnal beküldheted!",
-				"later": "{relative} belül, helyi idő szerint {absolute} kor lehet benyújtani",
-				"submissions-all-exhausted": "Felhasználta az összes kijelölt beküldési helyet!",
-				"submissions-1-exhausted": "Felhasználta az egyetlen beadványát az éjszakára!",
-				"submissions-2-exhausted": "Mindkét beadványát felhasználta az éjszakára!",
-				"submissions-all-ct-exhausted": "Mind a {count} beadványát felhasználta az éjszakára!"
+				"blacklisted": "Tiltólistára került, úgyhogy nem küldhet be egyetlen dalt sem. Sajnálom.",
+				"immediately": "Akár most is küldhet!",
+				"later": "{relative}, helyi idő szerint {absolute}-kor tud beküldeni.",
+				"submissions-all-exhausted": "Felhasználta az összes beküldési lehetőségét.",
+				"submissions-1-exhausted": "Felhasználta az egyetlen beküldési lehetőségét erre az alkalomra.",
+				"submissions-2-exhausted": "Mindkét beküldési lehetőségét felhasználta erre az alkalomra.",
+				"submissions-all-ct-exhausted": "Mind a {count} beküldési lehetőségét felhasználta erre az alkalomra."
 			}
 		},
 		"help": {
