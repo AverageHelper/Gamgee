@@ -147,7 +147,7 @@ export async function describeAllCommands(
 }
 
 function describeParameters(
-	options: Array<
+	options: ReadonlyArray<
 		| ApplicationCommandOption
 		| ApplicationCommandOptionData
 		| ApplicationCommandChoicesData
