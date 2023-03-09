@@ -202,9 +202,9 @@
 			"description": "Kiírja a videó címét és időtartamát.",
 			"name": "videó",
 			"responses": {
-				"generic-fetch-error": "Ez a videó lekérdezés hibát adott.",
-				"include-link": "Ehhez hozzá kell adnia egy dal linkjét.",
-				"no-info": "Ebből nem tudtam dalt kapni. Próbáljon ki egy linket egy {supported-platform}.",
+				"generic-fetch-error": "A videó lekérésekor hibát kaptam.",
+				"include-link": "Ehhez szükségem van egy dalra mutató linkre.",
+				"no-info": "Ezt nem tudtam dalként értelmezni. Próbáljon ki egy linket egy {supported-platform}.",
 				"supported-platform": "támogatott platformról"
 			}
 		}
