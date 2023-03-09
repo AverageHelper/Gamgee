@@ -88,12 +88,12 @@
 			"name": "quo",
 			"options": {
 				"open": {
-					"description": "Kezdje el elfogadni a dalkérelmeket a sorba.",
+					"description": "Elkezdek dalkéréseket fogadni.",
 					"name": "nyisd",
 					"responses": {
-						"ack": "Elismert",
-						"already-open": "Már nyílt a sor!",
-						"no-queue": "Nincs sor a nyitáshoz. Beállítottál már egyet?",
+						"ack": "Rendben!",
+						"already-open": "Már nyitva van a sor!",
+						"no-queue": "Nincs megnyitható sor. Beállítottál már egyet?",
 						"the-queue-now-open": "Megnyílt a sor!",
 						"this-queue-now-open": "Ez a sor nyitva van!"
 					}
