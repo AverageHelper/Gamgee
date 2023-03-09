@@ -52,7 +52,7 @@
 					"name": "Min. dal hossza"
 				},
 				"queue-duration": {
-					"description": "Az a maximális időtartam, ameddig a várólista eltarthat, ha az összes bejegyzést végponttól végéig lejátszaná. A várólista automatikusan bezárul, ha a beküldés miatt a sor túllépi ezt a korlátot.",
+					"description": "Az a maximális időtartam, amennyit a várólistán lévő dalok kitölthetnek, ha az összeset egymás után kezdettől végéig lejátszaná. A várólista automatikusan lezárul, ha egy beküldött dal miatt a lista hossza túllépi ezt a korlátot.",
 					"name": "Teljes várólista hossza"
 				}
 			},
