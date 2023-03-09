@@ -7,16 +7,7 @@
 	"commands": {
 		"cooldown": {
 			"description": "Averigüe cuándo puede enviar de nuevo.",
-			"name": "cooldown",
-			"responses": {
-				"blacklisted": "Puede enviar una vez que sea eliminado de la lista negra. Lo siento",
-				"immediately": "¡Puedes enviar ahora mismo!",
-				"later": "Puede enviar en {relative}, a las {absolute} hora local",
-				"submissions-all-exhausted": "¡Has usado todas tus presentaciones de canciones para la noche!",
-				"submissions-1-exhausted": "¡Has usado tu única presentación de canción para la noche!",
-				"submissions-2-exhausted": "¡Has usado las 2 presentaciones de tus canciones para la noche!",
-				"submissions-all-ct-exhausted": "¡Has usado las {count} presentaciones de tus canciones para la noche!"
-			}
+			"name": "cooldown"
 		},
 		"help": {
 			"description": "Imprime un mensaje de ayuda útil.",
@@ -33,75 +24,15 @@
 		},
 		"limits": {
 			"description": "Muestra los límites de envío de la cola de canciones.",
-			"name": "limites",
-			"values": {
-				"cooldown": {
-					"description": "La cantidad mínima de tiempo que cada usuario debe esperar entre sus propios envíos.",
-					"name": "Enfriamiento de sumisión"
-				},
-				"count": {
-					"description": "El número máximo de envíos que cada usuario puede enviar.",
-					"name": "Número de envíos de canciones"
-				},
-				"entry-duration-max": {
-					"description": "La duración máxima de una canción enviada.",
-					"name": "Duración máxima de la canción"
-				},
-				"entry-duration-min": {
-					"description": "La duración mínima de una canción enviada.",
-					"name": "Duración mínima de la canción"
-				},
-				"queue-duration": {
-					"description": "La longitud máxima que debe tomar la cola si todas las canciones se reproducen de principio a fin. La cola se cerrará automáticamente cuando un envío haga que la cola supere este límite.",
-					"name": "Longitud total de la cola de canciones"
-				}
-			},
-			"responses": {
-				"infinite": "infinita",
-				"none": "sin",
-				"title": "Límites de cola",
-				"use-cooldown-cmd": "Usa {cooldown} para ver tu tiempo de enfriamiento"
-			}
+			"name": "limites"
 		},
 		"nowplaying": {
 			"description": "Muestra la canción actual en la cola (o mi mejor suposición).",
-			"name": "jugandoahora",
-			"responses": {
-				"almost-sure": "Estoy 85% seguro de que esta es la presentación de {usermention}: {url}",
-				"dj-says": "El DJ me dijo que esta es la presentación de {usermention}: {url}",
-				"good-chance": "Hay una buena posibilidad de que esta sea la presentación de {usermention}: {url}",
-				"i-think": "Creo que esta es la presentación de {usermention}: {url}",
-				"likely": "Muy probablemente, esta es la presentación de {usermention}: {url}",
-				"no-queue": "No hay una cola configurada en este momento, por lo que no se está reproduciendo nada.",
-				"no-song": "Probablemente no hay nada jugando en este momento. (Si lo hay, no puedo oírlo)"
-			}
+			"name": "jugandoahora"
 		},
 		"ping": {
 			"description": "Haga ping a mi servidor host para comprobar la latencia.",
-			"name": "ping",
-			"responses": {
-				"pong": "Pong! Respuesta enviada en {time}. La latencia de la API es de {latency}"
-			}
-		},
-		"queue-admin": {
-			"description": "Comandos administrativos para gestionar la cola de canciones.",
-			"name": "quo",
-			"options": {
-				"open": {
-					"description": "Comienza a aceptar solicitudes de canciones en la cola.",
-					"name": "abre",
-					"responses": {
-						"ack": "Acepto.",
-						"already-open": "¡La cola ya estaba abierta!",
-						"no-queue": "No hay cola para abrir. ¿Ya has configurado uno?",
-						"the-queue-now-open": "¡La cola ya está abierta!",
-						"this-queue-now-open": "¡Esta cola ya está abierta!"
-					}
-				}
-			},
-			"responses": {
-				"list-possible-subcommands": "Querías decir:"
-			}
+			"name": "ping"
 		},
 		"setprefix": {
 			"description": "Establezca el prefijo utilizado por los comandos de mensajes.",
@@ -133,7 +64,6 @@
 				"rejections": {
 					"allotment-expended": "Ha utilizado los {max} envíos asignados.",
 					"cooldown": "Ya has enviado una canción en los últimos {duration}. Debe esperar {remaining} antes de volver a enviar.",
-					"queue-channel-submission-not-implemented": "Aún no se ha implementado la solicitud de canciones en el canal de cola.",
 					"too-long": "Esa canción es demasiado larga. El límite es de {limit}, pero esto dura {actual}.",
 					"too-short": "Esa canción es demasiado corta. El límite es de {limit}, pero esto dura {actual}."
 				},
@@ -150,16 +80,7 @@
 		},
 		"stats": {
 			"description": "Obtenga sus estadísticas de colas personales.",
-			"name": "estadísticas",
-			"responses": {
-				"title": "Estadísticas personales",
-				"average-sub-duration": "Duración promedio de las presentaciones de tus canciones",
-				"blacklisted": "En la lista negra",
-				"cooldown-remaining": "Tiempo restante de enfriamiento",
-				"queue-empty": "La cola está vacía. No tienes estadísticas en este momento.",
-				"total-subs": "Canciones totales enviadas por ti",
-				"value-limit": "{value} (límite {limit})"
-			}
+			"name": "estadísticas"
 		},
 		"t": {
 			"description": "Mostrar que estoy escribiendo.",
@@ -183,15 +104,7 @@
 		},
 		"userinfo": {
 			"description": "Devuelve alguna información sobre usted.",
-			"name": "usuarioinfo",
-			"responses": {
-				"statement": "Su configuración regional es {ulocale} ({therefore}) y la configuración regional del servidor es {glocale}",
-				"statement-sans-guild": "Su configuración regional es {ulocale} ({therefore})",
-				"supported": "compatible",
-				"unknown": "desconocido",
-				"unsupported": "no es compatible, así que optaremos por el {default}",
-				"assume": "así asumiremos {default}"
-			}
+			"name": "usuarioinfo"
 		},
 		"version": {
 			"description": "Muestra la versión actual de la base de código del bot.",
@@ -200,13 +113,7 @@
 		},
 		"video": {
 			"description": "Responde con el título y la duración del video.",
-			"name": "video",
-			"responses": {
-				"generic-fetch-error": "Esa consulta de video me dio un error.",
-				"include-link": "Debes agregar un enlace de canción a eso.",
-				"no-info": "No pude obtener una canción de eso. Pruebe un enlace desde una {supported-platform}.",
-				"supported-platform": "plataforma compatible"
-			}
+			"name": "video"
 		}
 	},
 	"common": {

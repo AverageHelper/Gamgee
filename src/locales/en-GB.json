@@ -7,16 +7,7 @@
 	"commands": {
 		"cooldown": {
 			"description": "Find out when you can submit again.",
-			"name": "cooldown",
-			"responses": {
-				"blacklisted": "You can submit once you are removed from the blacklist. My apologies.",
-				"immediately": "You can submit right now!",
-				"later": "You may submit in {relative}, at {absolute} local time",
-				"submissions-all-exhausted": "You've used all of your submissions for the night!",
-				"submissions-1-exhausted": "You've used your only submission for the night!",
-				"submissions-2-exhausted": "You've used both of your submissions for the night!",
-				"submissions-all-ct-exhausted": "You've used all {count} of your submissions for the night!"
-			}
+			"name": "cooldown"
 		},
 		"help": {
 			"description": "Print a useful help message.",
@@ -33,75 +24,15 @@
 		},
 		"limits": {
 			"description": "Display the song queue's submission limits.",
-			"name": "limits",
-			"values": {
-				"cooldown": {
-					"description": "The minimum amount of time that each user must wait between their own submissions.",
-					"name": "Submission Cooldown"
-				},
-				"count": {
-					"description": "The maximum number of submissions that each user may submit.",
-					"name": "Number of Submissions"
-				},
-				"entry-duration-max": {
-					"description": "The maximum duration of a song submission.",
-					"name": "Max Song Length"
-				},
-				"entry-duration-min": {
-					"description": "The minimum duration of a song submission.",
-					"name": "Min Song Length"
-				},
-				"queue-duration": {
-					"description": "The maximum duration that the queue should take if all its entries were played end-to-end. The queue will automatically close when a submission takes the queue over this limit.",
-					"name": "Total Queue Length"
-				}
-			},
-			"responses": {
-				"infinite": "infinite",
-				"none": "none",
-				"title": "Queue Limits",
-				"use-cooldown-cmd": "Use {cooldown} to see your cooldown time"
-			}
+			"name": "limits"
 		},
 		"nowplaying": {
 			"description": "Reveal the current song in the queue (or my best guess).",
-			"name": "nowplaying",
-			"responses": {
-				"almost-sure": "I am 85% certain this is {usermention}'s submission: {url}",
-				"dj-says": "The DJ told me this is {usermention}'s submission: {url}",
-				"good-chance": "There is a good chance this is {usermention}'s submission: {url}",
-				"i-think": "I think this is {usermention}'s submission: {url}",
-				"likely": "Very likely, this is {usermention}'s submission: {url}",
-				"no-queue": "There is no queue set up right now, so nothing is playing.",
-				"no-song": "There is probably nothing playing right now. (If there is, I cannot hear it)"
-			}
+			"name": "nowplaying"
 		},
 		"ping": {
 			"description": "Ping my host server to check latency.",
-			"name": "ping",
-			"responses": {
-				"pong": "Pong! Sent response in {time}. API latency is {latency}"
-			}
-		},
-		"queue-admin": {
-			"description": "Administrative commands to manage the song queue.",
-			"name": "quo",
-			"options": {
-				"open": {
-					"description": "Start accepting song requests to the queue.",
-					"name": "open",
-					"responses": {
-						"ack": "Got it!",
-						"already-open": "The queue is already open!",
-						"no-queue": "There is no queue to open. Have you set one up yet?",
-						"the-queue-now-open": "The queue is now open!",
-						"this-queue-now-open": "This queue is now open!"
-					}
-				}
-			},
-			"responses": {
-				"list-possible-subcommands": "Did you mean:"
-			}
+			"name": "ping"
 		},
 		"setprefix": {
 			"description": "Set the prefix used by message commands.",
@@ -133,7 +64,6 @@
 				"rejections": {
 					"allotment-expended": "You have used all {max} of your allotted submissions.",
 					"cooldown": "You've already submitted a song within the last {duration}. You must wait {remaining} before submitting again.",
-					"queue-channel-submission-not-implemented": "Requesting songs in the queue channel has not been implemented yet.",
 					"too-long": "That song is too long. The limit is {limit}, but this is {actual} long.",
 					"too-short": "That song is too short. The limit is {limit}, but this is {actual} long."
 				},
@@ -150,16 +80,7 @@
 		},
 		"stats": {
 			"description": "Get your personal queue statistics.",
-			"name": "stats",
-			"responses": {
-				"title": "Personal Statistics",
-				"average-sub-duration": "Average Duration of Your Submissions",
-				"blacklisted": "Blacklisted",
-				"cooldown-remaining": "Time Remaining on Cooldown",
-				"queue-empty": "The queue is empty. You have no stats right now.",
-				"total-subs": "Total Submissions from You",
-				"value-limit": "{value} (limit {limit})"
-			}
+			"name": "stats"
 		},
 		"t": {
 			"description": "Start a typing indicator.",
@@ -183,15 +104,7 @@
 		},
 		"userinfo": {
 			"description": "Returns some information about you.",
-			"name": "userinfo",
-			"responses": {
-				"statement": "Your locale is {ulocale} ({therefore}), and the server's locale is {glocale}",
-				"statement-sans-guild": "Your locale is {ulocale} ({therefore})",
-				"supported": "supported",
-				"unknown": "unknown",
-				"unsupported": "not supported, so we'll go with {default}",
-				"assume": "so we'll assume {default}"
-			}
+			"name": "userinfo"
 		},
 		"version": {
 			"description": "Display the bot's current codebase version.",
@@ -200,13 +113,7 @@
 		},
 		"video": {
 			"description": "Reply with the video title and duration.",
-			"name": "video",
-			"responses": {
-				"generic-fetch-error": "That video query gave me an error.",
-				"include-link": "You'll have to add a song link to that.",
-				"no-info": "I could not get a song from that. Try a link from a {supported-platform}.",
-				"supported-platform": "supported platform"
-			}
+			"name": "video"
 		}
 	},
 	"common": {
