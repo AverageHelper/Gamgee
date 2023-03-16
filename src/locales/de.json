@@ -14,8 +14,8 @@
 				"later": "Sie können in {relative}, um {absolute} Uhr Ortszeit einreichen",
 				"submissions-all-exhausted": "Sie haben alle Ihre Einreichungen für die Nacht verwendet!",
 				"submissions-1-exhausted": "Sie haben Ihre einzige Einreichung für die Nacht verwendet!",
-				"submissions-2-exhausted": "Sie haben beide Ihrer Einsendungen für die Nacht verwendet!",
-				"submissions-all-ct-exhausted": "Sie haben alle {count} Ihrer Einsendungen für die Nacht verwendet!"
+				"submissions-2-exhausted": "Sie haben beide Ihrer Einreichungen für die Nacht verwendet!",
+				"submissions-all-ct-exhausted": "Sie haben alle {count} Ihrer Einreichungen für die Nacht verwendet!"
 			}
 		},
 		"help": {
@@ -33,22 +33,22 @@
 		},
 		"limits": {
 			"description": "Zeigen Sie die Einreichungslimits der Song-Warteschlange an.",
-			"name": "grenzen",
+			"name": "limits",
 			"values": {
 				"cooldown": {
-					"description": "Die Mindestzeit, die jeder Benutzer zwischen seinen eigenen Übermittlungen warten muss.",
-					"name": "Einreichungs-Abkühlen"
+					"description": "Die Mindestzeit, die jeder Benutzer zwischen seinen eigenen Einreichungen warten muss.",
+					"name": "Einreichungs-Abklingzeit"
 				},
 				"count": {
-					"description": "Die maximale Anzahl von Übermittlungen, die jeder Benutzer übermitteln kann.",
+					"description": "Die maximale Anzahl von Einreichungen, die jeder Benutzer einreichen kann.",
 					"name": "Anzahl der Einreichungen"
 				},
 				"entry-duration-max": {
-					"description": "Die maximale Dauer einer Songeinreichung.",
+					"description": "Die maximale Dauer einer Einreichung.",
 					"name": "Max. Songlänge"
 				},
 				"entry-duration-min": {
-					"description": "Die Mindestdauer einer Songeinreichung.",
+					"description": "Die Mindestdauer einer Einreichung.",
 					"name": "Min. Songlänge"
 				},
 				"queue-duration": {
@@ -93,7 +93,7 @@
 					"responses": {
 						"ack": "Anerkannt!",
 						"already-open": "Die Warteschlange ist bereits geöffnet!",
-						"no-queue": "Es muss keine Warteschlange geöffnet werden. Hast du schon einen eingerichtet?",
+						"no-queue": "Es muss keine Warteschlange geöffnet werden. Hast du schon eine eingerichtet?",
 						"the-queue-now-open": "Die Warteschlange ist jetzt geöffnet!",
 						"this-queue-now-open": "Diese Warteschlange ist jetzt geöffnet!"
 					}
@@ -132,10 +132,10 @@
 				"not-allowed": "Sie dürfen keine Songs einreichen. Es tut mir Leid.",
 				"rejections": {
 					"allotment-expended": "Sie haben alle {max} Ihrer zugeteilten Einreichungen verwendet.",
-					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut senden.",
-					"queue-channel-submission-not-implemented": "Das Einreichung von Songs im Warteschlangenkanal wurde noch nicht implementiert.",
-					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das ist {actual} lang.",
-					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das ist {actual} lang."
+					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut einreichen.",
+					"queue-channel-submission-not-implemented": "Das Einreichen von Songs im Warteschlangenkanal wurde noch nicht implementiert.",
+					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das Lied ist {actual} lang.",
+					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das Lied ist {actual} lang."
 				},
 				"this-queue-full-autoclose": "Diese Warteschlange ist voll. Ich schließe es jetzt.",
 				"query-returned-error": "Diese Abfrage gab mir einen Fehler. Vielleicht nochmal versuchen?",
@@ -157,7 +157,7 @@
 				"blacklisted": "Auf der schwarzen Liste",
 				"cooldown-remaining": "Verbleibende Abklingzeit",
 				"queue-empty": "Die Warteschlange ist leer. Du hast momentan keine Statistiken.",
-				"total-subs": "Gesamtzahl der Einsendungen von Ihnen",
+				"total-subs": "Gesamtzahl Ihrer Einreichungen",
 				"value-limit": "{value} (Grenze {limit})"
 			}
 		},
@@ -205,7 +205,7 @@
 				"generic-fetch-error": "Diese Videoabfrage hat mir einen Fehler gegeben.",
 				"include-link": "Sie müssen einen Song-Link hinzufügen.",
 				"no-info": "Ich konnte daraus kein Lied machen. Probieren Sie einen Link von einer {supported-platform} aus.",
-				"supported-platform": "unterstützte Plattform"
+				"supported-platform": "unterstützten Plattform"
 			}
 		}
 	},

@@ -15,6 +15,7 @@ This project started out as a simple Discord bot to play around with APIs and th
 - [**bendai94**](https://github.com/bendai94) - _Contributor_
 - [**karcsesz**](https://github.com/karcsesz) - _Contributor_
 - [**vayandas**](https://github.com/vayandas) - _Contributor_
+- **Marph92** - _Contributor_
 
 ## Prerequisites
 
