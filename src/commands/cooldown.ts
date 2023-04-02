@@ -1,9 +1,9 @@
 import type { Command } from "./Command.js";
-import { composed, createPartialString, push, pushBold } from "../helpers/composeStrings.js";
+import { bold } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { localizations, t } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllStoredEntriesFromSender,
@@ -11,7 +11,6 @@ import {
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
-// TODO: i18n
 export const cooldown: Command = {
 	name: "cooldown",
 	nameLocalizations: localizations("commands.cooldown.name"),
@@ -33,11 +32,14 @@ export const cooldown: Command = {
 
 		// If the user is blacklisted, they have no limit usage :P
 		if (config.blacklistedUsers?.some(u => u.id === user.id) === true) {
-			return await replyPrivately("You can submit once you're removed from the blacklist... sorry");
+			return await replyPrivately(t("commands.cooldown.responses.blacklisted", userLocale));
 		}
 
 		// If there's no cooldown, the user may submit whenever!
-		const msgSubmitImmediately = "You can submit right now! :grinning:";
+		const msgSubmitImmediately = `${t(
+			"commands.cooldown.responses.immediately",
+			userLocale
+		)} :grinning:`;
 		if (config.cooldownSeconds === null || config.cooldownSeconds <= 0) {
 			return await replyPrivately(msgSubmitImmediately);
 		}
@@ -69,26 +71,30 @@ export const cooldown: Command = {
 			const absolute = Math.ceil(latestTimestamp / MILLISECONDS_IN_SECOND + config.cooldownSeconds);
 			const relative = durationString(userLocale, timeToWait);
 
-			const msg = createPartialString("You may submit in ");
-			pushBold(relative, msg);
-			push(`, at <t:${absolute}:T> local time`, msg);
-			await replyPrivately(composed(msg));
+			const msg = ti(
+				"commands.cooldown.responses.later",
+				{ relative: bold(relative), absolute: `<t:${absolute}:T>` },
+				userLocale
+			);
+			await replyPrivately(msg);
 		} else {
 			// We're finished, it is done, used all their submissions up
-			const partial = createPartialString("You've used ");
+			let msg: string;
 			if (userSubmissionCount <= 0) {
-				push("all of your submissions", partial);
+				msg = t("commands.cooldown.responses.submissions-all-exhausted", userLocale);
 			} else if (userSubmissionCount === 1) {
-				push("your only submission", partial);
+				msg = t("commands.cooldown.responses.submissions-1-exhausted", userLocale);
 			} else if (userSubmissionCount === 2) {
-				push("both of your submissions", partial);
+				msg = t("commands.cooldown.responses.submissions-2-exhausted", userLocale);
 			} else {
-				push(`all ${userSubmissionCount} of your submissions`, partial);
+				msg = ti(
+					"commands.cooldown.responses.submissions-all-ct-exhausted",
+					{ count: `${userSubmissionCount}` },
+					userLocale
+				);
 			}
-			push(" for the night! :tada:", partial);
 
-			const msg = composed(partial);
-			await replyPrivately(msg);
+			await replyPrivately(`${msg} :tada:`);
 		}
 	}
 };

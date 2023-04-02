@@ -23,22 +23,23 @@ import {
 
 export interface SongRequest {
 	/** The URL where the track may be found. */
-	songUrl: URL;
+	readonly songUrl: URL;
 
 	/** The command context of the request. */
-	context: CommandContext;
+	readonly context: CommandContext;
 
 	/** The queue channel where the request should land if accepted. */
-	queueChannel: TextChannel;
+	readonly queueChannel: TextChannel;
 
 	/**
-	 * The message that contains the original embed, if we sent
-	 * one. If the user sent one, this value should be `null`.
+	 * A `Promise` that resolves with the message that contains
+	 * the original embed, if _we_ sent one. If the user sent one,
+	 * this value should resolve to `null`.
 	 */
-	publicPreemptiveResponse: Message | null;
+	readonly publicPreemptiveResponse: Promise<Message | null>;
 
 	/** The place where log messages should be sent. */
-	logger: Logger;
+	readonly logger: Logger;
 }
 
 const logger = useLogger();
@@ -48,9 +49,10 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 	const content = `:hammer: <@!${context.user.id}> ${reason}`;
 
 	if (context.type === "interaction") {
-		if (request.publicPreemptiveResponse) {
+		const publicPreemptiveResponse = await request.publicPreemptiveResponse;
+		if (publicPreemptiveResponse) {
 			// delete the mock invocation
-			await deleteMessage(request.publicPreemptiveResponse);
+			await deleteMessage(publicPreemptiveResponse);
 		}
 		try {
 			await context.interaction.editReply({
@@ -73,12 +75,13 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 		// Can't suppress other users' embeds, but we *can* delete the message
 		await deleteMessage(context.message);
 	} else {
-		if (request.publicPreemptiveResponse) {
+		const publicPreemptiveResponse = await request.publicPreemptiveResponse;
+		if (publicPreemptiveResponse) {
 			// delete the mock invocation
-			await deleteMessage(request.publicPreemptiveResponse);
+			await deleteMessage(publicPreemptiveResponse);
 		}
 		try {
-			await context.interaction.editReply("Done.");
+			await context.interaction.editReply(t("commands.sr.responses.finished", context.userLocale));
 		} catch (error) {
 			logger.error(error);
 		}
@@ -86,10 +89,10 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 }
 
 interface SongAcceptance {
-	queueChannel: TextChannel;
-	context: CommandContext;
-	entry: UnsentQueueEntry;
-	logger: Logger;
+	readonly queueChannel: TextChannel;
+	readonly context: CommandContext;
+	readonly entry: UnsentQueueEntry;
+	readonly logger: Logger;
 }
 
 /**
@@ -103,7 +106,9 @@ async function acceptSongRequest({
 	entry,
 	logger
 }: SongAcceptance): Promise<void> {
+	logger.debug(`Began enqueuing request at ${Date.now()} from ${logUser(context.user)}`);
 	await pushEntryToQueue(entry, queueChannel);
+	logger.debug(`Enqueued request at ${Date.now()} from ${logUser(context.user)}`);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
 		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`

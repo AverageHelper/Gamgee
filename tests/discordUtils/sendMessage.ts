@@ -22,8 +22,7 @@ async function sendMessage(
 	channelId: Snowflake = TEST_CHANNEL_ID
 ): Promise<Message> {
 	const channel = await client.channels.fetch(channelId);
-	if (!channel || !channel.isTextBased())
-		throw new Error(`Channel ${channelId} is not a text channel.`);
+	if (!channel?.isTextBased()) throw new Error(`Channel ${channelId} is not a text channel.`);
 
 	return await channel.send(content);
 }

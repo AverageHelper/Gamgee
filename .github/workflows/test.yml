@@ -7,20 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.10.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Use Node.js 16.10.x
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.10.x
       - run: npm ci
       - run: npm run build
       - name: Run npm run test:src
@@ -32,13 +27,27 @@ jobs:
           CI: true
           NODE_ENV: "test"
 
+  test_18:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - run: npm ci
+      - run: npm run build
+      - name: Run npm run test:src
+        run: npm run test:src -- --coverage=false
+
   integration:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16.10.x (earliest version supported)
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.10.x
       - run: npm ci

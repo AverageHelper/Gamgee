@@ -3,12 +3,11 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { getVideoDetails } from "../actions/getVideoDetails.js";
-import { localizations } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { stopEscapingUriInString } from "../actions/messages/editMessage.js";
 
-// TODO: i18n
 export const video: Command = {
 	name: "video",
 	nameLocalizations: localizations("commands.video.name"),
@@ -25,12 +24,19 @@ export const video: Command = {
 		}
 	],
 	requiresGuild: false,
-	async execute(context) {
-		const { guildLocale, logger, options, type, reply, prepareForLongRunningTasks } = context;
+	async execute({
+		guildLocale,
+		logger,
+		options,
+		userLocale,
+		type,
+		reply,
+		prepareForLongRunningTasks
+	}) {
 		const firstOption = options[0];
 		if (!firstOption) {
 			return await reply({
-				content: "You're gonna have to add a song link to that.",
+				content: t("commands.video.responses.include-link", userLocale),
 				ephemeral: true
 			});
 		}
@@ -45,15 +51,22 @@ export const video: Command = {
 			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
 		const supportedPlatform =
 			type === "interaction"
-				? `[supported platform](<${supportedPlatformsList}>)`
-				: "supported platform";
+				? `[${t(
+						"commands.video.responses.supported-platform",
+						userLocale
+				  )}](<${supportedPlatformsList}>)`
+				: t("commands.video.responses.supported-platform", userLocale);
 
 		try {
 			await prepareForLongRunningTasks(); // in case we need to wait on a timeout error, lol
 			const video = await getVideoDetails(urlString);
 			if (video === null) {
 				return await reply({
-					content: `I couldn't get a song from that. Try a link from a ${supportedPlatform}.`,
+					content: ti(
+						"commands.video.responses.no-info",
+						{ "supported-platform": supportedPlatform },
+						userLocale
+					),
 					ephemeral: true
 				});
 			}
@@ -80,7 +93,7 @@ export const video: Command = {
 			// Handle fetch errors
 		} catch (error) {
 			logger.error(richErrorMessage(`Failed to run query for URL: ${urlString}`, error));
-			return await reply("That video query gave me an error.");
+			return await reply(t("commands.video.responses.generic-fetch-error", guildLocale));
 		}
 	}
 };

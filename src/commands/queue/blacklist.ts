@@ -30,9 +30,8 @@ export const blacklist: Subcommand = {
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
-	async execute(context) {
+	async execute({ type, guild, user, options, logger, reply, replyPrivately, deleteInvocation }) {
 		const { quo: parentCommand } = await import("./index.js");
-		const { type, guild, user, options, logger, reply, replyPrivately, deleteInvocation } = context;
 
 		const queueChannel = await getQueueChannel(guild);
 		if (!queueChannel) {
@@ -41,7 +40,7 @@ export const blacklist: Subcommand = {
 
 		const firstOption = options[0];
 		if (!firstOption) {
-			if (context.type === "message") {
+			if (type === "message") {
 				logger.debug("Private-ness for message commands is restricted to DMs.");
 				// We can reply to text messages twice, since the second one will be a DM. We `await` here, not `return`.
 				await reply(":paperclip: Check the list in your DMs");
@@ -78,7 +77,7 @@ export const blacklist: Subcommand = {
 			pushCode(`${prefix}${parentCommand.name} ${whitelist.name} <user mention>`, replyMsg);
 			push(".", replyMsg);
 			pushNewLine(replyMsg);
-			if (context.type === "message") {
+			if (type === "message") {
 				// These are DMs. Be clear about where to run commands.
 				push("(Run these in ", replyMsg);
 				push(`*${guildName}*`, replyMsg);

@@ -15,7 +15,7 @@ type EntityKeys = keyof WithoutPrefixedKeys<typeof dataSource, "$">;
  */
 export async function useRepository<Entity extends EntityKeys, T = undefined>(
 	table: Entity,
-	cb: (repository: typeof dataSource[Entity]) => T | Promise<T>
+	cb: (repository: (typeof dataSource)[Entity]) => T | Promise<T>
 ): Promise<T> {
 	return await cb(dataSource[table]);
 }

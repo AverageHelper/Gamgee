@@ -25,7 +25,7 @@ const logger = useLogger();
 /**
  * Fetches metadata about the provided GitHub repository.
  */
-export async function gitHubMetadata(options: Options): Promise<GitHubMetadata> {
+export async function gitHubMetadata(options: Readonly<Options>): Promise<GitHubMetadata> {
 	const { owner, repo } = options;
 	const gitHubApi = new URL("https://api.github.com/");
 	const url = new URL(`/repos/${owner}/${repo}`, gitHubApi);

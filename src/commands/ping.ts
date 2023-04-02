@@ -1,9 +1,9 @@
 import type { Command } from "./Command.js";
 import type { Message } from "discord.js";
-import { localizations } from "../i18n.js";
+import { code } from "../helpers/composeStrings.js";
+import { localizations, ti } from "../i18n.js";
 import { randomPhrase, unwrappingFirstWith } from "../helpers/randomStrings.js";
 
-// TODO: i18n
 export const ping: Command = {
 	name: "ping",
 	nameLocalizations: localizations("commands.ping.name"),
@@ -11,7 +11,7 @@ export const ping: Command = {
 	descriptionLocalizations: localizations("commands.ping.description"),
 	requiresGuild: false,
 	async execute(context) {
-		const { client, user, logger } = context;
+		const { client, user, logger, guildLocale, type } = context;
 		const random = unwrappingFirstWith(
 			{
 				me: client.user.username,
@@ -25,7 +25,7 @@ export const ping: Command = {
 		let responseTime: number;
 
 		// FIXME: Ping seems to report slower for messages vs interactions. This is probably to do with the extra API work we do around message parsing. Best fix that
-		if (context.type === "message") {
+		if (type === "message") {
 			testMessage = await context.message.reply({
 				content: random,
 				allowedMentions: { repliedUser: false }
@@ -42,7 +42,11 @@ export const ping: Command = {
 
 		const apiLatency = Math.round(client.ws.ping);
 		await testMessage.edit({
-			content: `Pong! Sent response in \`${responseTime}ms\`. API latency is \`${apiLatency}ms\``,
+			content: ti(
+				"commands.ping.responses.pong",
+				{ time: code(`${responseTime}ms`), latency: code(`${apiLatency}ms`) },
+				guildLocale
+			),
 			allowedMentions: { repliedUser: false }
 		});
 		logger.info(`Sent ping response in ${responseTime}ms. API latency is ${apiLatency}ms.`);

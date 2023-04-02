@@ -11,9 +11,9 @@ import { version } from "../version.js";
 type FetchTestFunction = typeof getYouTubeVideo;
 
 interface FetchTest {
-	name: string;
-	fn: FetchTestFunction;
-	urlString: string;
+	readonly name: string;
+	readonly fn: FetchTestFunction;
+	readonly urlString: string;
 }
 
 interface FetchResult {
@@ -23,7 +23,7 @@ interface FetchResult {
 	error?: NodeJS.ErrnoException;
 }
 
-const SERVICE_TESTS: NonEmptyArray<FetchTest> = [
+const SERVICE_TESTS: Readonly<NonEmptyArray<FetchTest>> = [
 	{
 		name: "YouTube",
 		fn: getYouTubeVideo,

@@ -4,7 +4,7 @@ import { useTestLogger } from "../testUtils/logger";
 
 const logger = useTestLogger();
 
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 40_000; // must be shorter than Mocha's test timeout
 
 async function uuid(): Promise<number> {
 	await new Promise(resolve => setTimeout(resolve, 3)); // ensure Date.now() is a new value

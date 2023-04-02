@@ -80,7 +80,7 @@ async function prepareGuildedCommands(
 
 async function prepareCommandsForGuild(
 	guild: Guild,
-	guildCommands: Array<GuildedCommand>,
+	guildCommands: ReadonlyArray<GuildedCommand>,
 	logger: Logger
 ): Promise<void> {
 	const commandBuilders = guildCommands;
@@ -133,7 +133,7 @@ export function deployableCommand(cmd: Command): ApplicationCommandDataResolvabl
 	}
 
 	if (cmd.options) {
-		payload.options = cmd.options;
+		payload.options = cmd.options.slice();
 	}
 	// TODO: Set defaultMemberPermissions and dmPermission
 

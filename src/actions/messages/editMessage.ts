@@ -47,18 +47,20 @@ export async function suppressEmbedsForMessage(
 		}
 
 		// We sent this, so we can edit its content directly.
+		let options: MessageEditOptions;
 		if (suppress) {
-			await editMessage(message, {
+			options = {
 				flags: ["SuppressEmbeds"],
 				content: escapeUriInString(message.content),
 				allowedMentions: { users: [] }
-			});
+			};
 		} else {
-			await editMessage(message, {
+			options = {
 				flags: [],
 				content: stopEscapingUriInString(message.content)
-			});
+			};
 		}
+		await editMessage(message, options);
 	} catch (error) {
 		logger.error(richErrorMessage("Cannot suppress message embeds.", error));
 	}

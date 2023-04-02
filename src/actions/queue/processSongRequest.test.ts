@@ -94,7 +94,7 @@ describe("Song request pipeline", () => {
 		request = {
 			context,
 			logger: useTestLogger(),
-			publicPreemptiveResponse: null,
+			publicPreemptiveResponse: Promise.resolve(null),
 			queueChannel: {
 				id: QUEUE_CHANNEL_ID,
 				guild: {
@@ -134,7 +134,7 @@ describe("Song request pipeline", () => {
 
 	test("(message) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
 		// mock the queue's duration max
-		config.entryDurationMaxSeconds = 10;
+		config = { ...config, entryDurationMaxSeconds: 10 };
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter for a long song
@@ -153,7 +153,7 @@ describe("Song request pipeline", () => {
 
 	test("(interaction) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
 		// mock the queue's duration max
-		config.entryDurationMaxSeconds = 10;
+		config = { ...config, entryDurationMaxSeconds: 10 };
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter for a long song
@@ -165,17 +165,20 @@ describe("Song request pipeline", () => {
 		});
 
 		context = { ...context, type: "interaction" } as unknown as CommandContext;
-		request.context = context;
-		request.publicPreemptiveResponse = { id: "a-message" } as unknown as Message;
+		request = {
+			...request,
+			context,
+			publicPreemptiveResponse: Promise.resolve({ id: "a-message" } as unknown as Message)
+		};
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
 
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith(request.publicPreemptiveResponse);
+		expect(mockDeleteMessage).toHaveBeenCalledWith(await request.publicPreemptiveResponse);
 	});
 
 	test("closes the queue automatically just as entries exceed queue-length limits", async () => {
 		// mock the queue limits to disable cooldown, enable long submissions, enable queue cap
-		config.queueDurationSeconds = 250;
+		config = { ...config, queueDurationSeconds: 250 };
 		mockGetStoredQueueConfig.mockResolvedValue(config);
 
 		// mock the video getter to consider any URL to be really long

@@ -34,7 +34,7 @@ export const RESTORE_BUTTON: MessageButton = {
 };
 
 export function actionRow(
-	buttons: NonEmptyArray<MessageButton>
+	buttons: Readonly<NonEmptyArray<Readonly<MessageButton>>>
 ): ActionRowBuilder<MessageActionRowComponentBuilder> {
 	return new ActionRowBuilder<MessageActionRowComponentBuilder>() //
 		.setComponents(

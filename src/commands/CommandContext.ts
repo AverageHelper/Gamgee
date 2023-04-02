@@ -53,17 +53,17 @@ interface BaseCommandContext {
 	readonly options: ReadonlyArray<MessageCommandInteractionOption>;
 
 	/** Instructs Discord to keep interaction handles open long enough for long-running tasks to complete. */
-	prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
+	readonly prepareForLongRunningTasks: (ephemeral?: boolean) => void | Promise<void>;
 
 	/**
 	 * Deletes the command invocation if it was sent as a text message.
 	 *
 	 * Note: Slash command interactions are ephemeral until replied to. This method does nothing in the case of Discord Interactions.
 	 */
-	deleteInvocation: () => Promise<void>;
+	readonly deleteInvocation: () => Promise<void>;
 
 	/** Sends a typing indicator, then stops typing after 10 seconds, or when a message is sent. */
-	sendTyping: () => void;
+	readonly sendTyping: () => void;
 
 	/**
 	 * Sends a DM or ephemeral reply to the command's sender.
@@ -75,7 +75,7 @@ interface BaseCommandContext {
 	 * @param options The message payload to send.
 	 * @param viaDM Whether Gamgee should reply in DMs.
 	 */
-	replyPrivately: (
+	readonly replyPrivately: (
 		options:
 			| string //
 			| Omit<MessageReplyOptions, "flags">
@@ -84,12 +84,12 @@ interface BaseCommandContext {
 	) => Promise<void>;
 
 	/** Replies to the command invocation message, optionally pinging the command's sender. */
-	reply: (
+	readonly reply: (
 		options:
 			| string
 			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
-					shouldMention?: boolean;
+					readonly shouldMention?: boolean;
 			  })
 	) => Promise<void>;
 
@@ -99,12 +99,12 @@ interface BaseCommandContext {
 	 * @returns a `Promise` that resolves with a reference to the message sent,
 	 * or a boolean value indicating whether an ephemeral reply succeeded or failed.
 	 */
-	followUp: (
+	readonly followUp: (
 		options:
 			| string
 			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
-					reply?: boolean;
+					readonly reply?: boolean;
 			  })
 	) => Promise<Message | boolean>;
 }

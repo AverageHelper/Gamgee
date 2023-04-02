@@ -191,6 +191,7 @@ export async function replyPrivately(
 		// Inform the user that we tried to DM them, but they have their DMs off
 		if ("author" in source) {
 			// TODO: Tried to DM about what? Be more specific
+			// FIXME: DMs-disabled isn't always the reason for this error
 			await source.channel?.send(
 				`<@!${source.author.id}> ${t("common.dm-failed-disabled", guildLocale)} :slight_frown:`
 			);

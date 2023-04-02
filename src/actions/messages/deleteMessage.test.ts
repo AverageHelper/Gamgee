@@ -54,7 +54,7 @@ describe("Bulk Message Delete", () => {
 			}
 		} as unknown as TextChannel;
 
-		mockBulkDelete.mockImplementation((ids: Array<string>) => {
+		mockBulkDelete.mockImplementation((ids: ReadonlyArray<string>) => {
 			// Discord balks when we try <2 || >100 IDs
 			if (ids.length < 2 || ids.length > 100) {
 				return Promise.reject(new Error("Can't delete fewer than 2 or more than 100"));

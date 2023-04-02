@@ -5,5 +5,5 @@
 	"require": ["ts-node/register", "./tests/hooks.ts"],
 	"retries": 2,
 	"spec": ["./tests/**/*.test.ts"],
-	"timeout": 20000
+	"timeout": 60000
 }

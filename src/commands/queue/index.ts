@@ -1,15 +1,16 @@
 import type { Command, Subcommand } from "../Command.js";
-import { invokeCommand } from "../../actions/invokeCommand.js";
-import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
-import { setup } from "./setup.js";
-import { teardown } from "./teardown.js";
 import { blacklist } from "./blacklist.js";
-import { whitelist } from "./whitelist.js";
-import { open } from "./open.js";
 import { close } from "./close.js";
+import { invokeCommand } from "../../actions/invokeCommand.js";
 import { limit } from "./limit.js";
-import { stats } from "./stats.js";
+import { localizations, t } from "../../i18n.js";
+import { open } from "./open.js";
+import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import { restart } from "./restart.js";
+import { setup } from "./setup.js";
+import { stats } from "./stats.js";
+import { teardown } from "./teardown.js";
+import { whitelist } from "./whitelist.js";
 import {
 	composed,
 	createPartialString,
@@ -30,21 +31,25 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	restart
 ];
 
-// TODO: i18n
 export const quo: Command = {
 	name: "quo",
+	nameLocalizations: localizations("commands.queue-admin.name"),
 	description: "Administrative commands to manage the song queue.",
+	descriptionLocalizations: localizations("commands.queue-admin.description"),
 	options: namedSubcommands,
 	requiresGuild: true,
 	permissions: ["owner", "admin", "queue-admin"],
 	async execute(context) {
+		const locale = context.guildLocale;
 		const firstOption = context.options[0];
 		if (!firstOption) {
-			const response = createPartialString("The possible subcommands are:");
+			const response = createPartialString(
+				t("commands.queue-admin.responses.list-possible-subcommands", locale)
+			);
 			Object.values(namedSubcommands).forEach(command => {
 				pushNewLine(response);
 				push(" - ", response);
-				pushCode(command.name, response);
+				pushCode(command.nameLocalizations?.[locale] ?? command.name, response);
 			});
 
 			return await context.reply(composed(response));
@@ -80,12 +85,14 @@ export const quo: Command = {
 			}
 		}
 
-		// TODO: Print clickable slash command references instead
-		const response = createPartialString("The possible subcommands are:");
+		const response = createPartialString(
+			t("commands.queue-admin.responses.list-possible-subcommands", locale)
+		);
 		Object.values(namedSubcommands).forEach(command => {
 			pushNewLine(response);
 			push(" - ", response);
-			pushCode(command.name, response);
+			// TODO: Print clickable slash command references instead
+			pushCode(command.nameLocalizations?.[locale] ?? command.name, response);
 		});
 		return await context.reply(composed(response));
 	}

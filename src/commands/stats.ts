@@ -1,11 +1,10 @@
 import type { Command } from "./Command.js";
 import { averageSubmissionPlaytimeForUser } from "../actions/queue/useQueue.js";
-import { composed, createPartialString, push } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { isQueueOpen } from "../useGuildStorage.js";
-import { localizations, t } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllStoredEntriesFromSender,
@@ -13,7 +12,6 @@ import {
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
 
-// TODO: i18n
 export const stats: Command = {
 	name: "stats",
 	nameLocalizations: localizations("commands.stats.name"),
@@ -35,11 +33,14 @@ export const stats: Command = {
 
 		// If the queue is open, display the user's limit usage
 		const embed = new EmbedBuilder() //
-			.setTitle("Personal Statistics");
+			.setTitle(t("commands.stats.responses.title", userLocale));
 
 		const userIsBlacklisted = config.blacklistedUsers?.some(u => u.id === user.id) === true;
 		if (userIsBlacklisted) {
-			embed.addFields({ name: "Blacklisted", value: ":skull_crossbones:" });
+			embed.addFields({
+				name: t("commands.stats.responses.blacklisted", userLocale),
+				value: ":skull_crossbones:"
+			});
 		}
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
@@ -49,18 +50,38 @@ export const stats: Command = {
 		]);
 
 		// Average song length
-		const durationMsg = createPartialString(durationString(userLocale, avgDuration));
+		let durationMsg = durationString(userLocale, avgDuration);
 		if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
-			push(` (limit ${durationString(userLocale, config.entryDurationMaxSeconds)})`, durationMsg);
+			durationMsg = ti(
+				"commands.stats.responses.value-limit",
+				{
+					value: durationString(userLocale, avgDuration),
+					limit: durationString(userLocale, config.entryDurationMaxSeconds)
+				},
+				userLocale
+			);
 		}
-		embed.addFields({ name: "Average Length of Your Submissions", value: composed(durationMsg) });
+		embed.addFields({
+			name: t("commands.stats.responses.average-sub-duration", userLocale),
+			value: durationMsg
+		});
 
 		// Total submissions
-		const requestCountMsg = createPartialString(`${userSubmissionCount}`);
+		let requestCountMsg = `${userSubmissionCount}`;
 		if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-			push(` (limit ${config.submissionMaxQuantity})`, requestCountMsg);
+			requestCountMsg = ti(
+				"commands.stats.responses.value-limit",
+				{
+					value: `${userSubmissionCount}`,
+					limit: `${config.submissionMaxQuantity}`
+				},
+				userLocale
+			);
 		}
-		embed.addFields({ name: "Total Submissions from You", value: composed(requestCountMsg) });
+		embed.addFields({
+			name: t("commands.stats.responses.total-subs", userLocale),
+			value: requestCountMsg
+		});
 
 		// Remaining wait time (if applicable)
 		const userCanSubmitAgainLater =
@@ -80,7 +101,10 @@ export const stats: Command = {
 					? Math.max(0, config.cooldownSeconds - timeSinceLatest)
 					: 0;
 			const value = durationString(userLocale, timeToWait);
-			embed.addFields({ name: "Time Remaining on Cooldown", value });
+			embed.addFields({
+				name: t("commands.stats.responses.cooldown-remaining", userLocale),
+				value
+			});
 
 			// TODO: ETA to user's next submission would be nice here
 		}
@@ -88,7 +112,7 @@ export const stats: Command = {
 		if ((embed.data.fields ?? []).length > 0) {
 			await replyPrivately({ embeds: [embed] });
 		} else {
-			await replyPrivately("The queue is empty. You have no stats lol");
+			await replyPrivately(t("commands.stats.responses.queue-empty", userLocale));
 		}
 	}
 };

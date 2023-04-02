@@ -1,4 +1,5 @@
 import "../../../tests/testUtils/leakedHandles.js";
+import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 jest.mock("../../actions/queue/getQueueChannel");
 jest.mock("../../useGuildStorage");
@@ -25,6 +26,7 @@ describe("Open the Queue", () => {
 		context = {
 			guild: "the-guild",
 			channel: undefined,
+			logger: useTestLogger(),
 			reply: mockReply,
 			deleteInvocation: mockDeleteInvocation,
 			followUp: mockFollowUp

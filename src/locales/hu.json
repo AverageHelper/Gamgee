@@ -7,7 +7,16 @@
 	"commands": {
 		"cooldown": {
 			"description": "Tudja meg, mikor küldhet új dalt.",
-			"name": "cooldown"
+			"name": "cooldown",
+			"responses": {
+				"blacklisted": "Tiltólistára került, úgyhogy nem küldhet be egyetlen dalt sem. Sajnálom.",
+				"immediately": "Akár most is küldhet!",
+				"later": "{relative}, helyi idő szerint {absolute}-kor tud beküldeni.",
+				"submissions-all-exhausted": "Felhasználta az összes beküldési lehetőségét.",
+				"submissions-1-exhausted": "Felhasználta az egyetlen beküldési lehetőségét erre az alkalomra.",
+				"submissions-2-exhausted": "Mindkét beküldési lehetőségét felhasználta erre az alkalomra.",
+				"submissions-all-ct-exhausted": "Mind a {count} beküldési lehetőségét felhasználta erre az alkalomra."
+			}
 		},
 		"help": {
 			"description": "Kiír egy hasznos súgóüzenetet.",
@@ -24,15 +33,75 @@
 		},
 		"limits": {
 			"description": "Kiírja a várólista beküldési korlátait.",
-			"name": "határok"
+			"name": "határok",
+			"values": {
+				"cooldown": {
+					"description": "Az a minimális idő, ameddig minden felhasználónak várnia kell a saját beküldései között.",
+					"name": "Beküldés Cooldown"
+				},
+				"count": {
+					"description": "Az egyes felhasználók által beküldhető dalok maximális száma.",
+					"name": "Beküldhető dalok száma"
+				},
+				"entry-duration-max": {
+					"description": "A beküldött dal maximális időtartama.",
+					"name": "Max. dal hossza"
+				},
+				"entry-duration-min": {
+					"description": "A beküldött dal minimális időtartama.",
+					"name": "Min. dal hossza"
+				},
+				"queue-duration": {
+					"description": "Az a maximális időtartam, amennyit a várólistán lévő dalok kitölthetnek, ha az összeset egymás után kezdettől végéig lejátszaná. A várólista automatikusan lezárul, ha egy beküldött dal miatt a lista hossza túllépi ezt a korlátot.",
+					"name": "Teljes várólista hossza"
+				}
+			},
+			"responses": {
+				"infinite": "végtelen",
+				"none": "semmi",
+				"title": "Beküldési korlátok",
+				"use-cooldown-cmd": "A {cooldown} segítségével megtekintheti, mennyi idő múlva tud újra beküldeni"
+			}
 		},
 		"nowplaying": {
 			"description": "Kiírja az aktuális dalt a sorban (vagy a legjobb tippemet).",
-			"name": "mitjátszik"
+			"name": "mitjátszik",
+			"responses": {
+				"almost-sure": "Úgy 85%-ban vagyok benne biztos, hogy ezt {usermention} küldte be: {url}",
+				"dj-says": "Megkérdeztem a DJ-t, szerinte ezt {usermention} küldte be: {url}",
+				"good-chance": "Jó esély van rá, hogy ez {usermention}-é: {url}",
+				"i-think": "Szerintem ezt {usermention} küldte be: {url}",
+				"likely": "Nagyon valószínű, hogy ezt {usermention} küldte be: {url}",
+				"no-queue": "Jelenleg nincs sor itt beállítva, így semmi sincs a lemezjátszón.",
+				"no-song": "Most semmi nem hallható. (Ha mégis, akkor beszélnem kell az orvosommal)"
+			}
 		},
 		"ping": {
 			"description": "Pingeli a szerveremet a válaszidő ellenőrzéséhez.",
-			"name": "ping"
+			"name": "ping",
+			"responses": {
+				"pong": "Pong! {time} alatt elküldtük a választ. Az API késleltetése {latency}"
+			}
+		},
+		"queue-admin": {
+			"description": "Adminisztratív parancsok a dalsor kezeléséhez.",
+			"name": "quo",
+			"options": {
+				"open": {
+					"description": "Elkezdek dalkéréseket fogadni.",
+					"name": "nyisd",
+					"responses": {
+						"ack": "Rendben!",
+						"already-open": "Már nyitva van a sor!",
+						"no-queue": "Nincs megnyitható sor. Beállítottál már egyet?",
+						"the-queue-now-open": "Megnyílt a sor!",
+						"this-queue-now-open": "Ez a sor nyitva van!"
+					}
+				}
+			},
+			"responses": {
+				"list-possible-subcommands": "Úgy értetted:"
+			}
 		},
 		"setprefix": {
 			"description": "Beállítja az üzenetparancsok előtt használt előtagot.",
@@ -64,6 +133,7 @@
 				"rejections": {
 					"allotment-expended": "Felhasználta mind a(z) {max} lehetőségét.",
 					"cooldown": "Már küldött be dalt az elmúlt {duration}-ban/ben. Várnia kell {remaining}-(e)t, mielőtt újra küldhet.",
+					"queue-channel-submission-not-implemented": "Még nem vagyok képes a várólistából dalkéréseket fogadni.",
 					"too-long": "Ez a dal túl hosszú. A határ {limit}, de ez {actual} hosszú.",
 					"too-short": "Ez a dal túl rövid. A határ {limit}, de ez {actual} hosszú."
 				},
@@ -80,7 +150,16 @@
 		},
 		"stats": {
 			"description": "Lekéri személyes sorstatisztikáit.",
-			"name": "statisztika"
+			"name": "statisztika",
+			"responses": {
+				"title": "Személyes statisztika",
+				"average-sub-duration": "Beküldött dalainak átlagos időtartama",
+				"blacklisted": "Tiltólistán van",
+				"cooldown-remaining": "A következő beküldési lehetőségéig hátralévő idő",
+				"queue-empty": "A sor üres. Jelenleg nincsenek statisztikái.",
+				"total-subs": "Összesen beküldött dalok",
+				"value-limit": "{value} (korlát {limit})"
+			}
 		},
 		"t": {
 			"description": "Megmutatja, hogy itt gépelek.",
@@ -104,7 +183,15 @@
 		},
 		"userinfo": {
 			"description": "Néhány információt kiír önről.",
-			"name": "felhasználóadatok"
+			"name": "felhasználóadatok",
+			"responses": {
+				"statement": "Az Ön területi beállítása {ulocale} ({therefore}), a szerver területi beállítása pedig {glocale}",
+				"statement-sans-guild": "Az Ön területi beállítása {ulocale} ({therefore})",
+				"supported": "támogatott",
+				"unknown": "ismeretlen",
+				"unsupported": "nem támogatott, ezért legyen {default}",
+				"assume": "ezért legyen {default}"
+			}
 		},
 		"version": {
 			"description": "Megjeleníti a bot aktuális verzióját.",
@@ -113,7 +200,13 @@
 		},
 		"video": {
 			"description": "Kiírja a videó címét és időtartamát.",
-			"name": "videó"
+			"name": "videó",
+			"responses": {
+				"generic-fetch-error": "A videó lekérésekor hibát kaptam.",
+				"include-link": "Ehhez szükségem van egy dalra mutató linkre.",
+				"no-info": "Ezt nem tudtam dalként értelmezni. Próbáljon ki egy linket egy {supported-platform}.",
+				"supported-platform": "támogatott platformról"
+			}
 		}
 	},
 	"common": {

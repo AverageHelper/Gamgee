@@ -22,7 +22,7 @@ export function pushBold(str: string, partial: PartialString): void {
 	push(bold(str), partial);
 }
 
-export function bold(str: string): string {
+export function bold<S extends string>(str: S): `**${S}**` {
 	return `**${str}**`;
 }
 
@@ -34,7 +34,9 @@ export function pushCode(str: string, partial: PartialString): void {
 	push(code(str), partial);
 }
 
-export function code(str: string): string {
+export type Code<S extends string> = `\`${S}\``;
+
+export function code<S extends string>(str: S): Code<S> {
 	return `\`${str}\``;
 }
 

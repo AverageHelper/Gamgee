@@ -53,7 +53,7 @@ export async function getGuildAdminRoles(guild: Guild): Promise<Array<Snowflake>
 
 export async function updateRole(
 	roleId: Snowflake,
-	attrs: Partial<Pick<Role, "definesGuildAdmin" | "definesQueueAdmin">>,
+	attrs: Partial<Pick<Readonly<Role>, "definesGuildAdmin" | "definesQueueAdmin">>,
 	guild: Guild
 ): Promise<void> {
 	if (!roleId) return;
@@ -130,7 +130,7 @@ export async function setQueueChannel(
 
 /** Retrieves the guild's message command prefix. */
 export async function getCommandPrefix(guild: Guild | null | undefined): Promise<string> {
-	if (!guild || !guild.id) return DEFAULT_MESSAGE_COMMAND_PREFIX;
+	if (!guild?.id) return DEFAULT_MESSAGE_COMMAND_PREFIX;
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },

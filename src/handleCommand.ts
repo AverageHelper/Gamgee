@@ -1,6 +1,7 @@
 import type { Command, CommandContext, MessageCommandInteractionOption } from "./commands/index.js";
 import type { DMChannel, GuildTextBasedChannel, Message } from "discord.js";
 import type { Logger } from "./logger.js";
+import type { ReadonlyDeep } from "type-fest";
 import type { Response, ResponseContext } from "./helpers/randomStrings.js";
 import { ApplicationCommandOptionType, ChannelType } from "discord.js";
 import { DEFAULT_LOCALE, localeIfSupported } from "./i18n.js";
@@ -125,7 +126,7 @@ export async function queryFromMessage(
  */
 export function optionsFromArgs(
 	args: Array<string>,
-	command?: Command
+	command?: ReadonlyDeep<Command>
 ): [MessageCommandInteractionOption] | [] {
 	const firstArg = args.shift();
 	if (firstArg === undefined) return [];
@@ -365,7 +366,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 	// Some helpers for parsing intents
 	const messageContainsWord = (str: string): boolean =>
 		query.map(s => s.toLowerCase()).includes(str);
-	const messageContainsOneOfWords = (strs: Array<string>): boolean =>
+	const messageContainsOneOfWords = (strs: ReadonlyArray<string>): boolean =>
 		query.map(s => s.toLowerCase()).some(s => strs.includes(s));
 
 	if (invocationMethod === "bot-mention") {
