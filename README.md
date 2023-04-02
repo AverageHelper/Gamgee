@@ -10,12 +10,16 @@ This project started out as a simple Discord bot to play around with APIs and th
 
 ## Authors & Contributors
 
-- [**AverageHelper**](https://github.com/AverageHelper) - _Creator_
-- [**ajnrules**](https://github.com/ajnrules) - _Contributor_
-- [**bendai94**](https://github.com/bendai94) - _Contributor_
-- [**karcsesz**](https://github.com/karcsesz) - _Contributor_
-- [**vayandas**](https://github.com/vayandas) - _Contributor_
-- **Marph92** - _Contributor_
+In order to highlight new contributors, these users are listed reverse-chronoligically, in order of when contributions were first provided:
+
+- **Marph92**
+- [**vayandas**](https://github.com/vayandas)
+- [**karcsesz**](https://github.com/karcsesz)
+- [**bendai94**](https://github.com/bendai94)
+- [**ajnrules**](https://github.com/ajnrules)
+- [**AverageHelper**](https://github.com/AverageHelper)
+
+Many thanks to each person who contributed code or translations or advice or any other kind of help! I cannot build Gamgee alone, and every bit of help is very much appreciated!
 
 ## Prerequisites
 
