@@ -7,7 +7,16 @@
 	"commands": {
 		"cooldown": {
 			"description": "Finden Sie heraus, wann Sie wieder einreichen können.",
-			"name": "cooldown"
+			"name": "cooldown",
+			"responses": {
+				"blacklisted": "Sie können einreichen, sobald Sie von der schwarzen Liste entfernt wurden. Entschuldigen Sie.",
+				"immediately": "Sie können sofort einreichen!",
+				"later": "Sie können in {relative}, um {absolute} Uhr Ortszeit einreichen",
+				"submissions-all-exhausted": "Sie haben alle Ihre Einreichungen für die Nacht verwendet!",
+				"submissions-1-exhausted": "Sie haben Ihre einzige Einreichung für die Nacht verwendet!",
+				"submissions-2-exhausted": "Sie haben beide Ihrer Einreichungen für die Nacht verwendet!",
+				"submissions-all-ct-exhausted": "Sie haben alle {count} Ihrer Einreichungen für die Nacht verwendet!"
+			}
 		},
 		"help": {
 			"description": "Drucken Sie eine nützliche Hilfenachricht.",
@@ -24,15 +33,75 @@
 		},
 		"limits": {
 			"description": "Zeigen Sie die Einreichungslimits der Song-Warteschlange an.",
-			"name": "grenzen"
+			"name": "limits",
+			"values": {
+				"cooldown": {
+					"description": "Die Mindestzeit, die jeder Benutzer zwischen seinen eigenen Einreichungen warten muss.",
+					"name": "Einreichungs-Abklingzeit"
+				},
+				"count": {
+					"description": "Die maximale Anzahl von Einreichungen, die jeder Benutzer einreichen kann.",
+					"name": "Anzahl der Einreichungen"
+				},
+				"entry-duration-max": {
+					"description": "Die maximale Dauer einer Einreichung.",
+					"name": "Max. Songlänge"
+				},
+				"entry-duration-min": {
+					"description": "Die Mindestdauer einer Einreichung.",
+					"name": "Min. Songlänge"
+				},
+				"queue-duration": {
+					"description": "Die maximale Dauer, die die Warteschlange dauern sollte, wenn alle ihre Einträge durchgehend abgespielt wurden. Die Warteschlange wird automatisch geschlossen, wenn eine Einreichung die Warteschlange über dieses Limit hinaus nimmt.",
+					"name": "Gesamtwarteschlangenlänge"
+				}
+			},
+			"responses": {
+				"infinite": "unendlich",
+				"none": "keiner",
+				"title": "Warteschlangenlimits",
+				"use-cooldown-cmd": "Verwenden Sie {cooldown} um Ihre Abklingzeit anzuzeigen"
+			}
 		},
 		"nowplaying": {
 			"description": "Zeigen Sie den aktuellen Song in der Warteschlange an (oder meine beste Vermutung).",
-			"name": "spieltjetzt"
+			"name": "spieltjetzt",
+			"responses": {
+				"almost-sure": "Ich bin mir zu 85% sicher, dass dies {usermention}s Einreichung: {url}",
+				"dj-says": "Der DJ sagte mir, dies sei {usermention}s Einreichung: {url}",
+				"good-chance": "Es besteht eine gute Chance, dass dies {usermention}s Einreichung: {url}",
+				"i-think": "Ich denke, das ist {usermention}s Einreichung: {url}",
+				"likely": "Sehr wahrscheinlich ist dies {usermention}s Einreichung: {url}",
+				"no-queue": "Momentan ist keine Warteschlange eingerichtet, daher wird nichts wiedergegeben.",
+				"no-song": "Wahrscheinlich wird gerade nichts gespielt. (Wenn ja, kann ich es nicht hören)"
+			}
 		},
 		"ping": {
 			"description": "Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.",
-			"name": "ping"
+			"name": "ping",
+			"responses": {
+				"pong": "Pong! Antwort in {time} gesendet. Die API-Latenz beträgt {latency}"
+			}
+		},
+		"queue-admin": {
+			"description": "Verwaltungsbefehle zum Verwalten der Song-Warteschlange.",
+			"name": "quo",
+			"options": {
+				"open": {
+					"description": "Beginnen Sie mit dem Akzeptieren von Songanfragen in die Warteschlange.",
+					"name": "offen",
+					"responses": {
+						"ack": "Anerkannt!",
+						"already-open": "Die Warteschlange ist bereits geöffnet!",
+						"no-queue": "Es muss keine Warteschlange geöffnet werden. Hast du schon eine eingerichtet?",
+						"the-queue-now-open": "Die Warteschlange ist jetzt geöffnet!",
+						"this-queue-now-open": "Diese Warteschlange ist jetzt geöffnet!"
+					}
+				}
+			},
+			"responses": {
+				"list-possible-subcommands": "Meinten Sie:"
+			}
 		},
 		"setprefix": {
 			"description": "Legen Sie das Präfix fest, das von Nachrichtenbefehlen verwendet wird.",
@@ -63,9 +132,10 @@
 				"not-allowed": "Sie dürfen keine Songs einreichen. Es tut mir Leid.",
 				"rejections": {
 					"allotment-expended": "Sie haben alle {max} Ihrer zugeteilten Einreichungen verwendet.",
-					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut senden.",
-					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das ist {actual} lang.",
-					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das ist {actual} lang."
+					"cooldown": "Du hast in den letzten {duration} bereits einen Song eingereicht. Sie müssen {remaining} warten, bevor Sie erneut einreichen.",
+					"queue-channel-submission-not-implemented": "Das Einreichen von Songs im Warteschlangenkanal wurde noch nicht implementiert.",
+					"too-long": "Das Lied ist zu lang. Das Limit ist {limit}, aber das Lied ist {actual} lang.",
+					"too-short": "Das Lied ist zu kurz. Das Limit ist {limit}, aber das Lied ist {actual} lang."
 				},
 				"this-queue-full-autoclose": "Diese Warteschlange ist voll. Ich schließe es jetzt.",
 				"query-returned-error": "Diese Abfrage gab mir einen Fehler. Vielleicht nochmal versuchen?",
@@ -80,7 +150,16 @@
 		},
 		"stats": {
 			"description": "Holen Sie sich Ihre persönliche Warteschlangenstatistik.",
-			"name": "statistiken"
+			"name": "statistiken",
+			"responses": {
+				"title": "Persönliche Statistiken",
+				"average-sub-duration": "Durchschnittliche Dauer Ihrer Einreichungen",
+				"blacklisted": "Auf der schwarzen Liste",
+				"cooldown-remaining": "Verbleibende Abklingzeit",
+				"queue-empty": "Die Warteschlange ist leer. Du hast momentan keine Statistiken.",
+				"total-subs": "Gesamtzahl Ihrer Einreichungen",
+				"value-limit": "{value} (Grenze {limit})"
+			}
 		},
 		"t": {
 			"description": "Zeigen Sie, dass ich tippe",
@@ -104,7 +183,15 @@
 		},
 		"userinfo": {
 			"description": "Gibt einige Informationen über Sie zurück.",
-			"name": "benutzerinfo"
+			"name": "benutzerinfo",
+			"responses": {
+				"statement": "Ihr Gebietsschema ist {ulocale} ({therefore}), und das Gebietsschema des Servers ist {glocale}",
+				"statement-sans-guild": "Ihr Gebietsschema ist {ulocale} ({therefore})",
+				"supported": "unterstützt",
+				"unknown": "Unbekannt",
+				"unsupported": "nicht unterstützt, also gehen wir mit {default}",
+				"assume": "also gehen wir von {default} aus"
+			}
 		},
 		"version": {
 			"description": "Zeigt die aktuelle Codebasisversion des Bots an.",
@@ -113,7 +200,13 @@
 		},
 		"video": {
 			"description": "Antworte mit Videotitel und Dauer.",
-			"name": "video"
+			"name": "video",
+			"responses": {
+				"generic-fetch-error": "Diese Videoabfrage hat mir einen Fehler gegeben.",
+				"include-link": "Sie müssen einen Song-Link hinzufügen.",
+				"no-info": "Ich konnte daraus kein Lied machen. Probieren Sie einen Link von einer {supported-platform} aus.",
+				"supported-platform": "unterstützten Plattform"
+			}
 		}
 	},
 	"common": {

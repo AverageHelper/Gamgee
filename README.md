@@ -12,6 +12,7 @@ This project started out as a simple Discord bot to play around with APIs and th
 
 In order to highlight new contributors, these users are listed reverse-chronoligically, in order of when contributions were first provided:
 
+- **Marph92**
 - [**vayandas**](https://github.com/vayandas)
 - [**karcsesz**](https://github.com/karcsesz)
 - [**bendai94**](https://github.com/bendai94)
