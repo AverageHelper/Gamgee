@@ -55,7 +55,7 @@ exports[`Help command describes all commands in de 1`] = `
 \`?hilfe\` - Drucken Sie eine nützliche Hilfenachricht.
 \`?wieman\` - Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.
 \`?sprachen\` - Drucke die Sprachstatistiken meines Hauptrepositorys.
-\`?grenzen\` - Zeigen Sie die Einreichungslimits der Song-Warteschlange an.
+\`?limits\` - Zeigen Sie die Einreichungslimits der Song-Warteschlange an.
 \`?spieltjetzt\` OR \`?now-playing\` - Zeigen Sie den aktuellen Song in der Warteschlange an (oder meine beste Vermutung).
 \`?ping\` - Pingen Sie meinen Hostserver, um die Latenz zu überprüfen.
 \`?quo\` - Verwaltungsbefehle zum Verwalten der Song-Warteschlange.
@@ -213,7 +213,7 @@ exports[`Help command describes all commands in hu 1`] = `
     \`?quo teardown\` - Deletes and un-sets the current queue.
     \`?quo blacklist [?user]\` - Show the list of blacklisted users, or add a user to the blacklist.
     \`?quo whitelist [user]\` - Allows a previously-blacklisted user to make song requests.
-    \`?quo nyisd\` - Kezdje el elfogadni a dalkérelmeket a sorba.
+    \`?quo nyisd\` - Elkezdek dalkéréseket fogadni.
     \`?quo close\` - Stop accepting song requests to the queue.
     \`?quo limit [?count | cooldown | entry-duration-min | entry-duration-max | queue-duration] [?value]\` - Set a limit value on the queue. (Time in seconds, where applicable)
     \`?quo stats\` - Print statistics on the current queue.
