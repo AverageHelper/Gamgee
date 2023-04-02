@@ -9,13 +9,13 @@
 			"description": "Découvrez quand vous pourrez soumettre à nouveau.",
 			"name": "cooldown",
 			"responses": {
-				"blacklisted": "Vous pouvez soumettre une fois que vous êtes retiré de la liste noire. Je suis désolé",
+				"blacklisted": "Vous pouvez soumettre une fois que vous êtes retiré de la liste noire. Je suis désolée",
 				"immediately": "Vous pouvez soumettre dès maintenant !",
 				"later": "Vous pouvez soumettre en {relative}, à {absolute} heure locale",
 				"submissions-all-exhausted": "Vous avez utilisé toutes vos soumissions pour la nuit!",
 				"submissions-1-exhausted": "Vous avez utilisé votre seule soumission pour la nuit!",
 				"submissions-2-exhausted": "Vous avez utilisé vos deux soumissions pour la nuit!",
-				"submissions-all-ct-exhausted": "Vous avez utilisé vos {count} soumissions pour la soirée!"
+				"submissions-all-ct-exhausted": "Vous avez utilisé vos {count} soumissions pour la nuit!"
 			}
 		},
 		"help": {
@@ -93,7 +93,7 @@
 					"responses": {
 						"ack": "J'accuse réception",
 						"already-open": "La file d'attente est déjà ouverte!",
-						"no-queue": "Il n'y a pas de file d'attente à ouvrir. En avez-vous déjà créé un?",
+						"no-queue": "Il n'y a pas de file d'attente à ouvrir. En avez-vous déjà créée une?",
 						"the-queue-now-open": "La file d'attente est désormais ouverte!",
 						"this-queue-now-open": "Cette file d'attente est maintenant ouverte!"
 					}
