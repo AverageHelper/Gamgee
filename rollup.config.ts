@@ -1,12 +1,11 @@
 import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import analyze from "rollup-plugin-analyzer";
 import commonjs from "@rollup/plugin-commonjs";
+import esbuild from "rollup-plugin-esbuild";
 import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
-import typescript from "@rollup/plugin-typescript";
 
 const isProduction = process.env["NODE_ENV"] === "production";
 
@@ -26,9 +25,10 @@ export default defineConfig({
 			: null,
 
 		// Transpile source
-		typescript({
+		esbuild({
 			tsconfig: "./tsconfig.prod.json",
-			sourceMap: !isProduction
+			sourceMap: !isProduction,
+			minify: isProduction
 		}), // translate TypeScript to JS
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
 		json(), // translate JSON
@@ -38,9 +38,6 @@ export default defineConfig({
 			exportConditions: ["node"],
 			preferBuiltins: true
 		}),
-
-		// Minify output
-		process.env["NODE_ENV"] === "production" ? terser() : null,
 
 		// Statistics
 		analyze({ filter: () => false }), // only top-level summary

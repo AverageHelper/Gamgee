@@ -1,5 +1,5 @@
 import type {
-	ApplicationCommandOption,
+	ApplicationCommandOptionData,
 	ApplicationCommandOptionType,
 	ApplicationCommandSubCommandData,
 	ApplicationCommandType,
@@ -24,7 +24,7 @@ interface BaseCommand
 		"options" | "type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
 	> {
 	readonly aliases?: ReadonlyArray<string>;
-	readonly options?: Readonly<NonEmptyArray<ApplicationCommandOption | Subcommand>>;
+	readonly options?: Readonly<NonEmptyArray<ApplicationCommandOptionData>>;
 	readonly type?: ApplicationCommandType.ChatInput;
 
 	/**
