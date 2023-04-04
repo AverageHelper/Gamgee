@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.1.1] - 2023-04-03
+### Changed
+- Trying out [ESBuild](https://esbuild.github.io) instead of [terser](https://terser.org). Should hopefully make for a less memory-intensive build process for small servers.
+
 ### Fixed
 - Failure to decode button interactions. New discord.js version properly utilizes the new subdependency version. (They _really_ should consider pinning their deps.)
 
