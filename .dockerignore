@@ -1,0 +1,26 @@
+# OS files
+.DS_Store
+
+# Secret files
+.env
+
+# Useless files
+*.log
+logs
+node_modules
+
+# Generated files
+db
+db-test
+dist
+./config
+coverage
+src/version.ts
+tmp
+temp
+.vs
+.idea
+stats.html
+
+# The Dockerfile itself
+Dockerfile
