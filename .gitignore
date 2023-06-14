@@ -3,7 +3,6 @@
 
 # Secret files
 .env
-Dockerfile
 
 # Useless files
 *.log
@@ -20,4 +19,5 @@ src/version.ts
 tmp
 temp
 .vs
+.idea
 stats.html
