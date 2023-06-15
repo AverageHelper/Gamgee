@@ -31,8 +31,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          registry: ${{ env.REGISTRY }}
           context: .
           push: true
-          tags: "latest"
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
