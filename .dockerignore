@@ -3,6 +3,7 @@
 
 # Secret files
 .env
+docker-compose.yml
 
 # Useless files
 *.log
