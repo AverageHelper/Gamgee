@@ -1,3 +1,5 @@
+import "jest-extended";
+
 /**
  * An array that always contains at least one element.
  */
