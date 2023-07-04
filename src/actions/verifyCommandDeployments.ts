@@ -34,6 +34,7 @@ export async function verifyCommandDeployments(
 		}
 	}
 
+	logger.debug("Done with global commands. Moving on to guild commands...");
 	const guildedDiff = await diffGuildCommandDeployments(client, logger);
 	if (guildedDiff) {
 		const issue = guildedDiff.issue;
@@ -110,7 +111,7 @@ interface Diff {
 	readonly actual: string | number;
 }
 
-function diffArrays(expected: Array<string>, actual: Array<string>): Diff | null {
+function diffArrays(expected: ReadonlyArray<string>, actual: ReadonlyArray<string>): Diff | null {
 	if (actual.length !== expected.length) {
 		return {
 			issue: "length",

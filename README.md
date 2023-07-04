@@ -82,7 +82,7 @@ You might have arrived here about a bot already running on Gamgee. For example, 
 
 <!-- TODO: Create a Discord server for folks to join about running their own hosted instance of Gamgee, or perhaps using an existing one. -->
 
-You could add that bot to your own server if you'd like (coming soon™), or you can run you own instance:
+You could add that bot to your own server if you'd like (coming soon™), or you can run your own instance:
 
 ### Get your own bot token
 
@@ -101,6 +101,8 @@ LOG_LEVEL={silly | debug | verbose | info | warn | error}
 # must be one of [silly, debug, verbose, info, warn, error]
 # defaults to `info` in production mode, `error` in test mode, and `debug` in any other mode
 ```
+
+**Do not commit this file to git** or your bot _will_ get "hacked".
 
 ### Invite your bot to your server
 
@@ -131,8 +133,6 @@ Once you have your bot's account token in the .env file, run the following comma
 ```sh
 $ npm run commands:deploy
 ```
-
-**Do not commit this file to git** or your bot _will_ get "hacked".
 
 ### Run the bot
 
