@@ -109,7 +109,6 @@ function defaultInteraction(): Interaction {
 			type: ChannelType.GuildText,
 			partial: false
 		},
-		isCommand: () => true,
 		isButton: () => false,
 		isChatInputCommand: () => true,
 		isAutocomplete: () => false,
@@ -121,7 +120,7 @@ describe("on(interactionCreate)", () => {
 	describe("commands", () => {
 		test("logs interaction errors", async () => {
 			const interaction = defaultInteraction();
-			interaction.isCommand = (): boolean => {
+			interaction.isChatInputCommand = (): boolean => {
 				throw interactionError;
 			};
 
@@ -130,7 +129,7 @@ describe("on(interactionCreate)", () => {
 
 		test("does nothing if the interaction isn't a supported interaction type", async () => {
 			const interaction = defaultInteraction();
-			interaction.isCommand = (): boolean => false;
+			interaction.isChatInputCommand = (): boolean => false;
 
 			await expect(interactionCreate.execute(interaction, logger)).resolves.toBeUndefined();
 			expect(mockGlobalExecute).not.toHaveBeenCalled();
