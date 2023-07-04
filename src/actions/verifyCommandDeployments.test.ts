@@ -11,10 +11,12 @@ const mockAllCommands = _mockAllCommands as Map<string, Command>;
 import { verifyCommandDeployments } from "./verifyCommandDeployments.js";
 
 // Mock the logger to track output
+const mockLoggerDebug = jest.fn();
 const mockLoggerInfo = jest.fn();
 const mockLoggerVerbose = jest.fn();
 const mockLoggerWarn = jest.fn();
 const mockLogger = {
+	debug: mockLoggerDebug,
 	verbose: mockLoggerVerbose,
 	info: mockLoggerInfo,
 	warn: mockLoggerWarn
