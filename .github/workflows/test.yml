@@ -18,14 +18,7 @@ jobs:
           node-version: 16.10.x
       - run: npm ci
       - run: npm run build
-      - name: Run npm run test:src
-        uses: ArtiomTr/jest-coverage-report-action@v2.1.1
-        with:
-          skip-step: install # we already ran `npm ci`
-          test-script: npm run test:src
-        env:
-          CI: true
-          NODE_ENV: "test"
+      - run: npm run test:src
 
   test_18:
     runs-on: ubuntu-latest
