@@ -39,7 +39,7 @@ export async function _main(logger = useLogger()): Promise<void> {
 		// Handle top-level errors
 	} catch (error) {
 		logger.error(
-			richErrorMessage("Something bad has happened and we had to everything for a bit.", error)
+			richErrorMessage("Something bad has happened and we had to stop everything for a bit.", error)
 		);
 	}
 }

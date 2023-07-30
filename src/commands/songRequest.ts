@@ -2,8 +2,8 @@ import type { GuildedCommand } from "./Command.js";
 import type { Message } from "discord.js";
 import type { SongRequest } from "../actions/queue/processSongRequest.js";
 import { ApplicationCommandOptionType, hideLinkEmbed } from "discord.js";
+import { getCommandPrefix, isQueueOpen } from "../useGuildStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-import { isQueueOpen } from "../useGuildStorage.js";
 import { localizations, t } from "../i18n.js";
 import { logUser } from "../helpers/logUser.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
@@ -83,8 +83,9 @@ export const sr: GuildedCommand = {
 			// This means we'll need to remember this message to delete it if the submission gets rejected
 			// This should match the behavior of context.deleteInvocation() on `?sr`
 			const href = shouldHideEmbeds ? hideLinkEmbed(songUrl.href) : songUrl.href;
+			const prefix = await getCommandPrefix(guild);
 			publicPreemptiveResponse = sendMessageInChannel(channel, {
-				content: `${MENTION_SENDER}\n?${sr.name} ${href}`,
+				content: `${MENTION_SENDER}\n${prefix}${sr.name} ${href}`, // to match message command structure, for search compatibility
 				allowedMentions: { users: [], repliedUser: false }
 			});
 

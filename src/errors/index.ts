@@ -1,3 +1,4 @@
+export * from "./EnvVariableNotFoundError.js";
 export * from "./InvalidPonyFmUrlError.js";
 export * from "./InvalidYouTubeUrlError.js";
 export * from "./NotFoundError.js";
