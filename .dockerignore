@@ -22,3 +22,6 @@ temp
 .vs
 .idea
 stats.html
+
+# The Dockerfile itself
+Dockerfile

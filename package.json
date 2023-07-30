@@ -6,6 +6,9 @@
 	"scripts": {
 		"start": "NODE_ENV=development ./node_modules/.bin/nodemon --inspect dist/server.js",
 		"setup": "rm -r dist && npm ci && npm run export-version && npm run build:only --production && npm run baseline && npm run migrate && npm run commands:deploy",
+		"firstrun": "npm run setup:buildtime && npm run setup:firstrun",
+		"firstrun:buildtime": "rm -r dist; npm ci && npm run export-version && npm run build:only --production",
+		"firstrun:runtime": "npm run prisma:generate && npm run migrate && npm run commands:deploy",
 		"commands:deploy": "node . --deploy",
 		"commands:revoke": "node . --revoke",
 		"release": "./node_modules/.bin/ts-node -P tsconfig.test.json ./scripts/release.ts",
