@@ -1,6 +1,12 @@
 import type { Client, Guild } from "discord.js";
 import type { Logger } from "../logger.js";
 import { allCommands } from "../commands/index.js";
+import {
+	rememberDeploymentForCommandInGuild,
+	rememberDeploymentForGlobalCommand
+} from "../helpers/mentionCommands.js";
+
+// TODO: Autodeploy commands if checks fail
 
 /**
  * Verify that the deployed command list is up-to-date, and yell in the console if it's not.
@@ -79,6 +85,14 @@ async function diffGuildCommandDeployments(
 
 	for (const guild of guilds) {
 		const guildCommands = await guild.commands.fetch();
+
+		for (const command of guildCommands.values()) {
+			const knownCommand = allCommands.get(command.name);
+			if (knownCommand?.requiresGuild === true) {
+				rememberDeploymentForCommandInGuild(knownCommand, guild.id, command);
+			}
+		}
+
 		const actualCommandNames = Array.from(guildCommands.values())
 			.map(c => c.name)
 			.sort(sortAlphabetically);
@@ -96,7 +110,15 @@ async function diffGlobalCommandDeployments(client: Client<true>): Promise<Diff 
 		.map(c => c.name)
 		.sort(sortAlphabetically);
 
-	const actualCommandNames = (await client.application.commands.fetch())
+	const actualCommands = await client.application.commands.fetch();
+	for (const command of actualCommands.values()) {
+		const knownCommand = allCommands.get(command.name);
+		if (knownCommand?.requiresGuild === false) {
+			rememberDeploymentForGlobalCommand(knownCommand, command);
+		}
+	}
+
+	const actualCommandNames = actualCommands //
 		.map(c => c.name)
 		.sort(sortAlphabetically);
 

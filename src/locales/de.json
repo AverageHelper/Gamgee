@@ -25,7 +25,13 @@
 		},
 		"howto": {
 			"description": "Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.",
-			"name": "wieman"
+			"name": "wieman",
+			"responses": {
+				"to-submit": "Um einen Song einzureichen, verwenden Sie {command}\n\nZum Beispiel: {example}\nIch werde mit einer Bestätigung antworten, dass Ihr Song zur Warteschlange hinzugefügt wurde!",
+				"see-supported-platforms": "Sehen [Sie sich unsere Liste der unterstützten Plattformen an]({url}).",
+				"see-supported-platforms-at-url": "Sehen Sie sich unsere Liste der unterstützten Plattformen unter {url} an.",
+				"to-get-current-song": "Um einen Link zum aktuellen Song zu erhalten, verwenden Sie {command}."
+			}
 		},
 		"languages": {
 			"description": "Drucke die Sprachstatistiken meines Hauptrepositorys.",

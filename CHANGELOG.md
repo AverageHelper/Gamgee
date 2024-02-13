@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.mailmap` file.
 
 ### Changed
+- When the bot references a command in chat, we now use an interactive link to the new slash-command variant. Users can click or tap this command to fill in their message bar.
 - Some internals to prepare for modern module syntax.
 
 ### Fixed

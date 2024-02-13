@@ -25,7 +25,13 @@
 		},
 		"howto": {
 			"description": "Print instructions for using the common queue commands.",
-			"name": "howto"
+			"name": "howto",
+			"responses": {
+				"to-submit": "To submit a song, use {command}\n\nFor example: {example}\nI will respond with confirmation that your song has joined the queue!",
+				"see-supported-platforms": "See [our list of supported platforms]({url}).",
+				"see-supported-platforms-at-url": "See our list of supported platforms at {url}.",
+				"to-get-current-song": "To get a link to the current song, use {command}."
+			}
 		},
 		"languages": {
 			"description": "Print my core repository's language statistics.",

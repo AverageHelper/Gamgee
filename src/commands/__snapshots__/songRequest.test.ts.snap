@@ -1,10 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Song request via URL Song request help descibes how to submit a song 1`] = `
-"To submit a song, type \`?sr <link>\`.
-For example: \`?sr https://youtu.be/dQw4w9WgXcQ\`
-I will respond with a text verification indicating your song has joined the queue!
+"To submit a song, use \`?sr\`
+
+For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
+I will respond with confirmation that your song has joined the queue!
 See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
 
-To get a link to the current song, type \`?nowplaying\` and check your DMs."
+To get a link to the current song, use \`?nowplaying\`."
 `;
