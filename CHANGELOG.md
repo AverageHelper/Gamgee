@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Test falures on Node 18+.
 - `npm run commands:deploy` and `npm run commands:revoke` work correctly now.
 
 ## [2.1.1] - 2023-04-03
