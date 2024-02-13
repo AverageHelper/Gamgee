@@ -1,4 +1,4 @@
-import { destroyTesterClient, setupTesterClient } from "./discordUtils/testerClient"; // use .js in ESM
+import { destroyTesterClient, setupTesterClient } from "./discordUtils/testerClient.js";
 
 export const mochaHooks = {
 	async before(): Promise<void> {

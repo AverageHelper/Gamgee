@@ -68,7 +68,7 @@ import { error } from "./error.js";
 import { interactionCreate } from "./interactionCreate.js";
 import { messageCreate } from "./messageCreate.js";
 import { messageReactionAdd } from "./messageReactionAdd.js";
-import { ready } from "./ready";
+import { ready } from "./ready.js";
 
 _add(error as EventHandler);
 _add(interactionCreate as EventHandler);

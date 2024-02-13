@@ -1,4 +1,4 @@
-import { useTestLogger } from "../testUtils/logger";
+import { useTestLogger } from "../testUtils/logger.js";
 
 const logger = useTestLogger();
 
