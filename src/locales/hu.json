@@ -30,7 +30,7 @@
 				"to-submit": "Dal beküldéséhez használja a {command} parancsot\n\nPéldául: {example}\nJelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!",
 				"see-supported-platforms": "Tekintse meg [a támogatott platformok listáját]({url}).",
 				"see-supported-platforms-at-url": "Tekintse meg a támogatott platformok listáját a {url} címen.",
-				"to-get-current-song": "Az aktuális dalra mutató hivatkozás megtekintéséhez használja a {command} parancsot."
+				"to-get-current-song": "Az aktuális dal hivatkozásának lekéréséhez használja a {command} parancsot."
 			}
 		},
 		"languages": {
