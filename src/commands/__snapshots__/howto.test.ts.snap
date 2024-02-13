@@ -104,20 +104,20 @@ exports[`How-to command in hu informs the user how to run queue commands (intera
 "Dal beküldéséhez használja a \`?sr\` parancsot
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
-Megerősítéssel válaszolok, jelezve, hogy a dalod felkerült a sorba!
+Jelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!
 Tekintse meg [a támogatott platformok listáját](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
 
-Az aktuális dalra mutató hivatkozás megtekintéséhez használja a \`?nowplaying\` parancsot."
+Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
 
 exports[`How-to command in hu informs the user how to run queue commands (message) 1`] = `
 "Dal beküldéséhez használja a \`?sr\` parancsot
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
-Megerősítéssel válaszolok, jelezve, hogy a dalod felkerült a sorba!
+Jelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!
 Tekintse meg a támogatott platformok listáját a <https://github.com/AverageHelper/Gamgee#supported-music-platforms> címen.
 
-Az aktuális dalra mutató hivatkozás megtekintéséhez használja a \`?nowplaying\` parancsot."
+Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
 
 exports[`How-to command in pt-BR informs the user how to run queue commands (interaction) 1`] = `
