@@ -24,9 +24,10 @@
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";
+import { code } from "../helpers/composeStrings.js";
+import { DEFAULT_LOCALE, locales, metadataForLocale, randomSupportedLocale, t } from "../i18n.js";
 import { firstWord } from "../helpers/firstWord.js";
 import { indefiniteArticle } from "../helpers/indefiniteArticle.js";
-import { locales, metadataForLocale, randomSupportedLocale } from "../i18n.js";
 import { randomBoolean } from "../helpers/randomBoolean.js";
 import { randomElementOfArray } from "../helpers/randomElementOfArray.js";
 import { randomInt } from "../helpers/randomInt.js";
@@ -115,6 +116,12 @@ export const phrases: ResponseRepository = [
 		"definitely",
 		"for sure"
 	],
+	() =>
+		`${
+			t(`languages.${randomSupportedLocale()}`, DEFAULT_LOCALE) // "German", "English, UK", etc.
+				.replace(/\W+/giu, " ") // "English, UK" ~> "English UK"
+				.split(" ")[0] ?? "That language" // "English UK" ~> "English"
+		} is hard, but it can be learned through tough thorough thought, though.`,
 
 	// LOTR
 	"A wizard is never late!",
@@ -133,6 +140,7 @@ export const phrases: ResponseRepository = [
 	"There's some good in this world, Mr. Frodo, and it's worth fighting for.",
 	"We may yet, Mr. Frodo. We may.",
 	"We're taking the hobbit to Isengard!",
+	"What about second breakfast? :>",
 
 	// Marvel
 	({ me }) =>
@@ -187,16 +195,19 @@ export const phrases: ResponseRepository = [
 	"Who's the most remarkable extraordinary fellow?",
 
 	// Star Trek: TNG
+	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
+	"Tea, Earl Grey, hot",
+	"You know, back when I was in the academy, we would follow every toast with a song!",
+
+	// Star Trek (Tamarian)
 	"Darmok on the ocean",
 	"Darmok and Jalad at Tanagra",
 	"Darmok and Jalad on the ocean",
-	"He just kept talking in one long incredibly unbroken sentence moving from topic to topic so that no-one had a chance to interrupt; it was really quite hypnotic.",
 	"Mirab, with sails unfurled",
 	"Rai and Jiri at Lungha. Rai of Lowani. Lowani under two moons. Jiri of Umbaya. Umbaya of crossed roads. At Lungha. Lungha, her sky gray.",
 	"Shaka, when the walls fell",
 	"Sokath, his eyes open!",
 	"Tanagra, on the ocean. Darmok at Tanagra.",
-	"Tea, Earl Grey, hot",
 	"Temba, at rest",
 	"Temba, his arms open",
 	"Temba, his arms wide",
@@ -204,8 +215,8 @@ export const phrases: ResponseRepository = [
 	"The beast at Tanagra",
 	"Uzani, his army with fists closed",
 	"Uzani, his army with fists open",
-	"You know, back when I was in the academy, we would follow every toast with a song!",
 	"Zinda, his face black, his eyes red",
+	// TODO: Add more from https://memory-alpha.fandom.com/wiki/Tamarian_language, once there is more to balance these out
 
 	// Wonka
 	"A little nonsense now and then is relished by the wisest men.",
@@ -267,7 +278,6 @@ export const phrases: ResponseRepository = [
 	"Don't count your chickens",
 	"Down the hall, up the stairs, past the gargoyle",
 	"*ENERGY*",
-	"English is hard, but it can be learned through tough thorough thought, though.",
 	[
 		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
 		"_ _",
@@ -289,6 +299,7 @@ export const phrases: ResponseRepository = [
 	"I actually think spoon clothes is a great idea!",
 	"I am altering the deal. Pray I do not alter it further.",
 	["I am what I am", SHRUGGIE],
+	"I came out the year I came out",
 	"I can rhyme as fine as a dime hidden in the slime of a crime that my mimes have co-signed intertwined with ill raps that will blow your mind vice tight like my name is bind",
 	"I can't even right now.",
 	"I don't like this can we change the topic plz ty",
@@ -315,6 +326,7 @@ export const phrases: ResponseRepository = [
 	"I've never seen an eclipse.",
 	"I'm processing your message. I should be ready in... a few years ^^",
 	["I'm so hungry, I could eat a...", "*nevermind*", ">.>", "<.<"],
+	"I've got {color} hair and pronouns! Do you?",
 	"It's not a phase!",
 	"Jack and Jill ran up the hill...",
 	"James, while John had had 'had', had had 'had had'. 'Had had' had had a better effect on the teacher.",
@@ -325,6 +337,7 @@ export const phrases: ResponseRepository = [
 	"Lorem ipsum dolor sit amet...",
 	"Man, I gotta listen to more Zenith",
 	"My favorite type of music is the one with all of the instruments and sounds.",
+	"never don't stop unbelieving",
 	["Nice question!", "Only one small issue:", "*I am inside your PC*"],
 	["Odds aren't good.", "I prefer evens"],
 	"Gonna go check out the vendor hall now k byee",
@@ -373,7 +386,7 @@ export const phrases: ResponseRepository = [
 	"(This message will be in a separate message)",
 	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
 	"\\*thoughtful phrase\\*",
-	() => `To talk to a customer, please press \`${randomInt(9)}\``,
+	() => `To talk to a customer, please press ${code(randomInt(9))}`,
 	"Today is the tomorrow you were promised yesterday",
 	"Today's been a long week.",
 	"Truly inspirational!",
@@ -393,12 +406,17 @@ export const phrases: ResponseRepository = [
 	"Your free trial has expired. Would you like to purchase WinRAR?",
 	({ otherMember: m, otherUser: u }) =>
 		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
-	"`01011001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101 00101110`", // You lost the game.
-	"`01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110`", // I just wasted your time.
+	code("01100110 01101100 01101111 01101111 01100110"), // floof
+	code(
+		"01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110" // I just wasted your time.
+	),
+	code(
+		"01011001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101 00101110" // You lost the game.
+	),
 
 	...philosophy,
 	...copypasta
-]; // 239 of these
+]; // 244 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

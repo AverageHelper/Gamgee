@@ -1,6 +1,6 @@
 import "dotenv/config.js";
 
-import { EnvVariableNotFoundError } from "./EnvVariableNotFoundError.js";
+import { EnvVariableNotFoundError } from "../errors/EnvVariableNotFoundError.js";
 
 export type EnvKey =
 	| "BOT_ADMIN_ROLE_ID"
