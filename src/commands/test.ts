@@ -113,7 +113,7 @@ export const test: Command = {
 			)}](${supportedPlatformsList})`;
 
 			embed.setTitle(t("commands.test.responses.results-header", userLocale));
-			embed.setDescription(ti("commands.test.responses.see-on-github", { list }, userLocale));
+			embed.setDescription(ti("commands.test.responses.see-on-forge", { list }, userLocale));
 			results.forEach(result => addResult(result, embed));
 
 			const anyFailures = results.some(result => result.error !== undefined);

@@ -1,16 +1,27 @@
+import type { Infer } from "superstruct";
+import { boolean, is, number, record, string, type } from "superstruct";
 import { fetch } from "./fetch.js";
-import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
+import { isUrlString } from "./guards.js";
 import { useLogger } from "../logger.js";
 
 type RequestInit = Exclude<Parameters<typeof fetch>[1], undefined>;
 
-export interface GitHubMetadata {
-	name: string;
-	full_name: string;
-	private: boolean;
-	html_url: string;
-	description: string;
-	languages_url: string;
+const languagesMetadata = record(string(), number());
+
+type LanguagesMetadata = Infer<typeof languagesMetadata>;
+
+const repoMetadata = type({
+	name: string(),
+	full_name: string(),
+	private: boolean(),
+	html_url: string(),
+	description: string(),
+	languages_url: string()
+});
+
+type RepoMetadata = Infer<typeof repoMetadata>;
+
+export interface GitForgeMetadata extends RepoMetadata {
 	languages: Record<string, number>;
 }
 
@@ -22,12 +33,12 @@ export interface Options {
 const logger = useLogger();
 
 /**
- * Fetches metadata about the provided GitHub repository.
+ * Fetches metadata about the provided git repository.
  */
-export async function gitHubMetadata(options: Readonly<Options>): Promise<GitHubMetadata> {
+export async function gitForgeMetadata(options: Readonly<Options>): Promise<GitForgeMetadata> {
 	const { owner, repo } = options;
-	const gitHubApi = new URL("https://api.github.com/");
-	const url = new URL(`/repos/${owner}/${repo}`, gitHubApi);
+	const forgeApi = new URL("https://api.github.com/");
+	const url = new URL(`/repos/${owner}/${repo}`, forgeApi);
 
 	logger.verbose(`Asking ${url.href} about its metadata...`);
 	const repoData = await getFrom(url, isRepoMetadata);
@@ -46,28 +57,16 @@ export class UnexpectedResponseError extends TypeError {
 	}
 }
 
-type RepoMetadata = Omit<GitHubMetadata, "languages">;
-
 function isRepoMetadata(tbd: unknown): tbd is RepoMetadata {
 	return (
-		isObject(tbd) &&
-		"name" in tbd &&
-		"full_name" in tbd &&
-		"private" in tbd &&
-		"html_url" in tbd &&
-		"description" in tbd &&
-		"languages_url" in tbd &&
-		isString((tbd as unknown as GitHubMetadata).name) &&
-		isString((tbd as unknown as GitHubMetadata).full_name) &&
-		isBoolean((tbd as unknown as GitHubMetadata).private) &&
-		isUrlString((tbd as unknown as GitHubMetadata).html_url) &&
-		isString((tbd as unknown as GitHubMetadata).description) &&
-		isUrlString((tbd as unknown as GitHubMetadata).languages_url)
+		is(tbd, repoMetadata) && //
+		isUrlString(tbd.html_url) &&
+		isUrlString(tbd.languages_url)
 	);
 }
 
-function isLanguagesMetadata(tbd: unknown): tbd is Record<string, number> {
-	return isObject(tbd) && Object.values(tbd).every(isNumber);
+function isLanguagesMetadata(tbd: unknown): tbd is LanguagesMetadata {
+	return is(tbd, languagesMetadata);
 }
 
 /**

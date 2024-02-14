@@ -4,11 +4,11 @@ import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
-jest.mock("./helpers/githubMetadata.js");
+jest.mock("./helpers/gitForgeMetadata.js");
 
-import { gitHubMetadata } from "./helpers/githubMetadata.js";
-const mockGitHubMetadata = gitHubMetadata as jest.Mock;
-mockGitHubMetadata.mockResolvedValue({
+import { gitForgeMetadata } from "./helpers/gitForgeMetadata.js";
+const mockGitForgeMetadata = gitForgeMetadata as jest.Mock;
+mockGitForgeMetadata.mockResolvedValue({
 	name: "Gamgee",
 	full_name: "Gamgee",
 	private: false,

@@ -10,14 +10,6 @@ export function isObject(tbd: unknown): tbd is Record<string, unknown> {
 	return typeof tbd === "object" && tbd !== null && !Array.isArray(tbd);
 }
 
-export function isBoolean(tbd: unknown): tbd is boolean {
-	return tbd !== null && (typeof tbd === "boolean" || tbd instanceof Boolean);
-}
-
-export function isNumber(tbd: unknown): tbd is number {
-	return tbd !== null && (typeof tbd === "number" || tbd instanceof Number);
-}
-
 export function isString(tbd: unknown): tbd is string {
 	return tbd !== null && (typeof tbd === "string" || tbd instanceof String);
 }

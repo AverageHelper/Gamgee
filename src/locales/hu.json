@@ -177,7 +177,7 @@
 				"preamble-failure": "Valami elromlott. Ez fontos lehet:",
 				"preamble-success": "Osztottam és szoroztam, és úgy tűnik, minden rendben!",
 				"results-header": "Vizsgálat eredményei Platform szerint",
-				"see-on-github": "Tekintse meg a {list} a GitHubon.",
+				"see-on-forge": "Tekintse meg a {list} a GitHubon.",
 				"supported-platforms": "támogatott platformok listáját"
 			}
 		},
