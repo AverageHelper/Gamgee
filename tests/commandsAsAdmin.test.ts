@@ -1,5 +1,5 @@
 import { channelMention, userMention } from "discord.js";
-import { expectNull, expectToContain, expectValueEqual } from "./testUtils/expectations/chai";
+import { expectNull, expectToContain, expectValueEqual } from "./testUtils/expectations/chai.js";
 import {
 	requireEnv,
 	setIsQueueAdmin,
@@ -10,7 +10,7 @@ import {
 	sendMessageWithDefaultClient,
 	sendCommandWithDefaultClient,
 	useTesterClient
-} from "./discordUtils";
+} from "./discordUtils/index.js";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");

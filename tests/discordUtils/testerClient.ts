@@ -2,8 +2,8 @@ import type { EnvKey } from "../../src/helpers/environment.js";
 import type { Message, PartialMessage } from "discord.js";
 import "dotenv/config";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
-import { useTestLogger } from "../testUtils/logger";
-import { useDispatchLoop } from "./dispatchLoop";
+import { useTestLogger } from "../testUtils/logger.js";
+import { useDispatchLoop } from "./dispatchLoop.js";
 
 export function requireEnv(key: EnvKey): string {
 	const value = process.env[key];

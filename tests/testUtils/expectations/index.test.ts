@@ -1,4 +1,4 @@
-import type { AssertionLib } from "./index";
+import type { AssertionLib } from "./index.js";
 import { expect } from "chai";
 import {
 	expectArray,
@@ -11,7 +11,7 @@ import {
 	expectToContain,
 	expectUndefined,
 	expectValueEqual
-} from "./index";
+} from "./index.js";
 
 const libs: ReadonlyArray<AssertionLib> = ["@jest/expect", "chai", "node"];
 

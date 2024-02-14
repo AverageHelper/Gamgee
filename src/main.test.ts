@@ -32,7 +32,7 @@ const mockLogger = {
 } as unknown as Logger;
 
 // Import the unit under test
-import { _main } from "./main";
+import { _main } from "./main.js";
 
 // A basic error to test with
 const loginError = new Error("Failed to log in. This is a test.");

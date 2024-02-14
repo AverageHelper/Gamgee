@@ -13,7 +13,7 @@ import {
 	expectToContain as jestExpectToContain,
 	expectUndefined as jestExpectUndefined,
 	expectValueEqual as jestExpectValueEqual
-} from "./jest";
+} from "./jest.js";
 
 import {
 	expectArray as chaiExpectArray,
@@ -26,7 +26,7 @@ import {
 	expectToContain as chaiExpectToContain,
 	expectUndefined as chaiExpectUndefined,
 	expectValueEqual as chaiExpectValueEqual
-} from "./chai";
+} from "./chai.js";
 
 import {
 	expectArray as nodeExpectArray,
@@ -39,7 +39,7 @@ import {
 	expectToContain as nodeExpectToContain,
 	expectUndefined as nodeExpectUndefined,
 	expectValueEqual as nodeExpectValueEqual
-} from "./node";
+} from "./node.js";
 
 export type AssertionLib = "@jest/expect" | "chai" | "node";
 
