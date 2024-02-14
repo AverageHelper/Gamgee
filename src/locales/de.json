@@ -177,7 +177,7 @@
 				"preamble-failure": "Äh, etwas ist schief gelaufen. Schau am besten mal hier rein:",
 				"preamble-success": "Ich habe die Zahlen überprüft und es sieht so aus, als ob es uns allen gut geht!",
 				"results-header": "Testergebnisse nach Plattform",
-				"see-on-github": "Sehen Sie sich die {list} auf unserem GitHub an.",
+				"see-on-forge": "Sehen Sie sich die {list} auf unserem GitHub an.",
 				"supported-platforms": "Liste der unterstützten Plattformen"
 			}
 		},

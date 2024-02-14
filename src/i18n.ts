@@ -74,7 +74,7 @@ const _: Vocabulary = vocabulary; // ensures our language types are formatted ri
 
 import type { Get, Split } from "type-fest";
 import _get from "lodash/get.js";
-import isString from "lodash/isString.js";
+import { isString } from "./helpers/guards.js";
 
 function split<S extends string, D extends string>(string: S, separator: D): Split<S, D> {
 	return string.split(separator) as Split<S, D>;

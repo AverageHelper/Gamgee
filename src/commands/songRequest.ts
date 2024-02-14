@@ -8,7 +8,6 @@ import { localizations, t } from "../i18n.js";
 import { logUser } from "../helpers/logUser.js";
 import { processSongRequest } from "../actions/queue/processSongRequest.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
-import { URL } from "node:url";
 import { useJobQueue } from "@averagehelper/job-queue";
 import {
 	deleteMessage,

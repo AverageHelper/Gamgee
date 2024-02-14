@@ -4,7 +4,6 @@ import { getPonyFmTrack } from "./network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
-import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 
 export interface VideoDetails {

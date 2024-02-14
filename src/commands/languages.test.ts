@@ -1,9 +1,9 @@
 import "../../tests/testUtils/leakedHandles.js";
 
-jest.mock("../helpers/githubMetadata.js");
-import { gitHubMetadata } from "../helpers/githubMetadata.js";
-const mockGitHubMetadata = gitHubMetadata as jest.Mock;
-mockGitHubMetadata.mockResolvedValue({
+jest.mock("../helpers/gitForgeMetadata.js");
+import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
+const mockGitForgeMetadata = gitForgeMetadata as jest.Mock;
+mockGitForgeMetadata.mockResolvedValue({
 	languages: {
 		English: 80,
 		Spanish: 10,
@@ -22,7 +22,7 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 
 const logger = useTestLogger();
 
-describe("Language Statistics from GitHub", () => {
+describe("Language Statistics from our git forge", () => {
 	let context: CommandContext;
 
 	beforeEach(() => {
@@ -34,13 +34,13 @@ describe("Language Statistics from GitHub", () => {
 		} as unknown as CommandContext;
 	});
 
-	test("asks GitHub about my language statistics", async () => {
+	test("asks our git forge about our language statistics", async () => {
 		const owner = "AverageHelper";
 		const repo = "Gamgee";
 
 		await expect(languages.execute(context)).resolves.toBeUndefined();
-		expect(mockGitHubMetadata).toHaveBeenCalledOnce();
-		expect(mockGitHubMetadata).toHaveBeenCalledWith({ owner, repo });
+		expect(mockGitForgeMetadata).toHaveBeenCalledOnce();
+		expect(mockGitForgeMetadata).toHaveBeenCalledWith({ owner, repo });
 
 		expect(mockReply).toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("languages"));

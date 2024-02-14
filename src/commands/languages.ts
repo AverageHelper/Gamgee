@@ -1,6 +1,6 @@
-import type { GitHubMetadata } from "../helpers/githubMetadata.js";
+import type { GitForgeMetadata } from "../helpers/gitForgeMetadata.js";
 import type { GlobalCommand } from "./Command.js";
-import { gitHubMetadata } from "../helpers/githubMetadata.js";
+import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
 import { locales, localizations } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
@@ -8,7 +8,7 @@ import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 const owner = "AverageHelper";
 const repo = "Gamgee";
 
-let cachedMetadata: GitHubMetadata | null = null;
+let cachedMetadata: GitForgeMetadata | null = null;
 
 // TODO: i18n
 export const languages: GlobalCommand = {
@@ -22,10 +22,10 @@ export const languages: GlobalCommand = {
 			await prepareForLongRunningTasks();
 			if (cachedMetadata === null) {
 				// eslint-disable-next-line require-atomic-updates
-				cachedMetadata = await gitHubMetadata({ owner, repo });
+				cachedMetadata = await gitForgeMetadata({ owner, repo });
 			}
 		} catch (error) {
-			logger.error(richErrorMessage("Failed to get metadata from my GitHub repo.", error));
+			logger.error(richErrorMessage("Failed to get metadata from my git forge.", error));
 			await reply("Erm... I'm not sure :sweat_smile:");
 			await timeoutSeconds(1);
 			await followUp({

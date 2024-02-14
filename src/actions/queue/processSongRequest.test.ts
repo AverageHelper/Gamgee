@@ -52,7 +52,6 @@ const mockChannelSend = jest.fn() as jest.Mock<Promise<unknown>, [string]>;
 import type { CommandContext, MessageCommandContext } from "../../commands/CommandContext.js";
 import type { SongRequest } from "./processSongRequest.js";
 import { processSongRequest } from "./processSongRequest.js";
-import { URL } from "node:url";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 describe("Song request pipeline", () => {

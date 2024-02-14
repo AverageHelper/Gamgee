@@ -2,6 +2,7 @@ import type { GuildedCommand } from "./Command.js";
 import { getCommandPrefix } from "../useGuildStorage.js";
 import { localizations } from "../i18n.js";
 import { SLASH_COMMAND_INTENT_PREFIX } from "../constants/database.js";
+import { supportedPlatformsList } from "../constants/repository.js";
 import {
 	composed,
 	createPartialString,
@@ -42,8 +43,6 @@ export const howto: GuildedCommand = {
 		push("I will respond with a text verification indicating your song has joined the queue!", msg);
 		pushNewLine(msg);
 
-		const supportedPlatformsList =
-			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
 		const supportedPlatforms =
 			type === "interaction"
 				? `See [our list of supported platforms](<${supportedPlatformsList}>)`
