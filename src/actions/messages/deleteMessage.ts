@@ -1,9 +1,9 @@
 import type { Message, PartialMessage, Snowflake, TextChannel } from "discord.js";
 import { ChannelType } from "discord.js";
+import { chunk } from "../../helpers/chunk.js";
 import { isDiscordError } from "../../helpers/isError.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
-import chunk from "lodash/chunk.js";
 
 const logger = useLogger();
 

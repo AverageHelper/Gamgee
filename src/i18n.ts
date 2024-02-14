@@ -72,18 +72,10 @@ type Vocabulary = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _: Vocabulary = vocabulary; // ensures our language types are formatted right
 
-import type { Get, Split } from "type-fest";
-import _get from "lodash/get.js";
+import type { Get } from "./helpers/get.js";
+import { get } from "./helpers/get.js";
 import { isString } from "./helpers/guards.js";
-
-function split<S extends string, D extends string>(string: S, separator: D): Split<S, D> {
-	return string.split(separator) as Split<S, D>;
-}
-
-const get = <BaseType, Path extends string | ReadonlyArray<string>>(
-	object: BaseType,
-	path: Path
-): Get<BaseType, Path> => _get(object, path) as Get<BaseType, Path>;
+import { split } from "./helpers/split.js";
 
 const DOT = ".";
 
@@ -132,6 +124,9 @@ export function t<K extends string>(
 	}
 
 	return undefined; // we're stumped, return nothing
+	// Most implementations might default to returning the keypath,
+	// but I think we should let TypeScript yell at us if we
+	// missed translating a key.
 }
 
 import { composed, createPartialString, push } from "./helpers/composeStrings.js";
