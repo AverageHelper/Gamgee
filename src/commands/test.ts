@@ -5,6 +5,7 @@ import { getPonyFmTrack } from "../actions/network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "../actions/network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "../actions/network/getYouTubeVideo.js";
 import { localizations, t, ti } from "../i18n.js";
+import { supportedPlatformsList } from "../constants/repository.js";
 import { version } from "../version.js";
 
 type FetchTestFunction = typeof getYouTubeVideo;
@@ -106,9 +107,6 @@ export const test: Command = {
 			const embed = new EmbedBuilder();
 			embed.setFooter({ text: `Gamgee v${version}` });
 
-			// TODO: We use this URL in several places. Move it into a central place for us to import and use around
-			const supportedPlatformsList =
-				"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
 			const list = `[${t(
 				"commands.test.responses.supported-platforms",
 				userLocale

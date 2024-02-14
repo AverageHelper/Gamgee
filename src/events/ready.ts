@@ -3,6 +3,7 @@ import { deployCommands } from "../actions/deployCommands.js";
 import { getEnv } from "../helpers/environment.js";
 import { onEvent } from "../helpers/onEvent.js";
 import { parseArgs } from "../helpers/parseArgs.js";
+import { repository } from "../constants/repository.js";
 import { revokeCommands } from "../actions/revokeCommands.js";
 import { verifyCommandDeployments } from "../actions/verifyCommandDeployments.js";
 import { version as gamgeeVersion } from "../version.js";
@@ -62,7 +63,7 @@ function setActivity(client: Client<true>): ClientPresence {
 	// multiline string on the bot's user profile.
 	return client.user.setActivity({
 		type: ActivityType.Playing,
-		name: "Source: github.com/AverageHelper/Gamgee",
-		url: "https://github.com/AverageHelper/Gamgee"
+		name: `Source: ${repository.hostname}${repository.pathname}`,
+		url: repository.href
 	});
 }
