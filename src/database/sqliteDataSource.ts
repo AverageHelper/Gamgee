@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { requireEnv } from "../helpers/environment.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
-import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 
 const logger = useLogger();

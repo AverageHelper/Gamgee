@@ -2,7 +2,6 @@ import type { CommandContext } from "../../commands/index.js";
 import type { Logger } from "../../logger.js";
 import type { Message, TextChannel } from "discord.js";
 import type { UnsentQueueEntry } from "../../useQueueStorage.js";
-import type { URL } from "node:url";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
 import { deleteMessage } from "../../actions/messages/index.js";
 import { durationString } from "../../helpers/durationString.js";

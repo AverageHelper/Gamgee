@@ -5,7 +5,6 @@ import { getPonyFmTrack } from "../actions/network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "../actions/network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "../actions/network/getYouTubeVideo.js";
 import { localizations, t, ti } from "../i18n.js";
-import { URL } from "node:url";
 import { version } from "../version.js";
 
 type FetchTestFunction = typeof getYouTubeVideo;

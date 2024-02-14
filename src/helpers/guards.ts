@@ -1,5 +1,3 @@
-import { URL } from "node:url";
-
 export function isNonEmptyArray<T>(array: ReadonlyArray<T>): array is NonEmptyArray<T> {
 	return array.length > 0;
 }

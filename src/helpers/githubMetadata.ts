@@ -1,6 +1,5 @@
 import { fetch } from "./fetch.js";
 import { isBoolean, isNumber, isObject, isString, isUrlString } from "./guards.js";
-import { URL } from "node:url";
 import { useLogger } from "../logger.js";
 
 type RequestInit = Exclude<Parameters<typeof fetch>[1], undefined>;

@@ -1,4 +1,3 @@
-import type { URL } from "node:url";
 import type { VideoDetails } from "../getVideoDetails.js";
 import { fetchMetadata } from "../../helpers/fetchMetadata.js";
 import { isString } from "../../helpers/guards.js";

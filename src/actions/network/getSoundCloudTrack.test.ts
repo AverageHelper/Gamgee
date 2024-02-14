@@ -1,5 +1,4 @@
 import type { Song, SongInfoOptions } from "soundcloud-scraper";
-import { URL } from "node:url";
 import {
 	expectDefined,
 	expectPositive,

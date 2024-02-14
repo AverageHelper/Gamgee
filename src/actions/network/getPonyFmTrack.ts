@@ -1,4 +1,3 @@
-import type { URL } from "node:url";
 import type { VideoDetails } from "../getVideoDetails.js";
 import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { isObject, isString } from "../../helpers/guards.js";

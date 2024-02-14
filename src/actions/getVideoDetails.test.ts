@@ -1,5 +1,4 @@
 import type { VideoDetails } from "./getVideoDetails.js";
-import { URL } from "node:url";
 import { VideoError } from "../errors/VideoError.js";
 
 jest.mock("./network/getBandcampTrack.js", () => ({ getBandcampTrack: jest.fn() }));
