@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Internal logging to indicate the start of a user's submission cooldown timer.
 - `.mailmap` file.
 
 ### Changed
