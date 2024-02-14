@@ -1,5 +1,5 @@
 import type { CommandInteraction } from "discord.js";
-import type { Command } from "./commands";
+import type { Command } from "./commands/index.js";
 import { ChannelType } from "discord.js";
 
 const mockAllCommands = new Map<string, Command>();

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `.mailmap` file.
 
+### Changed
+- Some internals to prepare for modern module syntax.
+
 ### Fixed
 - Test falures on Node 18+.
 - `npm run commands:deploy` and `npm run commands:revoke` work correctly now.

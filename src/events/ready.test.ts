@@ -25,7 +25,7 @@ import { Client } from "discord.js";
 const client = new Client({ intents: [] });
 
 // Mock parseArgs so we can control what the args are
-import type { Args } from "../helpers/parseArgs";
+import type { Args } from "../helpers/parseArgs.js";
 const mockParseArgs = jest.fn<Args, []>();
 jest.mock("../helpers/parseArgs.js", () => ({ parseArgs: mockParseArgs }));
 

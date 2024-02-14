@@ -1,7 +1,7 @@
 import type { Snowflake } from "discord.js";
-import { sendCommand } from "./sendMessage";
-import { requireEnv, useTesterClient } from "./testerClient";
-import { waitForMessage } from "./messageDispatch";
+import { sendCommand } from "./sendMessage.js";
+import { requireEnv, useTesterClient } from "./testerClient.js";
+import { waitForMessage } from "./messageDispatch.js";
 
 const UUT_ID: Snowflake = requireEnv("BOT_TEST_ID");
 const TEST_CHANNEL_ID: Snowflake = requireEnv("CHANNEL_ID");

@@ -1,7 +1,7 @@
 import type { Snowflake } from "discord.js";
-import { logUser } from "../../src/helpers/logUser";
-import { requireEnv, useTesterClient } from "./testerClient";
-import { useTestLogger } from "../testUtils/logger";
+import { logUser } from "../../src/helpers/logUser.js";
+import { requireEnv, useTesterClient } from "./testerClient.js";
+import { useTestLogger } from "../testUtils/logger.js";
 
 const logger = useTestLogger();
 
