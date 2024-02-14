@@ -5,11 +5,25 @@ import analyze from "rollup-plugin-analyzer";
 import commonjs from "@rollup/plugin-commonjs";
 import esbuild from "rollup-plugin-esbuild";
 import json from "@rollup/plugin-json";
+import replace from "@rollup/plugin-replace";
 
 const isProduction = process.env["NODE_ENV"] === "production";
 
+const HOME = process.env["HOME"];
+
 export default defineConfig({
 	plugins: [
+		// Prisma injects the home directory. Remove that:
+		HOME !== undefined
+			? replace({
+					values: {
+						[HOME]: "~"
+					},
+					delimiters: ["", ""],
+					preventAssignment: true
+			  })
+			: null,
+
 		// Transpile source
 		esbuild({
 			tsconfig: "./tsconfig.prod.json",
