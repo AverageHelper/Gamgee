@@ -62,7 +62,6 @@
 		"soundcloud-scraper": "5.0.3",
 		"source-map-support": "0.5.21",
 		"superstruct": "1.0.3",
-		"type-fest": "3.6.1",
 		"winston": "3.8.1",
 		"winston-daily-rotate-file": "4.7.1",
 		"yargs": "17.5.1",
@@ -115,6 +114,7 @@
 		"semver": "7.6.0",
 		"ts-jest": "29.1.2",
 		"ts-node": "10.9.1",
+		"type-fest": "4.10.2",
 		"typescript": "4.9.5"
 	}
 }
