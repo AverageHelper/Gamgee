@@ -82,9 +82,7 @@ You could add that bot to your own server if you'd like (coming soon™), or you
 If you'd like to run natively, the following command should verify you have the prerequisites:
 
 ```sh
-$ npm -v && node -v
-7.20.3
-v16.15.1
+npm -v && node -v
 ```
 
 For running the container, you don't need anything other than a Docker-compatible container runtime.
@@ -117,9 +115,9 @@ The rest of the steps should be handled automatically.
 ### Clone the Repo
 
 ```sh
-$ cd path/to/parent
-$ git clone https://github.com/AverageHelper/Gamgee.git
-$ cd Gamgee
+cd path/to/parent
+git clone https://github.com/AverageHelper/Gamgee.git
+cd Gamgee
 ```
 
 Create a file called `.env` in the root of this project folder. Paste your token into that file:
@@ -141,7 +139,7 @@ LOG_LEVEL={silly | debug | verbose | info | warn | error}
 ### Install dependencies
 
 ```sh
-$ npm install
+npm install
 ```
 
 ### Initialise the Bot
@@ -149,7 +147,7 @@ $ npm install
 The first time you download the source, you'll need to run this command before you run the bot:
 
 ```sh
-$ npm run firstrun
+npm run firstrun
 ```
 
 This will ensure a clean build environment, build the source code, initialise the database, then deploy the commands.
@@ -157,7 +155,7 @@ This will ensure a clean build environment, build the source code, initialise th
 #### Build Sources for Debugging
 
 ```sh
-$ npm run setup
+npm run setup
 ```
 
 #### Manually Register Slash Commands
@@ -165,7 +163,7 @@ $ npm run setup
 In case you'd like to manually deploy Gamgee's [Slash Commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ), you can use the following command:
 
 ```sh
-$ npm run commands:deploy
+npm run commands:deploy
 ```
 
 Keep in mind that this requires a valid Discord bot token!
@@ -175,11 +173,19 @@ Keep in mind that this requires a valid Discord bot token!
 Since Gamgee is just a Node script, any Node process manager will do.
 
 ```sh
-$ node .
-# or
-$ npm start
-# or
-$ pm2 start .
+node .
+```
+
+or
+
+```sh
+npm start
+```
+
+or
+
+```sh
+pm2 start .
 ```
 
 ## Advanced configuration
