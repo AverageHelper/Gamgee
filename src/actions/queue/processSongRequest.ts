@@ -106,8 +106,12 @@ async function acceptSongRequest({
 	logger
 }: SongAcceptance): Promise<void> {
 	logger.debug(`Began enqueuing request at ${Date.now()} from ${logUser(context.user)}`);
-	await pushEntryToQueue(entry, queueChannel);
-	logger.debug(`Enqueued request at ${Date.now()} from ${logUser(context.user)}`);
+	const storedEntry = await pushEntryToQueue(entry, queueChannel);
+	logger.debug(
+		`Enqueued request at ${Date.now()} from ${logUser(
+			context.user
+		)}. Cooldown timer began at ${storedEntry.sentAt.getTime()}`
+	);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
 		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
