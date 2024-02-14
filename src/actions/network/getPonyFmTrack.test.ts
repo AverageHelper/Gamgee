@@ -1,6 +1,5 @@
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { Response } from "cross-fetch";
-import { URL } from "node:url";
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetch

@@ -48,7 +48,6 @@ import type { ReadonlyTuple } from "type-fest";
 import { ApplicationCommandOptionType } from "discord.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "../constants/database.js";
 import { sr as songRequest } from "./songRequest.js";
-import { URL } from "node:url";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
 const logger = useTestLogger();

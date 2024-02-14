@@ -1,7 +1,6 @@
 import type { videoInfo, getInfoOptions } from "ytdl-core";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
-import { URL } from "node:url";
 
 // Mock ytdl
 jest.mock("ytdl-core", () => ({

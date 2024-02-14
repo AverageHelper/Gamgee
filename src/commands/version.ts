@@ -1,4 +1,5 @@
 import type { Command } from "./Command.js";
+import { changelog } from "../constants/repository.js";
 import { localizations, ti } from "../i18n.js";
 import { version as gamgeeVersion } from "../version.js";
 import { randomCelebration, unwrappingFirstWith } from "../helpers/randomStrings.js";
@@ -22,8 +23,6 @@ export const version: Command = {
 		const systemName = "Gamgee Core";
 
 		if (type === "interaction") {
-			const repo = "https://github.com/AverageHelper/Gamgee";
-			const changelog = `${repo}/blob/main/CHANGELOG.md`; // TODO: Select the current version's heading
 			// Discord lets bots link stuff in Markdown syntax, but it'll also embed by default.
 			// We use angled brackets (`<` and `>`) to prevent the embed.
 			return await reply(

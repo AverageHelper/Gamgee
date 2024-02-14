@@ -1,5 +1,4 @@
 import type { Result } from "htmlmetaparser";
-import type { URL } from "node:url";
 import { fetchWithTimeout } from "./fetch.js";
 import { Handler } from "htmlmetaparser";
 import { Parser } from "htmlparser2";

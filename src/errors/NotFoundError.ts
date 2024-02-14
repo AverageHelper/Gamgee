@@ -1,4 +1,3 @@
-import type { URL } from "node:url";
 import { VideoError } from "./VideoError.js";
 
 export class NotFoundError extends VideoError {

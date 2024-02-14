@@ -183,7 +183,7 @@
 				"preamble-failure": "Uh, algo salió mal. Mejor mira esto:",
 				"preamble-success": "Corrí los números, ¡y parece que todos estamos bien!",
 				"results-header": "Resultados de la prueba por plataforma",
-				"see-on-github": "Consulte la {list} en nuestro GitHub.",
+				"see-on-forge": "Consulte la {list} en nuestro GitHub.",
 				"supported-platforms": "lista de plataformas compatibles"
 			}
 		},

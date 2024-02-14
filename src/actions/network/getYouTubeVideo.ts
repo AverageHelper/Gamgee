@@ -1,4 +1,3 @@
-import type { URL } from "node:url";
 import type { VideoDetails } from "../getVideoDetails.js";
 import type { videoInfo as YTVideoInfo } from "ytdl-core";
 import { getBasicInfo, validateURL } from "ytdl-core";

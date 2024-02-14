@@ -7,6 +7,7 @@ import { localizations, t, ti } from "../i18n.js";
 import { resolveStringFromOption } from "../helpers/optionResolvers.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { stopEscapingUriInString } from "../actions/messages/editMessage.js";
+import { supportedPlatformsList } from "../constants/repository.js";
 
 export const video: Command = {
 	name: "video",
@@ -47,8 +48,6 @@ export const video: Command = {
 			? stopEscapingUriInString(escapedSongUrlString)
 			: escapedSongUrlString;
 
-		const supportedPlatformsList =
-			"https://github.com/AverageHelper/Gamgee#supported-music-platforms";
 		const supportedPlatform =
 			type === "interaction"
 				? `[${t(

@@ -183,7 +183,7 @@
 				"preamble-failure": "Euh, quelque chose s'est mal passé. Le mieux est de regarder ceci:",
 				"preamble-success": "J'ai fait les calculs, et on dirait que tout va bien!",
 				"results-header": "Résultats des tests par plate-forme",
-				"see-on-github": "Consultez la {list} sur notre GitHub.",
+				"see-on-forge": "Consultez la {list} sur notre GitHub.",
 				"supported-platforms": "liste des plates-formes prise en charge"
 			}
 		},

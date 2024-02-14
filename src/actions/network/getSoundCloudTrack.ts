@@ -1,7 +1,6 @@
 import type { VideoDetails } from "../getVideoDetails.js";
 import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
-import { URL } from "node:url";
 import { useLogger } from "../../logger.js";
 import { VideoError } from "../../errors/VideoError.js";
 import SoundCloud from "soundcloud-scraper";

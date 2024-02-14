@@ -3,6 +3,7 @@ import { composed, createPartialString, push, pushNewLine } from "../helpers/com
 import { getCommandPrefix } from "../useGuildStorage.js";
 import { localizations, ti } from "../i18n.js";
 import { mentionCommand } from "../helpers/mentionCommands.js";
+import { supportedPlatformsList } from "../constants/repository.js";
 
 export const howto: GuildedCommand = {
 	name: "howto",
@@ -38,8 +39,6 @@ export const howto: GuildedCommand = {
 		);
 		pushNewLine(msg);
 
-		const supportedPlatformsList =
-			"<https://github.com/AverageHelper/Gamgee#supported-music-platforms>";
 		const supportedPlatforms =
 			type === "interaction"
 				? ti(
