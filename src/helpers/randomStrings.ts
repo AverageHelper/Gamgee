@@ -1,4 +1,5 @@
 import type { GuildMember, User } from "discord.js";
+import { isFunction, isString } from "./guards.js";
 import { randomElementOfArray } from "./randomElementOfArray.js";
 import { useLogger } from "../logger.js";
 import {
@@ -9,8 +10,6 @@ import {
 	phrases,
 	questions
 } from "../constants/textResponses.js";
-import isFunction from "lodash/isFunction";
-import { isString } from "./guards.js";
 
 const logger = useLogger();
 

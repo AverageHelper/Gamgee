@@ -1,78 +1,30 @@
+import type { Infer } from "superstruct";
 import type { VideoDetails } from "../getVideoDetails.js";
 import { fetchWithTimeout } from "../../helpers/fetch.js";
-import { isObject, isString } from "../../helpers/guards.js";
 import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
+import { is, string, type } from "superstruct";
 
-// Based on https://github.com/Poniverse/Pony.fm/blob/a1522f3cd73d849099e4a3d897656dc8c4795dd7/app/Http/Controllers/Api/V1/TracksController.php#L129
-interface PonyFmTrackAPIResponse {
-	// id: number;
-	title: string;
-	// description: string;
-	// lyrics: string;
-	// user: {
-	//	id: number;
-	//	name: string;
-	//	url: string;
-	//	avatars: {
-	//		thumbnail: string;
-	//		small: string;
-	//		normal: string;
-	//	};
-	// };
-	// stats: {
-	//	views: number;
-	//	plays: number;
-	//	downloads: number;
-	//	comments: number;
-	//	favourites: number;
-	// };
-	url: string;
-	// is_vocal: boolean;
-	// is_explicit: boolean;
-	// is_downloadable: boolean;
-	// published_at: {
-	//	date: string;
-	//	timezone_type: number;
-	//	timezone: string;
-	// };
-	duration: string;
-	// genre?: {
-	//	id: number;
-	//	name: string;
-	// };
-	// type: {
-	//	id: number;
-	//	name: string;
-	// };
-	// covers: {
-	//	thumbnail: string;
-	//	small: string;
-	//	normal: string;
-	// };
-	// source: string;
-	// streams: {
-	//	mp3: {
-	//		url: string;
-	//		mime_type: string;
-	//	};
-	// };
+// From https://github.com/Poniverse/Pony.fm/blob/a1522f3cd73d849099e4a3d897656dc8c4795dd7/app/Http/Controllers/Api/V1/TracksController.php#L129
+const ponyFmTrackAPIResponse = type({
+	title: string(),
+	url: string(),
+	duration: string()
+});
+
+type PonyFmTrackAPIResponse = Infer<typeof ponyFmTrackAPIResponse>;
+
+function isPonyFmTrackAPIResponse(tbd: unknown): tbd is PonyFmTrackAPIResponse {
+	return is(tbd, ponyFmTrackAPIResponse);
 }
 
-function isPonyFmTrackAPIResponse(resp: unknown): resp is PonyFmTrackAPIResponse {
-	return (
-		isObject(resp) &&
-		isString((resp as unknown as PonyFmTrackAPIResponse).title) &&
-		isString((resp as unknown as PonyFmTrackAPIResponse).duration) &&
-		isString((resp as unknown as PonyFmTrackAPIResponse).url)
-	);
-}
+const ponyFmTrackAPIError = type({
+	message: string()
+});
 
-interface PonyFmTrackAPIError {
-	message: string;
-}
+type PonyFmTrackAPIError = Infer<typeof ponyFmTrackAPIError>;
 
-function isPonyFmTrackAPIError(resp: unknown): resp is PonyFmTrackAPIError {
-	return isObject(resp) && isString((resp as unknown as PonyFmTrackAPIError).message);
+function isPonyFmTrackAPIError(tbd: unknown): tbd is PonyFmTrackAPIError {
+	return is(tbd, ponyFmTrackAPIError);
 }
 
 /**
