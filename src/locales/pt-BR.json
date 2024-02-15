@@ -27,7 +27,9 @@
 			"description": "Imprima instruções para usar os comandos de fila comum.",
 			"name": "como",
 			"responses": {
-				"to-submit": "Para enviar uma música, use {command}\n\nPor exemplo: {example}\nResponderei com uma confirmação indicando que sua música entrou na fila!",
+				"to-submit": "Para enviar uma música, use {command}",
+				"example": "Por exemplo: {example}",
+				"will-confirm": "Responderei com uma confirmação indicando que sua música entrou na fila!",
 				"see-supported-platforms": "Veja [nossa lista de plataformas suportadas]({url}).",
 				"see-supported-platforms-at-url": "Veja nossa lista de plataformas suportadas em {url}.",
 				"to-get-current-song": "Para obter um link para a música atual, use {command}."

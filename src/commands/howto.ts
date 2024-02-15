@@ -1,7 +1,7 @@
 import type { GuildedCommand } from "./Command.js";
 import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
 import { getCommandPrefix } from "../useGuildStorage.js";
-import { localizations, ti } from "../i18n.js";
+import { localizations, t, ti } from "../i18n.js";
 import { mentionCommand } from "../helpers/mentionCommands.js";
 import { supportedPlatformsList } from "../constants/repository.js";
 
@@ -26,17 +26,19 @@ export const howto: GuildedCommand = {
 		const exampleQuery = "https://youtu.be/dQw4w9WgXcQ"; // :P
 
 		const srMention = mentionCommand(sr, guild, COMMAND_PREFIX);
+		push(ti("commands.howto.responses.to-submit", { command: srMention }, guildLocale), msg);
+		pushNewLine(msg);
+		pushNewLine(msg);
 		push(
 			ti(
-				"commands.howto.responses.to-submit",
-				{
-					command: srMention,
-					example: `\`/${srCommandName} ${exampleQuery}\``
-				},
+				"commands.howto.responses.example",
+				{ example: `\`/${srCommandName} ${exampleQuery}\`` },
 				guildLocale
 			),
 			msg
 		);
+		pushNewLine(msg);
+		push(t("commands.howto.responses.will-confirm", guildLocale), msg);
 		pushNewLine(msg);
 
 		const supportedPlatforms =

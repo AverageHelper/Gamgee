@@ -27,7 +27,9 @@
 			"description": "Imprime les instructions d'utilisation des commandes de la file d'attente courante.",
 			"name": "comment",
 			"responses": {
-				"to-submit": "Pour soumettre une chanson, utilisez {command}\n\nPar exemple: {example}\nJe vous répondrai avec une confirmation indiquant que votre chanson a rejoint la file d'attente!",
+				"to-submit": "Pour soumettre une chanson, utilisez {command}",
+				"example": "Par exemple: {example}",
+				"will-confirm": "Je vous répondrai avec une confirmation indiquant que votre chanson a rejoint la file d'attente!",
 				"see-supported-platforms": "Consultez [notre liste de plateformes prises en charge]({url}).",
 				"see-supported-platforms-at-url": "Consultez notre liste des plates-formes prises en charge sur {url}.",
 				"to-get-current-song": "Pour obtenir un lien vers la chanson actuelle, utilisez {command}."

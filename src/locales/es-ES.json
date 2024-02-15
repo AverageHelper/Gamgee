@@ -27,7 +27,9 @@
 			"description": "Imprima instrucciones para usar los comandos de cola comunes.",
 			"name": "cómo",
 			"responses": {
-				"to-submit": "Para enviar una canción, use {command}\n\nPor ejemplo: {example}\n¡Responderé con una confirmación indicando que tu canción se ha unido a la cola!",
+				"to-submit": "Para enviar una canción, use {command}",
+				"example": "Por ejemplo: {example}",
+				"will-confirm": "¡Responderé con una confirmación indicando que tu canción se ha unido a la cola!",
 				"see-supported-platforms": "Vea [nuestra lista de plataformas compatibles]({url}).",
 				"see-supported-platforms-at-url": "Consulte nuestra lista de plataformas compatibles en {url}.",
 				"to-get-current-song": "Para obtener un enlace a la canción actual, use {command}."
