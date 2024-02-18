@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Translations for `/howto` command responses. (Thanks to [@karcsesz](https://github.com/karcsesz) and [@vayandas](https://github.com/vayandas) for help translating!)
+- Translations for `/howto` command responses. (Thanks to [@karcsesz](https://github.com/karcsesz), [@vayandas](https://github.com/vayandas), and marph92 for help translating!)
 - Internal logging to indicate the start of a user's submission cooldown timer.
 - `.mailmap` file.
 

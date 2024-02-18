@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`How-to command in de informs the user how to run queue commands (interaction) 1`] = `
-"Um einen Song einzureichen, verwenden Sie \`?sr\`
+"Um einen Song einzureichen, verwende \`?sr\`
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
-Ich werde mit einer Bestätigung antworten, dass Ihr Song zur Warteschlange hinzugefügt wurde!
-Sehen [Sie sich unsere Liste der unterstützten Plattformen an](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Ich werde mit einer Bestätigung antworten, dass dein Song zur Warteschlange hinzugefügt wurde!
+Siehe [unsere Liste der unterstützten Plattformen](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
 
-Um einen Link zum aktuellen Song zu erhalten, verwenden Sie \`?nowplaying\`."
+Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
 
 exports[`How-to command in de informs the user how to run queue commands (message) 1`] = `
-"Um einen Song einzureichen, verwenden Sie \`?sr\`
+"Um einen Song einzureichen, verwende \`?sr\`
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
-Ich werde mit einer Bestätigung antworten, dass Ihr Song zur Warteschlange hinzugefügt wurde!
-Sehen Sie sich unsere Liste der unterstützten Plattformen unter <https://github.com/AverageHelper/Gamgee#supported-music-platforms> an.
+Ich werde mit einer Bestätigung antworten, dass dein Song zur Warteschlange hinzugefügt wurde!
+Siehe unsere Liste der unterstützten Plattformen <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
 
-Um einen Link zum aktuellen Song zu erhalten, verwenden Sie \`?nowplaying\`."
+Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
 
 exports[`How-to command in en-GB informs the user how to run queue commands (interaction) 1`] = `

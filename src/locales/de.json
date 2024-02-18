@@ -27,12 +27,12 @@
 			"description": "Drucken Sie Anweisungen zur Verwendung der allgemeinen Warteschlangenbefehle.",
 			"name": "wieman",
 			"responses": {
-				"to-submit": "Um einen Song einzureichen, verwenden Sie {command}",
+				"to-submit": "Um einen Song einzureichen, verwende {command}",
 				"example": "Zum Beispiel: {example}",
-				"will-confirm": "Ich werde mit einer Bestätigung antworten, dass Ihr Song zur Warteschlange hinzugefügt wurde!",
-				"see-supported-platforms": "Sehen [Sie sich unsere Liste der unterstützten Plattformen an]({url}).",
-				"see-supported-platforms-at-url": "Sehen Sie sich unsere Liste der unterstützten Plattformen unter {url} an.",
-				"to-get-current-song": "Um einen Link zum aktuellen Song zu erhalten, verwenden Sie {command}."
+				"will-confirm": "Ich werde mit einer Bestätigung antworten, dass dein Song zur Warteschlange hinzugefügt wurde!",
+				"see-supported-platforms": "Siehe [unsere Liste der unterstützten Plattformen]({url}).",
+				"see-supported-platforms-at-url": "Siehe unsere Liste der unterstützten Plattformen {url}.",
+				"to-get-current-song": "Um einen Link zum aktuellen Song zu erhalten, verwende {command}."
 			}
 		},
 		"languages": {
