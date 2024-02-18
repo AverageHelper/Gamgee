@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Parse Changelog
         id: changelog
-        uses: coditory/changelog-parser@v1.0.2
+        uses: coditory/changelog-parser@4f567c6914ee75eff434b4d946393dfd254f8f98
 
       - name: Publish Release
         if: steps.changelog.outputs.status != 'unreleased'
         # This action doesn't create a new release if the tag already exists
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag_name: v${{ steps.changelog.outputs.version }}
