@@ -19,6 +19,7 @@ const QUEUE_COMMAND = "quo";
 
 describe("Command as admin", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
+	const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 	const NO_QUEUE = "no queue";
 	const NEW_QUEUE = "New queue";
 
@@ -211,7 +212,6 @@ describe("Command as admin", function () {
 	});
 
 	describe("video", function () {
-		const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
 		it("asks for a song link", async function () {
