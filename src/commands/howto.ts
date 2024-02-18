@@ -1,17 +1,10 @@
 import type { GuildedCommand } from "./Command.js";
+import { composed, createPartialString, push, pushNewLine } from "../helpers/composeStrings.js";
 import { getCommandPrefix } from "../useGuildStorage.js";
-import { localizations } from "../i18n.js";
-import { SLASH_COMMAND_INTENT_PREFIX } from "../constants/database.js";
+import { localizations, t, ti } from "../i18n.js";
+import { mentionCommand } from "../helpers/mentionCommands.js";
 import { supportedPlatformsList } from "../constants/repository.js";
-import {
-	composed,
-	createPartialString,
-	push,
-	pushCode,
-	pushNewLine
-} from "../helpers/composeStrings.js";
 
-// TODO: i18n
 export const howto: GuildedCommand = {
 	name: "howto",
 	nameLocalizations: localizations("commands.howto.name"),
@@ -25,38 +18,50 @@ export const howto: GuildedCommand = {
 		const srCommandName: string = sr.nameLocalizations
 			? sr.nameLocalizations[guildLocale] ?? sr.name
 			: sr.name;
-		const nowPlayingCommandName: string = nowPlaying.nameLocalizations
-			? nowPlaying.nameLocalizations[guildLocale] ?? nowPlaying.name
-			: nowPlaying.name;
 
 		// Print the standard help
-		const COMMAND_PREFIX =
-			type === "message" ? await getCommandPrefix(guild) : SLASH_COMMAND_INTENT_PREFIX;
+		const COMMAND_PREFIX = await getCommandPrefix(guild);
 		const msg = createPartialString();
 
 		const exampleQuery = "https://youtu.be/dQw4w9WgXcQ"; // :P
 
-		push(`To submit a song, type \`${COMMAND_PREFIX}${srCommandName} <link>\`.`, msg);
+		const srMention = mentionCommand(sr, guild, COMMAND_PREFIX);
+		push(ti("commands.howto.responses.to-submit", { command: srMention }, guildLocale), msg);
 		pushNewLine(msg);
-		push(`For example: \`${COMMAND_PREFIX}${srCommandName} ${exampleQuery}\``, msg);
 		pushNewLine(msg);
-		push("I will respond with a text verification indicating your song has joined the queue!", msg);
+		push(
+			ti(
+				"commands.howto.responses.example",
+				{ example: `\`/${srCommandName} ${exampleQuery}\`` },
+				guildLocale
+			),
+			msg
+		);
+		pushNewLine(msg);
+		push(t("commands.howto.responses.will-confirm", guildLocale), msg);
 		pushNewLine(msg);
 
 		const supportedPlatforms =
 			type === "interaction"
-				? `See [our list of supported platforms](<${supportedPlatformsList}>)`
-				: `See our list of supported platforms at <${supportedPlatformsList}>.`;
+				? ti(
+						"commands.howto.responses.see-supported-platforms",
+						{ url: `<${supportedPlatformsList}>` },
+						guildLocale
+				  )
+				: ti(
+						"commands.howto.responses.see-supported-platforms-at-url",
+						{ url: `<${supportedPlatformsList}>` },
+						guildLocale
+				  );
 		push(supportedPlatforms, msg);
 		pushNewLine(msg);
 		pushNewLine(msg);
 
-		push("To get a link to the current song, type ", msg);
-		pushCode(`${COMMAND_PREFIX}${nowPlayingCommandName}`, msg);
-		if (type === "message") {
-			push(" and check your DMs", msg);
-		}
-		push(".", msg);
+		const npMention = mentionCommand(nowPlaying, guild, COMMAND_PREFIX);
+		push(
+			ti("commands.howto.responses.to-get-current-song", { command: npMention }, guildLocale),
+			msg
+		);
 
 		return await reply(composed(msg));
 	}

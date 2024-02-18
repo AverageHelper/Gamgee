@@ -17,7 +17,7 @@ describe("Help command", () => {
 
 	beforeEach(() => {
 		context = {
-			type: "message",
+			type: "interaction",
 			guild: {
 				id: "the-guild"
 			},

@@ -1,9 +1,12 @@
-import type { Command, Subcommand } from "../Command.js";
+import type { GuildedCommand, Subcommand } from "../Command.js";
 import { blacklist } from "./blacklist.js";
 import { close } from "./close.js";
+import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
+import { getCommandPrefix } from "../../useGuildStorage.js";
 import { invokeCommand } from "../../actions/invokeCommand.js";
 import { limit } from "./limit.js";
 import { localizations, t } from "../../i18n.js";
+import { mentionSubcommand } from "../../helpers/mentionCommands.js";
 import { open } from "./open.js";
 import { resolveSubcommandNameFromOption } from "../../helpers/optionResolvers.js";
 import { restart } from "./restart.js";
@@ -11,13 +14,6 @@ import { setup } from "./setup.js";
 import { stats } from "./stats.js";
 import { teardown } from "./teardown.js";
 import { whitelist } from "./whitelist.js";
-import {
-	composed,
-	createPartialString,
-	push,
-	pushCode,
-	pushNewLine
-} from "../../helpers/composeStrings.js";
 
 const namedSubcommands: NonEmptyArray<Subcommand> = [
 	setup,
@@ -31,7 +27,7 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	restart
 ];
 
-export const quo: Command = {
+export const quo: GuildedCommand = {
 	name: "quo",
 	nameLocalizations: localizations("commands.queue-admin.name"),
 	description: "Administrative commands to manage the song queue.",
@@ -43,14 +39,15 @@ export const quo: Command = {
 		const locale = context.guildLocale;
 		const firstOption = context.options[0];
 		if (!firstOption) {
+			const COMMAND_PREFIX = await getCommandPrefix(context.guild);
 			const response = createPartialString(
 				t("commands.queue-admin.responses.list-possible-subcommands", locale)
 			);
-			Object.values(namedSubcommands).forEach(command => {
+			for (const command of namedSubcommands) {
 				pushNewLine(response);
-				push(" - ", response);
-				pushCode(command.nameLocalizations?.[locale] ?? command.name, response);
-			});
+				push("- ", response);
+				push(mentionSubcommand(quo, command, context.guild, COMMAND_PREFIX), response);
+			}
 
 			return await context.reply(composed(response));
 		}
@@ -85,15 +82,15 @@ export const quo: Command = {
 			}
 		}
 
+		const COMMAND_PREFIX = await getCommandPrefix(context.guild);
 		const response = createPartialString(
 			t("commands.queue-admin.responses.list-possible-subcommands", locale)
 		);
-		Object.values(namedSubcommands).forEach(command => {
+		for (const command of namedSubcommands) {
 			pushNewLine(response);
-			push(" - ", response);
-			// TODO: Print clickable slash command references instead
-			pushCode(command.nameLocalizations?.[locale] ?? command.name, response);
-		});
+			push("- ", response);
+			push(mentionSubcommand(quo, command, context.guild, COMMAND_PREFIX), response);
+		}
 		return await context.reply(composed(response));
 	}
 };

@@ -25,7 +25,15 @@
 		},
 		"howto": {
 			"description": "Kiír utasításokat a gyakori parancsok használatához.",
-			"name": "hogyankell"
+			"name": "hogyankell",
+			"responses": {
+				"to-submit": "Dal beküldéséhez használja a {command} parancsot",
+				"example": "Például: {example}",
+				"will-confirm": "Jelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!",
+				"see-supported-platforms": "Tekintse meg [a támogatott platformok listáját]({url}).",
+				"see-supported-platforms-at-url": "Tekintse meg a támogatott platformok listáját a {url} címen.",
+				"to-get-current-song": "Az aktuális dal hivatkozásának lekéréséhez használja a {command} parancsot."
+			}
 		},
 		"languages": {
 			"description": "Kiírja a forráskódom nyelvi statisztikáit.",

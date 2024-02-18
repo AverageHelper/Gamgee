@@ -84,6 +84,13 @@ export const phrases: ResponseRepository = [
 	"Hey, get out of my sandwich",
 	"I like trains",
 
+	// Assassination Classroom
+	'"... was tentacles all along!"',
+	"Backup plans are the cornerstone of confidence.",
+	"If something is possible, carry on as planned. Even if it isn’t possible, do it anyway",
+	"It’s all fun and games until things get real.",
+	"The difference between the novice and the master is that the master has failed more times than the novice has tried",
+
 	// Columbo
 	"A little early in the evening for this burglar, isn't it, Commissioner?",
 	"Can we talk off the record?",
@@ -218,6 +225,12 @@ export const phrases: ResponseRepository = [
 	"Zinda, his face black, his eyes red",
 	// TODO: Add more from https://memory-alpha.fandom.com/wiki/Tamarian_language, once there is more to balance these out
 
+	// Time
+	"Did you hear Unix clocks ticked over to 17-something? Feels like ages ago, but it's, what, <t:1700000000:R> now?",
+	"Did you hear we just hit a new Unix time epoch? Yeah, pretty recently too, only <t:1700000000:R> or something",
+	"Remember that new Unix time epoch? I know, that's _so_ <t:1700000000:R>",
+	"Someone just told me we hit a new Unix time epoch. I'm like, that's _so_ <t:1700000000:R>",
+
 	// Wonka
 	"A little nonsense now and then is relished by the wisest men.",
 	"If the Good Lord had intended us to walk, he wouldn't have invented roller skates!",
@@ -244,6 +257,7 @@ export const phrases: ResponseRepository = [
 	// Other
 	"Another good song!",
 	"Are we there yet?",
+	"Are you for Music such as Untitled 1 and Music and more Music by Music + Music (with Eminem) and the best one of all time Song?",
 	"Are you sure you typed your message correctly? All I see is a bunch of words",
 	"Based",
 	"Based on what?",
@@ -292,7 +306,8 @@ export const phrases: ResponseRepository = [
 	"haha automated message go brrrrrrr",
 	"\\*happy robot noises\\*",
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
-	({ otherUser }) => `Hey, I know you! You're ${otherUser.username}, right?`,
+	({ otherMember: m, otherUser: u }) =>
+		`Hey, I know you! You're ${m?.nickname ?? u.username}, right?`,
 	({ me }) => `Hey all! ${firstWord(me)} here!`,
 	"Hm? I'm just vibing",
 	"I actually understand everything you're saying. It's just fun to troll you with nonsense replies :stuck_out_tongue_winking_eye:",
@@ -305,12 +320,13 @@ export const phrases: ResponseRepository = [
 	"I don't like this can we change the topic plz ty",
 	"I don't like your tone.",
 	"I feel unexplained joys and sorrows, but alas I am synthetic.",
-	({ otherUser: u }) => `I agree, ${u.username}. Wise words`,
+	({ otherMember: m, otherUser: u }) => `I agree, ${m?.nickname ?? u.username}. Wise words`,
 	"I have a dream...",
 	["I have this amazing story I wanna share. Here it is:", "The.", "I hope you liked it!"],
 	"I just wasted three seconds of your life.",
 	["I", "just wasted", "ten seconds", "of your life"],
 	"I like youtube links, they're comfortable and easy to manage.",
+	"I literally don't know this song",
 	"I love when it when it\n:thinking:\nbottom text",
 	"I must go, Technology needs me!",
 	"I see Discord's redecorated! ... I don't like it",
@@ -384,6 +400,7 @@ export const phrases: ResponseRepository = [
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
 	"This is just a random phrase. Feel free to add to another.",
 	"(This message will be in a separate message)",
+	"This message was written in 4K Ultra HD:tm:",
 	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
 	"\\*thoughtful phrase\\*",
 	() => `To talk to a customer, please press ${code(randomInt(9))}`,
@@ -392,6 +409,7 @@ export const phrases: ResponseRepository = [
 	"Truly inspirational!",
 	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
+	"Were you attacked by a party?",
 	"What are the odds that I would find myself where I began",
 	'What\'s my favorite colour? I think they call it "OG Blurple"',
 	"What's the matter?",
@@ -416,7 +434,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta
-]; // 244 of these
+]; // 257 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

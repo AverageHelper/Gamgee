@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Translations for `/howto` command responses. (Thanks to [@karcsesz](https://github.com/karcsesz), [@vayandas](https://github.com/vayandas), and marph92 for help translating!)
 - Internal logging to indicate the start of a user's submission cooldown timer.
 - `.mailmap` file.
 
 ### Changed
+- When the bot references a command in chat, we now use an interactive link to the new slash-command variant. Users can click or tap this command to fill in their message bar.
 - Some internals to prepare for modern module syntax.
 
 ### Fixed
