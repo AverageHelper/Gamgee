@@ -15,6 +15,7 @@ const QUEUE_COMMAND = "quo";
 describe("Command as pleb", function () {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 	const fullUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+	const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 
 	beforeEach(async function () {
 		const title = this.test?.fullTitle();
@@ -97,8 +98,8 @@ describe("Command as pleb", function () {
 					});
 
 					it("`sr` alone provides info on how to use the request command", async function () {
-						const content = await commandResponseInTestChannel("sr", "To submit a song, type");
-						expectToContain(content, "To submit a song, type");
+						const content = await commandResponseInTestChannel("sr", "To submit a song, use");
+						expectToContain(content, "To submit a song, use");
 					});
 
 					it("`nowplaying` sends the track info to DMs", async function () {
@@ -126,7 +127,6 @@ describe("Command as pleb", function () {
 	});
 
 	describe("video", function () {
-		const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
 		it("asks for a song link", async function () {

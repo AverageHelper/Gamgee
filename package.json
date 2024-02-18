@@ -1,6 +1,6 @@
 {
 	"name": "gamgee",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"description": "A Discord bot for managing a song request queue.",
 	"private": true,
 	"scripts": {
@@ -11,7 +11,7 @@
 		"firstrun:runtime": "npm run prisma:generate && npm run migrate && npm run commands:deploy",
 		"commands:deploy": "node . --deploy",
 		"commands:revoke": "node . --revoke",
-		"release": "./node_modules/.bin/ts-node -P tsconfig.test.json ./scripts/release.ts",
+		"release": "TSX_TSCONFIG_PATH='./tsconfig.test.json' node --require tsx/cjs scripts/release.ts",
 		"baseline": "./node_modules/.bin/prisma migrate resolve --applied 20220915022732_initial_state",
 		"migrate": "./node_modules/.bin/prisma migrate deploy",
 		"prisma:introspect": "./node_modules/.bin/prisma db pull",
@@ -29,7 +29,7 @@
 		"test:src:watch": "npm run test:src -- --watch --coverage=false",
 		"test:e2e": "./node_modules/.bin/concurrently -kn bot,mocha -s first 'npm run start:test' 'sleep 5 && npm run _test:e2e'",
 		"start:test": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; export NODE_ENV=test-mocha; ./node_modules/.bin/prisma migrate reset --force && node .",
-		"_test:e2e": "TS_NODE_PROJECT='./tsconfig.e2e.json' ./node_modules/.bin/mocha"
+		"_test:e2e": "TSX_TSCONFIG_PATH='./tsconfig.e2e.json' node --require tsx/cjs ./node_modules/.bin/mocha"
 	},
 	"main": "./dist/server.js",
 	"type": "commonjs",
@@ -65,7 +65,7 @@
 		"winston": "3.8.1",
 		"winston-daily-rotate-file": "4.7.1",
 		"yargs": "17.5.1",
-		"ytdl-core": "4.11.3"
+		"ytdl-core": "4.11.5"
 	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "22.0.2",
@@ -113,7 +113,7 @@
 		"rollup-plugin-visualizer": "5.8.1",
 		"semver": "7.6.0",
 		"ts-jest": "29.1.2",
-		"ts-node": "10.9.1",
+		"tsx": "4.7.1",
 		"type-fest": "4.10.2",
 		"typescript": "4.9.5"
 	}
