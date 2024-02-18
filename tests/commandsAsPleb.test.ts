@@ -98,8 +98,8 @@ describe("Command as pleb", function () {
 					});
 
 					it("`sr` alone provides info on how to use the request command", async function () {
-						const content = await commandResponseInTestChannel("sr", "To submit a song, type");
-						expectToContain(content, "To submit a song, type");
+						const content = await commandResponseInTestChannel("sr", "To submit a song, use");
+						expectToContain(content, "To submit a song, use");
 					});
 
 					it("`nowplaying` sends the track info to DMs", async function () {
