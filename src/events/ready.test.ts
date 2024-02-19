@@ -5,14 +5,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 const logger = useTestLogger();
 
-// Mock the client to track 'setActivity' calls and provide basic info
-const mockSetActivity = vi.fn();
 const MockClient = vi.hoisted(
 	() =>
 		class MockClient {
 			user = {
-				username: "Gamgee",
-				setActivity: mockSetActivity
+				username: "Gamgee"
 			};
 
 			destroy(): void {
@@ -72,7 +69,6 @@ describe("once(ready)", () => {
 		});
 		mockDeployCommands.mockResolvedValue(undefined);
 		mockRevokeCommands.mockResolvedValue(undefined);
-		mockSetActivity.mockReturnValue({});
 	});
 
 	afterEach(() => {
@@ -122,10 +118,5 @@ describe("once(ready)", () => {
 	test("verifies command deployments", async () => {
 		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
 		expect(mockVerifyCommandDeployments).toHaveBeenCalledWith(client, logger);
-	});
-
-	test("sets user activity", async () => {
-		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
-		expect(mockSetActivity).toHaveBeenCalledOnce();
 	});
 });
