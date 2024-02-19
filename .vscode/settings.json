@@ -8,5 +8,13 @@
 	"i18n-ally.localesPaths": ["src/locales"],
 	"i18n-ally.sourceLanguage": "en-US",
 	"i18n-ally.tabStyle": "tab",
-	"todo-tree.filtering.excludeGlobs": ["**/dist/**"]
+	"todo-tree.filtering.excludeGlobs": ["**/dist/**"],
+	"coverage-gutters.coverageFileNames": [
+		"clover.xml",
+		"lcov.info",
+		"cov.xml",
+		"coverage.xml",
+		"jacoco.xml",
+		"coverage.cobertura.xml"
+	]
 }
