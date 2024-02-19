@@ -64,7 +64,6 @@ export default defineConfig({
 		"discord.js",
 
 		// Circular
-		"undici",
 		"winston-transport",
 		"winston",
 
