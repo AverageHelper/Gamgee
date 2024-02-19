@@ -1,21 +1,22 @@
-import type { Logger } from "../logger.js";
 import type { Message } from "discord.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { MessageType } from "discord.js";
 import { messageCreate } from "./messageCreate.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 
 // Mock the command handler
-jest.mock("../handleCommand.js", () => ({ handleCommand: jest.fn() }));
+vi.mock("../handleCommand.js", () => ({ handleCommand: vi.fn() }));
 import { handleCommand } from "../handleCommand.js";
-const mockHandleCommand = handleCommand as jest.Mock<
-	Promise<void>,
-	[message: Message, logger: Logger]
+const mockHandleCommand = handleCommand as Mock<
+	Parameters<typeof handleCommand>,
+	ReturnType<typeof handleCommand>
 >;
 
 describe("messageCreate", () => {
 	const logger = useTestLogger();
 	let message: Message;
-	const mockMessageFetch = jest.fn();
+	const mockMessageFetch = vi.fn();
 
 	beforeEach(() => {
 		message = {

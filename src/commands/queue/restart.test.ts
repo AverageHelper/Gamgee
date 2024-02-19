@@ -1,28 +1,42 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../../actions/messages");
-jest.mock("../../actions/queue/useQueue");
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../useQueueStorage");
-jest.mock("../../permissions");
+vi.mock("../../actions/messages/index.js");
+vi.mock("../../actions/queue/useQueue.js");
+vi.mock("../../actions/queue/getQueueChannel.js");
+vi.mock("../../useQueueStorage.js");
+vi.mock("../../permissions/index.js");
 
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
-const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as jest.Mock;
+const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as Mock<
+	Parameters<typeof bulkDeleteMessagesWithIds>,
+	ReturnType<typeof bulkDeleteMessagesWithIds>
+>;
 
+import type { QueueEntry } from "../../useQueueStorage.js";
 import { deleteStoredEntriesForQueue, getAllStoredEntries } from "../../useQueueStorage.js";
-const mockDeleteStoredEntriesForQueue = deleteStoredEntriesForQueue as jest.Mock;
-const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
+const mockDeleteStoredEntriesForQueue = deleteStoredEntriesForQueue as Mock<
+	Parameters<typeof deleteStoredEntriesForQueue>,
+	ReturnType<typeof deleteStoredEntriesForQueue>
+>;
+const mockGetAllStoredEntries = getAllStoredEntries as Mock<
+	Parameters<typeof getAllStoredEntries>,
+	ReturnType<typeof getAllStoredEntries>
+>;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import type { GuildedCommandContext } from "../Command.js";
 import type { TextChannel } from "discord.js";
 import { restart } from "./restart.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
-const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
-const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockPrepareForLongRunningTasks = vi.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger();
 
@@ -60,11 +74,11 @@ describe("Clear queue contents", () => {
 	`(
 		"clears the queue when admin==$isAdmin and in $channelId",
 		async ({ channelId }: { channelId: string }) => {
-			const queueChannel = { id: "queue-channel" };
+			const queueChannel = { id: "queue-channel" } as unknown as TextChannel;
 			const queueEntries = [
-				{ queueMessageId: "message1" },
-				{ queueMessageId: "message2" },
-				{ queueMessageId: "message3" }
+				{ queueMessageId: "message1" } as unknown as QueueEntry,
+				{ queueMessageId: "message2" } as unknown as QueueEntry,
+				{ queueMessageId: "message3" } as unknown as QueueEntry
 			];
 			mockGetQueueChannel.mockResolvedValue(queueChannel);
 			mockGetAllStoredEntries.mockResolvedValue(queueEntries);

@@ -72,7 +72,7 @@ export default defineConfig({
 	input: "src/main.ts",
 	output: {
 		file: "dist/server.js",
-		format: "commonjs",
+		format: "module",
 		inlineDynamicImports: true,
 		sourcemap: isProduction ? undefined : "inline"
 	}

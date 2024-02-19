@@ -1,10 +1,10 @@
 import type { CommandInteractionOption, Guild } from "discord.js";
-import "../../tests/testUtils/leakedHandles.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ApplicationCommandOptionType, channelMention } from "discord.js";
-import { expectNull } from "../../tests/testUtils/expectations/jest.js";
+import { expectNull } from "../../tests/testUtils/expectations/vitest.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
 
-const mockResolveChannel = jest.fn();
+const mockResolveChannel = vi.fn();
 
 describe("Option Resolver", () => {
 	let guild: Guild;

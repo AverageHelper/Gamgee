@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Get Queue Limits shows statistics on queue limits 1`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 1`] = `
 {
   "embeds": [
     {
@@ -34,7 +34,7 @@ exports[`Get Queue Limits shows statistics on queue limits 1`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 2`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 2`] = `
 {
   "embeds": [
     {
@@ -68,7 +68,7 @@ exports[`Get Queue Limits shows statistics on queue limits 2`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 3`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 3`] = `
 {
   "embeds": [
     {
@@ -102,7 +102,7 @@ exports[`Get Queue Limits shows statistics on queue limits 3`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 4`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 4`] = `
 {
   "embeds": [
     {
@@ -136,7 +136,7 @@ exports[`Get Queue Limits shows statistics on queue limits 4`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 5`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 5`] = `
 {
   "embeds": [
     {
@@ -170,7 +170,7 @@ exports[`Get Queue Limits shows statistics on queue limits 5`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 6`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 6`] = `
 {
   "embeds": [
     {
@@ -204,7 +204,7 @@ exports[`Get Queue Limits shows statistics on queue limits 6`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 7`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 7`] = `
 {
   "embeds": [
     {
@@ -238,7 +238,7 @@ exports[`Get Queue Limits shows statistics on queue limits 7`] = `
 }
 `;
 
-exports[`Get Queue Limits shows statistics on queue limits 8`] = `
+exports[`Get Queue Limits > shows statistics on queue limits 8`] = `
 {
   "embeds": [
     {

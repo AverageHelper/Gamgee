@@ -1,5 +1,5 @@
-import "../../../../tests/testUtils/leakedHandles.js";
+import { vi } from "vitest";
 
-export const sendPrivately = jest.fn().mockResolvedValue(null);
-export const replyPrivately = jest.fn().mockResolvedValue(undefined);
-export const reply = jest.fn().mockResolvedValue(undefined);
+export const sendPrivately = vi.fn().mockResolvedValue(null);
+export const replyPrivately = vi.fn().mockResolvedValue(undefined);
+export const reply = vi.fn().mockResolvedValue(undefined);

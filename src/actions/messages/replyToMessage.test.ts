@@ -1,10 +1,16 @@
 import type { CommandInteraction, Message, User } from "discord.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { channelMention } from "discord.js";
 import { DEFAULT_LOCALE } from "../../i18n.js";
 import { replyPrivately, sendPrivately } from "./replyToMessage.js";
 
+vi.mock("../../logger.js", async () => ({
+	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger
+}));
+
 describe("Message replies", () => {
-	const mockUserSend = jest.fn().mockResolvedValue({});
+	const resultMessage = { id: "foo" };
+	const mockUserSend = vi.fn().mockResolvedValue(resultMessage);
 
 	let user: User;
 
@@ -25,26 +31,22 @@ describe("Message replies", () => {
 
 		test("calls the `send` method of the given user", async () => {
 			const content = "yo";
-			await expect(sendPrivately(user, content)).resolves.toBeTruthy();
+			await expect(sendPrivately(user, content)).resolves.toStrictEqual(resultMessage);
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith(content);
 		});
 
 		test("returns `null` if the `send` method of the given user throws", async () => {
-			jest.spyOn(global.console, "error").mockImplementation(() => undefined);
-
 			mockUserSend.mockRejectedValueOnce(new Error("This is a test"));
 			const content = "yo";
 			await expect(sendPrivately(user, content)).resolves.toBeNull();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith(content);
-
-			jest.restoreAllMocks();
 		});
 	});
 
 	describe("interaction replies", () => {
-		const mockReply = jest.fn();
+		const mockReply = vi.fn();
 		let interaction: CommandInteraction;
 
 		beforeEach(() => {
@@ -60,7 +62,7 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(interaction, content, false, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeTrue();
+			).resolves.toBe(true);
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
 		});
@@ -70,7 +72,7 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(interaction, content, false, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeFalse();
+			).resolves.toBe(false);
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
 		});
@@ -79,7 +81,7 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(interaction, { content }, false, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeTrue();
+			).resolves.toBe(true);
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
 		});
@@ -89,15 +91,15 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(interaction, { content }, false, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeFalse();
+			).resolves.toBe(false);
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
 		});
 	});
 
 	describe("message replies", () => {
-		const mockReply = jest.fn();
-		const mockChannelSend = jest.fn();
+		const mockReply = vi.fn();
+		const mockChannelSend = vi.fn();
 		let author: User;
 		let message: Message;
 
@@ -120,7 +122,7 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(message, content, true, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeTruthy();
+			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
@@ -132,7 +134,7 @@ describe("Message replies", () => {
 		test("sends a DM with a return prefix from missing text", async () => {
 			await expect(
 				replyPrivately(message, { content: undefined }, true, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeTruthy();
+			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
@@ -145,7 +147,7 @@ describe("Message replies", () => {
 			const content = "yo";
 			await expect(
 				replyPrivately(message, { content }, true, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeTruthy();
+			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
@@ -155,13 +157,11 @@ describe("Message replies", () => {
 		});
 
 		test("informs the user when DMs failed", async () => {
-			jest.spyOn(global.console, "error").mockImplementation(() => undefined);
-
 			mockUserSend.mockRejectedValueOnce(new Error("This is a test"));
 			const content = "yo";
 			await expect(
 				replyPrivately(message, content, true, DEFAULT_LOCALE, DEFAULT_LOCALE)
-			).resolves.toBeFalse();
+			).resolves.toBe(false);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledOnce();
 			expect(mockUserSend).toHaveBeenCalledWith(
@@ -169,8 +169,6 @@ describe("Message replies", () => {
 			);
 			expect(mockChannelSend).toHaveBeenCalledOnce();
 			expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("tried to DM you"));
-
-			jest.restoreAllMocks();
 		});
 	});
 });

@@ -1,9 +1,19 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../helpers/gitForgeMetadata.js");
+vi.mock("../helpers/gitForgeMetadata.js");
 import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as jest.Mock;
+const mockGitForgeMetadata = gitForgeMetadata as Mock<
+	Parameters<typeof gitForgeMetadata>,
+	ReturnType<typeof gitForgeMetadata>
+>;
 mockGitForgeMetadata.mockResolvedValue({
+	name: "",
+	full_name: "",
+	private: false,
+	html_url: "",
+	description: "",
+	languages_url: "",
 	languages: {
 		English: 80,
 		Spanish: 10,
@@ -12,9 +22,9 @@ mockGitForgeMetadata.mockResolvedValue({
 	}
 });
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockFollowUp = jest.fn().mockResolvedValue({});
-const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockFollowUp = vi.fn().mockResolvedValue({});
+const mockPrepareForLongRunningTasks = vi.fn().mockResolvedValue(undefined);
 
 import type { CommandContext } from "./Command.js";
 import { languages } from "./languages.js";

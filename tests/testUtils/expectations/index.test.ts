@@ -13,7 +13,7 @@ import {
 	expectValueEqual
 } from "./index.js";
 
-const libs: ReadonlyArray<AssertionLib> = ["@jest/expect", "chai", "node"];
+const libs: ReadonlyArray<AssertionLib> = ["vitest", "chai", "node"];
 
 for (const lib of libs) {
 	describe(`Modular test assertions for lib '${lib}'`, function () {

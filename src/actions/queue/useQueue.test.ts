@@ -1,7 +1,8 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../messages");
-jest.mock("../../useQueueStorage");
+vi.mock("../messages/index.js");
+vi.mock("../../useQueueStorage.js");
 
 import {
 	deleteStoredEntry,
@@ -9,16 +10,31 @@ import {
 	getStoredQueueConfig,
 	saveNewEntryToDatabase
 } from "../../useQueueStorage.js";
-const mockDeleteStoredEntry = deleteStoredEntry as jest.Mock;
-const mockGetStoredEntry = getStoredEntry as jest.Mock;
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as jest.Mock;
+const mockDeleteStoredEntry = deleteStoredEntry as Mock<
+	Parameters<typeof deleteStoredEntry>,
+	ReturnType<typeof deleteStoredEntry>
+>;
+const mockGetStoredEntry = getStoredEntry as Mock<
+	Parameters<typeof getStoredEntry>,
+	ReturnType<typeof getStoredEntry>
+>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
+const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as Mock<
+	Parameters<typeof saveNewEntryToDatabase>,
+	ReturnType<typeof saveNewEntryToDatabase>
+>;
 
 import { deleteMessage } from "../messages/index.js";
-const mockDeleteMessage = deleteMessage as jest.Mock;
+const mockDeleteMessage = deleteMessage as Mock<
+	Parameters<typeof deleteMessage>,
+	ReturnType<typeof deleteMessage>
+>;
 
-const mockChannelSend = jest.fn();
-const mockMessageRemoveReaction = jest.fn();
+const mockChannelSend = vi.fn();
+const mockMessageRemoveReaction = vi.fn();
 
 import type { Guild, Message, Snowflake, TextChannel } from "discord.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
@@ -69,13 +85,23 @@ describe("Request Queue", () => {
 
 		mockGetStoredEntry.mockImplementation(id => {
 			if (id === queueMessageId) {
-				return entry; // some entry
+				return Promise.resolve(entry); // some entry
 			}
-			return null; // not an entry
+			return Promise.resolve(null); // not an entry
 		});
 		mockDeleteStoredEntry.mockResolvedValue(undefined);
-		mockSaveNewEntryToDatabase.mockImplementation((entry: UnsentQueueEntry) => {
-			return Promise.resolve({ ...entry, channelId: queueChannel.id });
+		mockSaveNewEntryToDatabase.mockImplementation(entry => {
+			return Promise.resolve({
+				channelId: queueChannel.id,
+				queueMessageId: entry.queueMessageId,
+				url: entry.url,
+				seconds: entry.seconds,
+				sentAt: entry.sentAt,
+				senderId: entry.senderId,
+				isDone: entry.isDone,
+				haveCalledNowPlaying: [],
+				guildId: ""
+			});
 		});
 		mockGetStoredQueueConfig.mockResolvedValue({
 			blacklistedUsers: [],
@@ -83,7 +109,8 @@ describe("Request Queue", () => {
 			cooldownSeconds: 960,
 			entryDurationMaxSeconds: 430,
 			entryDurationMinSeconds: 0,
-			submissionMaxQuantity: 3
+			submissionMaxQuantity: 3,
+			queueDurationSeconds: null
 		});
 		mockMessageRemoveReaction.mockResolvedValue(undefined);
 		mockChannelSend.mockResolvedValue({
@@ -119,12 +146,10 @@ describe("Request Queue", () => {
 	};
 
 	test("stores queue entries", async () => {
-		await expect(pushEntryToQueue(request, queueChannel)).resolves.toContainEntries<
-			Record<string, unknown>
-		>([
-			...Object.entries(request), //
-			["channelId", queueChannel.id]
-		]);
+		await expect(pushEntryToQueue(request, queueChannel)).resolves.toMatchObject({
+			...request,
+			channelId: queueChannel.id
+		});
 
 		await flushPromises();
 
@@ -133,7 +158,8 @@ describe("Request Queue", () => {
 			{
 				...request,
 				isDone: false,
-				sentAt: expect.toBeValidDate() as Date,
+				// sentAt: expect.toBeValidDate() as Date, // TODO: Can we even assert these without `jest-extended`?
+				sentAt: expect.any(Date) as Date,
 				queueMessageId: "new-message"
 			},
 			queueChannel

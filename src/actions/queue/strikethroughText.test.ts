@@ -1,7 +1,6 @@
-import "../../../tests/testUtils/leakedHandles.js";
-
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText.js";
-import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
+import { describe, test } from "vitest";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
 
 describe("Add strikethrough", () => {
 	test("adds strikethrough to a normal string", () => {

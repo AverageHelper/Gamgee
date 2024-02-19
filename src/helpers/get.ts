@@ -1,6 +1,6 @@
 import type { Get } from "type-fest";
 
-import _get from "lodash/get.js";
+import _get from "lodash-es/get.js";
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is

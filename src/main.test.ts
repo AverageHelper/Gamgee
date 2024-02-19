@@ -1,17 +1,22 @@
+import type { Mock } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
 // Mock the client to track constructor and 'login' calls
-const mockConstructClient = jest.fn();
-const mockLogin = jest.fn();
-class MockClient {
-	login = mockLogin;
+const mockConstructClient = vi.fn();
+const mockLogin = vi.fn();
+const MockClient = vi.hoisted(
+	() =>
+		class MockClient {
+			login = mockLogin;
 
-	constructor(...args: ReadonlyArray<unknown>) {
-		mockConstructClient(...args);
-	}
-}
+			constructor(...args: ReadonlyArray<unknown>) {
+				mockConstructClient(...args);
+			}
+		}
+);
 
-const Discord = jest.requireActual<typeof import("discord.js")>("discord.js");
-jest.mock("discord.js", () => ({
-	...Discord,
+vi.mock("discord.js", async () => ({
+	...(await vi.importActual<typeof import("discord.js")>("discord.js")),
 	Client: MockClient
 }));
 
@@ -20,13 +25,16 @@ const mockToken = "TEST_TOKEN";
 process.env["DISCORD_TOKEN"] = mockToken;
 
 // Mock the event handler index so we can track it
-jest.mock("./events");
+vi.mock("./events/index.js");
 import { registerEventHandlers } from "./events/index.js";
-const mockRegisterEventHandlers = registerEventHandlers as jest.Mock;
+const mockRegisterEventHandlers = registerEventHandlers as Mock<
+	Parameters<typeof registerEventHandlers>,
+	ReturnType<typeof registerEventHandlers>
+>;
 
 // Mock the logger to track output
 import type { Logger } from "./logger.js";
-const mockLoggerError = jest.fn();
+const mockLoggerError = vi.fn();
 const mockLogger = {
 	error: mockLoggerError
 } as unknown as Logger;
@@ -44,7 +52,7 @@ describe("main", () => {
 	});
 
 	afterEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	test("disables @everyone pings", async () => {

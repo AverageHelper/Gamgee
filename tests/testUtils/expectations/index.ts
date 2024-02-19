@@ -3,17 +3,17 @@
 // ***
 
 import {
-	expectArray as jestExpectArray,
-	expectArrayOfLength as jestExpectArrayOfLength,
-	expectDefined as jestExpectDefined,
-	expectLessThan as jestExpectLessThan,
-	expectNotNull as jestExpectNotNull,
-	expectNull as jestExpectNull,
-	expectPositive as jestExpectPositive,
-	expectToContain as jestExpectToContain,
-	expectUndefined as jestExpectUndefined,
-	expectValueEqual as jestExpectValueEqual
-} from "./jest.js";
+	expectArray as vitestExpectArray,
+	expectArrayOfLength as vitestExpectArrayOfLength,
+	expectDefined as vitestExpectDefined,
+	expectLessThan as vitestExpectLessThan,
+	expectNotNull as vitestExpectNotNull,
+	expectNull as vitestExpectNull,
+	expectPositive as vitestExpectPositive,
+	expectToContain as vitestExpectToContain,
+	expectUndefined as vitestExpectUndefined,
+	expectValueEqual as vitestExpectValueEqual
+} from "./vitest.js";
 
 import {
 	expectArray as chaiExpectArray,
@@ -41,13 +41,13 @@ import {
 	expectValueEqual as nodeExpectValueEqual
 } from "./node.js";
 
-export type AssertionLib = "@jest/expect" | "chai" | "node";
+export type AssertionLib = "vitest" | "chai" | "node";
 
 /** Ensure that a value is an `Array`. */
 export function expectArray(actual: unknown, lib: AssertionLib): asserts actual is Array<unknown> {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectArray(actual);
+		case "vitest":
+			return vitestExpectArray(actual);
 		case "chai":
 			return chaiExpectArray(actual);
 		case "node":
@@ -64,8 +64,8 @@ export function expectArrayOfLength(
 	lib: AssertionLib
 ): asserts actual is Array<unknown> {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectArrayOfLength(actual, length);
+		case "vitest":
+			return vitestExpectArrayOfLength(actual, length);
 		case "chai":
 			return chaiExpectArrayOfLength(actual, length);
 		case "node":
@@ -81,8 +81,8 @@ export function expectDefined<T>(
 	lib: AssertionLib
 ): asserts actual is Exclude<T, undefined> {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectDefined(actual);
+		case "vitest":
+			return vitestExpectDefined(actual);
 		case "chai":
 			return chaiExpectDefined(actual);
 		case "node":
@@ -95,8 +95,8 @@ export function expectDefined<T>(
 /** Checks that a value is less than another. */
 export function expectLessThan(lhs: number, rhs: number, lib: AssertionLib): void {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectLessThan(lhs, rhs);
+		case "vitest":
+			return vitestExpectLessThan(lhs, rhs);
 		case "chai":
 			return chaiExpectLessThan(lhs, rhs);
 		case "node":
@@ -109,8 +109,8 @@ export function expectLessThan(lhs: number, rhs: number, lib: AssertionLib): voi
 /** Checks that a value is not the `null` value. */
 export function expectNotNull<T>(actual: T, lib: AssertionLib): asserts actual is Exclude<T, null> {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectNotNull(actual);
+		case "vitest":
+			return vitestExpectNotNull(actual);
 		case "chai":
 			return chaiExpectNotNull(actual);
 		case "node":
@@ -123,8 +123,8 @@ export function expectNotNull<T>(actual: T, lib: AssertionLib): asserts actual i
 /** Checks that a value is the `null` value. */
 export function expectNull(actual: unknown, lib: AssertionLib): asserts actual is null {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectNull(actual);
+		case "vitest":
+			return vitestExpectNull(actual);
 		case "chai":
 			return chaiExpectNull(actual);
 		case "node":
@@ -137,8 +137,8 @@ export function expectNull(actual: unknown, lib: AssertionLib): asserts actual i
 /** Checks that a number is positive. */
 export function expectPositive(actual: number, lib: AssertionLib): void {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectPositive(actual);
+		case "vitest":
+			return vitestExpectPositive(actual);
 		case "chai":
 			return chaiExpectPositive(actual);
 		case "node":
@@ -159,8 +159,8 @@ export function expectToContain<T>(
 	lib: AssertionLib
 ): void {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectToContain(container, expected);
+		case "vitest":
+			return vitestExpectToContain(container, expected);
 		case "chai":
 			return chaiExpectToContain(container, expected);
 		case "node":
@@ -173,8 +173,8 @@ export function expectToContain<T>(
 /** Checks that a value is `undefined`. */
 export function expectUndefined(actual: unknown, lib: AssertionLib): asserts actual is undefined {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectUndefined(actual);
+		case "vitest":
+			return vitestExpectUndefined(actual);
 		case "chai":
 			return chaiExpectUndefined(actual);
 		case "node":
@@ -191,8 +191,8 @@ export function expectValueEqual<T extends string | number | boolean>(
 	lib: AssertionLib
 ): asserts actual is T {
 	switch (lib) {
-		case "@jest/expect":
-			return jestExpectValueEqual(actual, expected);
+		case "vitest":
+			return vitestExpectValueEqual(actual, expected);
 		case "chai":
 			return chaiExpectValueEqual(actual, expected);
 		case "node":

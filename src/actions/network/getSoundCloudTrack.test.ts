@@ -1,32 +1,33 @@
 import type { Song, SongInfoOptions } from "soundcloud-scraper";
+import type { Mock } from "vitest";
+import { beforeEach, describe, test, vi } from "vitest";
 import {
 	expectDefined,
 	expectPositive,
 	expectValueEqual
-} from "../../../tests/testUtils/expectations/jest.js";
+} from "../../../tests/testUtils/expectations/vitest.js";
 
 // Mock fetch
-jest.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: jest.fn() }));
+vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));
 import { fetchWithTimeout } from "../../helpers/fetch.js";
-const mockFetchWithTimeout = fetchWithTimeout as jest.Mock<
-	Promise<Response>,
-	[
-		input: RequestInfo | globalThis.URL,
-		timeoutSeconds?: number,
-		init?: Omit<RequestInit | undefined, "signal">
-	]
+const mockFetchWithTimeout = fetchWithTimeout as Mock<
+	Parameters<typeof fetchWithTimeout>,
+	ReturnType<typeof fetchWithTimeout>
 >;
 
 // Mock SoundCloud client
-const mockGetSongInfo = jest.fn<
-	Promise<Song>,
-	[url: string, options?: SongInfoOptions | undefined]
+const mockGetSongInfo = vi.fn<
+	[url: string, options?: SongInfoOptions | undefined],
+	Promise<Song>
 >();
-class MockSoundCloudClient {
-	getSongInfo = mockGetSongInfo;
-}
+const MockSoundCloudClient = vi.hoisted(
+	() =>
+		class MockSoundCloudClient {
+			getSongInfo = mockGetSongInfo;
+		}
+);
 
-jest.mock("soundcloud-scraper", () => ({ Client: MockSoundCloudClient }));
+vi.mock("soundcloud-scraper", () => ({ Client: MockSoundCloudClient }));
 
 // Import the unit under test
 import { getSoundCloudTrack } from "./getSoundCloudTrack.js";

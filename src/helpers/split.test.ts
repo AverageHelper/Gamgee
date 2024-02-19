@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { split } from "./split.js";
 
 describe("Split strings by separator", () => {

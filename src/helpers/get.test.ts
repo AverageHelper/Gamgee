@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { get } from "./get.js";
 
 describe("Get from object by keypath", () => {

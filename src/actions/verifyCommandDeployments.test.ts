@@ -1,20 +1,21 @@
 import type { ApplicationCommandDataResolvable, Client, OAuth2Guild } from "discord.js";
 import type { Logger } from "../logger.js";
 import type { Command } from "../commands/index.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Collection } from "discord.js";
 import { deployableCommand } from "./deployCommands.js";
 
-jest.mock("../commands/index.js", () => ({ allCommands: new Map<string, Command>() }));
+vi.mock("../commands/index.js", () => ({ allCommands: new Map<string, Command>() }));
 import { allCommands as _mockAllCommands } from "../commands/index.js";
 const mockAllCommands = _mockAllCommands as Map<string, Command>;
 
 import { verifyCommandDeployments } from "./verifyCommandDeployments.js";
 
 // Mock the logger to track output
-const mockLoggerDebug = jest.fn();
-const mockLoggerInfo = jest.fn();
-const mockLoggerVerbose = jest.fn();
-const mockLoggerWarn = jest.fn();
+const mockLoggerDebug = vi.fn();
+const mockLoggerInfo = vi.fn();
+const mockLoggerVerbose = vi.fn();
+const mockLoggerWarn = vi.fn();
 const mockLogger = {
 	debug: mockLoggerDebug,
 	verbose: mockLoggerVerbose,
@@ -53,8 +54,8 @@ describe("Verify command deployments", () => {
 		}
 	];
 
-	const mockFetchApplicationCommands = jest.fn();
-	const mockFetchGuildCommands = jest.fn();
+	const mockFetchApplicationCommands = vi.fn();
+	const mockFetchGuildCommands = vi.fn();
 
 	const mockClient = {
 		application: {
@@ -63,12 +64,12 @@ describe("Verify command deployments", () => {
 			}
 		},
 		guilds: {
-			fetch: jest.fn().mockResolvedValue(
+			fetch: vi.fn().mockResolvedValue(
 				new Collection<string, OAuth2Guild>([
 					[
 						"guild1",
 						{
-							fetch: jest.fn().mockResolvedValue({
+							fetch: vi.fn().mockResolvedValue({
 								id: "guild1",
 								commands: {
 									fetch: mockFetchGuildCommands

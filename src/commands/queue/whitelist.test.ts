@@ -1,31 +1,41 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../useQueueStorage");
-jest.mock("../../helpers/getUserFromMention");
+vi.mock("../../actions/queue/getQueueChannel.js");
+vi.mock("../../useQueueStorage.js");
+vi.mock("../../helpers/getUserFromMention.js");
 
 import { getUserFromMention } from "../../helpers/getUserFromMention.js";
-const mockGetUserFromMention = getUserFromMention as jest.Mock;
+const mockGetUserFromMention = getUserFromMention as Mock<
+	Parameters<typeof getUserFromMention>,
+	ReturnType<typeof getUserFromMention>
+>;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { removeUserFromStoredBlacklist } from "../../useQueueStorage.js";
-const mockRemoveUserFromStoredBlacklist = removeUserFromStoredBlacklist as jest.Mock;
+const mockRemoveUserFromStoredBlacklist = removeUserFromStoredBlacklist as Mock<
+	Parameters<typeof removeUserFromStoredBlacklist>,
+	ReturnType<typeof removeUserFromStoredBlacklist>
+>;
 
 import type { GuildedCommandContext } from "../Command.js";
-import { ApplicationCommandOptionType, userMention } from "discord.js";
+import { ApplicationCommandOptionType, TextChannel, User, userMention } from "discord.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 import { whitelist } from "./whitelist.js";
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = vi.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger();
 
 describe("Removing from Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
-	const queueChannel = { id: queueChannelId };
+	const queueChannel = { id: queueChannelId } as unknown as TextChannel;
 
 	const ownerId = "server-owner";
 	const goodUserId = "good-user";
@@ -49,7 +59,7 @@ describe("Removing from Queue Blacklist", () => {
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
-		mockGetUserFromMention.mockResolvedValue({ id: goodUserId });
+		mockGetUserFromMention.mockResolvedValue({ id: goodUserId } as unknown as User);
 
 		mockRemoveUserFromStoredBlacklist.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
@@ -79,7 +89,7 @@ describe("Removing from Queue Blacklist", () => {
 	});
 
 	test("does nothing for the calling user", async () => {
-		mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
+		mockGetUserFromMention.mockResolvedValue({ id: context.user.id } as unknown as User);
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockRemoveUserFromStoredBlacklist).not.toHaveBeenCalled();

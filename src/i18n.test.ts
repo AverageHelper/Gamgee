@@ -1,5 +1,5 @@
-import "../tests/testUtils/leakedHandles.js";
-import { expectUndefined, expectValueEqual } from "../tests/testUtils/expectations/jest.js";
+import { describe, expect, test } from "vitest";
+import { expectUndefined, expectValueEqual } from "../tests/testUtils/expectations/vitest.js";
 import { localizations, t } from "./i18n.js";
 
 describe("i18n", () => {

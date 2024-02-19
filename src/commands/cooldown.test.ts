@@ -1,40 +1,57 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../useQueueStorage.js");
-jest.mock("../actions/queue/getQueueChannel.js");
-jest.mock("../useGuildStorage.js");
+vi.mock("../useQueueStorage.js");
+vi.mock("../actions/queue/getQueueChannel.js");
+vi.mock("../useGuildStorage.js");
 
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../useQueueStorage.js";
-const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
+	Parameters<typeof countAllStoredEntriesFromSender>,
+	ReturnType<typeof countAllStoredEntriesFromSender>
+>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
+	Parameters<typeof getLatestStoredEntryFromSender>,
+	ReturnType<typeof getLatestStoredEntryFromSender>
+>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { isQueueOpen } from "../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as jest.Mock;
+const mockIsQueueOpen = isQueueOpen as Mock<
+	Parameters<typeof isQueueOpen>,
+	ReturnType<typeof isQueueOpen>
+>;
 
 import type { GuildedCommandContext } from "./CommandContext.js";
+import type { TextChannel } from "discord.js";
 import { cooldown } from "./cooldown.js";
 
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
-const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
+const mockDeleteInvocation = vi.fn().mockResolvedValue(undefined);
 
 describe("User retrieving their own cooldown", () => {
 	let context: GuildedCommandContext;
 	const cooldownSeconds = 120;
 
 	beforeAll(() => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	});
 
 	beforeEach(() => {
-		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 24)); // 2021-03-14 11:24, date of first commit to Gamgee ^^
+		vi.setSystemTime(Date.UTC(2021, 3, 14, 11, 24)); // 2021-03-14 11:24, date of first commit to Gamgee ^^
 
 		context = {
 			guild: "the-guild",
@@ -45,13 +62,15 @@ describe("User retrieving their own cooldown", () => {
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
-		});
+		} as unknown as TextChannel);
 		mockGetStoredQueueConfig.mockResolvedValue({
 			blacklistedUsers: [],
 			cooldownSeconds,
 			entryDurationMaxSeconds: null,
 			entryDurationMinSeconds: null,
-			submissionMaxQuantity: null
+			submissionMaxQuantity: null,
+			channelId: "",
+			queueDurationSeconds: null
 		});
 		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
@@ -59,7 +78,7 @@ describe("User retrieving their own cooldown", () => {
 	});
 
 	afterAll(() => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	test("tells the user when the queue is not set up", async () => {
@@ -71,7 +90,13 @@ describe("User retrieving their own cooldown", () => {
 
 	test("tells the user when they're blacklisted", async () => {
 		mockGetStoredQueueConfig.mockResolvedValue({
-			blacklistedUsers: [context.user]
+			blacklistedUsers: [context.user],
+			channelId: "",
+			cooldownSeconds: null,
+			submissionMaxQuantity: null,
+			queueDurationSeconds: null,
+			entryDurationMaxSeconds: null,
+			entryDurationMinSeconds: null
 		});
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -120,13 +145,19 @@ describe("User retrieving their own cooldown", () => {
 				seconds: 500,
 				sentAt: new Date(Date.UTC(2021, 3, 14, 11, 21)),
 				senderId: context.user.id,
-				isDone: false
+				isDone: false,
+				guildId: "",
+				channelId: "",
+				haveCalledNowPlaying: []
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
-				blacklistedUsers: []
+				blacklistedUsers: [],
+				channelId: "",
+				queueDurationSeconds: null,
+				entryDurationMinSeconds: null
 			});
 			await cooldown.execute(context);
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -176,13 +207,19 @@ describe("User retrieving their own cooldown", () => {
 				seconds: 500,
 				sentAt: new Date(Date.UTC(2021, 3, 14, 11, 21)),
 				senderId: context.user.id,
-				isDone: false
+				isDone: false,
+				guildId: "",
+				channelId: "",
+				haveCalledNowPlaying: []
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationMaxSeconds: null,
 				submissionMaxQuantity,
-				blacklistedUsers: []
+				blacklistedUsers: [],
+				channelId: "",
+				queueDurationSeconds: null,
+				entryDurationMinSeconds: null
 			});
 			await cooldown.execute(context);
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -200,7 +237,10 @@ describe("User retrieving their own cooldown", () => {
 			cooldownSeconds,
 			entryDurationMaxSeconds: null,
 			submissionMaxQuantity,
-			blacklistedUsers: []
+			blacklistedUsers: [],
+			channelId: "",
+			queueDurationSeconds: null,
+			entryDurationMinSeconds: null
 		});
 		mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue({
@@ -209,7 +249,10 @@ describe("User retrieving their own cooldown", () => {
 			seconds: 500,
 			sentAt: new Date(),
 			senderId: context.user.id,
-			isDone: false
+			isDone: false,
+			guildId: "",
+			channelId: "",
+			haveCalledNowPlaying: []
 		});
 
 		// First invocation, just submitted a song
@@ -221,7 +264,7 @@ describe("User retrieving their own cooldown", () => {
 
 		// Second invocation, getting antsy (absolute time remains the same)
 		mockReplyPrivately.mockClear();
-		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 24, 10));
+		vi.setSystemTime(Date.UTC(2021, 3, 14, 11, 24, 10));
 		relative = "1 minute, 50 seconds";
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -231,7 +274,7 @@ describe("User retrieving their own cooldown", () => {
 
 		// Third invocation, waited a while (absolute time remains the same)
 		mockReplyPrivately.mockClear();
-		jest.setSystemTime(Date.UTC(2021, 3, 14, 11, 25, 10));
+		vi.setSystemTime(Date.UTC(2021, 3, 14, 11, 25, 10));
 		relative = "50 seconds";
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();

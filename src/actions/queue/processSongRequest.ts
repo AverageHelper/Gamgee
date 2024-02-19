@@ -59,7 +59,9 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 				allowedMentions: { users: [context.user.id], repliedUser: true }
 			});
 		} catch (error) {
-			logger.error(error);
+			logger.error(
+				richErrorMessage("Failed to edit interaction reply for private rejection.", error)
+			);
 		}
 	} else {
 		await context.deleteInvocation();
@@ -82,7 +84,9 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 		try {
 			await context.interaction.editReply(t("commands.sr.responses.finished", context.userLocale));
 		} catch (error) {
-			logger.error(error);
+			logger.error(
+				richErrorMessage("Failed to edit interaction reply for public rejection.", error)
+			);
 		}
 	}
 }
@@ -129,7 +133,7 @@ async function acceptSongRequest({
 		try {
 			await context.interaction.editReply(t("commands.sr.responses.finished", context.userLocale));
 		} catch (error) {
-			logger.error(error);
+			logger.error(richErrorMessage("Failed to edit interaction reply for acceptance.", error));
 		}
 	}
 }

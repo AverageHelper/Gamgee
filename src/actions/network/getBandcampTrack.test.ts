@@ -1,13 +1,15 @@
 import type { Result } from "htmlmetaparser";
-import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetchMetadata
-jest.mock("../../helpers/fetchMetadata.js");
+vi.mock("../../helpers/fetchMetadata.js");
 import { fetchMetadata } from "../../helpers/fetchMetadata.js";
-const mockFetchMetadata = fetchMetadata as jest.Mock<
-	Promise<Result>,
-	[url: URL, timeoutSeconds?: number]
+const mockFetchMetadata = fetchMetadata as Mock<
+	Parameters<typeof fetchMetadata>,
+	ReturnType<typeof fetchMetadata>
 >;
 
 // Import the unit under test

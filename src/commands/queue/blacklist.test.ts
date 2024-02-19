@@ -1,35 +1,48 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../useQueueStorage");
-jest.mock("../../helpers/getUserFromMention");
-jest.mock("../../permissions");
+vi.mock("../../actions/queue/getQueueChannel.js");
+vi.mock("../../useQueueStorage.js");
+vi.mock("../../helpers/getUserFromMention.js");
+vi.mock("../../permissions/index.js");
 
 import { getUserFromMention } from "../../helpers/getUserFromMention.js";
-const mockGetUserFromMention = getUserFromMention as jest.Mock;
+const mockGetUserFromMention = getUserFromMention as Mock<
+	Parameters<typeof getUserFromMention>,
+	ReturnType<typeof getUserFromMention>
+>;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { getStoredQueueConfig, saveUserToStoredBlacklist } from "../../useQueueStorage.js";
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockSaveUserToStoredBlacklist = saveUserToStoredBlacklist as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
+const mockSaveUserToStoredBlacklist = saveUserToStoredBlacklist as Mock<
+	Parameters<typeof saveUserToStoredBlacklist>,
+	ReturnType<typeof saveUserToStoredBlacklist>
+>;
 
 import type { GuildedCommandContext } from "../Command.js";
-import type { Snowflake } from "discord.js";
+import type { Snowflake, TextChannel, User } from "discord.js";
 import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { blacklist } from "./blacklist.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = vi.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
 
 const logger = useTestLogger();
 
 describe("Manage the Queue Blacklist", () => {
 	const queueChannelId = "queue-channel";
-	const queueChannel = { id: queueChannelId };
+	const queueChannel = { id: queueChannelId } as unknown as TextChannel;
 
 	const ownerId = "server-owner" as Snowflake;
 	const badUserId = "bad-user";
@@ -58,8 +71,16 @@ describe("Manage the Queue Blacklist", () => {
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
-		mockGetUserFromMention.mockResolvedValue({ id: badUserId });
-		mockGetStoredQueueConfig.mockResolvedValue({ blacklistedUsers: [] });
+		mockGetUserFromMention.mockResolvedValue({ id: badUserId } as unknown as User);
+		mockGetStoredQueueConfig.mockResolvedValue({
+			blacklistedUsers: [],
+			channelId: "",
+			cooldownSeconds: null,
+			submissionMaxQuantity: null,
+			queueDurationSeconds: null,
+			entryDurationMaxSeconds: null,
+			entryDurationMinSeconds: null
+		});
 
 		mockSaveUserToStoredBlacklist.mockResolvedValue(undefined);
 		mockReply.mockResolvedValue(undefined);
@@ -95,7 +116,7 @@ describe("Manage the Queue Blacklist", () => {
 
 	describe("Adding Users", () => {
 		test("does nothing against the calling user", async () => {
-			mockGetUserFromMention.mockResolvedValue({ id: context.user.id });
+			mockGetUserFromMention.mockResolvedValue({ id: context.user.id } as unknown as User);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
@@ -109,7 +130,7 @@ describe("Manage the Queue Blacklist", () => {
 		});
 
 		test("does nothing against the server owner", async () => {
-			mockGetUserFromMention.mockResolvedValue({ id: ownerId });
+			mockGetUserFromMention.mockResolvedValue({ id: ownerId } as unknown as User);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();
@@ -124,7 +145,7 @@ describe("Manage the Queue Blacklist", () => {
 
 		test("does nothing against the server owner, even when the owner is the caller", async () => {
 			context.user.id = ownerId;
-			mockGetUserFromMention.mockResolvedValue({ id: ownerId });
+			mockGetUserFromMention.mockResolvedValue({ id: ownerId } as unknown as User);
 			await expect(blacklist.execute(context)).resolves.toBeUndefined();
 
 			expect(mockSaveUserToStoredBlacklist).not.toHaveBeenCalled();

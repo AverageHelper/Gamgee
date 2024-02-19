@@ -70,19 +70,16 @@
 
 	"overrides": [
 		{
-			"files": ["src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
-			"extends": ["plugin:jest/recommended"],
-			"plugins": ["jest"],
+			"files": ["*.ts", "src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
+			"extends": ["plugin:vitest/recommended"],
+			"plugins": ["vitest"],
 			"parserOptions": {
 				"project": "./tsconfig.test.json"
-			},
-			"env": {
-				"jest": true
 			},
 			"rules": {
 				"prettier/prettier": "warn",
 				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
-				"jest/expect-expect": [
+				"vitest/expect-expect": [
 					"warn",
 					{
 						"assertFunctionNames": [

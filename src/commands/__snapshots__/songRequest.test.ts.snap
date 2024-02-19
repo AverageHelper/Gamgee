@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Song request via URL Song request help descibes how to submit a song 1`] = `
+exports[`Song request via URL > Song request help > descibes how to submit a song 1`] = `
 "To submit a song, use \`?sr\`
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`

@@ -1,40 +1,69 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
-jest.mock("../useGuildStorage.js");
-jest.mock("../useQueueStorage.js");
-jest.mock("../actions/queue/getQueueChannel.js");
-jest.mock("../actions/queue/useQueue.js");
-jest.mock("../actions/getVideoDetails.js");
+vi.mock("../useGuildStorage.js");
+vi.mock("../useQueueStorage.js");
+vi.mock("../actions/queue/getQueueChannel.js");
+vi.mock("../actions/queue/useQueue.js");
+vi.mock("../actions/getVideoDetails.js");
 
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
+	type QueueEntry
 } from "../useQueueStorage.js";
-const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock;
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
-const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock;
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
+	Parameters<typeof countAllStoredEntriesFromSender>,
+	ReturnType<typeof countAllStoredEntriesFromSender>
+>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
+	Parameters<typeof getLatestStoredEntryFromSender>,
+	ReturnType<typeof getLatestStoredEntryFromSender>
+>;
 
 import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
-const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
-const mockQueuePush = pushEntryToQueue as jest.Mock;
+const mockPlaytimeTotal = playtimeTotalInQueue as Mock<
+	Parameters<typeof playtimeTotalInQueue>,
+	ReturnType<typeof playtimeTotalInQueue>
+>;
+const mockQueuePush = pushEntryToQueue as Mock<
+	Parameters<typeof pushEntryToQueue>,
+	ReturnType<typeof pushEntryToQueue>
+>;
 
 import { getCommandPrefix, isQueueOpen } from "../useGuildStorage.js";
-const mockGetCommandPrefix = getCommandPrefix as jest.Mock;
-const mockIsQueueOpen = isQueueOpen as jest.Mock;
+const mockGetCommandPrefix = getCommandPrefix as Mock<
+	Parameters<typeof getCommandPrefix>,
+	ReturnType<typeof getCommandPrefix>
+>;
+const mockIsQueueOpen = isQueueOpen as Mock<
+	Parameters<typeof isQueueOpen>,
+	ReturnType<typeof isQueueOpen>
+>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { randomInt } from "../helpers/randomInt.js";
 import { getVideoDetails } from "../actions/getVideoDetails.js";
-const mockGetVideoDetails = getVideoDetails as jest.Mock;
-mockGetVideoDetails.mockImplementation(async (url: string) => {
+const mockGetVideoDetails = getVideoDetails as Mock<
+	Parameters<typeof getVideoDetails>,
+	ReturnType<typeof getVideoDetails>
+>;
+mockGetVideoDetails.mockImplementation(async url => {
 	// Enough uncertainty that *something* should go out of order if it's going to
 	const ms = randomInt(50);
 	await new Promise(resolve => setTimeout(resolve, ms));
 	return {
-		url,
+		url: typeof url === "string" ? url : url.href,
 		title: "video-title",
 		duration: {
 			seconds: 500
@@ -42,7 +71,7 @@ mockGetVideoDetails.mockImplementation(async (url: string) => {
 	};
 });
 
-import type { Client, GuildMember, Message } from "discord.js";
+import type { Client, GuildMember, Message, TextChannel } from "discord.js";
 import type { GuildedCommandContext } from "./Command.js";
 import type { ReadonlyTuple } from "type-fest";
 import { ApplicationCommandOptionType } from "discord.js";
@@ -67,12 +96,13 @@ describe("Song request via URL", () => {
 	];
 	const botId = "this-user";
 
-	const mockPrepareForLongRunningTasks = jest.fn().mockResolvedValue(undefined);
-	const mockReply = jest.fn().mockResolvedValue(undefined);
-	const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
-	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
-	const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
-	const mockFollowUp = jest.fn().mockResolvedValue(undefined);
+	const mockEditReply = vi.fn().mockResolvedValue(undefined);
+	const mockPrepareForLongRunningTasks = vi.fn().mockResolvedValue(undefined);
+	const mockReply = vi.fn().mockResolvedValue(undefined);
+	const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
+	const mockChannelSend = vi.fn().mockResolvedValue(undefined);
+	const mockDeleteMessage = vi.fn().mockResolvedValue(undefined);
+	const mockFollowUp = vi.fn().mockResolvedValue(undefined);
 
 	mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
 	mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
@@ -84,7 +114,7 @@ describe("Song request via URL", () => {
 	const queueChannel = {
 		id: "queue-channel-123",
 		name: "queue"
-	};
+	} as unknown as TextChannel;
 	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
 	mockGetStoredQueueConfig.mockResolvedValue({
@@ -92,7 +122,9 @@ describe("Song request via URL", () => {
 		cooldownSeconds: 600,
 		entryDurationMaxSeconds: null,
 		queueDurationSeconds: null,
-		submissionMaxQuantity: null
+		submissionMaxQuantity: null,
+		channelId: "",
+		entryDurationMinSeconds: null
 	});
 
 	const mockClient: Client<true> = {
@@ -121,7 +153,7 @@ describe("Song request via URL", () => {
 			},
 			guild: {
 				members: {
-					fetch: jest.fn().mockImplementation(
+					fetch: vi.fn().mockImplementation(
 						(userId: string) =>
 							new Promise(resolve => {
 								if (userId === mockSenderMember.user.id) {
@@ -155,7 +187,7 @@ describe("Song request via URL", () => {
 
 			await songRequest.execute(context);
 			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
+			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
 
 			const calls = mockReply.mock.calls[0] as Array<unknown>;
 			const description = calls[0];
@@ -168,16 +200,20 @@ describe("Song request via URL", () => {
 		const mockMessage2 = mockMessage("another-user", `?sr ${urls[1].href}`);
 
 		mockQueuePush.mockImplementationOnce(() => {
-			mockGetLatestStoredEntryFromSender.mockResolvedValueOnce({
+			const entry: QueueEntry = {
 				queueMessageId: mockMessage1.id,
-				url: urls[0],
+				url: urls[0].href,
 				seconds: 500,
 				sentAt: new Date(),
 				senderId: mockMessage1.author.id,
-				isDone: false
-			});
+				isDone: false,
+				haveCalledNowPlaying: [],
+				guildId: "",
+				channelId: ""
+			};
+			mockGetLatestStoredEntryFromSender.mockResolvedValueOnce(entry);
 			mockCountAllStoredEntriesFromSender.mockResolvedValueOnce(1);
-			return Promise.resolve();
+			return Promise.resolve(entry);
 		});
 
 		const context1 = {
@@ -223,7 +259,7 @@ describe("Song request via URL", () => {
 		// queue.push should only have been called on the first URL
 		expect(mockQueuePush).toHaveBeenCalledOnce();
 		expect(mockQueuePush).toHaveBeenCalledWith(
-			expect.toContainEntry(["url", urls[0]]),
+			expect.objectContaining({ url: urls[0].href }),
 			queueChannel
 		);
 
@@ -255,6 +291,9 @@ describe("Song request via URL", () => {
 							})),
 						guild: message.guild,
 						channel: message.channel,
+						interaction: {
+							editReply: mockEditReply
+						},
 						user: message.author,
 						createdTimestamp: new Date(),
 						logger,
@@ -274,10 +313,10 @@ describe("Song request via URL", () => {
 		urls.forEach((url, i) => {
 			expect(mockQueuePush).toHaveBeenNthCalledWith(
 				i + 1,
-				expect.toContainEntries([
-					["url", url],
-					["senderId", `user-${i + 1}`]
-				]),
+				expect.objectContaining({
+					url: url.href,
+					senderId: `user-${i + 1}`
+				}),
 				queueChannel
 			);
 		});

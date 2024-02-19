@@ -1,7 +1,8 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../useGuildStorage");
-jest.mock("../permissions");
+vi.mock("../useGuildStorage.js");
+vi.mock("../permissions/index.js");
 
 import type { CommandContext, CommandPermission, GuildedCommand } from "../commands/index.js";
 import type { Guild, GuildMember, Role } from "discord.js";
@@ -9,18 +10,24 @@ import { ApplicationCommandPermissionType } from "discord.js";
 import { invokeCommand } from "./invokeCommand.js";
 
 import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
-const mockGetQueueAdminRoles = getQueueAdminRoles as jest.Mock;
-const mockGetGuildAdminRoles = getGuildAdminRoles as jest.Mock;
-
-import { userHasRoleInGuild } from "../permissions/index.js";
-const mockUserHasRoleInGuild = userHasRoleInGuild as jest.Mock<
-	Promise<boolean>,
-	[user: GuildMember, roleId: string, guild: Guild]
+const mockGetQueueAdminRoles = getQueueAdminRoles as Mock<
+	Parameters<typeof getQueueAdminRoles>,
+	ReturnType<typeof getQueueAdminRoles>
+>;
+const mockGetGuildAdminRoles = getGuildAdminRoles as Mock<
+	Parameters<typeof getGuildAdminRoles>,
+	ReturnType<typeof getGuildAdminRoles>
 >;
 
-const mockExecute = jest.fn<Promise<void>, Array<unknown>>().mockResolvedValue(undefined);
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
+import { userHasRoleInGuild } from "../permissions/index.js";
+const mockUserHasRoleInGuild = userHasRoleInGuild as Mock<
+	Parameters<typeof userHasRoleInGuild>,
+	ReturnType<typeof userHasRoleInGuild>
+>;
+
+const mockExecute = vi.fn<Array<unknown>, Promise<void>>().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
 
 describe("Invoke Command", () => {
 	const callerId = "the-user";
@@ -101,9 +108,9 @@ describe("Invoke Command", () => {
 	});
 
 	describe("Permission Guards", () => {
-		const mockPermissions = jest.fn<
-			Array<CommandPermission> | Promise<Array<CommandPermission>>,
-			[guild: Guild]
+		const mockPermissions = vi.fn<
+			[guild: Guild],
+			Array<CommandPermission> | Promise<Array<CommandPermission>>
 		>();
 
 		beforeEach(() => {

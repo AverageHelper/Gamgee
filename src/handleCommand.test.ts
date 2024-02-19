@@ -1,13 +1,17 @@
 import type { Client, GuildMember, Message } from "discord.js";
-import "../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ApplicationCommandOptionType, userMention } from "discord.js";
-import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/jest.js";
+import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/vitest.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
-jest.mock("./helpers/gitForgeMetadata.js");
+vi.mock("./helpers/gitForgeMetadata.js");
 
 import { gitForgeMetadata } from "./helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as jest.Mock;
+const mockGitForgeMetadata = gitForgeMetadata as Mock<
+	Parameters<typeof gitForgeMetadata>,
+	ReturnType<typeof gitForgeMetadata>
+>;
 mockGitForgeMetadata.mockResolvedValue({
 	name: "Gamgee",
 	full_name: "Gamgee",
@@ -20,7 +24,7 @@ mockGitForgeMetadata.mockResolvedValue({
 	}
 });
 
-jest.mock("./commands");
+vi.mock("./commands/index.js");
 import { allCommands as mockCommandDefinitions } from "./commands/index.js";
 
 import { handleCommand, optionsFromArgs } from "./handleCommand.js";
@@ -31,10 +35,10 @@ const logger = useTestLogger();
 describe("Command handler", () => {
 	const botId = "this-user";
 
-	const mockReply = jest.fn().mockResolvedValue(undefined);
-	const mockAuthorSend = jest.fn().mockResolvedValue(undefined);
-	const mockChannelSend = jest.fn().mockResolvedValue(undefined);
-	const mockChannelSendTyping = jest.fn().mockResolvedValue(undefined);
+	const mockReply = vi.fn().mockResolvedValue(undefined);
+	const mockAuthorSend = vi.fn().mockResolvedValue(undefined);
+	const mockChannelSend = vi.fn().mockResolvedValue(undefined);
+	const mockChannelSendTyping = vi.fn().mockResolvedValue(undefined);
 
 	const mockClient: Client<true> = {
 		user: { id: botId },
@@ -59,7 +63,7 @@ describe("Command handler", () => {
 		},
 		guild: {
 			members: {
-				fetch: jest.fn().mockImplementation(
+				fetch: vi.fn().mockImplementation(
 					(userId: string) =>
 						new Promise(resolve => {
 							if (userId === mockSenderMember.user.id) {
@@ -77,7 +81,7 @@ describe("Command handler", () => {
 	beforeEach(() => {
 		mockMessage.content = "Some words";
 		mockMessage.author.bot = false;
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe("Options Parser", () => {
@@ -107,7 +111,7 @@ describe("Command handler", () => {
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
-				options: expect.toBeArrayOfSize(1) as Array<unknown>
+				options: expect.arrayContaining([]) as Array<unknown>
 			});
 			expectDefined(options[0]?.options);
 			expect(options[0].options).toStrictEqual([
@@ -130,7 +134,7 @@ describe("Command handler", () => {
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
-				options: expect.toBeArrayOfSize(2) as Array<unknown>
+				options: expect.arrayContaining([]) as Array<unknown>
 			});
 			expectDefined(options[0]?.options);
 			expect(options[0].options).toStrictEqual([
@@ -138,15 +142,17 @@ describe("Command handler", () => {
 					name: key,
 					type: ApplicationCommandOptionType.String,
 					value: key,
-					options: expect.toBeArrayOfSize(0) as Array<unknown>
+					options: expect.arrayContaining([]) as Array<unknown>
 				},
 				{
 					name: value,
 					type: ApplicationCommandOptionType.String,
 					value: value,
-					options: expect.toBeArrayOfSize(0) as Array<unknown>
+					options: expect.arrayContaining([]) as Array<unknown>
 				}
 			]);
+			expect(options[0].options[0]?.options).toHaveLength(0);
+			expect(options[0].options[1]?.options).toHaveLength(0);
 		});
 	});
 
@@ -194,7 +200,7 @@ describe("Command handler", () => {
 				);
 			});
 
-			// eslint-disable-next-line jest/no-commented-out-tests
+			// eslint-disable-next-line vitest/no-commented-out-tests
 			/*
 			test("runs if option integer is valid", async () => {
 				const cmd = "limit"; // this command has range constraints on its second option
@@ -292,17 +298,14 @@ describe("Command handler", () => {
 			expectDefined(mock);
 			expect(mock).toHaveBeenCalledOnce();
 			expect(mock).toHaveBeenCalledWith(
-				expect.toContainEntries([
-					["client", mockClient],
-					["message", mockMessage],
-					[
-						"options",
-						command
-							.split(/ +/u)
-							.slice(1)
-							.map(name => ({ name, type: ApplicationCommandOptionType.String }))
-					]
-				])
+				expect.objectContaining({
+					client: mockClient,
+					message: mockMessage,
+					options: command
+						.split(/ +/u)
+						.slice(1)
+						.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+				})
 			);
 		});
 
@@ -327,17 +330,14 @@ describe("Command handler", () => {
 				expectDefined(mock);
 				expect(mock).toHaveBeenCalledOnce();
 				expect(mock).toHaveBeenCalledWith(
-					expect.toContainEntries([
-						["client", mockClient],
-						["message", mockMessage],
-						[
-							"options",
-							command
-								.split(/ +/u)
-								.slice(1)
-								.map(name => ({ name, type: ApplicationCommandOptionType.String }))
-						]
-					])
+					expect.objectContaining({
+						client: mockClient,
+						message: mockMessage,
+						options: command
+							.split(/ +/u)
+							.slice(1)
+							.map(name => ({ name, type: ApplicationCommandOptionType.String }))
+					})
 				);
 			}
 		);

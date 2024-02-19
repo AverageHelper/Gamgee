@@ -1,15 +1,19 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../actions/assertUserCanRunCommand");
+vi.mock("../actions/assertUserCanRunCommand.js");
 
 import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";
-const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
+const mockAssertUserCanRunCommand = assertUserCanRunCommand as Mock<
+	Parameters<typeof assertUserCanRunCommand>,
+	ReturnType<typeof assertUserCanRunCommand>
+>;
 
 import type { GuildedCommandContext } from "./Command.js";
 import { howto } from "./howto.js";
 import { locales } from "../i18n.js";
 
-const mockReply = jest.fn();
+const mockReply = vi.fn();
 
 describe.each(locales)("How-to command in %s", guildLocale => {
 	let context: GuildedCommandContext;
@@ -28,7 +32,7 @@ describe.each(locales)("How-to command in %s", guildLocale => {
 	test("informs the user how to run queue commands (message)", async () => {
 		await howto.execute(context);
 		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
+		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
 
 		const calls = mockReply.mock.calls[0] as Array<unknown>;
 		const description = calls[0];
@@ -39,7 +43,7 @@ describe.each(locales)("How-to command in %s", guildLocale => {
 		context = { ...context, type: "interaction" } as unknown as GuildedCommandContext;
 		await howto.execute(context);
 		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith(expect.toBeString());
+		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
 
 		const calls = mockReply.mock.calls[0] as Array<unknown>;
 		const description = calls[0];

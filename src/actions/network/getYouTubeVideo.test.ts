@@ -1,16 +1,18 @@
-import type { videoInfo, getInfoOptions } from "ytdl-core";
-import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
+import type { Mock } from "vitest";
+import type { videoInfo } from "ytdl-core";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 
 // Mock ytdl
-jest.mock("ytdl-core", () => ({
-	validateURL: jest.requireActual<typeof import("ytdl-core")>("ytdl-core").validateURL,
-	getBasicInfo: jest.fn()
+vi.mock("ytdl-core", async () => ({
+	validateURL: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).validateURL,
+	getBasicInfo: vi.fn()
 }));
 import { getBasicInfo } from "ytdl-core";
-const mockGetBasicInfo = getBasicInfo as jest.Mock<
-	Promise<videoInfo>,
-	[url: string, options?: getInfoOptions]
+const mockGetBasicInfo = getBasicInfo as Mock<
+	Parameters<typeof getBasicInfo>,
+	ReturnType<typeof getBasicInfo>
 >;
 
 // Import the unit under test

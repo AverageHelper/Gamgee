@@ -1,16 +1,20 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../actions/assertUserCanRunCommand");
+vi.mock("../actions/assertUserCanRunCommand.js");
 
 import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";
-const mockAssertUserCanRunCommand = assertUserCanRunCommand as jest.Mock;
+const mockAssertUserCanRunCommand = assertUserCanRunCommand as Mock<
+	Parameters<typeof assertUserCanRunCommand>,
+	ReturnType<typeof assertUserCanRunCommand>
+>;
 
-import type { GuildedCommand, GuildedCommandContext } from "./Command.js";
+import type { GuildedCommandContext } from "./Command.js";
 import { DEFAULT_LOCALE, locales } from "../i18n.js";
 import { isPermissionAliasList } from "./Command.js";
 import { help } from "./help.js";
 
-const mockReplyPrivately = jest.fn();
+const mockReplyPrivately = vi.fn();
 
 describe("Help command", () => {
 	let context: GuildedCommandContext;
@@ -35,7 +39,7 @@ describe("Help command", () => {
 	test("describes all commands", async () => {
 		await help.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 		const description = calls[0];
@@ -49,7 +53,7 @@ describe("Help command", () => {
 
 			await help.execute(context);
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
-			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
 
 			const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 			const description = calls[0];
@@ -58,8 +62,8 @@ describe("Help command", () => {
 		10_000
 	);
 
-	test("describe pleb commands", async () => {
-		mockAssertUserCanRunCommand.mockImplementation((user, command: GuildedCommand) => {
+	test("describes pleb commands", async () => {
+		mockAssertUserCanRunCommand.mockImplementation((_, command) => {
 			if (
 				isPermissionAliasList(command.permissions) &&
 				command.permissions.some(perm => ["owner", "admin", "queue-admin"].includes(perm))
@@ -71,7 +75,7 @@ describe("Help command", () => {
 
 		await help.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.toBeString());
+		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 		const description = calls[0];
