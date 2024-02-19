@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - We now require Node 20.
+- Network and args parsing are now handled using native structures instead of `cross-fetch` and `yargs`.
 
 ## [2.2.0] - 2024-02-18
 ### Added
