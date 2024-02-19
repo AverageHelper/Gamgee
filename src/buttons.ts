@@ -1,10 +1,5 @@
-import type { ComponentEmojiResolvable } from "discord.js";
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	MessageActionRowComponentBuilder
-} from "discord.js";
+import type { ComponentEmojiResolvable, MessageActionRowComponentBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 
 export interface MessageButton {
 	id: string;

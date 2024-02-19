@@ -1,9 +1,7 @@
-import { ActivityType, Client, ClientPresence } from "discord.js";
 import { deployCommands } from "../actions/deployCommands.js";
 import { getEnv } from "../helpers/environment.js";
 import { onEvent } from "../helpers/onEvent.js";
 import { parseArgs } from "../helpers/parseArgs.js";
-import { repository } from "../constants/repository.js";
 import { revokeCommands } from "../actions/revokeCommands.js";
 import { verifyCommandDeployments } from "../actions/verifyCommandDeployments.js";
 import { version as gamgeeVersion } from "../version.js";
@@ -42,10 +40,6 @@ export const ready = onEvent("ready", {
 		logger.info("Verifying command deployments...");
 		await verifyCommandDeployments(client, logger);
 
-		// Set user activity
-		logger.info("Setting user activity");
-		setActivity(client);
-
 		if (getEnv("NODE_ENV")?.startsWith("test") === true) {
 			// Don't log the tag in test mode, people might see that!
 			logger.info(`Logged in as ${client.user.username}`);
@@ -56,14 +50,3 @@ export const ready = onEvent("ready", {
 		logger.info("Ready!");
 	}
 });
-
-function setActivity(client: Client<true>): ClientPresence {
-	// Shout out our source code.
-	// This looks like crap, but it's the only way to show a custom
-	// multiline string on the bot's user profile.
-	return client.user.setActivity({
-		type: ActivityType.Playing,
-		name: `Source: ${repository.hostname}${repository.pathname}`,
-		url: repository.href
-	});
-}
