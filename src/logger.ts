@@ -26,8 +26,8 @@ const defaultConsoleLogLevel: LogLevel =
 	(nodeEnv === "production" //
 		? "info"
 		: nodeEnv.startsWith("test")
-		? "error"
-		: "debug");
+			? "error"
+			: "debug");
 
 const logFileFormat = format.combine(format.timestamp(), format.json());
 const dirname = "./logs"; // TODO: Support a user-defined `logs` directory

@@ -21,7 +21,7 @@ export const userinfo: Command = {
 						"commands.userinfo.responses.unsupported",
 						{ default: code(DEFAULT_LOCALE) },
 						userLocale
-				  )
+					)
 			: ti("commands.userinfo.responses.assume", { default: code(DEFAULT_LOCALE) }, userLocale);
 
 		let response: string;

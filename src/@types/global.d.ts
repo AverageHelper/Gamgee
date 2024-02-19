@@ -14,7 +14,6 @@ declare global {
 	/**
 	 * The element type of the given array.
 	 */
-	type GetArrayElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer U>
-		? U
-		: never;
+	type GetArrayElementType<T extends ReadonlyArray<unknown>> =
+		T extends ReadonlyArray<infer U> ? U : never;
 }

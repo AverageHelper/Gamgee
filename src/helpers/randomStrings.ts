@@ -63,7 +63,7 @@ export function unwrappingFirstWith(context: ResponseContext, response: Response
 export async function unwrappingWith(
 	context: ResponseContext,
 	response: Response,
-	handler: (response: string) => unknown | Promise<unknown>,
+	handler: (response: string) => unknown,
 	pauseTime: number = 1000
 ): Promise<void> {
 	if (typeof response === "string") {

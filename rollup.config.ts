@@ -21,7 +21,7 @@ export default defineConfig({
 					},
 					delimiters: ["", ""],
 					preventAssignment: true
-			  })
+				})
 			: null,
 
 		// Transpile source
