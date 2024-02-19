@@ -1,10 +1,7 @@
 import type { Infer } from "superstruct";
 import { boolean, is, number, record, string, type } from "superstruct";
-import { fetch } from "./fetch.js";
 import { isUrlString } from "./guards.js";
 import { useLogger } from "../logger.js";
-
-type RequestInit = Exclude<Parameters<typeof fetch>[1], undefined>;
 
 const languagesMetadata = record(string(), number());
 

@@ -1,9 +1,10 @@
 import type { VideoDetails } from "../getVideoDetails.js";
+import type { Song } from "soundcloud-scraper";
+import { Client as SoundCloudClient } from "soundcloud-scraper";
 import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import { useLogger } from "../../logger.js";
 import { VideoError } from "../../errors/VideoError.js";
-import SoundCloud from "soundcloud-scraper";
 
 const logger = useLogger();
 
@@ -37,8 +38,8 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 	// Remove query params, because our SoundCloud client is silly
 	parsedUrl.search = "";
 
-	const client = new SoundCloud.Client();
-	let song: SoundCloud.Song;
+	const client = new SoundCloudClient();
+	let song: Song;
 	try {
 		song = await client.getSongInfo(parsedUrl.href);
 	} catch (error) {
