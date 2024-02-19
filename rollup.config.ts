@@ -67,7 +67,10 @@ export default defineConfig({
 		"undici",
 		"winston-transport",
 		"winston",
-		"yargs"
+		"yargs",
+
+		// Relies on __dirname
+		"@prisma/client"
 	],
 	input: "src/main.ts",
 	output: {

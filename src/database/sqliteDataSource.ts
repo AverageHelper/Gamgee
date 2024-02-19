@@ -16,9 +16,15 @@ export const dataSource = new PrismaClient();
 
 // ** Graceful exit under PM2 **
 
-function onShutdownFinished(): void {
-	logger.info("SQLite is sleeping now.");
-	logger.info("Goodnight!");
+async function shutDownNow(): Promise<void> {
+	try {
+		await dataSource.$disconnect();
+		logger.info("SQLite is sleeping now.");
+	} catch (error) {
+		logger.error(richErrorMessage("Failed to shut down database connection.", error));
+	} finally {
+		logger.info("Goodnight!");
+	}
 }
 
 // See https://pm2.io/docs/runtime/best-practices/graceful-shutdown/
@@ -28,17 +34,11 @@ process.on("message", msg => {
 		logger.debug("Got a 'shutdown' message");
 
 		/** Gracefully exit */
-		/* eslint-disable promise/prefer-await-to-then */
-		void dataSource
-			.$disconnect()
-			.then(onShutdownFinished)
-			.catch((error: unknown) => {
-				logger.error(richErrorMessage("Failed to shut down database connection.", error));
-			});
-		/* eslint-enable promise/prefer-await-to-then */
+		void shutDownNow();
 	}
 });
 
 // PM2 sends a SIGINT on Unix. We have 1600 ms to clean up and quit.
-// Prisma's beforeExit event fires after a `SIGINT` signal, but before database shutdown.
-dataSource.$on("beforeExit", onShutdownFinished);
+process.on("SIGINT", () => {
+	void shutDownNow();
+});
