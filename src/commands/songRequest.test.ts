@@ -7,11 +7,11 @@ vi.mock("../actions/queue/getQueueChannel.js");
 vi.mock("../actions/queue/useQueue.js");
 vi.mock("../actions/getVideoDetails.js");
 
+import type { QueueEntry } from "../useQueueStorage.js";
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig,
-	type QueueEntry,
 } from "../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
 	Parameters<typeof countAllStoredEntriesFromSender>,
