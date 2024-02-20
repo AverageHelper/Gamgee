@@ -9,6 +9,7 @@ export default defineConfig({
 		teardownTimeout: 60_000,
 		retry: 2,
 		setupFiles: ["./tests/hooks.ts"],
+		fileParallelism: false,
 		sequence: {
 			hooks: "list"
 		},
