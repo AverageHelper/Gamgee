@@ -38,7 +38,18 @@ process.on("message", msg => {
 	}
 });
 
+function reallyShutdownNow(): void {
+	// This force-exit backflip is needed because, for some reason, we run with two Node processes, and the second one doesn't close when the main one does. Doing `process.exit` seems to close both properly.
+	void shutDownNow()
+		/* eslint-disable promise/prefer-await-to-then */
+		.then(() => process.exit(0))
+		.catch(() => process.exit(1));
+	/* eslint-enable promise/prefer-await-to-then */
+}
+
 // PM2 sends a SIGINT on Unix. We have 1600 ms to clean up and quit.
-process.on("SIGINT", () => {
-	void shutDownNow();
-});
+process.on("exit", reallyShutdownNow);
+process.on("beforeExit", reallyShutdownNow);
+process.on("SIGINT", reallyShutdownNow);
+process.on("SIGTERM", reallyShutdownNow);
+process.on("SIGUSR2", reallyShutdownNow);
