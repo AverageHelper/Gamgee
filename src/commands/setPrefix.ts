@@ -57,7 +57,7 @@ export const setPrefix: Command = {
 				newPrefix,
 			)}\n\n${ti(
 				"commands.setprefix.responses.try-example",
-				{ sample: `\`${newPrefix}${helpCommandName}\`` }, // We don't mention `/help` properly here because this command deals specifically with legacy commands
+				{ sample: `\`${newPrefix}${helpCommandName}\`` }, // We don't mention `/help` directly here because this command deals specifically with legacy commands
 				locale,
 			)}`,
 			ephemeral: true,
