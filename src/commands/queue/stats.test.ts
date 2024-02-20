@@ -1,33 +1,50 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../useQueueStorage");
-jest.mock("../../actions/queue/useQueue");
+vi.mock("../../actions/queue/getQueueChannel.js");
+vi.mock("../../useQueueStorage.js");
+vi.mock("../../actions/queue/useQueue.js");
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { countAllStoredEntries } from "../../useQueueStorage.js";
-const mockCountAllStoredEntries = countAllStoredEntries as jest.Mock;
+const mockCountAllStoredEntries = countAllStoredEntries as Mock<
+	Parameters<typeof countAllStoredEntries>,
+	ReturnType<typeof countAllStoredEntries>
+>;
 
 import {
 	playtimeAverageInQueue,
 	playtimeRemainingInQueue,
 	playtimeTotalInQueue
 } from "../../actions/queue/useQueue.js";
-const mockPlaytimeRemaining = playtimeRemainingInQueue as jest.Mock;
-const mockPlaytimeTotal = playtimeTotalInQueue as jest.Mock;
-const mockPlaytimeAverage = playtimeAverageInQueue as jest.Mock;
+const mockPlaytimeRemaining = playtimeRemainingInQueue as Mock<
+	Parameters<typeof playtimeRemainingInQueue>,
+	ReturnType<typeof playtimeRemainingInQueue>
+>;
+const mockPlaytimeTotal = playtimeTotalInQueue as Mock<
+	Parameters<typeof playtimeTotalInQueue>,
+	ReturnType<typeof playtimeTotalInQueue>
+>;
+const mockPlaytimeAverage = playtimeAverageInQueue as Mock<
+	Parameters<typeof playtimeAverageInQueue>,
+	ReturnType<typeof playtimeAverageInQueue>
+>;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
+import type { TextChannel } from "discord.js";
 import { stats } from "./stats.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
 const logger = useTestLogger();
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
-const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
+const mockDeleteInvocation = vi.fn().mockResolvedValue(undefined);
 
 describe("Queue Statistics", () => {
 	let context: GuildedCommandContext;
@@ -49,7 +66,7 @@ describe("Queue Statistics", () => {
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
-		});
+		} as unknown as TextChannel);
 	});
 
 	test("does nothing when the guild has no queue", async () => {

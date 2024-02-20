@@ -1,17 +1,20 @@
 import type { MessageReaction, User } from "discord.js";
+import type { MockInstance } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { messageReactionAdd } from "./messageReactionAdd.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
+
 const logger = useTestLogger();
 
 describe("Reaction duplication", () => {
-	const mockResendReact = jest.fn<Promise<unknown>, []>();
+	const mockResendReact = vi.fn<[], Promise<unknown>>();
 
-	let mockRandom: jest.SpyInstance<number, []>;
+	let mockRandom: MockInstance<[], number>;
 	let mockReaction: MessageReaction;
 	let mockSender: User;
 
 	beforeEach(() => {
-		mockRandom = jest.spyOn(global.Math, "random").mockReturnValue(1);
+		mockRandom = vi.spyOn(global.Math, "random").mockReturnValue(1);
 
 		mockReaction = {
 			me: false,

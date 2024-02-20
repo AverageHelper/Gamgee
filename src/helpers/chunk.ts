@@ -1,1 +1,1 @@
-export { default as chunk } from "lodash/chunk.js";
+export { default as chunk } from "lodash-es/chunk.js";

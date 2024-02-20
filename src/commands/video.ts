@@ -53,7 +53,7 @@ export const video: Command = {
 				? `[${t(
 						"commands.video.responses.supported-platform",
 						userLocale
-				  )}](<${supportedPlatformsList}>)`
+					)}](<${supportedPlatformsList}>)`
 				: t("commands.video.responses.supported-platform", userLocale);
 
 		try {

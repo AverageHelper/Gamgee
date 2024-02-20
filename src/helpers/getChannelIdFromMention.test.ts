@@ -1,5 +1,5 @@
-import "../../tests/testUtils/leakedHandles.js";
-import { expectNull, expectValueEqual } from "../../tests/testUtils/expectations/jest.js";
+import { describe, test } from "vitest";
+import { expectNull, expectValueEqual } from "../../tests/testUtils/expectations/vitest.js";
 import { getChannelIdFromMention } from "./getChannelIdFromMention.js";
 
 describe("Channel ID from mention string", () => {

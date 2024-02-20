@@ -1,5 +1,5 @@
-import "../../tests/testUtils/leakedHandles.js";
-import { expectDefined, expectToContain } from "../../tests/testUtils/expectations/jest.js";
+import { describe, test } from "vitest";
+import { expectDefined, expectToContain } from "../../tests/testUtils/expectations/vitest.js";
 import { richErrorMessage } from "./richErrorMessage.js";
 
 describe("Rich error messages", () => {

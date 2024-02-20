@@ -1,17 +1,14 @@
-import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
-import { Response } from "cross-fetch";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetch
-jest.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: jest.fn() }));
+vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));
 import { fetchWithTimeout } from "../../helpers/fetch.js";
-const mockFetchWithTimeout = fetchWithTimeout as jest.Mock<
-	Promise<Response>,
-	[
-		input: RequestInfo | globalThis.URL,
-		timeoutSeconds?: number,
-		init?: Omit<RequestInit | undefined, "signal">
-	]
+const mockFetchWithTimeout = fetchWithTimeout as Mock<
+	Parameters<typeof fetchWithTimeout>,
+	ReturnType<typeof fetchWithTimeout>
 >;
 
 // Import the unit under test

@@ -1,6 +1,6 @@
 import type { QueueConfig as _QueueConfig, QueueEntry as _QueueEntry, User } from "@prisma/client";
 import type { Snowflake, TextChannel } from "discord.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
+import { Prisma } from "@prisma/client";
 import { useLogger } from "./logger.js";
 import { useRepository } from "./database/useDatabase.js";
 
@@ -445,7 +445,7 @@ export async function removeUserFromStoredBlacklist(
 				where: { queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId } }
 			});
 		} catch (error) {
-			if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
 				// Nothing to delete here! Move along
 			} else {
 				throw error;

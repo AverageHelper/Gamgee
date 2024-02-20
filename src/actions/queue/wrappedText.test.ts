@@ -1,7 +1,6 @@
-import "../../../tests/testUtils/leakedHandles.js";
-
 import { addCharactersAround } from "./wrappedText.js";
-import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
+import { describe, test } from "vitest";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
 
 describe("Add pre- and postfix", () => {
 	test("adds strikethrough to a normal string", () => {

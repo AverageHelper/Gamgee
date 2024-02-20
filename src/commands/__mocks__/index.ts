@@ -1,18 +1,19 @@
 import type { Command } from "../Command.js";
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { vi } from "vitest";
 
 interface MockCommand {
 	name: Command["name"];
 	aliases?: Command["aliases"];
 	nameLocalizations?: Command["nameLocalizations"];
 	options: Command["options"];
-	execute: jest.Mock;
+	execute: Mock<Parameters<Command["execute"]>, ReturnType<Command["execute"]>>;
 }
 
 export { invokeCommand } from "../../actions/invokeCommand.js";
 
 const { allCommands: _allCommands, resolveAlias: _resolveAlias } =
-	jest.requireActual<typeof import("../index.js")>("../index");
+	await vi.importActual<typeof import("../index.js")>("../index.js");
 
 export function resolveAlias(alias: string): string {
 	return _resolveAlias(alias, allCommands);
@@ -26,7 +27,9 @@ function addMock(command: Command): void {
 		aliases: command.aliases,
 		options: command.options,
 		nameLocalizations: command.nameLocalizations,
-		execute: jest.fn().mockResolvedValue(undefined)
+		execute: vi
+			.fn<Parameters<Command["execute"]>, ReturnType<Command["execute"]>>()
+			.mockResolvedValue(undefined)
 	});
 }
 

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`How-to command in de informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in de > informs the user how to run queue commands (interaction) 1`] = `
 "Um einen Song einzureichen, verwende \`?sr\`
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -10,7 +10,7 @@ Siehe [unsere Liste der unterstützten Plattformen](<https://github.com/AverageH
 Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
 
-exports[`How-to command in de informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in de > informs the user how to run queue commands (message) 1`] = `
 "Um einen Song einzureichen, verwende \`?sr\`
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -20,7 +20,7 @@ Siehe unsere Liste der unterstützten Plattformen <https://github.com/AverageHel
 Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
 
-exports[`How-to command in en-GB informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in en-GB > informs the user how to run queue commands (interaction) 1`] = `
 "To submit a song, use \`?sr\`
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -30,7 +30,7 @@ See [our list of supported platforms](<https://github.com/AverageHelper/Gamgee#s
 To get a link to the current song, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in en-GB informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in en-GB > informs the user how to run queue commands (message) 1`] = `
 "To submit a song, use \`?sr\`
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -40,7 +40,7 @@ See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#
 To get a link to the current song, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in en-US informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in en-US > informs the user how to run queue commands (interaction) 1`] = `
 "To submit a song, use \`?sr\`
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -50,7 +50,7 @@ See [our list of supported platforms](<https://github.com/AverageHelper/Gamgee#s
 To get a link to the current song, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in en-US informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in en-US > informs the user how to run queue commands (message) 1`] = `
 "To submit a song, use \`?sr\`
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -60,7 +60,7 @@ See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#
 To get a link to the current song, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in es-ES informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in es-ES > informs the user how to run queue commands (interaction) 1`] = `
 "Para enviar una canción, use \`?sr\`
 
 Por ejemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -70,7 +70,7 @@ Vea [nuestra lista de plataformas compatibles](<https://github.com/AverageHelper
 Para obtener un enlace a la canción actual, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in es-ES informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in es-ES > informs the user how to run queue commands (message) 1`] = `
 "Para enviar una canción, use \`?sr\`
 
 Por ejemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -80,7 +80,7 @@ Consulte nuestra lista de plataformas compatibles en <https://github.com/Average
 Para obtener un enlace a la canción actual, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in fr informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in fr > informs the user how to run queue commands (interaction) 1`] = `
 "Pour soumettre une chanson, utilisez \`?sr\`
 
 Par exemple: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -90,7 +90,7 @@ Consultez [notre liste de plateformes prises en charge](<https://github.com/Aver
 Pour obtenir un lien vers la chanson actuelle, utilisez \`?nowplaying\`."
 `;
 
-exports[`How-to command in fr informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in fr > informs the user how to run queue commands (message) 1`] = `
 "Pour soumettre une chanson, utilisez \`?sr\`
 
 Par exemple: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -100,7 +100,7 @@ Consultez notre liste des plates-formes prises en charge sur <https://github.com
 Pour obtenir un lien vers la chanson actuelle, utilisez \`?nowplaying\`."
 `;
 
-exports[`How-to command in hu informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in hu > informs the user how to run queue commands (interaction) 1`] = `
 "Dal beküldéséhez használja a \`?sr\` parancsot
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -110,7 +110,7 @@ Tekintse meg [a támogatott platformok listáját](<https://github.com/AverageHe
 Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
 
-exports[`How-to command in hu informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in hu > informs the user how to run queue commands (message) 1`] = `
 "Dal beküldéséhez használja a \`?sr\` parancsot
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -120,7 +120,7 @@ Tekintse meg a támogatott platformok listáját a <https://github.com/AverageHe
 Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
 
-exports[`How-to command in pt-BR informs the user how to run queue commands (interaction) 1`] = `
+exports[`How-to command in pt-BR > informs the user how to run queue commands (interaction) 1`] = `
 "Para enviar uma música, use \`?sr\`
 
 Por exemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
@@ -130,7 +130,7 @@ Veja [nossa lista de plataformas suportadas](<https://github.com/AverageHelper/G
 Para obter um link para a música atual, use \`?nowplaying\`."
 `;
 
-exports[`How-to command in pt-BR informs the user how to run queue commands (message) 1`] = `
+exports[`How-to command in pt-BR > informs the user how to run queue commands (message) 1`] = `
 "Para enviar uma música, use \`?sr\`
 
 Por exemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`

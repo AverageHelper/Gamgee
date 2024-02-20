@@ -47,12 +47,12 @@ export const howto: GuildedCommand = {
 						"commands.howto.responses.see-supported-platforms",
 						{ url: `<${supportedPlatformsList}>` },
 						guildLocale
-				  )
+					)
 				: ti(
 						"commands.howto.responses.see-supported-platforms-at-url",
 						{ url: `<${supportedPlatformsList}>` },
 						guildLocale
-				  );
+					);
 		push(supportedPlatforms, msg);
 		pushNewLine(msg);
 		pushNewLine(msg);

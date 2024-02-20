@@ -1,10 +1,11 @@
 import type { CommandInteraction } from "discord.js";
 import type { Command } from "./commands/index.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ChannelType } from "discord.js";
 
-const mockAllCommands = new Map<string, Command>();
+const mockAllCommands = vi.hoisted(() => new Map<string, Command>());
 
-jest.mock("./commands", () => ({
+vi.mock("./commands/index.js", () => ({
 	allCommands: mockAllCommands
 }));
 
@@ -17,12 +18,12 @@ describe("Command event handler", () => {
 	const mockConsole = useTestLogger();
 
 	describe("Context", () => {
-		const mockInteractionSendTyping = jest.fn();
-		const mockInteractionReply = jest.fn();
-		const mockInteractionDeferReply = jest.fn();
-		const mockInteractionEditReply = jest.fn();
-		const mockInteractionFollowUp = jest.fn();
-		const mockUserSend = jest.fn();
+		const mockInteractionSendTyping = vi.fn();
+		const mockInteractionReply = vi.fn();
+		const mockInteractionDeferReply = vi.fn();
+		const mockInteractionEditReply = vi.fn();
+		const mockInteractionFollowUp = vi.fn();
+		const mockUserSend = vi.fn();
 		const mockCommand: Command = {
 			name: "context-test",
 			description: "lolcat",
@@ -166,7 +167,7 @@ describe("Command event handler", () => {
 	});
 
 	test("does nothing if the sender is a bot", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "global-guild-test",
 			description: "lolcat",
@@ -196,7 +197,7 @@ describe("Command event handler", () => {
 	});
 
 	test("does nothing if the sender is us", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "global-guild-test",
 			description: "lolcat",
@@ -226,7 +227,7 @@ describe("Command event handler", () => {
 	});
 
 	test("does nothing if the command is not found", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "global-guild-test",
 			description: "lolcat",
@@ -256,7 +257,7 @@ describe("Command event handler", () => {
 	});
 
 	test("calls the `execute` method of a global command from a guild", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "global-guild-test",
 			description: "lolcat",
@@ -286,7 +287,7 @@ describe("Command event handler", () => {
 	});
 
 	test("calls the `execute` method of a global command from DMs", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "global-test",
 			description: "lolcat",
@@ -316,7 +317,7 @@ describe("Command event handler", () => {
 	});
 
 	test("calls the `execute` method of a guilded command from a guild", async () => {
-		const mockExecute = jest.fn();
+		const mockExecute = vi.fn();
 		const mockCommand: Command = {
 			name: "guilded-test",
 			description: "lolcat",
@@ -346,8 +347,8 @@ describe("Command event handler", () => {
 	});
 
 	test("tells the user off when they try to execute a guilded command from DMs", async () => {
-		const mockExecute = jest.fn();
-		const mockInteractionReply = jest.fn();
+		const mockExecute = vi.fn();
+		const mockInteractionReply = vi.fn();
 		const mockCommand: Command = {
 			name: "guilded-dm-test",
 			description: "lolcat",

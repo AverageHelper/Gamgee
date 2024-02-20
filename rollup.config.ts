@@ -21,7 +21,7 @@ export default defineConfig({
 					},
 					delimiters: ["", ""],
 					preventAssignment: true
-			  })
+				})
 			: null,
 
 		// Transpile source
@@ -64,15 +64,16 @@ export default defineConfig({
 		"discord.js",
 
 		// Circular
-		"undici",
 		"winston-transport",
 		"winston",
-		"yargs"
+
+		// Relies on __dirname
+		"@prisma/client"
 	],
 	input: "src/main.ts",
 	output: {
 		file: "dist/server.js",
-		format: "commonjs",
+		format: "module",
 		inlineDynamicImports: true,
 		sourcemap: isProduction ? undefined : "inline"
 	}

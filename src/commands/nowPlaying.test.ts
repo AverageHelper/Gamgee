@@ -1,31 +1,42 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../actions/queue/useQueue");
-jest.mock("../actions/queue/getQueueChannel");
-jest.mock("../useQueueStorage");
-jest.mock("../permissions");
+vi.mock("../actions/queue/useQueue.js");
+vi.mock("../actions/queue/getQueueChannel.js");
+vi.mock("../useQueueStorage.js");
+vi.mock("../permissions/index.js");
 
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
-const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as jest.Mock;
+const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as Mock<
+	Parameters<typeof addUserToHaveCalledNowPlaying>,
+	ReturnType<typeof addUserToHaveCalledNowPlaying>
+>;
 
 import { getAllStoredEntries } from "../useQueueStorage.js";
-const mockGetAllStoredEntries = getAllStoredEntries as jest.Mock;
+const mockGetAllStoredEntries = getAllStoredEntries as Mock<
+	Parameters<typeof getAllStoredEntries>,
+	ReturnType<typeof getAllStoredEntries>
+>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
-mockGetAllStoredEntries.mockResolvedValue(undefined);
+mockGetAllStoredEntries.mockResolvedValue([]);
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockReplyWithMention = jest.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = jest.fn().mockResolvedValue(undefined);
-const mockDeleteMessage = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockReplyWithMention = vi.fn().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
+const mockDeleteMessage = vi.fn().mockResolvedValue(undefined);
 mockAddUserToHaveCalledNowPlaying.mockResolvedValue(undefined);
 
 import { nowPlaying } from "./nowPlaying.js";
 import { useTestLogger } from "../../tests/testUtils/logger.js";
 import type { GuildedCommandContext } from "./Command.js";
 import type { QueueEntry } from "../useQueueStorage.js";
+import type { TextChannel } from "discord.js";
 
 const logger = useTestLogger();
 
@@ -47,7 +58,7 @@ describe("Now-Playing", () => {
 		mockReplyWithMention.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
 		mockDeleteMessage.mockResolvedValue(undefined);
-		mockGetQueueChannel.mockResolvedValue({ id: queueChannelId });
+		mockGetQueueChannel.mockResolvedValue({ id: queueChannelId } as unknown as TextChannel);
 	});
 
 	test("informs the user when no queue is set up", async () => {
@@ -70,7 +81,7 @@ describe("Now-Playing", () => {
 		${[{ isDone: true }, { isDone: true }, { isDone: true }]}
 	`(
 		"informs the user if all entries are done or the queue is empty",
-		async ({ values }: { values: ReadonlyArray<QueueEntry> }) => {
+		async ({ values }: { values: Array<QueueEntry> }) => {
 			mockGetAllStoredEntries.mockResolvedValue(values);
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
@@ -93,16 +104,16 @@ describe("Now-Playing", () => {
 		${[{ isDone: false, url: "first!", senderId: "me" }, { isDone: true }, { isDone: false }]}
 	`(
 		"provides the URL of the most recent not-done song",
-		async ({ values }: { values: ReadonlyArray<QueueEntry> }) => {
+		async ({ values }: { values: Array<QueueEntry> }) => {
 			mockGetAllStoredEntries.mockResolvedValue(values);
 			mockGetQueueChannel.mockResolvedValue({
 				messages: {
-					fetch: jest.fn().mockResolvedValue({
+					fetch: vi.fn().mockResolvedValue({
 						id: "queue message id",
-						edit: jest.fn().mockResolvedValue(undefined)
+						edit: vi.fn().mockResolvedValue(undefined)
 					})
 				}
-			});
+			} as unknown as TextChannel);
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
 

@@ -8,6 +8,8 @@
 		"strictest/typescript-eslint",
 		"strictest/unicorn",
 		"eslint:recommended",
+		"plugin:import/recommended",
+		"plugin:import/typescript",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:prettier/recommended",
@@ -30,6 +32,12 @@
 	"env": {
 		"node": true
 	},
+	"settings": {
+		"import/resolver": {
+			"typescript": true,
+			"node": true
+		}
+	},
 	"rules": {
 		"file-progress/activate": 1,
 		"deprecation/deprecation": "warn",
@@ -39,8 +47,7 @@
 		"no-dupe-else-if": "warn",
 		"spaced-comment": ["warn", "always", { "exceptions": ["*"] }], // doc comments exist
 		"consistent-return": "off", // TS handles this
-		"no-duplicate-imports": "off", // typescript-eslint handles this
-		"@typescript-eslint/no-duplicate-imports": "error",
+		"no-duplicate-imports": "off", // eslint-plugin-import handles this
 		"@typescript-eslint/no-empty-interface": "off",
 		"@typescript-eslint/require-await": "warn",
 		"@typescript-eslint/no-inferrable-types": "off",
@@ -63,19 +70,16 @@
 
 	"overrides": [
 		{
-			"files": ["src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
-			"extends": ["plugin:jest/recommended"],
-			"plugins": ["jest"],
+			"files": ["*.ts", "src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
+			"extends": ["plugin:vitest/recommended"],
+			"plugins": ["vitest"],
 			"parserOptions": {
 				"project": "./tsconfig.test.json"
-			},
-			"env": {
-				"jest": true
 			},
 			"rules": {
 				"prettier/prettier": "warn",
 				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
-				"jest/expect-expect": [
+				"vitest/expect-expect": [
 					"warn",
 					{
 						"assertFunctionNames": [

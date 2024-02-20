@@ -1,25 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Help command describe pleb commands 1`] = `
-"Commands:
-\`?cooldown\` - Find out when you can submit again.
-\`?help\` - Print a handy help message.
-\`?howto\` - Print instructions for using the common queue commands.
-\`?languages\` - Print my core repository's language statistics.
-\`?limits\` - Display the song queue's submission limits.
-\`?nowplaying\` - Reveal the current song in the queue (or my best guess).
-\`?ping\` - Ping my host server to check latency.
-\`?sr\` - Submit a song to the queue.
-\`?stats\` - Get your personal queue statistics.
-\`?test\` - Make sure I still know how to talk to video services.
-\`?t\` - Start a typing indicator.
-\`?userinfo\` - Returns some information about you.
-\`?version\` - Display the bot's current codebase version.
-\`?video\` - Reply with the video title and duration.
-"
-`;
-
-exports[`Help command describes all commands 1`] = `
+exports[`Help command > describes all commands 1`] = `
 "Commands:
 \`?cooldown\` - Find out when you can submit again.
 \`?help\` - Print a handy help message.
@@ -49,7 +30,7 @@ exports[`Help command describes all commands 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in de 1`] = `
+exports[`Help command > describes all commands in de 1`] = `
 "Befehle:
 \`?cooldown\` - Finden Sie heraus, wann Sie wieder einreichen können.
 \`?help\` - Drucken Sie eine nützliche Hilfenachricht.
@@ -79,7 +60,7 @@ exports[`Help command describes all commands in de 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in en-GB 1`] = `
+exports[`Help command > describes all commands in en-GB 1`] = `
 "Commands:
 \`?cooldown\` - Find out when you can submit again.
 \`?help\` - Print a useful help message.
@@ -109,7 +90,7 @@ exports[`Help command describes all commands in en-GB 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in en-US 1`] = `
+exports[`Help command > describes all commands in en-US 1`] = `
 "Commands:
 \`?cooldown\` - Find out when you can submit again.
 \`?help\` - Print a handy help message.
@@ -139,7 +120,7 @@ exports[`Help command describes all commands in en-US 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in es-ES 1`] = `
+exports[`Help command > describes all commands in es-ES 1`] = `
 "Comandos:
 \`?cooldown\` - Averigüe cuándo puede enviar de nuevo.
 \`?help\` - Imprime un mensaje de ayuda útil.
@@ -169,7 +150,7 @@ exports[`Help command describes all commands in es-ES 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in fr 1`] = `
+exports[`Help command > describes all commands in fr 1`] = `
 "Commandes:
 \`?cooldown\` - Découvrez quand vous pourrez soumettre à nouveau.
 \`?help\` - Imprime un message d'aide utile.
@@ -199,7 +180,7 @@ exports[`Help command describes all commands in fr 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in hu 1`] = `
+exports[`Help command > describes all commands in hu 1`] = `
 "Parancsok:
 \`?cooldown\` - Tudja meg, mikor küldhet új dalt.
 \`?help\` - Kiír egy hasznos súgóüzenetet.
@@ -229,7 +210,7 @@ exports[`Help command describes all commands in hu 1`] = `
 "
 `;
 
-exports[`Help command describes all commands in pt-BR 1`] = `
+exports[`Help command > describes all commands in pt-BR 1`] = `
 "Comandos:
 \`?cooldown\` - Descubra quando você pode enviar novamente.
 \`?help\` - Imprima uma mensagem de ajuda útil.
@@ -256,5 +237,24 @@ exports[`Help command describes all commands in pt-BR 1`] = `
 \`?userinfo\` - Retorna algumas informações sobre você.
 \`?version\` - Exiba a versão atual da base de código do bot.
 \`?video\` - Responda com o título e a duração do vídeo.
+"
+`;
+
+exports[`Help command > describes pleb commands 1`] = `
+"Commands:
+\`?cooldown\` - Find out when you can submit again.
+\`?help\` - Print a handy help message.
+\`?howto\` - Print instructions for using the common queue commands.
+\`?languages\` - Print my core repository's language statistics.
+\`?limits\` - Display the song queue's submission limits.
+\`?nowplaying\` - Reveal the current song in the queue (or my best guess).
+\`?ping\` - Ping my host server to check latency.
+\`?sr\` - Submit a song to the queue.
+\`?stats\` - Get your personal queue statistics.
+\`?test\` - Make sure I still know how to talk to video services.
+\`?t\` - Start a typing indicator.
+\`?userinfo\` - Returns some information about you.
+\`?version\` - Display the bot's current codebase version.
+\`?video\` - Reply with the video title and duration.
 "
 `;

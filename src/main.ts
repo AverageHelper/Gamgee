@@ -47,6 +47,6 @@ export async function _main(logger = useLogger()): Promise<void> {
 /* istanbul ignore next */
 // Not Constantinople
 if (getEnv("NODE_ENV") !== "test") {
-	// Jest will never hit this without hax, but Mocha should:
+	// Vitest will never hit this without hax, but Mocha should:
 	void _main();
 }

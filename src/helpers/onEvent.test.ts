@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { onEvent } from "./onEvent.js";
 
 describe("Creating event handlers", () => {
@@ -12,7 +13,7 @@ describe("Creating event handlers", () => {
 			once: true,
 			execute
 		});
-		expect(handler).toBeObject();
+		expect(handler).toBeDefined();
 		expect(handler).toHaveProperty("name", "ready");
 		expect(handler).toHaveProperty("once", true);
 		expect(handler).toHaveProperty("execute", execute);

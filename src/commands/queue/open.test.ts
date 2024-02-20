@@ -1,23 +1,34 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
-jest.mock("../../actions/queue/getQueueChannel");
-jest.mock("../../useGuildStorage");
+vi.mock("../../actions/queue/getQueueChannel.js");
+vi.mock("../../useGuildStorage.js");
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as jest.Mock;
-const mockSetQueueOpen = setQueueOpen as jest.Mock;
+const mockIsQueueOpen = isQueueOpen as Mock<
+	Parameters<typeof isQueueOpen>,
+	ReturnType<typeof isQueueOpen>
+>;
+const mockSetQueueOpen = setQueueOpen as Mock<
+	Parameters<typeof setQueueOpen>,
+	ReturnType<typeof setQueueOpen>
+>;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
+import type { TextChannel } from "discord.js";
 import { open } from "./open.js";
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockFollowUp = jest.fn().mockResolvedValue(undefined);
-const mockChannelSend = jest.fn().mockResolvedValue(undefined);
-const mockDeleteInvocation = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockFollowUp = vi.fn().mockResolvedValue(undefined);
+const mockChannelSend = vi.fn().mockResolvedValue(undefined);
+const mockDeleteInvocation = vi.fn().mockResolvedValue(undefined);
 
 describe("Open the Queue", () => {
 	let context: GuildedCommandContext;
@@ -35,7 +46,7 @@ describe("Open the Queue", () => {
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel",
 			send: mockChannelSend
-		});
+		} as unknown as TextChannel);
 		mockIsQueueOpen.mockResolvedValue(true);
 		mockSetQueueOpen.mockResolvedValue(undefined);
 	});

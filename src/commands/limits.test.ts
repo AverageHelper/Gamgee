@@ -1,19 +1,27 @@
-import "../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../useQueueStorage");
-jest.mock("../actions/queue/getQueueChannel");
-jest.mock("../actions/queue/useQueue");
+vi.mock("../useQueueStorage.js");
+vi.mock("../actions/queue/getQueueChannel.js");
+vi.mock("../actions/queue/useQueue.js");
 
 import { getStoredQueueConfig } from "../useQueueStorage.js";
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as jest.Mock;
+const mockGetQueueChannel = getQueueChannel as Mock<
+	Parameters<typeof getQueueChannel>,
+	ReturnType<typeof getQueueChannel>
+>;
 
 import type { GuildedCommandContext } from "./CommandContext.js";
+import type { TextChannel } from "discord.js";
 import { limits } from "./limits.js";
 
-const mockReply = jest.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn().mockResolvedValue(undefined);
 
 describe("Get Queue Limits", () => {
 	let context: GuildedCommandContext;
@@ -27,11 +35,15 @@ describe("Get Queue Limits", () => {
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel"
-		});
+		} as unknown as TextChannel);
 		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
 			entryDurationMaxSeconds: null,
-			submissionMaxQuantity: null
+			submissionMaxQuantity: null,
+			blacklistedUsers: [],
+			channelId: "",
+			queueDurationSeconds: null,
+			entryDurationMinSeconds: null
 		});
 	});
 
@@ -65,7 +77,11 @@ describe("Get Queue Limits", () => {
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
 				entryDurationMaxSeconds,
-				submissionMaxQuantity
+				submissionMaxQuantity,
+				blacklistedUsers: [],
+				channelId: "",
+				queueDurationSeconds: null,
+				entryDurationMinSeconds: null
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();
 			expect(mockReply).toHaveBeenCalledOnce();

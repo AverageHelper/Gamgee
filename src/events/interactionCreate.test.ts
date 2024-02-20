@@ -1,13 +1,14 @@
 import type { CommandInteraction, Interaction, TextBasedChannel } from "discord.js";
 import type { Command } from "../commands/index.js";
 import { ChannelType } from "discord.js";
+import { describe, expect, test, vi } from "vitest";
 
 // Mock allCommands to isolate our test code
-const mockAllCommands = new Map<string, Command>();
-jest.mock("../commands", () => ({ allCommands: mockAllCommands }));
+const mockAllCommands = vi.hoisted(() => new Map<string, Command>());
+vi.mock("../commands/index.js", () => ({ allCommands: mockAllCommands }));
 
 // Create two mock commands to track handler behavior
-const mockGlobalExecute = jest.fn();
+const mockGlobalExecute = vi.fn();
 const mockGlobalCommand: Command = {
 	name: "global-test",
 	description: "lolcat",
@@ -16,7 +17,7 @@ const mockGlobalCommand: Command = {
 };
 mockAllCommands.set(mockGlobalCommand.name, mockGlobalCommand);
 
-const mockGuildedExecute = jest.fn();
+const mockGuildedExecute = vi.fn();
 const mockGuildedCommand: Command = {
 	name: "guilded-test",
 	description: "lolcat",
@@ -58,10 +59,10 @@ mockAllCommands.set(mockUserMessageErrorGlobalCommand.name, mockUserMessageError
 
 // Mock the logger to track output
 import type { Logger } from "../logger.js";
-const mockLoggerSilly = jest.fn();
-const mockLoggerDebug = jest.fn();
-const mockLoggerVerbose = jest.fn();
-const mockLoggerError = jest.fn();
+const mockLoggerSilly = vi.fn();
+const mockLoggerDebug = vi.fn();
+const mockLoggerVerbose = vi.fn();
+const mockLoggerError = vi.fn();
 const logger: Logger = {
 	silly: mockLoggerSilly,
 	debug: mockLoggerDebug,
@@ -78,7 +79,7 @@ const selfUid = "self-1234";
 const otherUid = "other-1234";
 const channelId = "the-channel-1234";
 
-const mockGuildMembersFetch = jest.fn();
+const mockGuildMembersFetch = vi.fn();
 
 // Helper function to create Interactions
 // Reduces code duplication
@@ -217,7 +218,7 @@ describe("on(interactionCreate)", () => {
 				channel: channel
 			} as unknown as Interaction;
 
-			const mockInteractionReply = jest.fn();
+			const mockInteractionReply = vi.fn();
 			(interaction as CommandInteraction).reply = mockInteractionReply;
 
 			await expect(interactionCreate.execute(interaction, logger)).resolves.toBeUndefined();
@@ -234,7 +235,7 @@ describe("on(interactionCreate)", () => {
 			interaction.inGuild = (): boolean => false;
 			interaction.member = null;
 
-			const mockChannelFetch = jest.fn();
+			const mockChannelFetch = vi.fn();
 			const channel = {
 				type: ChannelType.DM,
 				partial: true,

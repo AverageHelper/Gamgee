@@ -1,4 +1,4 @@
-export { default as isFunction } from "lodash/isFunction.js";
+export { default as isFunction } from "lodash-es/isFunction.js";
 
 export function isNonEmptyArray<T>(array: ReadonlyArray<T>): array is NonEmptyArray<T> {
 	return array.length > 0;

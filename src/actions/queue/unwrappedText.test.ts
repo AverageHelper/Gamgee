@@ -1,6 +1,5 @@
-import "../../../tests/testUtils/leakedHandles.js";
-
-import { expectValueEqual } from "../../../tests/testUtils/expectations/jest.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { describe, test } from "vitest";
 import { removeCharactersAround } from "./unwrappedText.js";
 
 describe("Remove strikethrough", () => {

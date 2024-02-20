@@ -1,19 +1,21 @@
 import type { VideoDetails } from "./getVideoDetails.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { VideoError } from "../errors/VideoError.js";
 
-jest.mock("./network/getBandcampTrack.js", () => ({ getBandcampTrack: jest.fn() }));
-jest.mock("./network/getPonyFmTrack.js", () => ({ getPonyFmTrack: jest.fn() }));
-jest.mock("./network/getSoundCloudTrack.js", () => ({ getSoundCloudTrack: jest.fn() }));
-jest.mock("./network/getYouTubeVideo.js", () => ({ getYouTubeVideo: jest.fn() }));
+vi.mock("./network/getBandcampTrack.js", () => ({ getBandcampTrack: vi.fn() }));
+vi.mock("./network/getPonyFmTrack.js", () => ({ getPonyFmTrack: vi.fn() }));
+vi.mock("./network/getSoundCloudTrack.js", () => ({ getSoundCloudTrack: vi.fn() }));
+vi.mock("./network/getYouTubeVideo.js", () => ({ getYouTubeVideo: vi.fn() }));
 
 import { getBandcampTrack } from "./network/getBandcampTrack.js";
 import { getPonyFmTrack } from "./network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
-const mockGetBandcampTrack = getBandcampTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
-const mockGetPonyFmTrack = getPonyFmTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
-const mockGetSoundCloudTrack = getSoundCloudTrack as jest.Mock<Promise<VideoDetails>, [URL]>;
-const mockGetYouTubeVideo = getYouTubeVideo as jest.Mock<Promise<VideoDetails>, [URL]>;
+const mockGetBandcampTrack = getBandcampTrack as Mock<[URL], Promise<VideoDetails>>;
+const mockGetPonyFmTrack = getPonyFmTrack as Mock<[URL], Promise<VideoDetails>>;
+const mockGetSoundCloudTrack = getSoundCloudTrack as Mock<[URL], Promise<VideoDetails>>;
+const mockGetYouTubeVideo = getYouTubeVideo as Mock<[URL], Promise<VideoDetails>>;
 
 import { getVideoDetails } from "./getVideoDetails.js";
 
@@ -71,7 +73,7 @@ describe("Video details", () => {
 		const dirtyUrl = `${url} Text and stuff`;
 		const cleanUrl = new URL(url);
 
-		await expect(getVideoDetails(dirtyUrl, null)).resolves.toBeObject();
+		await expect(getVideoDetails(dirtyUrl, null)).resolves.toMatchObject({ url: validUrl });
 		expect(mockGetBandcampTrack).toHaveBeenCalledOnce();
 		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl);
 

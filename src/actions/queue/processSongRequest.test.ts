@@ -1,51 +1,75 @@
-import "../../../tests/testUtils/leakedHandles.js";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-jest.mock("../../actions/messages/index.js");
-jest.mock("../getVideoDetails.js");
-jest.mock("./useQueue.js");
-jest.mock("../../useGuildStorage.js");
-jest.mock("../../useQueueStorage.js");
+vi.mock("../../actions/messages/index.js");
+vi.mock("../getVideoDetails.js");
+vi.mock("./useQueue.js");
+vi.mock("../../useGuildStorage.js");
+vi.mock("../../useQueueStorage.js");
+
+vi.mock("../../logger.js", async () => ({
+	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger
+}));
 
 // ** Gather mockable actions
 
 import { deleteMessage } from "../../actions/messages/index.js";
-const mockDeleteMessage = deleteMessage as jest.Mock<Promise<boolean>>;
+const mockDeleteMessage = deleteMessage as Mock<
+	Parameters<typeof deleteMessage>,
+	ReturnType<typeof deleteMessage>
+>;
 
-import type { VideoDetails } from "../getVideoDetails.js";
 import { getVideoDetails } from "../getVideoDetails.js";
-const mockGetVideoDetails = getVideoDetails as jest.Mock<Promise<VideoDetails | null>>;
+const mockGetVideoDetails = getVideoDetails as Mock<
+	Parameters<typeof getVideoDetails>,
+	ReturnType<typeof getVideoDetails>
+>;
 
 import type { Guild, Message, TextChannel } from "discord.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
-const mockPlaytimeTotalInQueue = playtimeTotalInQueue as jest.Mock<Promise<number>>;
-const mockPushEntryToQueue = pushEntryToQueue as jest.Mock<
-	Promise<QueueEntry>,
-	[UnsentQueueEntry, TextChannel]
+const mockPlaytimeTotalInQueue = playtimeTotalInQueue as Mock<
+	Parameters<typeof playtimeTotalInQueue>,
+	ReturnType<typeof playtimeTotalInQueue>
+>;
+const mockPushEntryToQueue = pushEntryToQueue as Mock<
+	Parameters<typeof pushEntryToQueue>,
+	ReturnType<typeof pushEntryToQueue>
 >;
 
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as jest.Mock<Promise<boolean>, [Guild]>;
-const mockSetQueueOpen = setQueueOpen as jest.Mock<Promise<void>, [boolean, Guild]>;
+const mockIsQueueOpen = isQueueOpen as Mock<
+	Parameters<typeof isQueueOpen>,
+	ReturnType<typeof isQueueOpen>
+>;
+const mockSetQueueOpen = setQueueOpen as Mock<
+	Parameters<typeof setQueueOpen>,
+	ReturnType<typeof setQueueOpen>
+>;
 
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig
 } from "../../useQueueStorage.js";
-import type { QueueConfig, QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
-const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as jest.Mock<
-	Promise<number>
+import type { QueueConfig, QueueEntry } from "../../useQueueStorage.js";
+const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
+	Parameters<typeof countAllStoredEntriesFromSender>,
+	ReturnType<typeof countAllStoredEntriesFromSender>
 >;
-const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as jest.Mock<
-	Promise<QueueEntry | null>
+const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
+	Parameters<typeof getLatestStoredEntryFromSender>,
+	ReturnType<typeof getLatestStoredEntryFromSender>
 >;
-const mockGetStoredQueueConfig = getStoredQueueConfig as jest.Mock<Promise<QueueConfig>>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
+	Parameters<typeof getStoredQueueConfig>,
+	ReturnType<typeof getStoredQueueConfig>
+>;
 
-const mockDeleteInvocation = jest.fn();
-const mockReplyPrivately = jest.fn();
-const mockFollowUp = jest.fn();
+const mockDeleteInvocation = vi.fn();
+const mockReplyPrivately = vi.fn();
+const mockFollowUp = vi.fn();
 
-const mockChannelSend = jest.fn() as jest.Mock<Promise<unknown>, [string]>;
+const mockChannelSend = vi.fn<[string], Promise<unknown>>();
 
 // ** Import the unit-under-test
 
