@@ -1,7 +1,7 @@
 import type { SupportedLocale } from "../i18n.js";
 import { describe, test } from "vitest";
 import { durationString } from "./durationString.js";
-import { expectValueEqual } from "../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations.js";
 
 // We don't test *every* locale we support, just a few edge cases.
 // We mostly want to make sure that `humanize-duration` does

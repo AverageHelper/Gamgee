@@ -1,7 +1,7 @@
 import type { Mock } from "vitest";
 import type { videoInfo } from "ytdl-core";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 
 // Mock ytdl

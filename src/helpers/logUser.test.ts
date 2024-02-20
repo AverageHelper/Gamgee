@@ -1,6 +1,6 @@
 import type { User } from "discord.js";
 import { beforeEach, describe, test } from "vitest";
-import { expectValueEqual } from "../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations.js";
 import { logUser } from "./logUser.js";
 
 describe("Log user ID", () => {

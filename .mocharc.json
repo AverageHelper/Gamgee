@@ -1,9 +1,0 @@
-{
-	"bail": true,
-	"exit": true,
-	"extensions": ["ts"],
-	"require": ["./tests/hooks.ts"],
-	"retries": 2,
-	"spec": ["./tests/**/*.test.ts"],
-	"timeout": 60000
-}

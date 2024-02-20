@@ -1,6 +1,6 @@
 import type { PartialString } from "./composeStrings.js";
 import { beforeEach, describe, test } from "vitest";
-import { expectValueEqual } from "../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../tests/testUtils/expectations.js";
 import {
 	composed,
 	createPartialString,

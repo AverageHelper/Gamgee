@@ -70,7 +70,7 @@
 
 	"overrides": [
 		{
-			"files": ["*.ts", "src/**/*.test.ts", "src/**/__mocks__/**/*.ts"],
+			"files": ["*.ts", "src/**/*.test.ts", "src/**/__mocks__/**/*.ts", "tests/**/*.ts"],
 			"extends": ["plugin:vitest/recommended"],
 			"plugins": ["vitest"],
 			"parserOptions": {
@@ -97,26 +97,7 @@
 			}
 		},
 		{
-			"files": ["tests/**/*.ts"],
-			"extends": ["plugin:mocha/recommended"],
-			"plugins": ["mocha"],
-			"parserOptions": {
-				"project": "./tsconfig.e2e.json"
-			},
-			"rules": {
-				"prettier/prettier": "warn",
-				"max-nested-callbacks": "off", // unit tests involve a lot of nested callbacks
-				"func-names": "off", // unnamed functions are common in Mocha
-				"@typescript-eslint/no-invalid-this": "off" // mocha exposes test metadata in `this`
-			}
-		},
-		{
-			"files": ["*.js", "*.cjs"],
-			"parser": "null"
-		},
-		{
 			"files": ["scripts/**/*.ts"],
-
 			"parserOptions": {
 				"project": "./tsconfig.test.json",
 				"tsconfigRootDir": "."

@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - We now require Node 20.
 - Network and args parsing are now handled using native structures instead of `cross-fetch` and `yargs`.
-- Replaced `Jest` with `Vitest` for unit testing.
+- Replaced `Jest`, `Mocha`, and `Chai` with `Vitest` for unit testing.
 - Started using ESM instead of CJS modules.
 
 ## [2.2.0] - 2024-02-18
