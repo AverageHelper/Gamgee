@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced `Jest`, `Mocha`, and `Chai` with `Vitest` for unit testing.
 - Started using ESM instead of CJS modules.
 - Use trailing commas to made code diffs cleaner.
+- `/limits` now mentions the `/cooldown` command properly.
+- Updated dependencies, and made our Rollup bundle tighter.
 
 ## [2.2.0] - 2024-02-18
 ### Added
