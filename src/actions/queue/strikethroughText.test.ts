@@ -1,6 +1,6 @@
 import { addStrikethrough, removeStrikethrough } from "./strikethroughText.js";
 import { describe, test } from "vitest";
-import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations.js";
 
 describe("Add strikethrough", () => {
 	test("adds strikethrough to a normal string", () => {

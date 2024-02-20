@@ -5,7 +5,7 @@ import {
 	expectDefined,
 	expectPositive,
 	expectValueEqual
-} from "../../../tests/testUtils/expectations/vitest.js";
+} from "../../../tests/testUtils/expectations.js";
 
 // Mock fetch
 vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));

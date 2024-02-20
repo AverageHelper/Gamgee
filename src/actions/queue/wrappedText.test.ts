@@ -1,6 +1,6 @@
 import { addCharactersAround } from "./wrappedText.js";
 import { describe, test } from "vitest";
-import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations.js";
 
 describe("Add pre- and postfix", () => {
 	test("adds strikethrough to a normal string", () => {

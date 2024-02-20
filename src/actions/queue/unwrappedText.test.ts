@@ -1,4 +1,4 @@
-import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { describe, test } from "vitest";
 import { removeCharactersAround } from "./unwrappedText.js";
 
