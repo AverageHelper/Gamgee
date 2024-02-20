@@ -136,7 +136,7 @@ describe("Command handler", () => {
 				value: subcommand,
 				options: expect.arrayContaining([]) as Array<unknown>
 			});
-			expectDefined(options[0]?.options);
+			expectDefined(options[0].options);
 			expect(options[0].options).toStrictEqual([
 				{
 					name: key,

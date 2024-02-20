@@ -1,3 +1,8 @@
+/**
+ * Type-safe assertions to use in tests.
+ */
+
+import type { FixedLengthArray } from "type-fest";
 import { expect } from "vitest";
 
 /** Ensure that a value is an `Array`. */
@@ -6,10 +11,10 @@ export function expectArray(actual: unknown): asserts actual is Array<unknown> {
 }
 
 /** Ensure that a value is an `Array` with the given number of elements. */
-export function expectArrayOfLength(
+export function expectArrayOfLength<Length extends number>(
 	actual: unknown,
-	length: number
-): asserts actual is Array<unknown> {
+	length: Length
+): asserts actual is FixedLengthArray<unknown, Length> {
 	expectArray(actual);
 	return expect(actual).toHaveLength(length);
 }
@@ -22,14 +27,6 @@ export function expectDefined<T>(actual: T): asserts actual is Exclude<T, undefi
 /** Checks that a value is the `null` value. */
 export function expectNull(actual: unknown): asserts actual is null {
 	return expect(actual).toBeNull();
-}
-
-/** Checks that a number is positive. */
-export function expectPositive(actual: number): void {
-	expect(actual).not.toBe(true);
-	expect(actual).not.toBeNaN();
-	expect(actual).not.toBe(Number.POSITIVE_INFINITY);
-	expect(actual).toBeGreaterThan(0);
 }
 
 /**
