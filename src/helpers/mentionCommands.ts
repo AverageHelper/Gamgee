@@ -1,6 +1,7 @@
 import type { ApplicationCommand, Guild } from "discord.js";
 import type { Code } from "./composeStrings.js";
 import type { GlobalCommand, GuildedCommand, Subcommand } from "../commands/index.js";
+import { chatInputApplicationCommandMention } from "discord.js";
 import { code } from "./composeStrings.js";
 import { useLogger } from "../logger.js";
 
@@ -47,11 +48,11 @@ type CommandMention = `</${string}:${string}>`;
 type SubcommandMention = `</${string} ${string}:${string}>`;
 
 function mentionAppCommand(command: ApplicationCommand): CommandMention {
-	return `</${command.name}:${command.id}>`;
+	return chatInputApplicationCommandMention(command.name, command.id);
 }
 
 function mentionAppSubcommand(command: ApplicationCommand, subcommand: string): SubcommandMention {
-	return `</${command.name} ${subcommand}:${command.id}>`;
+	return chatInputApplicationCommandMention(command.name, subcommand, command.id);
 }
 
 /**
