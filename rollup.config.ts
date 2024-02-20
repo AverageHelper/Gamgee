@@ -44,13 +44,6 @@ export default defineConfig({
 		visualizer()
 	],
 	onwarn(warning, defaultHandler) {
-		// Ignore "`this` has been rewritten to `undefined`" warnings.
-		// They usually relate to modules that were transpiled from
-		// TypeScript, and check their context by querying the value
-		// of global `this`.
-		// TODO: PR @averagehelper/job-queue to fix this
-		if (warning.code === "THIS_IS_UNDEFINED") return;
-
 		// Ignore "Use of eval is strongly discouraged" warnings from
 		// prisma. Their `eval` calls are fairly tame, though this should
 		// be audited with each update.
