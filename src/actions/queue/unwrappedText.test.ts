@@ -24,21 +24,21 @@ describe("Remove strikethrough", () => {
 	test("does nothing to left-half-stricken text", () => {
 		expectValueEqual(
 			removeCharactersAround("~~not really stricken", "~~"),
-			"~~not really stricken"
+			"~~not really stricken",
 		);
 	});
 
 	test("does nothing to right-half-stricken text", () => {
 		expectValueEqual(
 			removeCharactersAround("not really stricken~~", "~~"),
-			"not really stricken~~"
+			"not really stricken~~",
 		);
 	});
 
 	test("allows a link embed", () => {
 		expectValueEqual(
 			removeCharactersAround("<https://example.com>", "<", ">"),
-			"https://example.com"
+			"https://example.com",
 		);
 	});
 });

@@ -42,7 +42,7 @@ export async function deleteMessage(message: Message | PartialMessage): Promise<
  */
 export async function deleteMessageWithId(
 	messageId: Snowflake,
-	channel: TextChannel
+	channel: TextChannel,
 ): Promise<boolean> {
 	try {
 		await channel.messages.delete(messageId);
@@ -65,7 +65,7 @@ export async function deleteMessageWithId(
  */
 export async function bulkDeleteMessagesWithIds(
 	messageIds: ReadonlyArray<Snowflake>,
-	channel: TextChannel
+	channel: TextChannel,
 ): Promise<boolean> {
 	if (messageIds.length === 0) return true;
 
@@ -89,7 +89,7 @@ export async function bulkDeleteMessagesWithIds(
 
 			// Delete manually
 			const results = await Promise.allSettled(
-				messageIds.map(id => deleteMessageWithId(id, channel))
+				messageIds.map(id => deleteMessageWithId(id, channel)),
 			);
 			const didFailToDeleteSome = results.some(res => res.status === "rejected");
 			if (didFailToDeleteSome) {

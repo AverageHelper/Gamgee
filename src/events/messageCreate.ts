@@ -28,5 +28,5 @@ export const messageCreate = onEvent("messageCreate", {
 			const msgDescription = JSON.stringify(message, undefined, 2);
 			logger.error(richErrorMessage(`Failed to handle message: ${msgDescription}`, error));
 		}
-	}
+	},
 });

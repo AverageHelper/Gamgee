@@ -26,9 +26,9 @@ describe("Bandcamp track details", () => {
 		mockFetchMetadata.mockResolvedValue({
 			jsonld: [
 				{
-					name: "sample"
-				}
-			]
+					name: "sample",
+				},
+			],
 		} as unknown as Result);
 
 		await expect(() => getBandcampTrack(new URL(url))).rejects.toThrow(VideoError);
@@ -46,15 +46,15 @@ describe("Bandcamp track details", () => {
 				jsonld: [
 					{
 						name: "sample",
-						duration: `0H${Math.floor(duration / 60)}M${duration % 60}S`
-					}
-				]
+						duration: `0H${Math.floor(duration / 60)}M${duration % 60}S`,
+					},
+				],
 			} as unknown as Result);
 
 			const details = await getBandcampTrack(new URL(url));
 			expectValueEqual(details.url, url);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		}
+		},
 	);
 });

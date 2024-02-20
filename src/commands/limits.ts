@@ -37,9 +37,9 @@ export const limits: Command = {
 			.setDescription(
 				ti(
 					"commands.limits.responses.use-cooldown-cmd",
-					{ cooldown: code(`/${cooldownName}`) },
-					locale
-				)
+					{ cooldown: code(`/${cooldownName}`) }, // TODO: Try mentioning the command here
+					locale,
+				),
 			);
 
 		allLimits(locale).forEach(key => {
@@ -88,5 +88,5 @@ export const limits: Command = {
 		});
 
 		await reply({ embeds: [embed], ephemeral: true });
-	}
+	},
 };

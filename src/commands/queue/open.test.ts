@@ -40,12 +40,12 @@ describe("Open the Queue", () => {
 			logger: useTestLogger(),
 			reply: mockReply,
 			deleteInvocation: mockDeleteInvocation,
-			followUp: mockFollowUp
+			followUp: mockFollowUp,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel",
-			send: mockChannelSend
+			send: mockChannelSend,
 		} as unknown as TextChannel);
 		mockIsQueueOpen.mockResolvedValue(true);
 		mockSetQueueOpen.mockResolvedValue(undefined);
@@ -78,8 +78,8 @@ describe("Open the Queue", () => {
 		expect(mockFollowUp).toHaveBeenCalledWith(
 			expect.objectContaining({
 				content: expect.stringContaining("now open") as string,
-				reply: false
-			})
+				reply: false,
+			}),
 		);
 	});
 });

@@ -21,8 +21,8 @@ export const video: Command = {
 			description: "A song link from a supported platform",
 			descriptionLocalizations: localizations("commands.sr.options.url.description"),
 			type: ApplicationCommandOptionType.String,
-			required: true
-		}
+			required: true,
+		},
 	],
 	requiresGuild: false,
 	async execute({
@@ -32,13 +32,13 @@ export const video: Command = {
 		userLocale,
 		type,
 		reply,
-		prepareForLongRunningTasks
+		prepareForLongRunningTasks,
 	}) {
 		const firstOption = options[0];
 		if (!firstOption) {
 			return await reply({
 				content: t("commands.video.responses.include-link", userLocale),
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 		const escapedSongUrlString = resolveStringFromOption(firstOption).trim();
@@ -52,7 +52,7 @@ export const video: Command = {
 			type === "interaction"
 				? `[${t(
 						"commands.video.responses.supported-platform",
-						userLocale
+						userLocale,
 					)}](<${supportedPlatformsList}>)`
 				: t("commands.video.responses.supported-platform", userLocale);
 
@@ -64,9 +64,9 @@ export const video: Command = {
 					content: ti(
 						"commands.video.responses.no-info",
 						{ "supported-platform": supportedPlatform },
-						userLocale
+						userLocale,
 					),
-					ephemeral: true
+					ephemeral: true,
 				});
 			}
 
@@ -94,5 +94,5 @@ export const video: Command = {
 			logger.error(richErrorMessage(`Failed to run query for URL: ${urlString}`, error));
 			return await reply(t("commands.video.responses.generic-fetch-error", guildLocale));
 		}
-	}
+	},
 };

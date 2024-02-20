@@ -49,15 +49,15 @@ describe("Pony.FM track details", () => {
 				JSON.stringify({
 					title: "sample",
 					duration: `${duration}`,
-					url: test1
-				})
-			)
+					url: test1,
+				}),
+			),
 		);
 
 		const details = await getPonyFmTrack(new URL(url));
 		expectValueEqual(
 			details.url,
-			"https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine"
+			"https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine",
 		);
 		expectDefined(details.duration.seconds);
 		expectValueEqual(details.duration.seconds, duration);

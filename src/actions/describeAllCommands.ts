@@ -14,7 +14,7 @@ const INDENT = "    ";
 
 function localizedDescription(
 	cmd: Pick<Command, "description" | "descriptionLocalizations">,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): string {
 	const defaultDescription = cmd.description;
 	if (cmd.descriptionLocalizations) {
@@ -38,7 +38,7 @@ function isSubcommand(tbd: ApplicationCommandOption | Subcommand): tbd is Subcom
 export async function describeAllCommands(
 	context: InteractionCommandContext,
 	commands: ReadonlyMap<string, Command>,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): Promise<string> {
 	// Describe all commands
 	const description = createPartialString();

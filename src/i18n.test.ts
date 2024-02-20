@@ -10,27 +10,27 @@ describe("i18n", () => {
 		de: {
 			commands: {
 				sr: {
-					name: "sr"
-				}
+					name: "sr",
+				},
 			},
 			test: {
-				nonempty: ""
-			}
+				nonempty: "",
+			},
 		},
 		"en-US": {
 			commands: {
 				sr: {
-					name: "sr"
-				}
+					name: "sr",
+				},
 			},
 			test: {
 				empty: "",
 				nonempty,
 				only: {
-					english: onlyInEnglish
-				}
-			}
-		}
+					english: onlyInEnglish,
+				},
+			},
+		},
 	};
 
 	describe("t", () => {
@@ -86,7 +86,7 @@ describe("i18n", () => {
 				"es-ES": "sr",
 				fr: "sr",
 				hu: "sr",
-				"pt-BR": "sr"
+				"pt-BR": "sr",
 			});
 			expect(localizations("commands.sr.description")).toMatchObject({
 				de: "Senden Sie einen Song an die Warteschlange.",
@@ -95,7 +95,7 @@ describe("i18n", () => {
 				"es-ES": "Envía una canción a la cola.",
 				fr: "Soumets une chanson à la file d'attente.",
 				hu: "Beküld egy dalt a sorba.",
-				"pt-BR": "Envie uma música para a fila."
+				"pt-BR": "Envie uma música para a fila.",
 			});
 		});
 

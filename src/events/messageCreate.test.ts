@@ -23,14 +23,14 @@ describe("messageCreate", () => {
 			partial: false,
 			client: {
 				user: {
-					id: "me"
-				}
+					id: "me",
+				},
 			},
 			author: {
-				id: "not-me"
+				id: "not-me",
 			},
 			type: MessageType.Default,
-			fetch: mockMessageFetch
+			fetch: mockMessageFetch,
 		} as unknown as Message;
 		mockMessageFetch.mockResolvedValue(message);
 	});
@@ -78,7 +78,7 @@ describe("messageCreate", () => {
 		["GuildDiscoveryRequalified", MessageType.GuildDiscoveryRequalified],
 		[
 			"GuildDiscoveryGracePeriodInitialWarning",
-			MessageType.GuildDiscoveryGracePeriodInitialWarning
+			MessageType.GuildDiscoveryGracePeriodInitialWarning,
 		],
 		["GuildDiscoveryGracePeriodFinalWarning", MessageType.GuildDiscoveryGracePeriodFinalWarning],
 		["ThreadCreated", MessageType.ThreadCreated],
@@ -86,7 +86,7 @@ describe("messageCreate", () => {
 		["ChatInputCommand", MessageType.ChatInputCommand],
 		["ThreadStarterMessage", MessageType.ThreadStarterMessage],
 		["GuildInviteReminder", MessageType.GuildInviteReminder],
-		["ContextMenuCommand", MessageType.ContextMenuCommand]
+		["ContextMenuCommand", MessageType.ContextMenuCommand],
 	] as const;
 
 	for (const [typeName, type] of allTypes) {

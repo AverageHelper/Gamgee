@@ -19,7 +19,7 @@ const TEST_CHANNEL_ID: Snowflake = requireEnv("CHANNEL_ID");
 async function sendMessage(
 	client: Client<true>,
 	content: string,
-	channelId: Snowflake = TEST_CHANNEL_ID
+	channelId: Snowflake = TEST_CHANNEL_ID,
 ): Promise<Message> {
 	const channel = await client.channels.fetch(channelId);
 	if (!channel?.isTextBased()) throw new Error(`Channel ${channelId} is not a text channel.`);
@@ -40,7 +40,7 @@ async function sendMessage(
  */
 export async function sendMessageWithDefaultClient(
 	content: string,
-	channelId: Snowflake = TEST_CHANNEL_ID
+	channelId: Snowflake = TEST_CHANNEL_ID,
 ): Promise<void> {
 	await useTesterClient(async client => {
 		await sendMessage(client, content, channelId);
@@ -62,7 +62,7 @@ export async function sendMessageWithDefaultClient(
  */
 export async function sendCommandWithDefaultClient(
 	name: string,
-	channelId: Snowflake = TEST_CHANNEL_ID
+	channelId: Snowflake = TEST_CHANNEL_ID,
 ): Promise<void> {
 	await useTesterClient(async client => {
 		await sendMessage(client, `${COMMAND_PREFIX}${name}`, channelId);
@@ -86,7 +86,7 @@ export async function sendCommandWithDefaultClient(
 export async function sendCommand(
 	client: Client<true>,
 	name: string,
-	channelId: Snowflake = TEST_CHANNEL_ID
+	channelId: Snowflake = TEST_CHANNEL_ID,
 ): Promise<Message> {
 	return await sendMessage(client, `${COMMAND_PREFIX}${name}`, channelId);
 }

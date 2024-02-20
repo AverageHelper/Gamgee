@@ -5,7 +5,7 @@ import { getUserFromMention } from "./getUserFromMention.js";
 
 export async function resolveUserFromOption(
 	option: CommandInteractionOption,
-	guild: Guild
+	guild: Guild,
 ): Promise<User | null> {
 	if (option.type === ApplicationCommandOptionType.User) {
 		return option.user ?? null;
@@ -18,7 +18,7 @@ export async function resolveUserFromOption(
 
 export function resolveChannelFromOption(
 	option: CommandInteractionOption<"cached">,
-	guild: Guild
+	guild: Guild,
 ): GuildBasedChannel | null {
 	if (option.type === ApplicationCommandOptionType.Channel) {
 		const channel = option.channel;

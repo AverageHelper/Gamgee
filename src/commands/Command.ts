@@ -4,7 +4,7 @@ import type {
 	ApplicationCommandSubCommandData,
 	ApplicationCommandType,
 	ChatInputApplicationCommandData,
-	Guild
+	Guild,
 } from "discord.js";
 import type { CommandContext, GuildedCommandContext } from "./CommandContext.js";
 import type { CommandPermission, PermissionAlias } from "./CommandPermission.js";
@@ -15,7 +15,7 @@ export * from "./CommandPermission.js";
 export type PermissionAliasList = ReadonlyArray<PermissionAlias>;
 
 export type PermissionGenerator = (
-	guild: Guild
+	guild: Guild,
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
 interface BaseCommand

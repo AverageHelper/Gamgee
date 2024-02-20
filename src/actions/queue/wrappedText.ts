@@ -10,7 +10,7 @@
 export function addCharactersAround(
 	straightText: string,
 	prefix: string,
-	postfix?: string
+	postfix?: string,
 ): string {
 	if (!straightText) return straightText;
 	if (straightText.startsWith(prefix) && straightText.endsWith(postfix ?? prefix))

@@ -24,7 +24,7 @@ const namedSubcommands: NonEmptyArray<Subcommand> = [
 	close,
 	limit,
 	stats,
-	restart
+	restart,
 ];
 
 export const quo: GuildedCommand = {
@@ -41,7 +41,7 @@ export const quo: GuildedCommand = {
 		if (!firstOption) {
 			const COMMAND_PREFIX = await getCommandPrefix(context.guild);
 			const response = createPartialString(
-				t("commands.queue-admin.responses.list-possible-subcommands", locale)
+				t("commands.queue-admin.responses.list-possible-subcommands", locale),
 			);
 			for (const command of namedSubcommands) {
 				pushNewLine(response);
@@ -62,21 +62,21 @@ export const quo: GuildedCommand = {
 			} possible subcommands for one named '${arg}': ${JSON.stringify(
 				namedSubcommands.map(c => c.name),
 				undefined,
-				2
-			)}`
+				2,
+			)}`,
 		);
 		for (const command of namedSubcommands) {
 			if (command.name === arg) {
 				const subcommandContext = {
 					...context,
-					options: argOptions.slice()
+					options: argOptions.slice(),
 				};
 				context.logger.debug(
 					`Handling subcommand '${command.name}' with options: ${JSON.stringify(
 						context.options,
 						undefined,
-						2
-					)}`
+						2,
+					)}`,
 				);
 				return await invokeCommand(command, subcommandContext);
 			}
@@ -84,7 +84,7 @@ export const quo: GuildedCommand = {
 
 		const COMMAND_PREFIX = await getCommandPrefix(context.guild);
 		const response = createPartialString(
-			t("commands.queue-admin.responses.list-possible-subcommands", locale)
+			t("commands.queue-admin.responses.list-possible-subcommands", locale),
 		);
 		for (const command of namedSubcommands) {
 			pushNewLine(response);
@@ -92,5 +92,5 @@ export const quo: GuildedCommand = {
 			push(mentionSubcommand(quo, command, context.guild, COMMAND_PREFIX), response);
 		}
 		return await context.reply(composed(response));
-	}
+	},
 };

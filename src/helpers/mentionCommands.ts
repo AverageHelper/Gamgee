@@ -17,7 +17,7 @@ const deployedGlobalCommands = new Map<string, ApplicationCommand>();
  */
 export function rememberDeploymentForGlobalCommand(
 	command: GlobalCommand,
-	deployment: ApplicationCommand
+	deployment: ApplicationCommand,
 ): void {
 	logger.debug(`Global command /${command.name}, id: '${deployment.id}'`);
 	deployedGlobalCommands.set(command.name, deployment);
@@ -33,7 +33,7 @@ export function rememberDeploymentForGlobalCommand(
 export function rememberDeploymentForCommandInGuild(
 	command: GuildedCommand,
 	guildId: string,
-	deployment: ApplicationCommand
+	deployment: ApplicationCommand,
 ): void {
 	logger.debug(`Guild '${guildId}' command /${command.name}, id: '${deployment.id}'`);
 	const commandsInGuild = new Map(deployedGuildCommands.get(guildId));
@@ -65,7 +65,7 @@ function mentionAppSubcommand(command: ApplicationCommand, subcommand: string): 
  */
 export function mentionCommand<P extends string>(
 	command: GlobalCommand,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): CommandMention | Code<`${P}${string}`>;
 
 /**
@@ -81,7 +81,7 @@ export function mentionCommand<P extends string>(
 export function mentionCommand<P extends string>(
 	command: GuildedCommand,
 	guild: Guild | null,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): CommandMention | Code<`${P}${string}`>;
 
 export function mentionCommand<P extends string>(
@@ -127,7 +127,7 @@ export function mentionSubcommand<P extends string>(
 	command: GuildedCommand,
 	subcommand: Subcommand,
 	guild: Guild | null,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): SubcommandMention | Code<`${P}${string}`> {
 	const guildCommands = guild ? deployedGuildCommands.get(guild.id) : undefined;
 	const cached = guildCommands?.get(command.name);

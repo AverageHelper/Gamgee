@@ -21,7 +21,7 @@ async function getQueueChannelFromCommand(context: CommandContext): Promise<Text
 	} catch (error) {
 		logger.error(richErrorMessage("Failed to fetch queue channel.", error));
 		await context.reply(
-			"The configured channel doesn't exist. Have an administrator set the queue back up."
+			"The configured channel doesn't exist. Have an administrator set the queue back up.",
 		);
 		return null;
 	}
@@ -31,7 +31,7 @@ async function getQueueChannelFromCommand(context: CommandContext): Promise<Text
 	if (!queueChannel.isTextBased()) {
 		logger.error("The configured channel is not a text channel.");
 		await context.reply(
-			"The configured channel is not a text channel. Have an administrator set up the queue again."
+			"The configured channel is not a text channel. Have an administrator set up the queue again.",
 		);
 		return null;
 	}
@@ -73,7 +73,7 @@ async function getQueueChannelFromGuild(guild: Guild): Promise<TextChannel | nul
  * @returns the guild's queue channel, or `null` if it has none.
  */
 export async function getQueueChannel(
-	source: CommandContext | Guild | null
+	source: CommandContext | Guild | null,
 ): Promise<TextChannel | null> {
 	if (!source) return null;
 	if ("type" in source) return await getQueueChannelFromCommand(source);

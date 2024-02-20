@@ -6,7 +6,7 @@ import type {
 	MessageCreateOptions,
 	MessageReplyOptions,
 	TextBasedChannel,
-	User
+	User,
 } from "discord.js";
 import { channelMention, ChannelType, DiscordAPIError } from "discord.js";
 import { composed, createPartialString, push, pushNewLine } from "../../helpers/composeStrings.js";
@@ -35,7 +35,7 @@ export async function sendPrivately(user: User, content: string): Promise<Messag
 	if (user.bot && user.id === getEnv("CORDE_BOT_ID")) {
 		// this is our known tester
 		logger.error(
-			`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`
+			`I'm sure ${user.username} is a nice person, but I should not send DMs to a bot. I don't know how to report this.`,
 		);
 		return null;
 	} else if (!user.bot) {
@@ -59,7 +59,7 @@ async function sendDM(user: User, content: string | MessageCreateOptions): Promi
 		return await user.send(content);
 	} catch (error) {
 		logger.error(
-			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error),
 		);
 		return null;
 	}
@@ -68,7 +68,7 @@ async function sendDM(user: User, content: string | MessageCreateOptions): Promi
 function replyMessage(
 	source: TextBasedChannel | null,
 	content: string | null | undefined,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): string {
 	const msg = createPartialString();
 	if (source && source.type !== ChannelType.DM) {
@@ -84,7 +84,7 @@ function replyMessage(
 async function sendDMReply(
 	source: Message,
 	options: string | MessageReplyOptions,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): Promise<Message | null> {
 	const user: User = source.author;
 	try {
@@ -94,12 +94,12 @@ async function sendDMReply(
 
 			if (typeof options === "string") {
 				return await reply(source, {
-					content: `(DM to <@!${user.id}>)\n${options}`
+					content: `(DM to <@!${user.id}>)\n${options}`,
 				});
 			}
 			return await reply(source, {
 				...options,
-				content: `(DM to <@!${user.id}>)\n${options.content ?? ""}`
+				content: `(DM to <@!${user.id}>)\n${options.content ?? ""}`,
 			});
 		} else if (!user.bot) {
 			logger.silly("This is a human. Or their dog... I love dogs!");
@@ -111,12 +111,12 @@ async function sendDMReply(
 			return await sendDM(user, { ...options, content: response });
 		}
 		logger.error(
-			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`
+			`I'm sure ${user.username} is a nice person, but they are a bot. I should not send DMs to a bot. I don't know how to report this to you, so here's an error!`,
 		);
 		return null;
 	} catch (error) {
 		logger.error(
-			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error)
+			richErrorMessage(`Failed to send direct message to user ${logUser(user)}.`, error),
 		);
 		return null;
 	}
@@ -124,7 +124,7 @@ async function sendDMReply(
 
 async function sendEphemeralReply(
 	source: CommandInteraction,
-	options: string | InteractionReplyOptions
+	options: string | InteractionReplyOptions,
 ): Promise<boolean> {
 	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
@@ -134,7 +134,7 @@ async function sendEphemeralReply(
 			await source.reply({ ...options, ephemeral: true });
 		}
 		logger.verbose(
-			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`
+			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`,
 		);
 		return true;
 	} catch (error) {
@@ -162,7 +162,7 @@ export async function replyPrivately(
 	options: string | Omit<MessageCreateOptions, "reply" | "flags">,
 	preferDMs: boolean,
 	userLocale: SupportedLocale,
-	guildLocale: SupportedLocale
+	guildLocale: SupportedLocale,
 ): Promise<Message | boolean> {
 	let message: Message | null;
 
@@ -177,7 +177,7 @@ export async function replyPrivately(
 		} else {
 			message = await sendDM(source.user, {
 				...options,
-				content: replyMessage(source.channel, options.content, userLocale)
+				content: replyMessage(source.channel, options.content, userLocale),
 			});
 		}
 
@@ -193,16 +193,16 @@ export async function replyPrivately(
 			// TODO: Tried to DM about what? Be more specific
 			// FIXME: DMs-disabled isn't always the reason for this error
 			await source.channel?.send(
-				`<@!${source.author.id}> ${t("common.dm-failed-disabled", guildLocale)} :slight_frown:`
+				`<@!${source.author.id}> ${t("common.dm-failed-disabled", guildLocale)} :slight_frown:`,
 			);
 		} else if (typeof options === "string") {
 			return await sendEphemeralReply(source, {
-				content: `${t("common.dm-failed-disabled", userLocale)}\n${options}`
+				content: `${t("common.dm-failed-disabled", userLocale)}\n${options}`,
 			});
 		} else {
 			return await sendEphemeralReply(source, {
 				...options,
-				content: `${t("common.dm-failed-disabled", userLocale)}\n${options.content ?? ""}`
+				content: `${t("common.dm-failed-disabled", userLocale)}\n${options.content ?? ""}`,
 			});
 		}
 		return false;
@@ -219,7 +219,7 @@ export async function replyPrivately(
  */
 export async function sendMessageInChannel(
 	channel: TextBasedChannel,
-	content: string | MessageCreateOptions
+	content: string | MessageCreateOptions,
 ): Promise<Message | null> {
 	try {
 		return await channel.send(content);
@@ -242,7 +242,7 @@ export async function sendMessageInChannel(
 export async function reply(
 	message: Message,
 	content: string | MessageReplyOptions,
-	shouldMention: boolean = true
+	shouldMention: boolean = true,
 ): Promise<Message | null> {
 	try {
 		if (shouldMention) {
@@ -255,7 +255,7 @@ export async function reply(
 	} catch (error) {
 		if (error instanceof DiscordAPIError && error.message.includes("message_reference")) {
 			logger.debug(
-				`The message ${message.id} must have been deleted. Sending reply in same channel.`
+				`The message ${message.id} must have been deleted. Sending reply in same channel.`,
 			);
 			return await sendMessageInChannel(message.channel, content);
 		}

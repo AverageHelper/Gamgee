@@ -8,7 +8,7 @@ import {
 	hugs,
 	philosophy,
 	phrases,
-	questions
+	questions,
 } from "../constants/textResponses.js";
 
 const logger = useLogger();
@@ -64,7 +64,7 @@ export async function unwrappingWith(
 	context: ResponseContext,
 	response: Response,
 	handler: (response: string) => unknown,
-	pauseTime: number = 1000
+	pauseTime: number = 1000,
 ): Promise<void> {
 	if (typeof response === "string") {
 		// It's just a string

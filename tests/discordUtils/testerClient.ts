@@ -40,14 +40,14 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.GuildMessageTyping
+		GatewayIntentBits.GuildMessageTyping,
 	],
 	partials: [Partials.Reaction, Partials.Channel, Partials.Message],
 	allowedMentions: {
 		parse: ["roles"],
 		repliedUser: true,
-		users: [requireEnv("BOT_TEST_ID")]
-	}
+		users: [requireEnv("BOT_TEST_ID")],
+	},
 });
 
 client.on("messageCreate", useDispatchLoop(messageWaiters));

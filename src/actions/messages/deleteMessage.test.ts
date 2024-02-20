@@ -7,7 +7,7 @@ const mockBulkDelete = vi.fn();
 const mockSingleDelete = vi.fn();
 
 vi.mock("../../logger.js", async () => ({
-	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger
+	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger,
 }));
 
 describe("Single Message Delete", () => {
@@ -16,11 +16,11 @@ describe("Single Message Delete", () => {
 
 	beforeEach(() => {
 		channel = {
-			type: ChannelType.GuildText
+			type: ChannelType.GuildText,
 		} as unknown as TextChannel;
 		message = {
 			delete: mockSingleDelete,
-			channel
+			channel,
 		} as unknown as Message;
 	});
 
@@ -50,8 +50,8 @@ describe("Bulk Message Delete", () => {
 		channel = {
 			bulkDelete: mockBulkDelete,
 			messages: {
-				delete: mockSingleDelete
-			}
+				delete: mockSingleDelete,
+			},
 		} as unknown as TextChannel;
 
 		mockBulkDelete.mockImplementation((ids: ReadonlyArray<string>) => {
@@ -82,7 +82,7 @@ describe("Bulk Message Delete", () => {
 
 			expect(mockBulkDelete).toHaveBeenCalledTimes(multiples);
 			expect(mockSingleDelete).toHaveBeenCalledTimes(singles);
-		}
+		},
 	);
 
 	test("returns false when bulk deletion fails for an unknown reason", async () => {
@@ -99,7 +99,7 @@ describe("Bulk Message Delete", () => {
 		400,
 		"DELETE",
 		"https://example.com",
-		{}
+		{},
 	);
 
 	test("falls back on individual deletions when queue contains messages older than 14 days", async () => {

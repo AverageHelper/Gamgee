@@ -24,7 +24,7 @@ describe("Video details", () => {
 	const details: VideoDetails = {
 		duration: { seconds: 5 },
 		title: "Sample",
-		url: validUrl
+		url: validUrl,
 	};
 
 	beforeEach(() => {
@@ -67,7 +67,7 @@ describe("Video details", () => {
 		["Bandcamp custom-domain", "https://forestrainmedia.com/track/bad-wolf"],
 		["SoundCloud", "https://soundcloud.com/hwps/no999"],
 		["YouTube", "https://youtu.be/9RAQsdTQIcs"],
-		["Pony.fm", "https://pony.fm/t46025"]
+		["Pony.fm", "https://pony.fm/t46025"],
 	] as const;
 	test.each(urls)("strips extra info from a %s URL", async (_, url) => {
 		const dirtyUrl = `${url} Text and stuff`;

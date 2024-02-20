@@ -20,7 +20,7 @@ export const userinfo: Command = {
 				: ti(
 						"commands.userinfo.responses.unsupported",
 						{ default: code(DEFAULT_LOCALE) },
-						userLocale
+						userLocale,
 					)
 			: ti("commands.userinfo.responses.assume", { default: code(DEFAULT_LOCALE) }, userLocale);
 
@@ -30,16 +30,16 @@ export const userinfo: Command = {
 			response = `${ti(
 				"commands.userinfo.responses.statement",
 				{ ulocale, therefore, glocale },
-				userLocale
+				userLocale,
 			)}`;
 		} else {
 			response = `${ti(
 				"commands.userinfo.responses.statement-sans-guild",
 				{ ulocale, therefore },
-				userLocale
+				userLocale,
 			)}`;
 		}
 
 		await replyPrivately(response);
-	}
+	},
 };

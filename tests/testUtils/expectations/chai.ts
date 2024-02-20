@@ -8,7 +8,7 @@ export function expectArray(actual: unknown): asserts actual is Array<unknown> {
 /** Ensure that a value is an `Array` with the given number of elements. */
 export function expectArrayOfLength(
 	actual: unknown,
-	length: number
+	length: number,
 ): asserts actual is Array<unknown> {
 	expectArray(actual);
 	expect(actual).to.have.lengthOf(length);
@@ -49,7 +49,7 @@ export function expectPositive(actual: number): void {
  */
 export function expectToContain<T>(
 	container: ReadonlyArray<T> | string | null | undefined,
-	expected: T
+	expected: T,
 ): void {
 	expect(container).to.contain(expected);
 }
@@ -62,7 +62,7 @@ export function expectUndefined(actual: unknown): asserts actual is undefined {
 /** Checks that a value is what you expect. */
 export function expectValueEqual<T extends string | number | boolean>(
 	actual: unknown,
-	expected: T
+	expected: T,
 ): asserts actual is T {
 	expect(actual).to.equal(expected);
 }

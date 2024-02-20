@@ -4,7 +4,7 @@ import { beforeEach, describe, test, vi } from "vitest";
 import {
 	expectDefined,
 	expectPositive,
-	expectValueEqual
+	expectValueEqual,
 } from "../../../tests/testUtils/expectations/vitest.js";
 
 // Mock fetch
@@ -24,7 +24,7 @@ const MockSoundCloudClient = vi.hoisted(
 	() =>
 		class MockSoundCloudClient {
 			getSongInfo = mockGetSongInfo;
-		}
+		},
 );
 
 vi.mock("soundcloud-scraper", () => ({ Client: MockSoundCloudClient }));
@@ -62,14 +62,14 @@ describe("SoundCloud track details", () => {
 			mockGetSongInfo.mockResolvedValue({
 				url: cleanUrl.href,
 				title: "sample",
-				duration: duration * 1000
+				duration: duration * 1000,
 			} as unknown as Song);
 
 			const details = await getSoundCloudTrack(new URL(url));
 			expectValueEqual(details.url, result);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		}
+		},
 	);
 
 	test.each`
@@ -84,12 +84,12 @@ describe("SoundCloud track details", () => {
 			mockGetSongInfo.mockResolvedValue({
 				url: result,
 				title: "sample",
-				duration: 5_000 // sample
+				duration: 5_000, // sample
 			} as unknown as Song);
 
 			const details = await getSoundCloudTrack(new URL(url));
 			expectValueEqual(details.url, result);
 			expectPositive(details.duration.seconds);
-		}
+		},
 	);
 });

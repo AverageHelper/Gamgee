@@ -11,7 +11,7 @@ import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
 	getStoredQueueConfig,
-	type QueueEntry
+	type QueueEntry,
 } from "../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
 	Parameters<typeof countAllStoredEntriesFromSender>,
@@ -66,8 +66,8 @@ mockGetVideoDetails.mockImplementation(async url => {
 		url: typeof url === "string" ? url : url.href,
 		title: "video-title",
 		duration: {
-			seconds: 500
-		}
+			seconds: 500,
+		},
 	};
 });
 
@@ -92,7 +92,7 @@ describe("Song request via URL", () => {
 		new URL("https://youtu.be/NUYvbT6vTPs"),
 		new URL("https://youtu.be/aekVhtK9yuQ"),
 		new URL("https://youtu.be/BwyY5LdpECA"),
-		new URL("https://youtu.be/7btMEX3kAPo")
+		new URL("https://youtu.be/7btMEX3kAPo"),
 	];
 	const botId = "this-user";
 
@@ -113,7 +113,7 @@ describe("Song request via URL", () => {
 
 	const queueChannel = {
 		id: "queue-channel-123",
-		name: "queue"
+		name: "queue",
 	} as unknown as TextChannel;
 	mockGetQueueChannel.mockResolvedValue(queueChannel);
 
@@ -124,16 +124,16 @@ describe("Song request via URL", () => {
 		queueDurationSeconds: null,
 		submissionMaxQuantity: null,
 		channelId: "",
-		entryDurationMinSeconds: null
+		entryDurationMinSeconds: null,
 	});
 
 	const mockClient: Client<true> = {
-		user: { id: botId }
+		user: { id: botId },
 	} as unknown as Client<true>;
 
 	function mockMessage(senderId: string, content: string): Message {
 		const mockSenderMember: GuildMember = {
-			user: { id: senderId }
+			user: { id: senderId },
 		} as unknown as GuildMember;
 
 		return {
@@ -141,7 +141,7 @@ describe("Song request via URL", () => {
 			author: {
 				bot: false,
 				id: mockSenderMember.user.id,
-				username: senderId
+				username: senderId,
 			},
 			createdAt: new Date(),
 			client: mockClient,
@@ -149,7 +149,7 @@ describe("Song request via URL", () => {
 			reply: mockReply,
 			channel: {
 				id: "request-channel-456",
-				send: mockChannelSend
+				send: mockChannelSend,
 			},
 			guild: {
 				members: {
@@ -161,10 +161,10 @@ describe("Song request via URL", () => {
 								} else if (userId === botId) {
 									return resolve(mockClient);
 								}
-							})
-					)
-				}
-			}
+							}),
+					),
+				},
+			},
 		} as unknown as Message;
 	}
 
@@ -182,7 +182,7 @@ describe("Song request via URL", () => {
 				reply: mockReply,
 				replyPrivately: mockReplyPrivately,
 				deleteInvocation: mockDeleteMessage,
-				followUp: mockFollowUp
+				followUp: mockFollowUp,
 			} as unknown as GuildedCommandContext;
 
 			await songRequest.execute(context);
@@ -209,7 +209,7 @@ describe("Song request via URL", () => {
 				isDone: false,
 				haveCalledNowPlaying: [],
 				guildId: "",
-				channelId: ""
+				channelId: "",
 			};
 			mockGetLatestStoredEntryFromSender.mockResolvedValueOnce(entry);
 			mockCountAllStoredEntriesFromSender.mockResolvedValueOnce(1);
@@ -225,15 +225,15 @@ describe("Song request via URL", () => {
 				{
 					name: "url",
 					value: urls[0].href,
-					type: ApplicationCommandOptionType.String
-				}
+					type: ApplicationCommandOptionType.String,
+				},
 			],
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
 			deleteInvocation: mockDeleteMessage,
-			followUp: mockFollowUp
+			followUp: mockFollowUp,
 		} as unknown as GuildedCommandContext;
 		const context2 = {
 			...context1,
@@ -241,12 +241,12 @@ describe("Song request via URL", () => {
 				{
 					name: "url",
 					value: urls[1].href,
-					type: ApplicationCommandOptionType.String
-				}
+					type: ApplicationCommandOptionType.String,
+				},
 			],
 			user: mockMessage2.author,
 			guild: mockMessage2.guild,
-			channel: mockMessage2.channel
+			channel: mockMessage2.channel,
 		} as unknown as GuildedCommandContext;
 
 		// Request a song twice in quick succession
@@ -260,7 +260,7 @@ describe("Song request via URL", () => {
 		expect(mockQueuePush).toHaveBeenCalledOnce();
 		expect(mockQueuePush).toHaveBeenCalledWith(
 			expect.objectContaining({ url: urls[0].href }),
-			queueChannel
+			queueChannel,
 		);
 
 		// The submission should have been rejected with a cooldown warning via DMs
@@ -287,12 +287,12 @@ describe("Song request via URL", () => {
 							.map(url => ({
 								name: "url",
 								value: url,
-								type: ApplicationCommandOptionType.String
+								type: ApplicationCommandOptionType.String,
 							})),
 						guild: message.guild,
 						channel: message.channel,
 						interaction: {
-							editReply: mockEditReply
+							editReply: mockEditReply,
 						},
 						user: message.author,
 						createdTimestamp: new Date(),
@@ -300,10 +300,10 @@ describe("Song request via URL", () => {
 						prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 						reply: mockReply,
 						replyPrivately: mockReplyPrivately,
-						followUp: mockFollowUp
+						followUp: mockFollowUp,
 					} as unknown as GuildedCommandContext;
 				})
-				.map(songRequest.execute)
+				.map(songRequest.execute),
 		]);
 
 		// Wait for handles to close
@@ -315,9 +315,9 @@ describe("Song request via URL", () => {
 				i + 1,
 				expect.objectContaining({
 					url: url.href,
-					senderId: `user-${i + 1}`
+					senderId: `user-${i + 1}`,
 				}),
-				queueChannel
+				queueChannel,
 			);
 		});
 		expect(mockQueuePush).toHaveBeenCalledTimes(10);

@@ -5,7 +5,7 @@ describe("Args parser", () => {
 	test("defaults both flags to `false`", () => {
 		expect(parseArgs()).toMatchObject({
 			deploy: false,
-			revoke: false
+			revoke: false,
 		});
 	});
 });

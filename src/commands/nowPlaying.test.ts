@@ -51,7 +51,7 @@ describe("Now-Playing", () => {
 			user: { id: "the user" },
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
-			deleteInvocation: mockDeleteMessage
+			deleteInvocation: mockDeleteMessage,
 		} as unknown as GuildedCommandContext;
 
 		mockGetAllStoredEntries.mockResolvedValue([]);
@@ -91,7 +91,7 @@ describe("Now-Playing", () => {
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("nothing"));
-		}
+		},
 	);
 
 	test.each`
@@ -110,9 +110,9 @@ describe("Now-Playing", () => {
 				messages: {
 					fetch: vi.fn().mockResolvedValue({
 						id: "queue message id",
-						edit: vi.fn().mockResolvedValue(undefined)
-					})
-				}
+						edit: vi.fn().mockResolvedValue(undefined),
+					}),
+				},
 			} as unknown as TextChannel);
 
 			await expect(nowPlaying.execute(context)).resolves.toBeUndefined();
@@ -123,6 +123,6 @@ describe("Now-Playing", () => {
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("first!"), true);
 			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("<@me>"), true);
-		}
+		},
 	);
 });

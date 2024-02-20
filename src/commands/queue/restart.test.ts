@@ -48,7 +48,7 @@ describe("Clear queue contents", () => {
 			logger,
 			guild: "the guild",
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
-			reply: mockReply
+			reply: mockReply,
 		} as unknown as GuildedCommandContext;
 
 		mockGetAllStoredEntries.mockResolvedValue([]);
@@ -78,15 +78,15 @@ describe("Clear queue contents", () => {
 			const queueEntries = [
 				{ queueMessageId: "message1" } as unknown as QueueEntry,
 				{ queueMessageId: "message2" } as unknown as QueueEntry,
-				{ queueMessageId: "message3" } as unknown as QueueEntry
+				{ queueMessageId: "message3" } as unknown as QueueEntry,
 			];
 			mockGetQueueChannel.mockResolvedValue(queueChannel);
 			mockGetAllStoredEntries.mockResolvedValue(queueEntries);
 			context = {
 				...context,
 				channel: {
-					id: channelId
-				} as unknown as TextChannel
+					id: channelId,
+				} as unknown as TextChannel,
 			};
 
 			await expect(restart.execute(context)).resolves.toBeUndefined();
@@ -102,10 +102,10 @@ describe("Clear queue contents", () => {
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledOnce();
 			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledWith(
 				queueEntries.map(entry => entry.queueMessageId),
-				queueChannel
+				queueChannel,
 			);
 			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledOnce();
-		}
+		},
 	);
 
 	test("Does not clear the database when clearing messages fails", async () => {

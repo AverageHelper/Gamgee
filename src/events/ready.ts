@@ -48,5 +48,5 @@ export const ready = onEvent("ready", {
 		}
 
 		logger.info("Ready!");
-	}
+	},
 });

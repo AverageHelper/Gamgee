@@ -6,7 +6,7 @@ import { ChannelType } from "discord.js";
 const mockAllCommands = vi.hoisted(() => new Map<string, Command>());
 
 vi.mock("./commands/index.js", () => ({
-	allCommands: mockAllCommands
+	allCommands: mockAllCommands,
 }));
 
 import { handleInteraction } from "./handleInteraction.js";
@@ -37,7 +37,7 @@ describe("Command event handler", () => {
 				await context.replyPrivately({ content: "yo object in secret" });
 				await context.replyPrivately("yo DMs", true);
 				await context.replyPrivately({ content: "yo DMs object" }, true);
-			}
+			},
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -47,30 +47,30 @@ describe("Command event handler", () => {
 			interaction = {
 				commandName: mockCommand.name,
 				options: {
-					data: []
+					data: [],
 				},
 				client: {
 					user: {
-						id: selfUid
-					}
+						id: selfUid,
+					},
 				},
 				user: {
 					bot: false,
 					id: otherUid,
-					send: mockUserSend
+					send: mockUserSend,
 				},
 				inCachedGuild: () => false,
 				member: null,
 				guild: null,
 				channel: {
 					type: ChannelType.DM,
-					sendTyping: mockInteractionSendTyping
+					sendTyping: mockInteractionSendTyping,
 				},
 				deferred: false,
 				reply: mockInteractionReply,
 				deferReply: mockInteractionDeferReply,
 				editReply: mockInteractionEditReply,
-				followUp: mockInteractionFollowUp
+				followUp: mockInteractionFollowUp,
 			} as unknown as CommandInteraction;
 		});
 
@@ -119,7 +119,7 @@ describe("Command event handler", () => {
 			expect(mockInteractionReply).toHaveBeenCalled();
 			expect(mockInteractionReply).toHaveBeenCalledWith({
 				content: "yo in secret",
-				ephemeral: true
+				ephemeral: true,
 			});
 		});
 
@@ -129,7 +129,7 @@ describe("Command event handler", () => {
 			expect(mockInteractionFollowUp).toHaveBeenCalled();
 			expect(mockInteractionFollowUp).toHaveBeenCalledWith({
 				content: "yo in secret",
-				ephemeral: true
+				ephemeral: true,
 			});
 		});
 
@@ -139,7 +139,7 @@ describe("Command event handler", () => {
 			expect(mockInteractionFollowUp).toHaveBeenCalled();
 			expect(mockInteractionFollowUp).toHaveBeenCalledWith({
 				content: "yo object in secret",
-				ephemeral: true
+				ephemeral: true,
 			});
 		});
 
@@ -148,7 +148,7 @@ describe("Command event handler", () => {
 			expect(mockInteractionReply).toHaveBeenCalled();
 			expect(mockInteractionReply).toHaveBeenCalledWith({
 				content: expect.stringContaining("Check your DMs") as string,
-				ephemeral: true
+				ephemeral: true,
 			});
 			expect(mockUserSend).toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledWith("yo DMs");
@@ -159,7 +159,7 @@ describe("Command event handler", () => {
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionEditReply).toHaveBeenCalled();
 			expect(mockInteractionEditReply).toHaveBeenCalledWith(
-				expect.stringContaining("Check your DMs") as string
+				expect.stringContaining("Check your DMs") as string,
 			);
 			expect(mockUserSend).toHaveBeenCalled();
 			expect(mockUserSend).toHaveBeenCalledWith({ content: "yo DMs object" });
@@ -172,7 +172,7 @@ describe("Command event handler", () => {
 			name: "global-guild-test",
 			description: "lolcat",
 			requiresGuild: false,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -180,16 +180,16 @@ describe("Command event handler", () => {
 			commandName: mockCommand.name,
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: true,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => false,
 			member: null,
 			guild: null,
-			channel: { type: ChannelType.DM }
+			channel: { type: ChannelType.DM },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -202,7 +202,7 @@ describe("Command event handler", () => {
 			name: "global-guild-test",
 			description: "lolcat",
 			requiresGuild: false,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -210,16 +210,16 @@ describe("Command event handler", () => {
 			commandName: mockCommand.name,
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: selfUid
+				id: selfUid,
 			},
 			inCachedGuild: () => false,
 			member: null,
 			guild: null,
-			channel: { type: ChannelType.DM }
+			channel: { type: ChannelType.DM },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -232,7 +232,7 @@ describe("Command event handler", () => {
 			name: "global-guild-test",
 			description: "lolcat",
 			requiresGuild: false,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -240,16 +240,16 @@ describe("Command event handler", () => {
 			commandName: "nop",
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => false,
 			member: null,
 			guild: null,
-			channel: { type: ChannelType.DM }
+			channel: { type: ChannelType.DM },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -262,7 +262,7 @@ describe("Command event handler", () => {
 			name: "global-guild-test",
 			description: "lolcat",
 			requiresGuild: false,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -270,16 +270,16 @@ describe("Command event handler", () => {
 			commandName: mockCommand.name,
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => true,
 			member: { id: otherUid },
 			guild: { id: "guild-1234" },
-			channel: { type: ChannelType.GuildText }
+			channel: { type: ChannelType.GuildText },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -292,7 +292,7 @@ describe("Command event handler", () => {
 			name: "global-test",
 			description: "lolcat",
 			requiresGuild: false,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -300,16 +300,16 @@ describe("Command event handler", () => {
 			commandName: mockCommand.name,
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => false,
 			member: null,
 			guild: null,
-			channel: { type: ChannelType.DM }
+			channel: { type: ChannelType.DM },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -322,7 +322,7 @@ describe("Command event handler", () => {
 			name: "guilded-test",
 			description: "lolcat",
 			requiresGuild: true,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
@@ -330,16 +330,16 @@ describe("Command event handler", () => {
 			commandName: mockCommand.name,
 			options: { data: [] },
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => true,
 			member: { id: otherUid },
 			guild: { id: "guild-1234" },
-			channel: { type: ChannelType.GuildText }
+			channel: { type: ChannelType.GuildText },
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -353,27 +353,27 @@ describe("Command event handler", () => {
 			name: "guilded-dm-test",
 			description: "lolcat",
 			requiresGuild: true,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
 		const interaction = {
 			commandName: mockCommand.name,
 			options: {
-				data: []
+				data: [],
 			},
 			client: {
-				user: { id: selfUid }
+				user: { id: selfUid },
 			},
 			user: {
 				bot: false,
-				id: otherUid
+				id: otherUid,
 			},
 			inCachedGuild: () => false,
 			guild: null,
 			member: null,
 			channel: { type: ChannelType.DM },
-			reply: mockInteractionReply
+			reply: mockInteractionReply,
 		} as unknown as CommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
@@ -381,7 +381,7 @@ describe("Command event handler", () => {
 		expect(mockInteractionReply).toHaveBeenCalledOnce();
 		expect(mockInteractionReply).toHaveBeenCalledWith({
 			content: "Can't do that here.",
-			ephemeral: true
+			ephemeral: true,
 		});
 	});
 });

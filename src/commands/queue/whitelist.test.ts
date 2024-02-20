@@ -50,12 +50,12 @@ describe("Removing from Queue Blacklist", () => {
 				{
 					name: "user",
 					value: userMention(goodUserId),
-					type: ApplicationCommandOptionType.String
-				}
+					type: ApplicationCommandOptionType.String,
+				},
 			],
 			logger,
 			reply: mockReply,
-			deleteInvocation: mockDeleteMessage
+			deleteInvocation: mockDeleteMessage,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
@@ -73,7 +73,7 @@ describe("Removing from Queue Blacklist", () => {
 		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("mention someone") as string,
-			ephemeral: true
+			ephemeral: true,
 		});
 	});
 
@@ -84,7 +84,7 @@ describe("Removing from Queue Blacklist", () => {
 		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("mention someone") as string,
-			ephemeral: true
+			ephemeral: true,
 		});
 	});
 
@@ -96,7 +96,7 @@ describe("Removing from Queue Blacklist", () => {
 		expect(mockReply).toHaveBeenCalledOnce();
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining("whitelist yourself") as string,
-			ephemeral: true
+			ephemeral: true,
 		});
 	});
 
@@ -126,7 +126,7 @@ describe("Removing from Queue Blacklist", () => {
 		expect(mockReply).toHaveBeenCalledWith({
 			content: expect.stringContaining(goodUserId) as string,
 			shouldMention: false,
-			ephemeral: true
+			ephemeral: true,
 		});
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockDeleteMessage).toHaveBeenCalledWith();

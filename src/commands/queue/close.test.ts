@@ -38,12 +38,12 @@ describe("Close the Queue", () => {
 			channel: undefined,
 			reply: mockReply,
 			deleteInvocation: mockDeleteInvocation,
-			followUp: mockFollowUp
+			followUp: mockFollowUp,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
 			id: "queue-channel",
-			send: mockChannelSend
+			send: mockChannelSend,
 		} as unknown as TextChannel);
 		mockIsQueueOpen.mockResolvedValue(false);
 		mockSetQueueOpen.mockResolvedValue(undefined);
@@ -76,8 +76,8 @@ describe("Close the Queue", () => {
 		expect(mockFollowUp).toHaveBeenCalledWith(
 			expect.objectContaining({
 				content: expect.stringContaining("now closed") as string,
-				reply: false
-			})
+				reply: false,
+			}),
 		);
 	});
 });

@@ -8,7 +8,7 @@ import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 
 export const cooldown: Command = {
@@ -22,7 +22,7 @@ export const cooldown: Command = {
 
 		const [queueChannel, isOpen] = await Promise.all([
 			getQueueChannel(guild), //
-			isQueueOpen(guild)
+			isQueueOpen(guild),
 		]);
 
 		if (!queueChannel) return await replyPrivately(t("common.queue.not-set-up", userLocale));
@@ -38,7 +38,7 @@ export const cooldown: Command = {
 		// If there's no cooldown, the user may submit whenever!
 		const msgSubmitImmediately = `${t(
 			"commands.cooldown.responses.immediately",
-			userLocale
+			userLocale,
 		)} :grinning:`;
 		if (config.cooldownSeconds === null || config.cooldownSeconds <= 0) {
 			return await replyPrivately(msgSubmitImmediately);
@@ -47,7 +47,7 @@ export const cooldown: Command = {
 		// If the queue is open, display the user's limit usage
 		const [latestSubmission, userSubmissionCount] = await Promise.all([
 			getLatestStoredEntryFromSender(user.id, queueChannel),
-			countAllStoredEntriesFromSender(user.id, queueChannel)
+			countAllStoredEntriesFromSender(user.id, queueChannel),
 		]);
 
 		if (!latestSubmission) {
@@ -74,7 +74,7 @@ export const cooldown: Command = {
 			const msg = ti(
 				"commands.cooldown.responses.later",
 				{ relative: bold(relative), absolute: `<t:${absolute}:T>` },
-				userLocale
+				userLocale,
 			);
 			await replyPrivately(msg);
 		} else {
@@ -90,11 +90,11 @@ export const cooldown: Command = {
 				msg = ti(
 					"commands.cooldown.responses.submissions-all-ct-exhausted",
 					{ count: `${userSubmissionCount}` },
-					userLocale
+					userLocale,
 				);
 			}
 
 			await replyPrivately(`${msg} :tada:`);
 		}
-	}
+	},
 };

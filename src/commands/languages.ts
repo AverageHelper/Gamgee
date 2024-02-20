@@ -30,7 +30,7 @@ export const languages: GlobalCommand = {
 			await timeoutSeconds(1);
 			await followUp({
 				content: `I do know that I can speak ${locales.length} different human languages!`,
-				reply: false
+				reply: false,
 			});
 			return;
 		}
@@ -42,12 +42,12 @@ export const languages: GlobalCommand = {
 		if (totalLanguages > 3) {
 			// Lots of languages. Be vague.
 			await reply(
-				`I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique ^^`
+				`I'm made up of about ${totalLanguages} different languages, each one of them perfect and unique ^^`,
 			);
 			await timeoutSeconds(1);
 			await followUp({
 				content: `I can also speak ${locales.length} different human languages!`,
-				reply: false
+				reply: false,
 			});
 			return;
 		}
@@ -76,7 +76,7 @@ export const languages: GlobalCommand = {
 		await timeoutSeconds(1);
 		await followUp({
 			content: `I can also speak ${locales.length} different human languages!`,
-			reply: false
+			reply: false,
 		});
-	}
+	},
 };

@@ -17,7 +17,7 @@ import { useLogger } from "../../logger.js";
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
 } from "../../useQueueStorage.js";
 
 export interface SongRequest {
@@ -56,11 +56,11 @@ async function reject_private(request: SongRequest, reason: string): Promise<voi
 		try {
 			await context.interaction.editReply({
 				content,
-				allowedMentions: { users: [context.user.id], repliedUser: true }
+				allowedMentions: { users: [context.user.id], repliedUser: true },
 			});
 		} catch (error) {
 			logger.error(
-				richErrorMessage("Failed to edit interaction reply for private rejection.", error)
+				richErrorMessage("Failed to edit interaction reply for private rejection.", error),
 			);
 		}
 	} else {
@@ -85,7 +85,7 @@ async function reject_public(request: SongRequest, reason: string): Promise<void
 			await context.interaction.editReply(t("commands.sr.responses.finished", context.userLocale));
 		} catch (error) {
 			logger.error(
-				richErrorMessage("Failed to edit interaction reply for public rejection.", error)
+				richErrorMessage("Failed to edit interaction reply for public rejection.", error),
 			);
 		}
 	}
@@ -107,27 +107,27 @@ async function acceptSongRequest({
 	queueChannel,
 	context,
 	entry,
-	logger
+	logger,
 }: SongAcceptance): Promise<void> {
 	logger.debug(`Began enqueuing request at ${Date.now()} from ${logUser(context.user)}`);
 	const storedEntry = await pushEntryToQueue(entry, queueChannel);
 	logger.debug(
 		`Enqueued request at ${Date.now()} from ${logUser(
-			context.user
-		)}. Cooldown timer began at ${storedEntry.sentAt.getTime()}`
+			context.user,
+		)}. Cooldown timer began at ${storedEntry.sentAt.getTime()}`,
 	);
 	logger.verbose(`Accepted request from user ${logUser(context.user)}.`);
 	logger.debug(
-		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`
+		`Pushed new request to queue. Sending public acceptance to user ${logUser(context.user)}`,
 	);
 
 	const MENTION_SENDER = `<@!${context.user.id}>`;
 	await context.followUp({
 		content: `${MENTION_SENDER}, ${t(
 			"commands.sr.responses.submission-accepted",
-			context.guildLocale
+			context.guildLocale,
 		)}`,
-		reply: false
+		reply: false,
 	});
 	if (context.type === "interaction") {
 		try {
@@ -158,15 +158,15 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			getStoredQueueConfig(queueChannel),
 			getLatestStoredEntryFromSender(senderId, queueChannel),
 			countAllStoredEntriesFromSender(senderId, queueChannel),
-			playtimeTotalInQueue(queueChannel)
+			playtimeTotalInQueue(queueChannel),
 		]);
 
 		// ** If the user is blacklisted, reject!
 		if (config.blacklistedUsers?.some(user => user.id === senderId) === true) {
 			logger.verbose(
 				`${config.blacklistedUsers.length} users on the blacklist. User ${logUser(
-					sender
-				)} is one of them.`
+					sender,
+				)} is one of them.`,
 			);
 			logger.verbose(`Rejected request from user ${logUser(sender)}: The user is blacklisted`);
 			return await reject_private(request, t("commands.sr.responses.not-allowed", userLocale));
@@ -177,16 +177,16 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		logger.verbose(
 			`User ${logUser(sender)} has submitted ${userSubmissionCount} request${
 				userSubmissionCount === 1 ? "" : "s"
-			} before this one`
+			} before this one`,
 		);
 		if (maxSubs !== null && maxSubs > 0 && userSubmissionCount >= maxSubs) {
 			const reason = ti(
 				"commands.sr.responses.rejections.allotment-expended",
 				{ max: `**${maxSubs}**` },
-				userLocale
+				userLocale,
 			);
 			logger.verbose(
-				`Rejected request from user ${logUser(sender)}: The user has submitted enough songs already`
+				`Rejected request from user ${logUser(sender)}: The user has submitted enough songs already`,
 			);
 			return await reject_private(request, reason);
 		}
@@ -198,14 +198,14 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
 		if (timeSinceLatest === null) {
 			logger.verbose(
-				`This is the first song request that I've seen from user ${logUser(sender)} tonight.`
+				`This is the first song request that I've seen from user ${logUser(sender)} tonight.`,
 			);
 		} else {
 			logger.verbose(
 				`User ${logUser(sender)} last submitted a request ${durationString(
 					DEFAULT_LOCALE,
-					timeSinceLatest
-				)} ago.`
+					timeSinceLatest,
+				)} ago.`,
 			);
 		}
 		if (
@@ -218,12 +218,12 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				"commands.sr.responses.rejections.cooldown",
 				{
 					duration: durationString(userLocale, cooldown),
-					remaining: `**${durationString(userLocale, cooldown - timeSinceLatest)}**`
+					remaining: `**${durationString(userLocale, cooldown - timeSinceLatest)}**`,
 				},
-				userLocale
+				userLocale,
 			);
 			logger.verbose(
-				`Rejected request from user ${logUser(sender)}: The user is still under cooldown`
+				`Rejected request from user ${logUser(sender)}: The user is still under cooldown`,
 			);
 			return await reject_private(request, reason);
 		}
@@ -238,15 +238,15 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		if (song === null) {
 			logger.verbose("Could not find the requested song.");
 			logger.verbose(
-				`Rejected request from user ${logUser(sender)}: Couldn't find '${songUrl.href}'`
+				`Rejected request from user ${logUser(sender)}: Couldn't find '${songUrl.href}'`,
 			);
 			// FIXME: This response is too generic. Present something more actionable based on why the song can't be found
 			return await reject_public(
 				request,
 				`${t("commands.sr.responses.song-not-found", guildLocale)} ${SHRUGGIE}\n${t(
 					"commands.sr.responses.try-supported-platform",
-					guildLocale
-				)}`
+					guildLocale,
+				)}`,
 			);
 		}
 
@@ -255,8 +255,8 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		logger.verbose(
 			`User ${logUser(sender)} wants to submit a song that is ${durationString(
 				DEFAULT_LOCALE,
-				seconds
-			)} long.`
+				seconds,
+			)} long.`,
 		);
 
 		// ** If the song is too short, reject!
@@ -267,10 +267,10 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 					"commands.sr.responses.rejections.too-short",
 					{
 						limit: `**${durationString(guildLocale, minDuration)}**`,
-						actual: `**${durationString(guildLocale, seconds)}**`
+						actual: `**${durationString(guildLocale, seconds)}**`,
 					},
-					guildLocale
-				)
+					guildLocale,
+				),
 			);
 			pushNewLine(rejection);
 			push(t("commands.sr.responses.try-longer-song", guildLocale), rejection);
@@ -286,10 +286,10 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 					"commands.sr.responses.rejections.too-long",
 					{
 						limit: `**${durationString(guildLocale, maxDuration)}**`,
-						actual: `**${durationString(guildLocale, seconds)}**`
+						actual: `**${durationString(guildLocale, seconds)}**`,
 					},
-					guildLocale
-				)
+					guildLocale,
+				),
 			);
 			pushNewLine(rejection);
 			push(t("commands.sr.responses.try-shorter-song", guildLocale), rejection);
@@ -325,7 +325,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				const durationLimitMsg = durationString(DEFAULT_LOCALE, totalPlaytimeLimit, true);
 				const durationMsg = durationString(DEFAULT_LOCALE, playtimeTotal + seconds, true);
 				logger.info(
-					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue.`
+					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue.`,
 				);
 			}
 
@@ -333,16 +333,16 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 			const promises: Array<Promise<unknown>> = [
 				setQueueOpen(false, queueChannel.guild),
 				queueChannel.send(
-					`${t("commands.sr.responses.this-queue-full-autoclose", guildLocale)} :wave:`
-				)
+					`${t("commands.sr.responses.this-queue-full-autoclose", guildLocale)} :wave:`,
+				),
 			];
 			await Promise.all(promises);
 			await context.followUp({
 				content: `\\~\\~\\~\\~\\~\\~\\~\\~\n\n**${t(
 					"commands.sr.responses.queue-full-autoclose",
-					guildLocale
+					guildLocale,
 				)}**  :wave:\n\n\\~\\~\\~\\~\\~\\~\\~\\~`,
-				reply: false
+				reply: false,
 			});
 
 			// If the queue will fill up soon, give warning, where
@@ -356,16 +356,16 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 				const durationLimitMsg = durationString(DEFAULT_LOCALE, totalPlaytimeLimit, true);
 				const durationMsg = durationString(DEFAULT_LOCALE, playtimeTotal + seconds, true);
 				logger.info(
-					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue soon.`
+					`The queue's duration limit is ${durationLimitMsg}. We're at ${durationMsg}. Closing the queue soon.`,
 				);
 			}
 
 			await context.followUp({
 				content: `========\n\n**${t(
 					"commands.sr.responses.queue-nearly-full",
-					guildLocale
+					guildLocale,
 				)}**  :checkered_flag:\n\n========`,
-				reply: false
+				reply: false,
 			});
 			// TODO: Add a parenthetical here about the amount of free time remaining on the queue
 		}
@@ -375,7 +375,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		logger.error(richErrorMessage("Failed to process song request", error));
 		return await reject_public(
 			request,
-			`${t("commands.sr.responses.query-returned-error", guildLocale)} :shrug:`
+			`${t("commands.sr.responses.query-returned-error", guildLocale)} :shrug:`,
 		);
 	}
 }

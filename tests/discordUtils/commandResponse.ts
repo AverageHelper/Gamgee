@@ -20,7 +20,7 @@ const TEST_CHANNEL_ID: Snowflake = requireEnv("CHANNEL_ID");
  */
 export async function commandResponseInTestChannel(
 	command: string,
-	expectToContain: string | undefined = undefined
+	expectToContain: string | undefined = undefined,
 ): Promise<string | null> {
 	const channelId: Snowflake = TEST_CHANNEL_ID;
 	return await useTesterClient(async client => {

@@ -23,14 +23,14 @@ describe("Help command", () => {
 		context = {
 			type: "interaction",
 			guild: {
-				id: "the-guild"
+				id: "the-guild",
 			},
 			channel: {
-				id: "the-channel"
+				id: "the-channel",
 			},
 			storage: null,
 			userLocale: DEFAULT_LOCALE,
-			replyPrivately: mockReplyPrivately
+			replyPrivately: mockReplyPrivately,
 		} as unknown as GuildedCommandContext;
 
 		mockAssertUserCanRunCommand.mockResolvedValue(true);
@@ -59,7 +59,7 @@ describe("Help command", () => {
 			const description = calls[0];
 			expect(description).toMatchSnapshot();
 		},
-		10_000
+		10_000,
 	);
 
 	test("describes pleb commands", async () => {

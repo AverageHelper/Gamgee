@@ -9,22 +9,22 @@ const MockClient = vi.hoisted(
 	() =>
 		class MockClient {
 			user = {
-				username: "Gamgee"
+				username: "Gamgee",
 			};
 
 			destroy(): void {
 				// nop
 			}
-		}
+		},
 );
 
 vi.mock("discord.js", async () => ({
 	...(await vi.importActual<typeof import("discord.js")>("discord.js")),
-	Client: MockClient
+	Client: MockClient,
 }));
 
 import { Client } from "discord.js";
-const client = new Client({ intents: [] });
+const client = new Client<true>({ intents: [] });
 
 // Mock parseArgs so we can control what the args are
 import type { Args } from "../helpers/parseArgs.js";
@@ -65,7 +65,7 @@ describe("once(ready)", () => {
 		// Default is no deploy, no revoke, no method behavior
 		mockParseArgs.mockReturnValue({
 			deploy: false,
-			revoke: false
+			revoke: false,
 		});
 		mockDeployCommands.mockResolvedValue(undefined);
 		mockRevokeCommands.mockResolvedValue(undefined);
@@ -78,7 +78,7 @@ describe("once(ready)", () => {
 	test("doesn't touch commands if the `deploy` and `revoke` flags are not set", async () => {
 		mockParseArgs.mockReturnValue({
 			deploy: false,
-			revoke: false
+			revoke: false,
 		});
 		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
 		expect(mockDeployCommands).not.toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe("once(ready)", () => {
 	test("deploys commands if the `deploy` flag is set", async () => {
 		mockParseArgs.mockReturnValue({
 			deploy: true,
-			revoke: false
+			revoke: false,
 		});
 		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
 		expect(mockDeployCommands).toHaveBeenCalledWith(client, logger);
@@ -98,7 +98,7 @@ describe("once(ready)", () => {
 	test("revokes commands if the `revoke` flag is set", async () => {
 		mockParseArgs.mockReturnValue({
 			deploy: false,
-			revoke: true
+			revoke: true,
 		});
 		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
 		expect(mockDeployCommands).not.toHaveBeenCalled();
@@ -108,7 +108,7 @@ describe("once(ready)", () => {
 	test("deploys commands if both the `revoke` and `deploy` flags are set", async () => {
 		mockParseArgs.mockReturnValue({
 			deploy: true,
-			revoke: true
+			revoke: true,
 		});
 		await expect(ready.execute(client, logger)).resolves.toBeUndefined();
 		expect(mockDeployCommands).toHaveBeenCalledWith(client, logger);

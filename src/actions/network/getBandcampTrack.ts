@@ -45,6 +45,6 @@ export async function getBandcampTrack(url: URL, timeoutSeconds?: number): Promi
 	return {
 		url: url.href,
 		title,
-		duration: { seconds: Math.floor(totalSeconds) }
+		duration: { seconds: Math.floor(totalSeconds) },
 	};
 }

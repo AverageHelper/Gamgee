@@ -13,8 +13,8 @@ export const setup: Subcommand = {
 			description: "The channel to use as the 'queue' channel for the server",
 			type: ApplicationCommandOptionType.Channel,
 			channelTypes: [ChannelType.GuildText],
-			required: true
-		}
+			required: true,
+		},
 	],
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
@@ -26,7 +26,7 @@ export const setup: Subcommand = {
 		if (!firstOption) {
 			return await reply({
 				content: `Please name a text channel to use for the queue!`,
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -35,14 +35,14 @@ export const setup: Subcommand = {
 			return await reply({
 				content:
 					"That's not a real channel, or I don't know how to find it yet. Mention the channel with `#`.",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
 		if (!newQueueChannel.isTextBased()) {
 			return await reply({
 				content: "I can't queue in a voice channel. Please specify a text channel instead",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -51,11 +51,11 @@ export const setup: Subcommand = {
 		logger.info(`Setting up channel '${newQueueChannel.name}' for queuage.`);
 		await Promise.all([
 			setQueueChannel(newQueueChannel.id, guild),
-			newQueueChannel.send("This is a queue now. :smiley:")
+			newQueueChannel.send("This is a queue now. :smiley:"),
 		]);
 		return await reply({
 			content: `New queue set up in ${channelMention(newQueueChannel.id)}`,
-			ephemeral: true
+			ephemeral: true,
 		});
-	}
+	},
 };

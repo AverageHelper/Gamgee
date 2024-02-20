@@ -14,19 +14,19 @@ export const close: GuildedSubcommand = {
 		const [isQueueAlreadyOpen, queueChannel] = await Promise.all([
 			isQueueOpen(guild),
 			getQueueChannel(guild),
-			deleteInvocation()
+			deleteInvocation(),
 		]);
 
 		if (!queueChannel) {
 			return await reply({
 				content: "There's no queue to close. Have you set one up yet?",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 		if (!isQueueAlreadyOpen) {
 			return await reply({
 				content: "The queue is already closed, silly! :stuck_out_tongue:",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -41,5 +41,5 @@ export const close: GuildedSubcommand = {
 		}
 		await Promise.all(promises);
 		await followUp({ content: "The queue is now closed. :wave:", reply: false });
-	}
+	},
 };

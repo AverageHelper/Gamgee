@@ -18,7 +18,7 @@ describe("Seconds to duration", () => {
 		"reports '$result' from zero in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
 			expectValueEqual(durationString(locale, 0), result);
-		}
+		},
 	);
 
 	test.each`
@@ -33,7 +33,7 @@ describe("Seconds to duration", () => {
 			expectValueEqual(durationString(locale, 0.01), result);
 			expectValueEqual(durationString(locale, 0.24), result);
 			expectValueEqual(durationString(locale, 0.44), result);
-		}
+		},
 	);
 
 	test.each`
@@ -48,7 +48,7 @@ describe("Seconds to duration", () => {
 			expectValueEqual(durationString(locale, 0.64), result);
 			expectValueEqual(durationString(locale, 0.84), result);
 			expectValueEqual(durationString(locale, 0.99), result);
-		}
+		},
 	);
 
 	test.each`
@@ -61,7 +61,7 @@ describe("Seconds to duration", () => {
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
 			expectValueEqual(durationString(locale, 3), result);
-		}
+		},
 	);
 
 	test.each`
@@ -75,7 +75,7 @@ describe("Seconds to duration", () => {
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
 			expectValueEqual(durationString(locale, 30), result);
 			expectValueEqual(durationString(locale, 30.49), result);
-		}
+		},
 	);
 
 	test.each`
@@ -88,7 +88,7 @@ describe("Seconds to duration", () => {
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
 			expectValueEqual(durationString(locale, 120), result);
-		}
+		},
 	);
 
 	test.each`
@@ -101,6 +101,6 @@ describe("Seconds to duration", () => {
 		"reports '$result' in $locale",
 		({ locale, result }: { locale: SupportedLocale; result: string }) => {
 			expectValueEqual(durationString(locale, 600), result);
-		}
+		},
 	);
 });

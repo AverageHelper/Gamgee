@@ -14,5 +14,5 @@ export const messageReactionAdd = onEvent("messageReactionAdd", {
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to handle reaction add.", error));
 		}
-	}
+	},
 });

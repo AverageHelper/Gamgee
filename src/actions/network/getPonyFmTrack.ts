@@ -8,7 +8,7 @@ import { is, string, type } from "superstruct";
 const ponyFmTrackAPIResponse = type({
 	title: string(),
 	url: string(),
-	duration: string()
+	duration: string(),
 });
 
 type PonyFmTrackAPIResponse = Infer<typeof ponyFmTrackAPIResponse>;
@@ -18,7 +18,7 @@ function isPonyFmTrackAPIResponse(tbd: unknown): tbd is PonyFmTrackAPIResponse {
 }
 
 const ponyFmTrackAPIError = type({
-	message: string()
+	message: string(),
 });
 
 type PonyFmTrackAPIError = Infer<typeof ponyFmTrackAPIError>;
@@ -37,11 +37,11 @@ function isPonyFmTrackAPIError(tbd: unknown): tbd is PonyFmTrackAPIError {
  */
 async function getPonyFmTrackInfoFromId(
 	trackId: number,
-	timeoutSeconds?: number
+	timeoutSeconds?: number,
 ): Promise<PonyFmTrackAPIResponse> {
 	const response = await fetchWithTimeout(
 		`https://pony.fm/api/v1/tracks/${trackId}`,
-		timeoutSeconds
+		timeoutSeconds,
 	);
 	if (response.status === 200) {
 		try {
@@ -61,7 +61,7 @@ async function getPonyFmTrackInfoFromId(
 		const responseParsed: unknown = await response.json();
 		if (!isPonyFmTrackAPIError(responseParsed)) {
 			throw new VideoError(
-				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`
+				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`,
 			); // TODO: i18n?
 		}
 		throw new VideoError(`Pony.fm API errored: ${responseParsed.message}`); // TODO: i18n?
@@ -102,6 +102,6 @@ export async function getPonyFmTrack(url: URL, timeoutSeconds?: number): Promise
 	return {
 		url: trackData.url,
 		title: trackData.title,
-		duration: { seconds: Math.floor(Number.parseFloat(trackData.duration)) }
+		duration: { seconds: Math.floor(Number.parseFloat(trackData.duration)) },
 	};
 }

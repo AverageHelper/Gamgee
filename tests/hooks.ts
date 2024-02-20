@@ -8,5 +8,5 @@ export const mochaHooks = {
 	async after(): Promise<void> {
 		// Signs out the test client after all tests are done
 		await destroyTesterClient();
-	}
+	},
 };

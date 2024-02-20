@@ -8,7 +8,7 @@ vi.mock("../useGuildStorage.js");
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
 	Parameters<typeof countAllStoredEntriesFromSender>,
@@ -57,11 +57,11 @@ describe("User retrieving their own cooldown", () => {
 			guild: "the-guild",
 			user: { id: "the-user" },
 			deleteInvocation: mockDeleteInvocation,
-			replyPrivately: mockReplyPrivately
+			replyPrivately: mockReplyPrivately,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
-			id: "queue-channel"
+			id: "queue-channel",
 		} as unknown as TextChannel);
 		mockGetStoredQueueConfig.mockResolvedValue({
 			blacklistedUsers: [],
@@ -70,7 +70,7 @@ describe("User retrieving their own cooldown", () => {
 			entryDurationMinSeconds: null,
 			submissionMaxQuantity: null,
 			channelId: "",
-			queueDurationSeconds: null
+			queueDurationSeconds: null,
 		});
 		mockCountAllStoredEntriesFromSender.mockResolvedValue(0);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue(null);
@@ -96,12 +96,12 @@ describe("User retrieving their own cooldown", () => {
 			submissionMaxQuantity: null,
 			queueDurationSeconds: null,
 			entryDurationMaxSeconds: null,
-			entryDurationMinSeconds: null
+			entryDurationMinSeconds: null,
 		});
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			"You can submit once you're removed from the blacklist... sorry"
+			"You can submit once you're removed from the blacklist... sorry",
 		);
 	});
 
@@ -133,7 +133,7 @@ describe("User retrieving their own cooldown", () => {
 		"the user cannot submit if they've hit the submission count limit (submitted $userSubmissions, max $submissionMaxQuantity)",
 		async ({
 			userSubmissions,
-			submissionMaxQuantity
+			submissionMaxQuantity,
 		}: {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
@@ -148,7 +148,7 @@ describe("User retrieving their own cooldown", () => {
 				isDone: false,
 				guildId: "",
 				channelId: "",
-				haveCalledNowPlaying: []
+				haveCalledNowPlaying: [],
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
@@ -157,7 +157,7 @@ describe("User retrieving their own cooldown", () => {
 				blacklistedUsers: [],
 				channelId: "",
 				queueDurationSeconds: null,
-				entryDurationMinSeconds: null
+				entryDurationMinSeconds: null,
 			});
 			await cooldown.execute(context);
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
@@ -174,9 +174,9 @@ describe("User retrieving their own cooldown", () => {
 			}
 
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
-				`You've used ${quantity} for the night! :tada:`
+				`You've used ${quantity} for the night! :tada:`,
 			);
-		}
+		},
 	);
 
 	test.each`
@@ -195,7 +195,7 @@ describe("User retrieving their own cooldown", () => {
 		"the user can submit immediately if they've hit not the submission count limit yet (submitted $userSubmissions, max $submissionMaxQuantity)",
 		async ({
 			userSubmissions,
-			submissionMaxQuantity
+			submissionMaxQuantity,
 		}: {
 			userSubmissions: number;
 			submissionMaxQuantity: number;
@@ -210,7 +210,7 @@ describe("User retrieving their own cooldown", () => {
 				isDone: false,
 				guildId: "",
 				channelId: "",
-				haveCalledNowPlaying: []
+				haveCalledNowPlaying: [],
 			});
 			mockGetStoredQueueConfig.mockResolvedValue({
 				cooldownSeconds,
@@ -219,12 +219,12 @@ describe("User retrieving their own cooldown", () => {
 				blacklistedUsers: [],
 				channelId: "",
 				queueDurationSeconds: null,
-				entryDurationMinSeconds: null
+				entryDurationMinSeconds: null,
 			});
 			await cooldown.execute(context);
 			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 			expect(mockReplyPrivately).toHaveBeenCalledWith("You can submit right now! :grinning:");
-		}
+		},
 	);
 
 	// User sees their cooldown wait time, stays where it's at during re-invocations, but the time remaining ticks down
@@ -240,7 +240,7 @@ describe("User retrieving their own cooldown", () => {
 			blacklistedUsers: [],
 			channelId: "",
 			queueDurationSeconds: null,
-			entryDurationMinSeconds: null
+			entryDurationMinSeconds: null,
 		});
 		mockCountAllStoredEntriesFromSender.mockResolvedValue(userSubmissions);
 		mockGetLatestStoredEntryFromSender.mockResolvedValue({
@@ -252,14 +252,14 @@ describe("User retrieving their own cooldown", () => {
 			isDone: false,
 			guildId: "",
 			channelId: "",
-			haveCalledNowPlaying: []
+			haveCalledNowPlaying: [],
 		});
 
 		// First invocation, just submitted a song
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`,
 		);
 
 		// Second invocation, getting antsy (absolute time remains the same)
@@ -269,7 +269,7 @@ describe("User retrieving their own cooldown", () => {
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`,
 		);
 
 		// Third invocation, waited a while (absolute time remains the same)
@@ -279,7 +279,7 @@ describe("User retrieving their own cooldown", () => {
 		await cooldown.execute(context);
 		expect(mockReplyPrivately).toHaveBeenCalledOnce();
 		expect(mockReplyPrivately).toHaveBeenCalledWith(
-			`You may submit in **${relative}**, at <t:${absolute}:T> local time`
+			`You may submit in **${relative}**, at <t:${absolute}:T> local time`,
 		);
 	});
 });

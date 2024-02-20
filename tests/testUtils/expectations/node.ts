@@ -8,7 +8,7 @@ export function expectArray(actual: unknown): asserts actual is Array<unknown> {
 /** Ensure that a value is an `Array` with the given number of elements. */
 export function expectArrayOfLength(
 	actual: unknown,
-	length: number
+	length: number,
 ): asserts actual is Array<unknown> {
 	expectArray(actual);
 	return strictEqual(actual.length, length);
@@ -26,7 +26,7 @@ export function expectLessThan(lhs: number, rhs: number): void {
 			actual: `${lhs} >= ${rhs}`,
 			expected: `${lhs} < ${rhs}`,
 			message: `Expected ${lhs} to be less than ${rhs}`,
-			operator: "<"
+			operator: "<",
 		});
 }
 
@@ -55,7 +55,7 @@ export function expectPositive(actual: number): void {
  */
 export function expectToContain<T>(
 	container: ReadonlyArray<T> | string | null | undefined,
-	expected: T
+	expected: T,
 ): void {
 	// The empty string is a member of any string.
 	if (typeof container === "string" && expected === "") return;
@@ -73,7 +73,7 @@ export function expectToContain<T>(
 		message: `\`container\` was expected to contain ${JSON.stringify(expected)}`,
 		actual: container,
 		expected,
-		operator: "strictEqual"
+		operator: "strictEqual",
 	});
 }
 
@@ -85,7 +85,7 @@ export function expectUndefined(actual: unknown): asserts actual is undefined {
 /** Checks that a value is what you expect. */
 export function expectValueEqual<T extends string | number | boolean>(
 	actual: unknown,
-	expected: T
+	expected: T,
 ): asserts actual is T {
 	return strictEqual(actual, expected);
 }

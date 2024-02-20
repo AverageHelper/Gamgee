@@ -7,7 +7,7 @@ import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import {
 	playtimeAverageInQueue,
 	playtimeRemainingInQueue,
-	playtimeTotalInQueue
+	playtimeTotalInQueue,
 } from "../../actions/queue/useQueue.js";
 
 // TODO: i18n
@@ -30,7 +30,7 @@ export const stats: Subcommand = {
 			countAllStoredEntries(queueChannel),
 			playtimeRemainingInQueue(queueChannel),
 			playtimeTotalInQueue(queueChannel),
-			playtimeAverageInQueue(queueChannel)
+			playtimeAverageInQueue(queueChannel),
 		]);
 		const playtimePlayed = playtimeTotal - playtimeRemaining;
 
@@ -40,7 +40,7 @@ export const stats: Subcommand = {
 		const formattedPlaytimeRemaining = durationString(userLocale, playtimeRemaining, true);
 
 		logger.info(
-			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`
+			`Info requested: ${formattedPlaytimePlayed} of ${formattedPlaytimeTotal} played. (${formattedPlaytimeRemaining} remaining in queue)`,
 		);
 
 		const embed = new EmbedBuilder() //
@@ -55,16 +55,16 @@ export const stats: Subcommand = {
 			embed.addFields({
 				name: "Remaining Playtime",
 				value: formattedPlaytimeRemaining,
-				inline: true
+				inline: true,
 			});
 			// TODO: Include the number of submitters who used up their count limit
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to generate queue statistics message.", error));
 			return await replyPrivately(
-				"Something went wrong with setting up the statistics. Sorry :frowning:"
+				"Something went wrong with setting up the statistics. Sorry :frowning:",
 			);
 		}
 
 		await replyPrivately({ embeds: [embed] });
-	}
+	},
 };

@@ -18,14 +18,14 @@ import {
 	deleteMessage,
 	reply as _reply,
 	replyPrivately as _replyPrivately,
-	sendMessageInChannel
+	sendMessageInChannel,
 } from "./actions/messages/index.js";
 import {
 	randomGreeting,
 	randomHug,
 	randomPhrase,
 	randomQuestion,
-	unwrappingWith
+	unwrappingWith,
 } from "./helpers/randomStrings.js";
 
 /**
@@ -71,7 +71,7 @@ interface QueryMessage {
  */
 export async function queryFromMessage(
 	message: Message,
-	logger: Logger
+	logger: Logger,
 ): Promise<QueryMessage | null> {
 	const client = message.client;
 	const content = message.content.trim();
@@ -126,7 +126,7 @@ export async function queryFromMessage(
  */
 export function optionsFromArgs(
 	args: Array<string>,
-	command?: ReadonlyDeep<Command>
+	command?: ReadonlyDeep<Command>,
 ): [MessageCommandInteractionOption] | [] {
 	const firstArg = args.shift();
 	if (firstArg === undefined) return [];
@@ -135,7 +135,7 @@ export function optionsFromArgs(
 		name: firstArg,
 		type: ApplicationCommandOptionType.String,
 		value: firstArg,
-		options: []
+		options: [],
 	};
 
 	// assert the option type, return null if not match
@@ -149,8 +149,8 @@ export function optionsFromArgs(
 					size(
 						string(),
 						firstOption.minLength ?? 0,
-						firstOption.maxLength ?? Number.MAX_SAFE_INTEGER
-					)
+						firstOption.maxLength ?? Number.MAX_SAFE_INTEGER,
+					),
 				);
 				break;
 			case ApplicationCommandOptionType.Integer: {
@@ -189,7 +189,7 @@ export function optionsFromArgs(
 			name: value,
 			type: ApplicationCommandOptionType.String,
 			value,
-			options: []
+			options: [],
 		};
 	});
 
@@ -240,7 +240,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 	logger.debug(
 		`User ${logUser(message.author)} sent message: '${content.slice(0, 20)}${
 			content.length > 20 ? "...' (trimmed)" : "'"
-		}`
+		}`,
 	);
 
 	const parsedQuery = await queryFromMessage(message, logger);
@@ -293,8 +293,8 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 			`Calling command handler '${command.name}' with options ${JSON.stringify(
 				options,
 				undefined,
-				2
-			)}`
+				2,
+			)}`,
 		);
 
 		let channel: GuildTextBasedChannel | DMChannel;
@@ -323,7 +323,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 				if (ephemeral === undefined || !ephemeral) {
 					void message.channel.sendTyping();
 					logger.debug(
-						`Started typing in channel ${message.channel.id} due to Context.prepareForLongRunningTasks`
+						`Started typing in channel ${message.channel.id} due to Context.prepareForLongRunningTasks`,
 					);
 				}
 			},
@@ -357,7 +357,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 			sendTyping: () => {
 				void message.channel.sendTyping();
 				logger.debug(`Started typing in channel ${message.channel.id} due to Context.sendTyping`);
-			}
+			},
 		};
 
 		return await invokeCommand(command, context);
@@ -373,7 +373,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 		// This is likely a game. Play along!
 		void message.channel.sendTyping();
 		logger.debug(
-			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`
+			`Started typing in channel ${message.channel.id} due to handleCommand receiving a game`,
 		);
 		await timeoutSeconds(2);
 
@@ -393,7 +393,7 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 				"hugs*",
 				"*hugs*",
 				"hugs,",
-				"hug"
+				"hug",
 			])
 		) {
 			wrapped = randomHug();

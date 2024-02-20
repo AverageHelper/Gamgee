@@ -37,10 +37,10 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
 			where: { channelId: queueChannel.id },
 			include: {
 				blacklistedUsers: {
-					include: { user: true }
-				}
-			}
-		})
+					include: { user: true },
+				},
+			},
+		}),
 	);
 	return {
 		blacklistedUsers: extantConfig?.blacklistedUsers.map(u => u.user) ?? [],
@@ -49,7 +49,7 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
 		entryDurationMaxSeconds: extantConfig?.entryDurationMaxSeconds ?? null,
 		entryDurationMinSeconds: extantConfig?.entryDurationMinSeconds ?? null,
 		queueDurationSeconds: extantConfig?.queueDurationSeconds ?? null,
-		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null
+		submissionMaxQuantity: extantConfig?.submissionMaxQuantity ?? null,
 	};
 }
 
@@ -66,7 +66,7 @@ export async function getStoredQueueConfig(queueChannel: TextChannel): Promise<Q
  */
 export async function updateStoredQueueConfig(
 	config: Partial<Readonly<_QueueConfig>>,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	if (Object.keys(config).length === 0) return; // nothing to store
 
@@ -76,7 +76,7 @@ export async function updateStoredQueueConfig(
 		entryDurationMaxSeconds: config.entryDurationMaxSeconds,
 		entryDurationMinSeconds: config.entryDurationMinSeconds,
 		queueDurationSeconds: config.queueDurationSeconds,
-		submissionMaxQuantity: config.submissionMaxQuantity
+		submissionMaxQuantity: config.submissionMaxQuantity,
 	};
 
 	// Update or create the config
@@ -86,9 +86,9 @@ export async function updateStoredQueueConfig(
 			update,
 			create: {
 				channelId: queueChannel.id,
-				...update
-			}
-		})
+				...update,
+			},
+		}),
 	);
 }
 
@@ -106,7 +106,7 @@ export async function updateStoredQueueConfig(
  */
 export async function saveNewEntryToDatabase(
 	entry: Omit<Readonly<_QueueEntry>, "channelId" | "guildId">,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<QueueEntry> {
 	// Make sure the channel is in there
 	await useRepository("channel", channels =>
@@ -116,9 +116,9 @@ export async function saveNewEntryToDatabase(
 
 			create: {
 				guildId: queueChannel.guildId,
-				id: queueChannel.id
-			}
-		})
+				id: queueChannel.id,
+			},
+		}),
 	);
 
 	const newEntry = {
@@ -129,21 +129,21 @@ export async function saveNewEntryToDatabase(
 		seconds: entry.seconds,
 		senderId: entry.senderId,
 		sentAt: entry.sentAt,
-		url: entry.url
+		url: entry.url,
 	};
 
 	// Add the entry, or update the one we have
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.upsert({
 			where: {
-				queueMessageId: entry.queueMessageId
+				queueMessageId: entry.queueMessageId,
 			},
 			update: newEntry,
 
 			create: newEntry,
 
-			include: { haveCalledNowPlaying: true }
-		})
+			include: { haveCalledNowPlaying: true },
+		}),
 	);
 }
 
@@ -155,8 +155,8 @@ export async function saveNewEntryToDatabase(
 export async function deleteStoredEntry(queueMessageId: Snowflake): Promise<void> {
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.delete({
-			where: { queueMessageId }
-		})
+			where: { queueMessageId },
+		}),
 	);
 }
 
@@ -174,8 +174,8 @@ export async function getStoredEntry(queueMessageId: Snowflake): Promise<QueueEn
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findUnique({
 			where: { queueMessageId },
-			include: { haveCalledNowPlaying: true }
-		})
+			include: { haveCalledNowPlaying: true },
+		}),
 	);
 }
 
@@ -191,11 +191,11 @@ export async function getAllStoredEntries(queueChannel: TextChannel): Promise<Ar
 		queueEntries.findMany({
 			where: {
 				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id
+				guildId: queueChannel.guild.id,
 			},
 			orderBy: { sentAt: "asc" },
-			include: { haveCalledNowPlaying: true }
-		})
+			include: { haveCalledNowPlaying: true },
+		}),
 	);
 }
 
@@ -210,9 +210,9 @@ export async function countAllStoredEntries(queueChannel: TextChannel): Promise<
 		queueEntries.count({
 			where: {
 				channelId: queueChannel.id,
-				guildId: queueChannel.guildId
-			}
-		})
+				guildId: queueChannel.guildId,
+			},
+		}),
 	);
 }
 
@@ -226,18 +226,18 @@ export async function countAllStoredEntries(queueChannel: TextChannel): Promise<
  */
 export async function getAllStoredEntriesFromSender(
 	senderId: string,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<Array<QueueEntry>> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findMany({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
-				senderId
+				senderId,
 			},
 			orderBy: { sentAt: "asc" },
-			include: { haveCalledNowPlaying: true }
-		})
+			include: { haveCalledNowPlaying: true },
+		}),
 	);
 }
 
@@ -251,18 +251,18 @@ export async function getAllStoredEntriesFromSender(
  */
 export async function getLatestStoredEntryFromSender(
 	senderId: string,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<QueueEntry | null> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.findFirst({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
-				senderId
+				senderId,
 			},
 			orderBy: { sentAt: "desc" },
-			include: { haveCalledNowPlaying: true }
-		})
+			include: { haveCalledNowPlaying: true },
+		}),
 	);
 }
 
@@ -278,16 +278,16 @@ export async function getLatestStoredEntryFromSender(
  */
 export async function countAllStoredEntriesFromSender(
 	senderId: string,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<number> {
 	return await useRepository("queueEntry", queueEntries =>
 		queueEntries.count({
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
-				senderId
-			}
-		})
+				senderId,
+			},
+		}),
 	);
 }
 
@@ -299,14 +299,14 @@ export async function countAllStoredEntriesFromSender(
  */
 export async function updateStoredEntryIsDone(
 	isDone: boolean,
-	queueMessageId: Snowflake
+	queueMessageId: Snowflake,
 ): Promise<void> {
 	logger.debug(`Marking entry ${queueMessageId} as ${isDone ? "" : "not "}done`);
 	await useRepository("queueEntry", queueEntries =>
 		queueEntries.update({
 			where: { queueMessageId },
-			data: { isDone }
-		})
+			data: { isDone },
+		}),
 	);
 }
 
@@ -319,9 +319,9 @@ export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Pr
 		queueEntries.deleteMany({
 			where: {
 				channelId: queueChannel.id,
-				guildId: queueChannel.guild.id
-			}
-		})
+				guildId: queueChannel.guild.id,
+			},
+		}),
 	);
 }
 
@@ -340,7 +340,7 @@ export async function deleteStoredEntriesForQueue(queueChannel: TextChannel): Pr
 export async function addToHaveCalledNowPlayingForStoredEntry(
 	userId: Snowflake,
 	queueMessageId: Snowflake,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	logger.debug(`Adding ${userId} to haveCalledNowPlaying for ${queueMessageId}`);
 	const entry = await useRepository("queueEntry", queueEntries =>
@@ -348,10 +348,10 @@ export async function addToHaveCalledNowPlayingForStoredEntry(
 			where: {
 				channelId: queueChannel.id,
 				guildId: queueChannel.guild.id,
-				queueMessageId
+				queueMessageId,
 			},
-			select: { senderId: true, haveCalledNowPlaying: true }
-		})
+			select: { senderId: true, haveCalledNowPlaying: true },
+		}),
 	);
 	if (!entry) {
 		logger.debug(`Could not find entry '${queueMessageId}' in the database!`);
@@ -372,11 +372,11 @@ export async function addToHaveCalledNowPlayingForStoredEntry(
 				haveCalledNowPlaying: {
 					connectOrCreate: {
 						where: { id: userId },
-						create: { id: userId }
-					}
-				}
-			}
-		})
+						create: { id: userId },
+					},
+				},
+			},
+		}),
 	);
 	logger.debug("User added to haveCalledNowPlaying");
 }
@@ -392,25 +392,25 @@ export async function addToHaveCalledNowPlayingForStoredEntry(
  */
 export async function saveUserToStoredBlacklist(
 	userId: Snowflake,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	const blacklistedUsers = {
 		connectOrCreate: {
 			where: {
 				queueConfigsChannelId_userId: {
 					queueConfigsChannelId: queueChannel.id,
-					userId
-				}
+					userId,
+				},
 			},
 			create: {
 				user: {
 					connectOrCreate: {
 						where: { id: userId },
-						create: { id: userId }
-					}
-				}
-			}
-		}
+						create: { id: userId },
+					},
+				},
+			},
+		},
 	};
 
 	await useRepository("queueConfig", configs =>
@@ -422,9 +422,9 @@ export async function saveUserToStoredBlacklist(
 			// If the queue config isn't found, create it:
 			create: {
 				channelId: queueChannel.id,
-				blacklistedUsers
-			}
-		})
+				blacklistedUsers,
+			},
+		}),
 	);
 }
 
@@ -436,13 +436,13 @@ export async function saveUserToStoredBlacklist(
  */
 export async function removeUserFromStoredBlacklist(
 	userId: Snowflake,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	await useRepository("queueConfigToBlacklistedUsers", async relation => {
 		try {
 			// Delete the relation, easy as that:
 			await relation.delete({
-				where: { queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId } }
+				where: { queueConfigsChannelId_userId: { queueConfigsChannelId: queueChannel.id, userId } },
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {

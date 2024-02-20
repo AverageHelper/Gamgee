@@ -17,10 +17,10 @@ export default defineConfig({
 		HOME !== undefined
 			? replace({
 					values: {
-						[HOME]: "~"
+						[HOME]: "~",
 					},
 					delimiters: ["", ""],
-					preventAssignment: true
+					preventAssignment: true,
 				})
 			: null,
 
@@ -28,7 +28,7 @@ export default defineConfig({
 		esbuild({
 			tsconfig: "./tsconfig.prod.json",
 			sourceMap: !isProduction,
-			minify: isProduction
+			minify: isProduction,
 		}), // translate TypeScript to JS
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
 		json(), // translate JSON
@@ -36,12 +36,12 @@ export default defineConfig({
 		// Find external dependencies
 		nodeResolve({
 			exportConditions: ["node"],
-			preferBuiltins: true
+			preferBuiltins: true,
 		}),
 
 		// Statistics
 		analyze({ filter: () => false }), // only top-level summary
-		visualizer()
+		visualizer(),
 	],
 	onwarn(warning, defaultHandler) {
 		// Ignore "Use of eval is strongly discouraged" warnings from
@@ -61,13 +61,13 @@ export default defineConfig({
 		"winston",
 
 		// Relies on __dirname
-		"@prisma/client"
+		"@prisma/client",
 	],
 	input: "src/main.ts",
 	output: {
 		file: "dist/server.js",
 		format: "module",
 		inlineDynamicImports: true,
-		sourcemap: isProduction ? undefined : "inline"
-	}
+		sourcemap: isProduction ? undefined : "inline",
+	},
 });

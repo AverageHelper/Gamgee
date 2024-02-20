@@ -10,14 +10,14 @@ const logger = useLogger();
 async function failPermissions(context: CommandContext): Promise<void> {
 	return await context.replyPrivately({
 		content: t("common.no-personal-permission", context.userLocale),
-		ephemeral: true
+		ephemeral: true,
 	});
 }
 
 async function failNoGuild(context: CommandContext): Promise<void> {
 	return await context.reply({
 		content: t("common.not-here", context.userLocale),
-		ephemeral: true
+		ephemeral: true,
 	});
 }
 

@@ -9,7 +9,7 @@ const TEST_GUILD_ID: Snowflake = requireEnv("GUILD_ID");
 
 async function setAdminRole(
 	roleKey: "QUEUE_ADMIN_ROLE_ID" | "QUEUE_CREATOR_ROLE_ID",
-	isAdmin: boolean
+	isAdmin: boolean,
 ): Promise<void> {
 	await useTesterClient(async client => {
 		const user = client.user;

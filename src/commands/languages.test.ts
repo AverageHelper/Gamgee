@@ -18,8 +18,8 @@ mockGitForgeMetadata.mockResolvedValue({
 		English: 80,
 		Spanish: 10,
 		Indonesian: 5,
-		HTML: 5
-	}
+		HTML: 5,
+	},
 });
 
 const mockReply = vi.fn().mockResolvedValue(undefined);
@@ -40,7 +40,7 @@ describe("Language Statistics from our git forge", () => {
 			logger,
 			prepareForLongRunningTasks: mockPrepareForLongRunningTasks,
 			reply: mockReply,
-			followUp: mockFollowUp
+			followUp: mockFollowUp,
 		} as unknown as CommandContext;
 	});
 

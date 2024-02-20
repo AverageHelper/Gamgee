@@ -11,7 +11,7 @@ import { getStoredQueueConfig, updateStoredQueueConfig } from "../../useQueueSto
 import { SAFE_PRINT_LENGTH } from "../../constants/output.js";
 import {
 	resolveIntegerFromOption,
-	resolveStringFromOption
+	resolveStringFromOption,
 } from "../../helpers/optionResolvers.js";
 
 type LimitKey =
@@ -34,7 +34,7 @@ function countLimitMeta(locale: SupportedLocale): QueueLimitArg {
 		name: t("commands.limits.values.count.name", locale),
 		value: "count",
 		description: t("commands.limits.values.count.description", locale),
-		example: "4"
+		example: "4",
 	};
 }
 
@@ -44,7 +44,7 @@ function cooldownLimitMeta(locale: SupportedLocale): QueueLimitArg {
 		name: t("commands.limits.values.cooldown.name", locale),
 		value: "cooldown",
 		description: t("commands.limits.values.cooldown.description", locale),
-		example: "1800"
+		example: "1800",
 	};
 }
 
@@ -54,7 +54,7 @@ function minDurationLimitMeta(locale: SupportedLocale): QueueLimitArg {
 		name: t("commands.limits.values.entry-duration-min.name", locale),
 		value: "entry-duration-min",
 		description: t("commands.limits.values.entry-duration-min.description", locale),
-		example: "0"
+		example: "0",
 	};
 }
 
@@ -64,7 +64,7 @@ function maxDurationLimitMeta(locale: SupportedLocale): QueueLimitArg {
 		name: t("commands.limits.values.entry-duration-max.name", locale),
 		value: "entry-duration-max",
 		description: t("commands.limits.values.entry-duration-max.description", locale),
-		example: "430"
+		example: "430",
 	};
 }
 
@@ -74,7 +74,7 @@ function totalQueueLengthLimitMeta(locale: SupportedLocale): QueueLimitArg {
 		name: t("commands.limits.values.queue-duration.name", locale),
 		value: "queue-duration",
 		description: t("commands.limits.values.queue-duration.description", locale),
-		example: "10800"
+		example: "10800",
 	};
 }
 
@@ -84,7 +84,7 @@ export function allLimits(locale: SupportedLocale): Array<QueueLimitArg> {
 		cooldownLimitMeta(locale),
 		minDurationLimitMeta(locale),
 		maxDurationLimitMeta(locale),
-		totalQueueLengthLimitMeta(locale)
+		totalQueueLengthLimitMeta(locale),
 	];
 }
 
@@ -111,14 +111,14 @@ export const limit: Subcommand = {
 			name: "key",
 			description: "The name of the limit.",
 			type: ApplicationCommandOptionType.String,
-			choices: allLimits(DEFAULT_LOCALE)
+			choices: allLimits(DEFAULT_LOCALE),
 		},
 		{
 			name: "value",
 			description: "The new value to set for the limit. Time values are given in seconds.",
 			type: ApplicationCommandOptionType.Integer,
-			minValue: -1
-		}
+			minValue: -1,
+		},
 	],
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
@@ -157,7 +157,7 @@ export const limit: Subcommand = {
 						return await reply("There is no upper limit on entry duration.");
 					}
 					return await reply(
-						`Upper entry duration limit is **${durationString(guildLocale, value)}**`
+						`Upper entry duration limit is **${durationString(guildLocale, value)}**`,
 					);
 				}
 
@@ -188,7 +188,7 @@ export const limit: Subcommand = {
 						return await reply("There is no lower limit on entry duration.");
 					}
 					return await reply(
-						`Entry duration lower limit is **${durationString(guildLocale, value)}**`
+						`Entry duration lower limit is **${durationString(guildLocale, value)}**`,
 					);
 				}
 
@@ -302,5 +302,5 @@ export const limit: Subcommand = {
 			default:
 				assertUnreachable(key);
 		}
-	}
+	},
 };

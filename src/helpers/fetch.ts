@@ -10,7 +10,7 @@ import { SECONDS_IN_MINUTE } from "../constants/time.js";
 export async function fetchWithTimeout(
 	input: string | URL | Request,
 	timeoutSeconds: number = 50,
-	init: Omit<RequestInit, "signal"> = {}
+	init: Omit<RequestInit, "signal"> = {},
 ): Promise<Response> {
 	// Abort the request after the given timeout
 	const timeoutController = new AbortController();

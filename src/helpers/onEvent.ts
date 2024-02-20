@@ -5,11 +5,11 @@ import type { ClientEvents } from "discord.js";
  */
 export function onEvent<K extends keyof ClientEvents>(
 	name: K,
-	params: Omit<EventHandler<K>, "name">
+	params: Omit<EventHandler<K>, "name">,
 ): EventHandler<K> {
 	return {
 		name,
 		once: params.once ?? false,
-		execute: params.execute
+		execute: params.execute,
 	};
 }

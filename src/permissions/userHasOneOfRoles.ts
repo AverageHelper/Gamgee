@@ -4,7 +4,7 @@ import type {
 	GuildMember,
 	PermissionResolvable,
 	Snowflake,
-	User
+	User,
 } from "discord.js";
 
 /**
@@ -20,7 +20,7 @@ import type {
 export async function userHasRoleInGuild(
 	user: GuildMember,
 	roleId: Snowflake,
-	guild: Guild
+	guild: Guild,
 ): Promise<boolean> {
 	const adminRole = await guild.roles.fetch(roleId);
 	// TODO: Test that user IDs match their guild member IDs
@@ -40,7 +40,7 @@ export async function userHasRoleInGuild(
 export function userHasPermissionInChannel(
 	user: GuildMember,
 	permission: PermissionResolvable,
-	channel: GuildChannelResolvable
+	channel: GuildChannelResolvable,
 ): boolean {
 	return user //
 		.permissionsIn(channel)
@@ -60,14 +60,14 @@ export function userHasPermissionInChannel(
 export async function userHasOneOfRoles(
 	user: User,
 	roleIds: ReadonlyArray<Snowflake>,
-	guild: Guild
+	guild: Guild,
 ): Promise<boolean> {
 	const adminRoles = await Promise.all(
-		roleIds.map(roleId => guild.roles.fetch(roleId)) //
+		roleIds.map(roleId => guild.roles.fetch(roleId)), //
 	);
 
 	// TODO: Test that user IDs match their guild member IDs
 	return adminRoles.some(
-		role => role?.members?.has(user.id) ?? false //
+		role => role?.members?.has(user.id) ?? false, //
 	);
 }

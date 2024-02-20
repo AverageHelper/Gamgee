@@ -54,16 +54,16 @@ if (!didFixChangelog) {
 // Fix package.json and package-lock.json
 console.info("\n** Version matching **");
 const versioned = type({
-	version: string()
+	version: string(),
 });
 const versionedLock = type({
 	version: string(),
 	lockfileVersion: enums([2, 3]),
 	packages: type({
 		"": type({
-			version: string()
-		})
-	})
+			version: string(),
+		}),
+	}),
 });
 
 const packageJson: unknown = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
@@ -77,12 +77,12 @@ const packageLockVersion = parseSemVer(packageLockJson.version);
 
 if (!packageVersion)
 	throw new TypeError(
-		'The "version" field in package.json is not a compliant Semantic Version number'
+		'The "version" field in package.json is not a compliant Semantic Version number',
 	);
 
 if (!packageLockVersion)
 	throw new TypeError(
-		'The "version" field in package-lock.json is not a compliant Semantic Version number'
+		'The "version" field in package-lock.json is not a compliant Semantic Version number',
 	);
 
 console.info("package.json version:", packageVersion.version);
@@ -90,7 +90,7 @@ console.info("package-lock.json version:", packageLockVersion.version);
 
 if (packageVersion.version !== packageLockVersion.version)
 	throw new EvalError(
-		'The "version" fields in package.json and package-lock.json do not match. Please let CHANGELOG.md be the source of truth for versioning. To ignore this warning and proceed, please first run `npm install`.'
+		'The "version" fields in package.json and package-lock.json do not match. Please let CHANGELOG.md be the source of truth for versioning. To ignore this warning and proceed, please first run `npm install`.',
 	);
 
 // Update package.json

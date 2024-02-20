@@ -3,7 +3,7 @@ import type { Logger } from "../logger.js";
 import { allCommands } from "../commands/index.js";
 import {
 	rememberDeploymentForCommandInGuild,
-	rememberDeploymentForGlobalCommand
+	rememberDeploymentForGlobalCommand,
 } from "../helpers/mentionCommands.js";
 
 // TODO: Autodeploy commands if checks fail
@@ -16,7 +16,7 @@ import {
  */
 export async function verifyCommandDeployments(
 	client: Client<true>,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	const globalDiff = await diffGlobalCommandDeployments(client);
 	if (globalDiff) {
@@ -26,12 +26,12 @@ export async function verifyCommandDeployments(
 		switch (issue) {
 			case "content":
 				logger.warn(
-					`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
+					`The deployed commands differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`,
 				);
 				break;
 			case "length":
 				logger.warn(
-					`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`
+					`The deployed commands differ from the expected command list: Expected ${expected} global command(s), but Discord returned ${actual}. Please redeploy.`,
 				);
 				break;
 			default:
@@ -50,12 +50,12 @@ export async function verifyCommandDeployments(
 		switch (issue) {
 			case "content":
 				logger.warn(
-					`The deployed commands in guild '${guildId}' differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`
+					`The deployed commands in guild '${guildId}' differ from the expected command list: Expected a command named '${expected}', but found '${actual}'. Please redeploy.`,
 				);
 				break;
 			case "length":
 				logger.warn(
-					`The deployed commands in guild '${guildId}' differ from the expected command list: Expected ${expected} command(s), but Discord returned ${actual}. Please redeploy.`
+					`The deployed commands in guild '${guildId}' differ from the expected command list: Expected ${expected} command(s), but Discord returned ${actual}. Please redeploy.`,
 				);
 				break;
 			default:
@@ -71,7 +71,7 @@ export async function verifyCommandDeployments(
 
 async function diffGuildCommandDeployments(
 	client: Client<true>,
-	logger: Logger
+	logger: Logger,
 ): Promise<(Diff & { guild: Guild }) | null> {
 	const oAuthGuilds = await client.guilds.fetch();
 	const guilds = await Promise.all(oAuthGuilds.map(g => g.fetch()));
@@ -138,7 +138,7 @@ function diffArrays(expected: ReadonlyArray<string>, actual: ReadonlyArray<strin
 		return {
 			issue: "length",
 			expected: expected.length,
-			actual: actual.length
+			actual: actual.length,
 		};
 	}
 
@@ -149,7 +149,7 @@ function diffArrays(expected: ReadonlyArray<string>, actual: ReadonlyArray<strin
 			return {
 				issue: "content",
 				expected: expectedName,
-				actual: deployedName
+				actual: deployedName,
 			};
 		}
 	}

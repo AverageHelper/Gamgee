@@ -6,7 +6,7 @@ import { isPermissionAliasList, resolvePermissions } from "../commands/CommandPe
 import { useLogger } from "../logger.js";
 import {
 	userHasPermissionInChannel,
-	userHasRoleInGuild
+	userHasRoleInGuild,
 } from "../permissions/userHasOneOfRoles.js";
 
 export type Invocable = Command | Subcommand;
@@ -25,7 +25,7 @@ const logger = useLogger();
 export async function assertUserCanRunCommand(
 	member: GuildMember,
 	command: Invocable,
-	channel: GuildTextBasedChannel | null
+	channel: GuildTextBasedChannel | null,
 ): Promise<boolean> {
 	if (command.requiresGuild && !channel) {
 		logger.debug(`Command '${command.name}' reqires a guild, but we don't have one right now.`);
@@ -47,7 +47,7 @@ export async function assertUserCanRunCommand(
 		: [];
 
 	logger.debug(
-		`Command '${command.name}' requires that callers satisfy 1 of ${permissions.length} cases:`
+		`Command '${command.name}' requires that callers satisfy 1 of ${permissions.length} cases:`,
 	);
 
 	let idx = 0;
@@ -56,7 +56,7 @@ export async function assertUserCanRunCommand(
 		switch (access.type) {
 			case ApplicationCommandPermissionType.Role: {
 				logger.debug(
-					`\tCase ${idx}: User must${access.permission ? "" : " not"} have ROLE ID: ${access.id}`
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have ROLE ID: ${access.id}`,
 				);
 				const userHasRole =
 					guild !== undefined && (await userHasRoleInGuild(member, access.id, guild));
@@ -70,7 +70,7 @@ export async function assertUserCanRunCommand(
 
 			case ApplicationCommandPermissionType.User: {
 				logger.debug(
-					`\tCase ${idx}: User must${access.permission ? "" : " not"} have USER ID: ${access.id}`
+					`\tCase ${idx}: User must${access.permission ? "" : " not"} have USER ID: ${access.id}`,
 				);
 				const userHasId = member.id === access.id;
 				logger.debug(`\tUser ${userHasId ? "has" : "does not have"} ID ${access.id}`);
@@ -85,14 +85,14 @@ export async function assertUserCanRunCommand(
 				logger.debug(
 					`\tCase ${idx}: User must${
 						access.permission ? "" : " not"
-					} have 'ReadMessageHistory' access in CHANNEL ID: ${access.id}`
+					} have 'ReadMessageHistory' access in CHANNEL ID: ${access.id}`,
 				);
 				const userCanSeeChannel =
 					channel !== null && userHasPermissionInChannel(member, "ReadMessageHistory", access.id);
 				logger.debug(
 					`\tUser ${
 						userCanSeeChannel ? "has" : "does not have"
-					} permission to read messages in channel ${access.id}`
+					} permission to read messages in channel ${access.id}`,
 				);
 				if (access.permission && channel) {
 					logger.debug("\tProceeding...");

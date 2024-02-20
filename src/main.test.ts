@@ -12,12 +12,12 @@ const MockClient = vi.hoisted(
 			constructor(...args: ReadonlyArray<unknown>) {
 				mockConstructClient(...args);
 			}
-		}
+		},
 );
 
 vi.mock("discord.js", async () => ({
 	...(await vi.importActual<typeof import("discord.js")>("discord.js")),
-	Client: MockClient
+	Client: MockClient,
 }));
 
 // Don't test against the production token
@@ -36,7 +36,7 @@ const mockRegisterEventHandlers = registerEventHandlers as Mock<
 import type { Logger } from "./logger.js";
 const mockLoggerError = vi.fn();
 const mockLogger = {
-	error: mockLoggerError
+	error: mockLoggerError,
 } as unknown as Logger;
 
 // Import the unit under test
@@ -61,9 +61,9 @@ describe("main", () => {
 			expect.objectContaining({
 				allowedMentions: {
 					parse: ["roles", "users"],
-					repliedUser: true
-				}
-			})
+					repliedUser: true,
+				},
+			}),
 		);
 	});
 

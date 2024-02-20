@@ -19,8 +19,8 @@ export const setPrefix: Command = {
 			type: ApplicationCommandOptionType.String,
 			minLength: 1,
 			maxLength: 3,
-			required: true
-		}
+			required: true,
+		},
 	],
 	permissions: ["owner"],
 	requiresGuild: true,
@@ -33,14 +33,14 @@ export const setPrefix: Command = {
 		if (!valueOption) {
 			return await reply({
 				content: t("commands.setprefix.responses.missing-value", locale),
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 		const newPrefix: string = resolveStringFromOption(valueOption);
 		if (newPrefix === undefined || newPrefix === "") {
 			return await reply({
 				content: t("commands.setprefix.responses.missing-value", locale),
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -54,13 +54,13 @@ export const setPrefix: Command = {
 
 		return await reply({
 			content: `**${t("commands.setprefix.responses.value-header", locale)}**: ${JSON.stringify(
-				newPrefix
+				newPrefix,
 			)}\n\n${ti(
 				"commands.setprefix.responses.try-example",
 				{ sample: `\`${newPrefix}${helpCommandName}\`` },
-				locale
+				locale,
 			)}`,
-			ephemeral: true
+			ephemeral: true,
 		});
-	}
+	},
 };

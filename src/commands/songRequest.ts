@@ -12,7 +12,7 @@ import { useJobQueue } from "@averagehelper/job-queue";
 import {
 	deleteMessage,
 	sendMessageInChannel,
-	stopEscapingUriInString
+	stopEscapingUriInString,
 } from "../actions/messages/index.js";
 
 export const sr: GuildedCommand = {
@@ -27,8 +27,8 @@ export const sr: GuildedCommand = {
 			description: "A song link from a supported platform",
 			descriptionLocalizations: localizations("commands.sr.options.url.description"),
 			type: ApplicationCommandOptionType.String,
-			required: true
-		}
+			required: true,
+		},
 	],
 	requiresGuild: true,
 	async execute(context) {
@@ -44,7 +44,7 @@ export const sr: GuildedCommand = {
 			reply,
 			replyPrivately,
 			prepareForLongRunningTasks,
-			deleteInvocation
+			deleteInvocation,
 		} = context;
 
 		const MENTION_SENDER = `<@!${user.id}>`;
@@ -73,7 +73,7 @@ export const sr: GuildedCommand = {
 			logger.error(`Could not parse URL string due to error: ${JSON.stringify(error)}`);
 			// TODO: Be more specific. What kind of error?
 			return await reply(
-				`:hammer: ${MENTION_SENDER} ${t("commands.sr.responses.query-returned-error", guildLocale)}`
+				`:hammer: ${MENTION_SENDER} ${t("commands.sr.responses.query-returned-error", guildLocale)}`,
 			);
 		}
 
@@ -85,7 +85,7 @@ export const sr: GuildedCommand = {
 			const prefix = await getCommandPrefix(guild);
 			publicPreemptiveResponse = sendMessageInChannel(channel, {
 				content: `${MENTION_SENDER}\n${prefix}${sr.name} ${href}`, // to match message command structure, for search compatibility
-				allowedMentions: { users: [], repliedUser: false }
+				allowedMentions: { users: [], repliedUser: false },
 			});
 
 			await prepareForLongRunningTasks(true);
@@ -103,7 +103,7 @@ export const sr: GuildedCommand = {
 
 			await context.followUp({
 				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
-				reply: false
+				reply: false,
 			});
 			return;
 		}
@@ -112,8 +112,11 @@ export const sr: GuildedCommand = {
 			await Promise.all([
 				deleteInvocation(),
 				replyPrivately(
-					t("commands.sr.responses.rejections.queue-channel-submission-not-implemented", userLocale)
-				)
+					t(
+						"commands.sr.responses.rejections.queue-channel-submission-not-implemented",
+						userLocale,
+					),
+				),
 			]);
 			return;
 		}
@@ -129,7 +132,7 @@ export const sr: GuildedCommand = {
 			}
 
 			return await replyPrivately(
-				`:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", userLocale)}`
+				`:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", userLocale)}`,
 			);
 		}
 
@@ -141,8 +144,8 @@ export const sr: GuildedCommand = {
 			context,
 			queueChannel,
 			publicPreemptiveResponse,
-			logger
+			logger,
 		});
 		logger.debug(`Enqueued request for processing at ${Date.now()} from ${logUser(user)}`);
-	}
+	},
 };
