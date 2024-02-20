@@ -1,4 +1,4 @@
-import type { Command } from "./Command.js";
+import type { GuildedCommand } from "./Command.js";
 import { bold } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
@@ -11,7 +11,7 @@ import {
 	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 
-export const cooldown: Command = {
+export const cooldown: GuildedCommand = {
 	name: "cooldown",
 	nameLocalizations: localizations("commands.cooldown.name"),
 	description: "Find out when you can submit again.",
