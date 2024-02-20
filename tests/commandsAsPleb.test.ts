@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { channelMention } from "discord.js";
-import { expectNull, expectToContain } from "./testUtils/expectations/chai.js";
 import {
 	requireEnv,
 	setIsQueueAdmin,
@@ -12,13 +12,14 @@ const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
 
 const QUEUE_COMMAND = "quo";
 
-describe("Command as pleb", function () {
+describe("Command as pleb", () => {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
 	const fullUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 	const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
 
-	beforeEach(async function () {
-		const title = this.test?.fullTitle();
+	beforeEach(async () => {
+		// Cut out the test filepath
+		const title = expect.getState().currentTestName?.split(" > ").slice(1).join(" > ");
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
 		await setIsQueueCreator(true);
@@ -36,18 +37,18 @@ describe("Command as pleb", function () {
 		await setIsQueueCreator(false);
 	});
 
-	describe("unknown input", function () {
-		it("does nothing", async function () {
+	describe("unknown input", () => {
+		it("does nothing", async () => {
 			const content = await commandResponseInTestChannel("dunno what this does");
-			expectNull(content);
+			expect(content).toBeNull();
 		});
 	});
 
-	describe("queue", function () {
-		describe("when the queue is not set up", function () {
-			it("url request does nothing", async function () {
+	describe("queue", () => {
+		describe("when the queue is not set up", () => {
+			it("url request does nothing", async () => {
 				const content = await commandResponseInTestChannel(`sr ${url}`, "no queue");
-				expectToContain(content?.toLowerCase(), "no queue");
+				expect(content?.toLowerCase()).toContain("no queue");
 			});
 		});
 
@@ -56,8 +57,8 @@ describe("Command as pleb", function () {
 			{ isOpen: false, state: "closed" },
 		] as const;
 		for (const { isOpen, state } of args) {
-			describe(`when the queue is ${state}`, function () {
-				beforeEach(async function () {
+			describe(`when the queue is ${state}`, () => {
+				beforeEach(async () => {
 					await sendMessageWithDefaultClient(`**Setup**`);
 					await setIsQueueCreator(true);
 					await setIsQueueAdmin(true);
@@ -80,73 +81,73 @@ describe("Command as pleb", function () {
 				if (isOpen) {
 					// TODO: Test blacklist behavior
 
-					it("accepts a song request", async function () {
+					it("accepts a song request", async () => {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 
 						// TODO: Check that the request appears in the queue as well
-						expectToContain(content, "Submission Accepted!");
+						expect(content).toContain("Submission Accepted!");
 					});
 
-					it("accepts a song request with embed hidden", async function () {
+					it("accepts a song request with embed hidden", async () => {
 						const content = await commandResponseInTestChannel(
 							`sr <${url}>`,
 							"Submission Accepted!",
 						);
 
 						// TODO: Check that the request appears in the queue as well
-						expectToContain(content, "Submission Accepted!");
+						expect(content).toContain("Submission Accepted!");
 					});
 
-					it("`sr` alone provides info on how to use the request command", async function () {
+					it("`sr` alone provides info on how to use the request command", async () => {
 						const content = await commandResponseInTestChannel("sr", "To submit a song, use");
-						expectToContain(content, "To submit a song, use");
+						expect(content).toContain("To submit a song, use");
 					});
 
-					it("`nowplaying` sends the track info to DMs", async function () {
+					it("`nowplaying` sends the track info to DMs", async () => {
 						await commandResponseInTestChannel(`sr ${url}`, "Submission Accepted!");
 
 						// This has had isues before, when the database doesn't know the user.
 						// New users should always be able to run this command.
 						// TODO: Have a second test robot run this command and see what happens. Sould succeed, but fail if we reintroduce the old bug
 						const content = await commandResponseInTestChannel("nowplaying", "(DM to");
-						expectToContain(content, fullUrl);
+						expect(content).toContain(fullUrl);
 					});
 				} else {
-					it("url request tells the user the queue is not open", async function () {
+					it("url request tells the user the queue is not open", async () => {
 						const content = await commandResponseInTestChannel(`sr ${url}`, "queue is not open");
-						expectToContain(content, "queue is not open");
+						expect(content).toContain("queue is not open");
 					});
 
-					it("url request tells the user the queue is not open even with embed hidden", async function () {
+					it("url request tells the user the queue is not open even with embed hidden", async () => {
 						const content = await commandResponseInTestChannel(`sr <${url}>`, "queue is not open");
-						expectToContain(content, "queue is not open");
+						expect(content).toContain("queue is not open");
 					});
 				}
 			});
 		}
 	});
 
-	describe("video", function () {
+	describe("video", () => {
 		const needSongLink = `You're gonna have to add a song link to that.`;
 
-		it("asks for a song link", async function () {
+		it("asks for a song link", async () => {
 			const content = await commandResponseInTestChannel("video", needSongLink);
-			expectToContain(content, needSongLink);
+			expect(content).toContain(needSongLink);
 		});
 
-		it("returns the title and duration of a song with normal spacing", async function () {
+		it("returns the title and duration of a song with normal spacing", async () => {
 			const content = await commandResponseInTestChannel(`video ${url}`, info);
-			expectToContain(content, info);
+			expect(content).toContain(info);
 		});
 
-		it("returns the title and duration of a song with suboptimal spacing", async function () {
+		it("returns the title and duration of a song with suboptimal spacing", async () => {
 			const content = await commandResponseInTestChannel(`video             ${url}`, info);
-			expectToContain(content, info);
+			expect(content).toContain(info);
 		});
 
-		it("returns the title and duration of a song with embed hidden", async function () {
+		it("returns the title and duration of a song with embed hidden", async () => {
 			const content = await commandResponseInTestChannel(`video <${url}>`, info);
-			expectToContain(content, info);
+			expect(content).toContain(info);
 		});
 	});
 });

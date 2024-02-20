@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { expectUndefined, expectValueEqual } from "../tests/testUtils/expectations/vitest.js";
+import { expectUndefined, expectValueEqual } from "../tests/testUtils/expectations.js";
 import { localizations, t } from "./i18n.js";
 
 describe("i18n", () => {

@@ -1,6 +1,6 @@
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetch

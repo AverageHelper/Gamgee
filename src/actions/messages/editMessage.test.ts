@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 import type { Range } from "./editMessage.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { expectValueEqual } from "../../../tests/testUtils/expectations/vitest.js";
+import { expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import {
 	editMessage,
 	escapeUriInString,

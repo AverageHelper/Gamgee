@@ -2,7 +2,7 @@ import type { Client, GuildMember, Message } from "discord.js";
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ApplicationCommandOptionType, userMention } from "discord.js";
-import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations/vitest.js";
+import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
 vi.mock("./helpers/gitForgeMetadata.js");
@@ -136,7 +136,7 @@ describe("Command handler", () => {
 				value: subcommand,
 				options: expect.arrayContaining([]) as Array<unknown>,
 			});
-			expectDefined(options[0]?.options);
+			expectDefined(options[0].options);
 			expect(options[0].options).toStrictEqual([
 				{
 					name: key,

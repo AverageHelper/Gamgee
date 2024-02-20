@@ -1,7 +1,7 @@
 import type { CommandInteractionOption, Guild } from "discord.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ApplicationCommandOptionType, channelMention } from "discord.js";
-import { expectNull } from "../../tests/testUtils/expectations/vitest.js";
+import { expectNull } from "../../tests/testUtils/expectations.js";
 import { resolveChannelFromOption } from "./optionResolvers.js";
 
 const mockResolveChannel = vi.fn();

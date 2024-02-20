@@ -1,11 +1,7 @@
 import type { Song, SongInfoOptions } from "soundcloud-scraper";
 import type { Mock } from "vitest";
-import { beforeEach, describe, test, vi } from "vitest";
-import {
-	expectDefined,
-	expectPositive,
-	expectValueEqual,
-} from "../../../tests/testUtils/expectations/vitest.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 
 // Mock fetch
 vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));
@@ -89,7 +85,10 @@ describe("SoundCloud track details", () => {
 
 			const details = await getSoundCloudTrack(new URL(url));
 			expectValueEqual(details.url, result);
-			expectPositive(details.duration.seconds);
+			expect(details.duration.seconds).not.toBe(true);
+			expect(details.duration.seconds).not.toBeNaN();
+			expect(details.duration.seconds).not.toBe(Number.POSITIVE_INFINITY);
+			expect(details.duration.seconds).toBeGreaterThan(0);
 		},
 	);
 });

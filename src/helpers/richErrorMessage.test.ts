@@ -1,5 +1,5 @@
 import { describe, test } from "vitest";
-import { expectDefined, expectToContain } from "../../tests/testUtils/expectations/vitest.js";
+import { expectDefined, expectToContain } from "../../tests/testUtils/expectations.js";
 import { richErrorMessage } from "./richErrorMessage.js";
 
 describe("Rich error messages", () => {
