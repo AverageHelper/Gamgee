@@ -45,7 +45,7 @@ async function getPonyFmTrackInfoFromId(
 	);
 	if (response.status === 200) {
 		try {
-			const responseParsed = (await response.json()) as unknown;
+			const responseParsed: unknown = await response.json();
 			if (!isPonyFmTrackAPIResponse(responseParsed)) {
 				throw new VideoError(`Malformed response from Pony.fm API`); // TODO: i18n?
 			}
@@ -58,7 +58,7 @@ async function getPonyFmTrackInfoFromId(
 		}
 	}
 	if (response.status === 404) {
-		const responseParsed = (await response.json()) as unknown;
+		const responseParsed: unknown = await response.json();
 		if (!isPonyFmTrackAPIError(responseParsed)) {
 			throw new VideoError(
 				`Pony.fm API errored with malformed body: ${JSON.stringify(responseParsed)}`

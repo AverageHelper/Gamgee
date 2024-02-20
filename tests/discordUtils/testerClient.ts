@@ -77,8 +77,8 @@ export async function setupTesterClient(): Promise<void> {
 /**
  * Be sure to call this only in an `after` or `afterAll` hook.
  */
-export function destroyTesterClient(): void {
-	client.destroy();
+export async function destroyTesterClient(): Promise<void> {
+	await client.destroy();
 	logger.debug("Signed out of test client");
 }
 

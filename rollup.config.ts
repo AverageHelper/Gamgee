@@ -60,7 +60,7 @@ export default defineConfig({
 		defaultHandler(warning);
 	},
 	external: [
-		// Circular, uses eval
+		// Circular, uses eval, unexpeted token in plugin-commonjs
 		"discord.js",
 
 		// Circular

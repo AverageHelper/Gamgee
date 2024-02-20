@@ -13,6 +13,7 @@ import { revokeCommands } from "./revokeCommands.js";
 import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 
 export async function deployCommands(client: Client<true>, logger: Logger): Promise<void> {
+	// FIXME: This means command deployments won't retain the permissions given to them previously. Need to only revoke UNKNOWN commands and update known ones.
 	await revokeCommands(client, logger); // fresh start!
 
 	logger.info("Deploying commands...");
