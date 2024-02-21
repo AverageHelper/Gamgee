@@ -8,7 +8,7 @@ vi.mock("../../useGuildStorage.js");
 vi.mock("../../useQueueStorage.js");
 
 vi.mock("../../logger.js", async () => ({
-	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger
+	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger,
 }));
 
 // ** Gather mockable actions
@@ -49,7 +49,7 @@ const mockSetQueueOpen = setQueueOpen as Mock<
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry } from "../../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
@@ -97,7 +97,7 @@ describe("Song request pipeline", () => {
 			entryDurationMaxSeconds: null,
 			entryDurationMinSeconds: null,
 			queueDurationSeconds: null,
-			submissionMaxQuantity: null
+			submissionMaxQuantity: null,
 		};
 
 		context = {
@@ -107,11 +107,11 @@ describe("Song request pipeline", () => {
 			followUp: mockFollowUp,
 			message: {
 				id: "some-message-1234",
-				content: "This is a message object. Trust me, bro"
+				content: "This is a message object. Trust me, bro",
 			},
 			user: {
-				id: "the-user"
-			}
+				id: "the-user",
+			},
 		} as unknown as CommandContext;
 
 		request = {
@@ -121,11 +121,11 @@ describe("Song request pipeline", () => {
 			queueChannel: {
 				id: QUEUE_CHANNEL_ID,
 				guild: {
-					id: GUILD_ID
+					id: GUILD_ID,
 				} as unknown as Guild,
-				send: mockChannelSend
+				send: mockChannelSend,
 			} as unknown as TextChannel,
-			songUrl: new URL("https://localhost:9999/")
+			songUrl: new URL("https://localhost:9999/"),
 		};
 
 		newEntry = {
@@ -137,7 +137,7 @@ describe("Song request pipeline", () => {
 			seconds: 1,
 			senderId: context.user.id,
 			sentAt: new Date(),
-			url: request.songUrl.href
+			url: request.songUrl.href,
 		};
 
 		mockDeleteMessage.mockResolvedValue(true);
@@ -165,7 +165,7 @@ describe("Song request pipeline", () => {
 		mockGetVideoDetails.mockResolvedValue({
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
-			url: newEntry.url
+			url: newEntry.url,
 		});
 
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
@@ -184,14 +184,14 @@ describe("Song request pipeline", () => {
 		mockGetVideoDetails.mockResolvedValue({
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
-			url: newEntry.url
+			url: newEntry.url,
 		});
 
 		context = { ...context, type: "interaction" } as unknown as CommandContext;
 		request = {
 			...request,
 			context,
-			publicPreemptiveResponse: Promise.resolve({ id: "a-message" } as unknown as Message)
+			publicPreemptiveResponse: Promise.resolve({ id: "a-message" } as unknown as Message),
 		};
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
 
@@ -209,7 +209,7 @@ describe("Song request pipeline", () => {
 		mockGetVideoDetails.mockResolvedValue({
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
-			url: newEntry.url
+			url: newEntry.url,
 		});
 
 		// mock the queue closer so it behaves as tho the unit closed the queue appropriately

@@ -13,7 +13,7 @@ const mockGlobalCommand: Command = {
 	name: "global-test",
 	description: "lolcat",
 	requiresGuild: false,
-	execute: mockGlobalExecute
+	execute: mockGlobalExecute,
 };
 mockAllCommands.set(mockGlobalCommand.name, mockGlobalCommand);
 
@@ -22,7 +22,7 @@ const mockGuildedCommand: Command = {
 	name: "guilded-test",
 	description: "lolcat",
 	requiresGuild: true,
-	execute: mockGuildedExecute
+	execute: mockGuildedExecute,
 };
 mockAllCommands.set(mockGuildedCommand.name, mockGuildedCommand);
 
@@ -32,7 +32,7 @@ const mockErrorGlobalCommand: Command = {
 	requiresGuild: false,
 	execute: () => {
 		throw new Error("Command error, this is a test");
-	}
+	},
 };
 mockAllCommands.set(mockErrorGlobalCommand.name, mockErrorGlobalCommand);
 
@@ -42,7 +42,7 @@ const mockErrorGuildedCommand: Command = {
 	requiresGuild: true,
 	execute: () => {
 		throw new Error("Command error, this is a test");
-	}
+	},
 };
 mockAllCommands.set(mockErrorGuildedCommand.name, mockErrorGuildedCommand);
 
@@ -53,7 +53,7 @@ const mockUserMessageErrorGlobalCommand: Command = {
 	requiresGuild: false,
 	execute: () => {
 		throw new Error(userErrorMessage);
-	}
+	},
 };
 mockAllCommands.set(mockUserMessageErrorGlobalCommand.name, mockUserMessageErrorGlobalCommand);
 
@@ -67,7 +67,7 @@ const logger: Logger = {
 	silly: mockLoggerSilly,
 	debug: mockLoggerDebug,
 	verbose: mockLoggerVerbose,
-	error: mockLoggerError
+	error: mockLoggerError,
 } as unknown as Logger;
 
 // Import the unit under test
@@ -94,7 +94,7 @@ function defaultInteraction(): Interaction {
 		client: { user: { id: selfUid } },
 		user: {
 			bot: false,
-			id: otherUid
+			id: otherUid,
 		},
 		channelId,
 		inCachedGuild: () => true,
@@ -103,17 +103,17 @@ function defaultInteraction(): Interaction {
 		guild: {
 			id: "guild-1234",
 			members: {
-				fetch: mockGuildMembersFetch
-			}
+				fetch: mockGuildMembersFetch,
+			},
 		},
 		channel: {
 			type: ChannelType.GuildText,
-			partial: false
+			partial: false,
 		},
 		isButton: () => false,
 		isChatInputCommand: () => true,
 		isAutocomplete: () => false,
-		replied: false
+		replied: false,
 	} as unknown as Interaction;
 }
 
@@ -174,7 +174,7 @@ describe("on(interactionCreate)", () => {
 			interaction.member = null;
 
 			const channel = {
-				type: ChannelType.DM
+				type: ChannelType.DM,
 			} as unknown as TextBasedChannel;
 
 			const guild = null;
@@ -183,7 +183,7 @@ describe("on(interactionCreate)", () => {
 			interaction = {
 				...interaction,
 				guild: guild,
-				channel: channel
+				channel: channel,
 			} as unknown as Interaction;
 
 			await expect(interactionCreate.execute(interaction, logger)).resolves.toBeUndefined();
@@ -206,7 +206,7 @@ describe("on(interactionCreate)", () => {
 			interaction.member = null;
 
 			const channel = {
-				type: ChannelType.DM
+				type: ChannelType.DM,
 			} as unknown as TextBasedChannel;
 
 			const guild: Interaction | null = null;
@@ -215,7 +215,7 @@ describe("on(interactionCreate)", () => {
 			interaction = {
 				...interaction,
 				guild: guild,
-				channel: channel
+				channel: channel,
 			} as unknown as Interaction;
 
 			const mockInteractionReply = vi.fn();
@@ -225,7 +225,7 @@ describe("on(interactionCreate)", () => {
 			expect(mockGuildedExecute).not.toHaveBeenCalled();
 			expect(mockInteractionReply).toHaveBeenCalledWith({
 				content: "Can't do that here.",
-				ephemeral: true
+				ephemeral: true,
 			});
 		});
 
@@ -239,7 +239,7 @@ describe("on(interactionCreate)", () => {
 			const channel = {
 				type: ChannelType.DM,
 				partial: true,
-				fetch: mockChannelFetch
+				fetch: mockChannelFetch,
 			} as unknown as TextBasedChannel;
 
 			const guild = null;
@@ -248,7 +248,7 @@ describe("on(interactionCreate)", () => {
 			interaction = {
 				...interaction,
 				guild: guild,
-				channel: channel
+				channel: channel,
 			} as unknown as Interaction;
 
 			await expect(interactionCreate.execute(interaction, logger)).resolves.toBeUndefined();

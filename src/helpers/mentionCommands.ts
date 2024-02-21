@@ -1,6 +1,7 @@
 import type { ApplicationCommand, Guild } from "discord.js";
 import type { Code } from "./composeStrings.js";
 import type { GlobalCommand, GuildedCommand, Subcommand } from "../commands/index.js";
+import { chatInputApplicationCommandMention } from "discord.js";
 import { code } from "./composeStrings.js";
 import { useLogger } from "../logger.js";
 
@@ -17,7 +18,7 @@ const deployedGlobalCommands = new Map<string, ApplicationCommand>();
  */
 export function rememberDeploymentForGlobalCommand(
 	command: GlobalCommand,
-	deployment: ApplicationCommand
+	deployment: ApplicationCommand,
 ): void {
 	logger.debug(`Global command /${command.name}, id: '${deployment.id}'`);
 	deployedGlobalCommands.set(command.name, deployment);
@@ -33,7 +34,7 @@ export function rememberDeploymentForGlobalCommand(
 export function rememberDeploymentForCommandInGuild(
 	command: GuildedCommand,
 	guildId: string,
-	deployment: ApplicationCommand
+	deployment: ApplicationCommand,
 ): void {
 	logger.debug(`Guild '${guildId}' command /${command.name}, id: '${deployment.id}'`);
 	const commandsInGuild = new Map(deployedGuildCommands.get(guildId));
@@ -47,11 +48,11 @@ type CommandMention = `</${string}:${string}>`;
 type SubcommandMention = `</${string} ${string}:${string}>`;
 
 function mentionAppCommand(command: ApplicationCommand): CommandMention {
-	return `</${command.name}:${command.id}>`;
+	return chatInputApplicationCommandMention(command.name, command.id);
 }
 
 function mentionAppSubcommand(command: ApplicationCommand, subcommand: string): SubcommandMention {
-	return `</${command.name} ${subcommand}:${command.id}>`;
+	return chatInputApplicationCommandMention(command.name, subcommand, command.id);
 }
 
 /**
@@ -65,7 +66,7 @@ function mentionAppSubcommand(command: ApplicationCommand, subcommand: string): 
  */
 export function mentionCommand<P extends string>(
 	command: GlobalCommand,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): CommandMention | Code<`${P}${string}`>;
 
 /**
@@ -81,7 +82,7 @@ export function mentionCommand<P extends string>(
 export function mentionCommand<P extends string>(
 	command: GuildedCommand,
 	guild: Guild | null,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): CommandMention | Code<`${P}${string}`>;
 
 export function mentionCommand<P extends string>(
@@ -127,7 +128,7 @@ export function mentionSubcommand<P extends string>(
 	command: GuildedCommand,
 	subcommand: Subcommand,
 	guild: Guild | null,
-	fallbackPrefix: P
+	fallbackPrefix: P,
 ): SubcommandMention | Code<`${P}${string}`> {
 	const guildCommands = guild ? deployedGuildCommands.get(guild.id) : undefined;
 	const cached = guildCommands?.get(command.name);

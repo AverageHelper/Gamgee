@@ -14,7 +14,7 @@ const vocabulary = {
 	"es-ES": esES,
 	fr,
 	hu,
-	"pt-BR": ptBR
+	"pt-BR": ptBR, // TODO: Get these keys from the JSON (?)
 } as const;
 
 export const DEFAULT_LOCALE = "en-US";
@@ -89,7 +89,7 @@ const DOT = ".";
  */
 export function t<K extends string>(
 	keypath: K,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): Get<MessageSchema, K> extends string ? Get<MessageSchema, K> : undefined;
 
 /**
@@ -103,14 +103,14 @@ export function t<K extends string>(
 export function t<K extends string, V extends Vocabulary>(
 	keypath: K,
 	locale: SupportedLocale,
-	messages: V
+	messages: V,
 ): Get<V[typeof DEFAULT_LOCALE], K> extends string ? Get<V[typeof DEFAULT_LOCALE], K> : undefined;
 
 // FIXME: We shouldn't need to overload this
 export function t<K extends string>(
 	keypath: K,
 	locale: SupportedLocale,
-	data = vocabulary
+	data = vocabulary,
 ): string | undefined {
 	if (keypath === "") return undefined;
 
@@ -144,14 +144,14 @@ import { randomElementOfArray } from "./helpers/randomElementOfArray.js";
 export function ti<K extends string>(
 	keypath: K,
 	values: Readonly<Record<string, string>>,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): Get<MessageSchema, K> extends string ? string : undefined;
 
 // FIXME: We shouldn't need to overload this
 export function ti<K extends string>(
 	keypath: K,
 	values: Readonly<Record<string, string>>,
-	locale: SupportedLocale
+	locale: SupportedLocale,
 ): string | undefined {
 	const rawText: string | undefined = t(keypath, locale);
 	if (rawText === undefined || rawText === "") return rawText;
@@ -239,12 +239,12 @@ export { ti as translateInterpolating };
  * or `undefined` if no translations exist.
  */
 export function localizations<K extends string>(
-	keypath: K
+	keypath: K,
 ): Get<MessageSchema, K> extends string ? Partial<Record<SupportedLocale, string>> : undefined;
 
 // FIXME: We shouldn't need to overload this
 export function localizations<K extends string>(
-	keypath: K
+	keypath: K,
 ): Partial<Record<SupportedLocale, string>> | undefined {
 	// Get all localizations for the given keypath
 	const result: Partial<Record<SupportedLocale, string>> = {};

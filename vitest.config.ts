@@ -5,13 +5,13 @@ export default defineConfig({
 		clearMocks: true,
 		include: ["src/**/*.test.ts"],
 		sequence: {
-			hooks: "list"
+			hooks: "list",
 		},
 		coverage: {
 			enabled: true,
 			all: true,
 			include: ["src/**/*!(.d)!(.test).ts"],
-			reportsDirectory: "coverage"
-		}
-	}
+			reportsDirectory: "coverage",
+		},
+	},
 });

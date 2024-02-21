@@ -12,23 +12,23 @@ export interface MessageButton {
 export const DONE_BUTTON: MessageButton = {
 	id: "DONE",
 	label: "Done",
-	style: ButtonStyle.Success
+	style: ButtonStyle.Success,
 };
 
 export const DELETE_BUTTON: MessageButton = {
 	id: "DELETE",
 	label: "Reject",
-	style: ButtonStyle.Danger
+	style: ButtonStyle.Danger,
 };
 
 export const RESTORE_BUTTON: MessageButton = {
 	id: "RESTORE",
 	label: "Restore",
-	style: ButtonStyle.Secondary
+	style: ButtonStyle.Secondary,
 };
 
 export function actionRow(
-	buttons: Readonly<NonEmptyArray<Readonly<MessageButton>>>
+	buttons: Readonly<NonEmptyArray<Readonly<MessageButton>>>,
 ): ActionRowBuilder<MessageActionRowComponentBuilder> {
 	return new ActionRowBuilder<MessageActionRowComponentBuilder>() //
 		.setComponents(
@@ -44,6 +44,6 @@ export function actionRow(
 					result.setURL(btn.url.href);
 				}
 				return result;
-			})
+			}),
 		);
 }

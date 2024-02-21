@@ -16,7 +16,7 @@ export const t: Command = {
 		logger,
 		replyPrivately,
 		deleteInvocation,
-		sendTyping
+		sendTyping,
 	}) {
 		await deleteInvocation();
 		if (!channel) {
@@ -35,5 +35,5 @@ export const t: Command = {
 
 		await timeoutSeconds(10); // this is roughly how long the typing indicator lasts on its own
 		logger.debug(`Finished typing in channel ${channel.id}`);
-	}
+	},
 };

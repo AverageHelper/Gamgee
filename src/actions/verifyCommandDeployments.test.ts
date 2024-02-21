@@ -20,7 +20,7 @@ const mockLogger = {
 	debug: mockLoggerDebug,
 	verbose: mockLoggerVerbose,
 	info: mockLoggerInfo,
-	warn: mockLoggerWarn
+	warn: mockLoggerWarn,
 } as unknown as Logger;
 
 describe("Verify command deployments", () => {
@@ -30,13 +30,13 @@ describe("Verify command deployments", () => {
 			name: "zaphod",
 			description: " ",
 			requiresGuild: false,
-			execute: () => undefined
+			execute: () => undefined,
 		},
 		{
 			name: "beeblebrox",
 			description: " ",
 			requiresGuild: false,
-			execute: () => undefined
+			execute: () => undefined,
 		},
 
 		// Guild-only Commands
@@ -44,14 +44,14 @@ describe("Verify command deployments", () => {
 			name: "arthur",
 			description: " ",
 			requiresGuild: true,
-			execute: () => undefined
+			execute: () => undefined,
 		},
 		{
 			name: "dent",
 			description: " ",
 			requiresGuild: true,
-			execute: () => undefined
-		}
+			execute: () => undefined,
+		},
 	];
 
 	const mockFetchApplicationCommands = vi.fn();
@@ -60,8 +60,8 @@ describe("Verify command deployments", () => {
 	const mockClient = {
 		application: {
 			commands: {
-				fetch: mockFetchApplicationCommands
-			}
+				fetch: mockFetchApplicationCommands,
+			},
 		},
 		guilds: {
 			fetch: vi.fn().mockResolvedValue(
@@ -72,14 +72,14 @@ describe("Verify command deployments", () => {
 							fetch: vi.fn().mockResolvedValue({
 								id: "guild1",
 								commands: {
-									fetch: mockFetchGuildCommands
-								}
-							})
-						} as unknown as OAuth2Guild
-					]
-				])
-			)
-		}
+									fetch: mockFetchGuildCommands,
+								},
+							}),
+						} as unknown as OAuth2Guild,
+					],
+				]),
+			),
+		},
 	} as unknown as Client<true>;
 
 	beforeEach(() => {
@@ -114,7 +114,7 @@ describe("Verify command deployments", () => {
 			expect(mockFetchGuildCommands).toHaveBeenCalledOnce();
 			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
-				expect.stringContaining("commands in guild 'guild1' differ")
+				expect.stringContaining("commands in guild 'guild1' differ"),
 			);
 			expect(mockLoggerWarn).toHaveBeenCalledWith(expect.stringContaining("Expected 1"));
 		});
@@ -125,17 +125,17 @@ describe("Verify command deployments", () => {
 				name: "ford",
 				description: " ",
 				requiresGuild: true,
-				execute: () => undefined
+				execute: () => undefined,
 			});
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
 			expect(mockFetchGuildCommands).toHaveBeenCalledOnce();
 			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
-				expect.stringContaining("commands in guild 'guild1' differ")
+				expect.stringContaining("commands in guild 'guild1' differ"),
 			);
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
-				expect.stringContaining("Expected a command named 'dent'")
+				expect.stringContaining("Expected a command named 'dent'"),
 			);
 		});
 	});
@@ -164,7 +164,7 @@ describe("Verify command deployments", () => {
 				name: "marvin",
 				description: " ",
 				requiresGuild: false,
-				execute: () => undefined
+				execute: () => undefined,
 			});
 
 			await expect(verifyCommandDeployments(mockClient, mockLogger)).resolves.toBeUndefined();
@@ -172,7 +172,7 @@ describe("Verify command deployments", () => {
 			expect(mockLoggerInfo).not.toHaveBeenCalled();
 			expect(mockLoggerWarn).toHaveBeenCalledWith(expect.stringContaining("commands differ"));
 			expect(mockLoggerWarn).toHaveBeenCalledWith(
-				expect.stringContaining("Expected a command named 'marvin'")
+				expect.stringContaining("Expected a command named 'marvin'"),
 			);
 		});
 	});

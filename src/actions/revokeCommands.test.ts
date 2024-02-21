@@ -13,13 +13,13 @@ describe("Command revocations", () => {
 	const mockClient = {
 		application: {
 			commands: {
-				set: mockApplicationCommandsSet
-			}
+				set: mockApplicationCommandsSet,
+			},
 		},
 		guilds: {
-			fetch: mockFetchOauthGuilds
-		}
-	} as unknown as Client;
+			fetch: mockFetchOauthGuilds,
+		},
+	} as unknown as Client<true>;
 
 	beforeEach(() => {
 		mockApplicationCommandsSet.mockResolvedValue(undefined);
@@ -30,19 +30,19 @@ describe("Command revocations", () => {
 					Promise.resolve({
 						id: "test-guild1",
 						commands: {
-							set: mockGuildCommandsSet
-						}
-					})
+							set: mockGuildCommandsSet,
+						},
+					}),
 			},
 			{
 				fetch: (): Promise<unknown> =>
 					Promise.resolve({
 						id: "test-guild2",
 						commands: {
-							set: mockGuildCommandsSet
-						}
-					})
-			}
+							set: mockGuildCommandsSet,
+						},
+					}),
+			},
 		]);
 	});
 

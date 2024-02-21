@@ -20,7 +20,7 @@ const MockSoundCloudClient = vi.hoisted(
 	() =>
 		class MockSoundCloudClient {
 			getSongInfo = mockGetSongInfo;
-		}
+		},
 );
 
 vi.mock("soundcloud-scraper", () => ({ Client: MockSoundCloudClient }));
@@ -58,14 +58,14 @@ describe("SoundCloud track details", () => {
 			mockGetSongInfo.mockResolvedValue({
 				url: cleanUrl.href,
 				title: "sample",
-				duration: duration * 1000
+				duration: duration * 1000,
 			} as unknown as Song);
 
 			const details = await getSoundCloudTrack(new URL(url));
 			expectValueEqual(details.url, result);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		}
+		},
 	);
 
 	test.each`
@@ -80,7 +80,7 @@ describe("SoundCloud track details", () => {
 			mockGetSongInfo.mockResolvedValue({
 				url: result,
 				title: "sample",
-				duration: 5_000 // sample
+				duration: 5_000, // sample
 			} as unknown as Song);
 
 			const details = await getSoundCloudTrack(new URL(url));
@@ -89,6 +89,6 @@ describe("SoundCloud track details", () => {
 			expect(details.duration.seconds).not.toBeNaN();
 			expect(details.duration.seconds).not.toBe(Number.POSITIVE_INFINITY);
 			expect(details.duration.seconds).toBeGreaterThan(0);
-		}
+		},
 	);
 });

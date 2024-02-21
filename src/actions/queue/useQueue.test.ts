@@ -8,7 +8,7 @@ import {
 	deleteStoredEntry,
 	getStoredEntry,
 	getStoredQueueConfig,
-	saveNewEntryToDatabase
+	saveNewEntryToDatabase,
 } from "../../useQueueStorage.js";
 const mockDeleteStoredEntry = deleteStoredEntry as Mock<
 	Parameters<typeof deleteStoredEntry>,
@@ -56,29 +56,29 @@ describe("Request Queue", () => {
 	beforeEach(() => {
 		const guild = {
 			id: guildId,
-			preferredLocale: DEFAULT_LOCALE
+			preferredLocale: DEFAULT_LOCALE,
 		} as unknown as Guild;
 
 		queueChannel = {
 			id: "queue-channel",
 			guild,
-			send: mockChannelSend
+			send: mockChannelSend,
 		} as unknown as TextChannel;
 
 		message = {
 			id: queueMessageId,
 			channel: {
-				id: "the-channel"
+				id: "the-channel",
 			},
 			author: {
-				id: entrySenderId
+				id: entrySenderId,
 			},
-			guild
+			guild,
 		} as unknown as Message;
 
 		entry = {
 			senderId: entrySenderId,
-			url: entryUrl
+			url: entryUrl,
 		} as unknown as QueueEntry;
 
 		forgetJobQueue(`${message.channel.id}_${message.id}`);
@@ -100,7 +100,7 @@ describe("Request Queue", () => {
 				senderId: entry.senderId,
 				isDone: entry.isDone,
 				haveCalledNowPlaying: [],
-				guildId: ""
+				guildId: "",
 			});
 		});
 		mockGetStoredQueueConfig.mockResolvedValue({
@@ -110,14 +110,14 @@ describe("Request Queue", () => {
 			entryDurationMaxSeconds: 430,
 			entryDurationMinSeconds: 0,
 			submissionMaxQuantity: 3,
-			queueDurationSeconds: null
+			queueDurationSeconds: null,
 		});
 		mockMessageRemoveReaction.mockResolvedValue(undefined);
 		mockChannelSend.mockResolvedValue({
 			id: "new-message",
 			channel: {
-				id: queueChannel.id
-			}
+				id: queueChannel.id,
+			},
 		});
 	});
 
@@ -142,13 +142,13 @@ describe("Request Queue", () => {
 	const request: UnsentQueueEntry = {
 		url: "song-url",
 		seconds: 43,
-		senderId: "sender" as Snowflake
+		senderId: "sender" as Snowflake,
 	};
 
 	test("stores queue entries", async () => {
 		await expect(pushEntryToQueue(request, queueChannel)).resolves.toMatchObject({
 			...request,
-			channelId: queueChannel.id
+			channelId: queueChannel.id,
 		});
 
 		await flushPromises();
@@ -160,9 +160,9 @@ describe("Request Queue", () => {
 				isDone: false,
 				// sentAt: expect.toBeValidDate() as Date, // TODO: Can we even assert these without `jest-extended`?
 				sentAt: expect.any(Date) as Date,
-				queueMessageId: "new-message"
+				queueMessageId: "new-message",
 			},
-			queueChannel
+			queueChannel,
 		);
 
 		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();

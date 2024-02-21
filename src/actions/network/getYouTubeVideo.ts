@@ -5,7 +5,7 @@ import {
 	InvalidYouTubeUrlError,
 	NotFoundError,
 	UnavailableError,
-	VideoError
+	VideoError,
 } from "../../errors/index.js";
 
 /**
@@ -51,6 +51,6 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 	return {
 		url: info.videoDetails.video_url,
 		title: info.videoDetails.title,
-		duration: { seconds }
+		duration: { seconds },
 	};
 }

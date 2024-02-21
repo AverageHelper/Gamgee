@@ -28,7 +28,7 @@ export interface VideoDetails {
  */
 export async function getVideoDetails(
 	urlOrString: URL | string,
-	logger: Logger | null = useLogger()
+	logger: Logger | null = useLogger(),
 ): Promise<VideoDetails | null> {
 	try {
 		const url: URL =
@@ -37,11 +37,11 @@ export async function getVideoDetails(
 			getYouTubeVideo(url),
 			getSoundCloudTrack(url),
 			getBandcampTrack(url),
-			getPonyFmTrack(url)
+			getPonyFmTrack(url),
 		]);
 	} catch (error) {
 		logger?.error(
-			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error)
+			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error),
 		);
 		return null;
 	}

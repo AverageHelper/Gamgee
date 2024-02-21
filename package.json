@@ -50,7 +50,7 @@
 	},
 	"homepage": "https://github.com/AverageHelper/Gamgee#readme",
 	"dependencies": {
-		"@averagehelper/job-queue": "1.0.1",
+		"@averagehelper/job-queue": "3.0.0",
 		"@prisma/client": "5.9.1",
 		"discord.js": "14.9.0",
 		"dotenv": "16.0.1",

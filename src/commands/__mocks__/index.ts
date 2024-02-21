@@ -29,7 +29,7 @@ function addMock(command: Command): void {
 		nameLocalizations: command.nameLocalizations,
 		execute: vi
 			.fn<Parameters<Command["execute"]>, ReturnType<Command["execute"]>>()
-			.mockResolvedValue(undefined)
+			.mockResolvedValue(undefined),
 	});
 }
 

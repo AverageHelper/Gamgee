@@ -8,5 +8,5 @@ export const error = onEvent("error", {
 	once: false,
 	execute(error, logger) {
 		logger.error(richErrorMessage("Received client error.", error));
-	}
+	},
 });

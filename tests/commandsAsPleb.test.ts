@@ -5,7 +5,7 @@ import {
 	setIsQueueAdmin,
 	setIsQueueCreator,
 	commandResponseInTestChannel,
-	sendMessageWithDefaultClient
+	sendMessageWithDefaultClient,
 } from "./discordUtils/index.js";
 
 const QUEUE_CHANNEL_ID = requireEnv("QUEUE_CHANNEL_ID");
@@ -26,7 +26,7 @@ describe("Command as pleb", () => {
 		await setIsQueueAdmin(true);
 		await commandResponseInTestChannel(
 			`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
-			"set up"
+			"set up",
 		);
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} restart`, "queue");
 		await commandResponseInTestChannel(`${QUEUE_COMMAND} limit entry-duration-max 0`, "removed");
@@ -54,7 +54,7 @@ describe("Command as pleb", () => {
 
 		const args = [
 			{ isOpen: true, state: "open" },
-			{ isOpen: false, state: "closed" }
+			{ isOpen: false, state: "closed" },
 		] as const;
 		for (const { isOpen, state } of args) {
 			describe(`when the queue is ${state}`, () => {
@@ -64,7 +64,7 @@ describe("Command as pleb", () => {
 					await setIsQueueAdmin(true);
 					await commandResponseInTestChannel(
 						`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
-						"set up"
+						"set up",
 					);
 
 					if (isOpen) {
@@ -91,7 +91,7 @@ describe("Command as pleb", () => {
 					it("accepts a song request with embed hidden", async () => {
 						const content = await commandResponseInTestChannel(
 							`sr <${url}>`,
-							"Submission Accepted!"
+							"Submission Accepted!",
 						);
 
 						// TODO: Check that the request appears in the queue as well

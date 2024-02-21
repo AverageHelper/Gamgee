@@ -19,7 +19,7 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  */
 export async function handleInteraction(
 	interaction: CommandInteraction,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
@@ -41,8 +41,8 @@ export async function handleInteraction(
 			`Calling command handler '${command.name}' with options ${JSON.stringify(
 				interaction.options,
 				undefined,
-				2
-			)}`
+				2,
+			)}`,
 		);
 
 		let member: GuildMember | null;
@@ -143,7 +143,7 @@ export async function handleInteraction(
 							// Really shouldn't mention
 							await interaction.reply({
 								...options,
-								allowedMentions: { users: [] }
+								allowedMentions: { users: [] },
 							});
 						}
 					} catch (error) {
@@ -154,7 +154,7 @@ export async function handleInteraction(
 				if (typeof options !== "string" && "ephemeral" in options && options?.ephemeral === true) {
 					// FIXME: Not true if we errored out
 					logger.verbose(
-						`Sent ephemeral reply to User ${logUser(interaction.user)}: ${JSON.stringify(options)}`
+						`Sent ephemeral reply to User ${logUser(interaction.user)}: ${JSON.stringify(options)}`,
 					);
 				}
 			},
@@ -181,9 +181,9 @@ export async function handleInteraction(
 			sendTyping: () => {
 				void interaction.channel?.sendTyping();
 				logger.debug(
-					`Typing in channel ${interaction.channel?.id ?? "nowhere"} due to Context.sendTyping`
+					`Typing in channel ${interaction.channel?.id ?? "nowhere"} due to Context.sendTyping`,
 				);
-			}
+			},
 		};
 
 		return await invokeCommand(command, context);

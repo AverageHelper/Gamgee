@@ -5,13 +5,13 @@ import { userHasOneOfRoles } from "./userHasOneOfRoles.js";
 import {
 	ROLE_CATEGORY_OWNER,
 	ROLE_CATEGORY_QUEUE_ADMIN,
-	ROLE_CATEGORY_GUILD_ADMIN
+	ROLE_CATEGORY_GUILD_ADMIN,
 } from "./RoleCategories.js";
 
 export async function userHasRoleCategoryInGuild(
 	user: User,
 	category: RoleCategory,
-	guild: Guild
+	guild: Guild,
 ): Promise<boolean> {
 	const isOwner = user.id === guild.ownerId;
 

@@ -9,7 +9,7 @@ import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import {
 	countAllStoredEntriesFromSender,
 	getLatestStoredEntryFromSender,
-	getStoredQueueConfig
+	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 
 export const stats: Command = {
@@ -23,7 +23,7 @@ export const stats: Command = {
 
 		const [queueChannel, isOpen] = await Promise.all([
 			getQueueChannel(guild), //
-			isQueueOpen(guild)
+			isQueueOpen(guild),
 		]);
 		if (!queueChannel) {
 			return await replyPrivately(t("common.queue.not-set-up", userLocale));
@@ -39,14 +39,14 @@ export const stats: Command = {
 		if (userIsBlacklisted) {
 			embed.addFields({
 				name: t("commands.stats.responses.blacklisted", userLocale),
-				value: ":skull_crossbones:"
+				value: ":skull_crossbones:",
 			});
 		}
 
 		const [latestSubmission, userSubmissionCount, avgDuration] = await Promise.all([
 			getLatestStoredEntryFromSender(user.id, queueChannel),
 			countAllStoredEntriesFromSender(user.id, queueChannel),
-			averageSubmissionPlaytimeForUser(user.id, queueChannel)
+			averageSubmissionPlaytimeForUser(user.id, queueChannel),
 		]);
 
 		// Average song length
@@ -56,14 +56,14 @@ export const stats: Command = {
 				"commands.stats.responses.value-limit",
 				{
 					value: durationString(userLocale, avgDuration),
-					limit: durationString(userLocale, config.entryDurationMaxSeconds)
+					limit: durationString(userLocale, config.entryDurationMaxSeconds),
 				},
-				userLocale
+				userLocale,
 			);
 		}
 		embed.addFields({
 			name: t("commands.stats.responses.average-sub-duration", userLocale),
-			value: durationMsg
+			value: durationMsg,
 		});
 
 		// Total submissions
@@ -73,14 +73,14 @@ export const stats: Command = {
 				"commands.stats.responses.value-limit",
 				{
 					value: `${userSubmissionCount}`,
-					limit: `${config.submissionMaxQuantity}`
+					limit: `${config.submissionMaxQuantity}`,
 				},
-				userLocale
+				userLocale,
 			);
 		}
 		embed.addFields({
 			name: t("commands.stats.responses.total-subs", userLocale),
-			value: requestCountMsg
+			value: requestCountMsg,
 		});
 
 		// Remaining wait time (if applicable)
@@ -103,7 +103,7 @@ export const stats: Command = {
 			const value = durationString(userLocale, timeToWait);
 			embed.addFields({
 				name: t("commands.stats.responses.cooldown-remaining", userLocale),
-				value
+				value,
 			});
 
 			// TODO: ETA to user's next submission would be nice here
@@ -114,5 +114,5 @@ export const stats: Command = {
 		} else {
 			await replyPrivately(t("commands.stats.responses.queue-empty", userLocale));
 		}
-	}
+	},
 };

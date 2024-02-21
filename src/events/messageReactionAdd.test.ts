@@ -20,25 +20,25 @@ describe("Reaction duplication", () => {
 			me: false,
 			client: {
 				user: {
-					id: "itz-meeee"
-				}
+					id: "itz-meeee",
+				},
 			},
 			message: {
 				author: {
-					id: "other-user"
-				}
+					id: "other-user",
+				},
 			},
 			emoji: {
-				name: "blue_square"
+				name: "blue_square",
 			},
 			count: 1,
 			react: mockResendReact,
-			fetch: () => Promise.resolve(mockReaction)
+			fetch: () => Promise.resolve(mockReaction),
 		} as unknown as MessageReaction;
 
 		mockSender = {
 			bot: false,
-			fetch: () => Promise.resolve(mockSender)
+			fetch: () => Promise.resolve(mockSender),
 		} as unknown as User;
 	});
 
@@ -49,7 +49,7 @@ describe("Reaction duplication", () => {
 	test("sometimes ignores a user's react", async () => {
 		mockRandom.mockReturnValue(0.5);
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});
@@ -57,7 +57,7 @@ describe("Reaction duplication", () => {
 	test("ignores emoji with an empty name", async () => {
 		mockReaction.emoji.name = "";
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});
@@ -65,7 +65,7 @@ describe("Reaction duplication", () => {
 	test("ignores emoji with a null name", async () => {
 		mockReaction.emoji.name = null;
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});
@@ -73,7 +73,7 @@ describe("Reaction duplication", () => {
 	test("ignores bot reacts", async () => {
 		mockSender.bot = true;
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});
@@ -81,7 +81,7 @@ describe("Reaction duplication", () => {
 	test("ignores the bot's own reacts", async () => {
 		mockReaction.me = true;
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});
@@ -89,7 +89,7 @@ describe("Reaction duplication", () => {
 	test("ignores :star:", async () => {
 		mockReaction.emoji.name = "⭐";
 		await expect(
-			messageReactionAdd.execute(mockReaction, mockSender, logger)
+			messageReactionAdd.execute(mockReaction, mockSender, logger),
 		).resolves.toBeUndefined();
 		expect(mockResendReact).not.toHaveBeenCalled();
 	});

@@ -66,7 +66,7 @@ declare module "superstruct" {
 		result: string | boolean | Partial<Failure>,
 		context: Context,
 		struct: Struct<T, S>,
-		value: any
+		value: any,
 	): Failure | undefined;
 	/**
 	 * Convert a validation result to an iterable of failures.
@@ -75,7 +75,7 @@ declare module "superstruct" {
 		result: Result,
 		context: Context,
 		struct: Struct<T, S>,
-		value: any
+		value: any,
 	): IterableIterator<Failure>;
 	/**
 	 * Check a value against a struct, traversing deeply into nested values, and
@@ -90,13 +90,13 @@ declare module "superstruct" {
 			coerce?: boolean;
 			mask?: boolean;
 			message?: string;
-		}
+		},
 	): IterableIterator<[Failure, undefined] | [undefined, T]>;
 	/**
 	 * Convert a union of type to an intersection.
 	 */
 	export type UnionToIntersection<U> = (U extends any ? (arg: U) => any : never) extends (
-		arg: infer I
+		arg: infer I,
 	) => void
 		? I
 		: never;
@@ -258,7 +258,7 @@ declare module "superstruct" {
 	 */
 	export type InferStructTuple<
 		Tuple extends AnyStruct[],
-		Length extends number = Tuple["length"]
+		Length extends number = Tuple["length"],
 	> = Length extends Length
 		? number extends Length
 			? Tuple
@@ -268,7 +268,7 @@ declare module "superstruct" {
 		Tuple extends AnyStruct[],
 		Length extends number,
 		Accumulated extends unknown[],
-		Index extends number = Accumulated["length"]
+		Index extends number = Accumulated["length"],
 	> = Index extends Length
 		? Accumulated
 		: _InferTuple<Tuple, Length, [...Accumulated, Infer<Tuple[Index]>]>;
@@ -289,7 +289,7 @@ declare module "superstruct" {
 		refiner: (value: T, context: Context) => Iterable<Failure>;
 		entries: (
 			value: unknown,
-			context: Context
+			context: Context,
 		) => Iterable<[string | number, unknown, Struct<any> | Struct<never>]>;
 		constructor(props: {
 			type: string;
@@ -329,7 +329,7 @@ declare module "superstruct" {
 			options?: {
 				coerce?: boolean;
 				message?: string;
-			}
+			},
 		): [StructError, undefined] | [undefined, T];
 	}
 	/**
@@ -338,7 +338,7 @@ declare module "superstruct" {
 	export function assert<T, S>(
 		value: unknown,
 		struct: Struct<T, S>,
-		message?: string
+		message?: string,
 	): asserts value is T;
 	/**
 	 * Create a value with the coercion logic of struct and validate it.
@@ -363,7 +363,7 @@ declare module "superstruct" {
 			coerce?: boolean;
 			mask?: boolean;
 			message?: string;
-		}
+		},
 	): [StructError, undefined] | [undefined, T];
 	/**
 	 * A `Context` contains information about the current location of the
@@ -418,7 +418,7 @@ declare module "superstruct" {
 	export function coerce<T, S, C>(
 		struct: Struct<T, S>,
 		condition: Struct<C, any>,
-		coercer: Coercer<C>
+		coercer: Coercer<C>,
 	): Struct<T, S>;
 	/**
 	 * Augment a struct to replace `undefined` values with a default.
@@ -431,7 +431,7 @@ declare module "superstruct" {
 		fallback: any,
 		options?: {
 			strict?: boolean;
-		}
+		},
 	): Struct<T, S>;
 	/**
 	 * Augment a struct to trim string inputs.
@@ -447,7 +447,7 @@ declare module "superstruct" {
 	 * Ensure that a string, array, map, or set is empty.
 	 */
 	export function empty<T extends string | any[] | Map<any, any> | Set<any>, S extends any>(
-		struct: Struct<T, S>
+		struct: Struct<T, S>,
 	): Struct<T, S>;
 	/**
 	 * Ensure that a number or date is below a threshold.
@@ -457,7 +457,7 @@ declare module "superstruct" {
 		threshold: T,
 		options?: {
 			exclusive?: boolean;
-		}
+		},
 	): Struct<T, S>;
 	/**
 	 * Ensure that a number or date is above a threshold.
@@ -467,27 +467,27 @@ declare module "superstruct" {
 		threshold: T,
 		options?: {
 			exclusive?: boolean;
-		}
+		},
 	): Struct<T, S>;
 	/**
 	 * Ensure that a string, array, map or set is not empty.
 	 */
 	export function nonempty<T extends string | any[] | Map<any, any> | Set<any>, S extends any>(
-		struct: Struct<T, S>
+		struct: Struct<T, S>,
 	): Struct<T, S>;
 	/**
 	 * Ensure that a string matches a regular expression.
 	 */
 	export function pattern<T extends string, S extends any>(
 		struct: Struct<T, S>,
-		regexp: RegExp
+		regexp: RegExp,
 	): Struct<T, S>;
 	/**
 	 * Ensure that a string, array, number, date, map, or set has a size (or length, or time) between `min` and `max`.
 	 */
 	export function size<
 		T extends string | number | Date | any[] | Map<any, any> | Set<any>,
-		S extends any
+		S extends any,
 	>(struct: Struct<T, S>, min: number, max?: number): Struct<T, S>;
 	/**
 	 * Augment a `Struct` to add an additional refinement to the validation.
@@ -499,7 +499,7 @@ declare module "superstruct" {
 	export function refine<T, S>(
 		struct: Struct<T, S>,
 		name: string,
-		refiner: Refiner<T>
+		refiner: Refiner<T>,
 	): Struct<T, S>;
 
 	/** types.js **/
@@ -539,7 +539,7 @@ declare module "superstruct" {
 	 * potential values as `struct.schema`.
 	 */
 	export function enums<U extends number, T extends readonly U[]>(
-		values: T
+		values: T,
 	): Struct<
 		T[number],
 		{
@@ -547,7 +547,7 @@ declare module "superstruct" {
 		}
 	>;
 	export function enums<U extends string, T extends readonly U[]>(
-		values: T
+		values: T,
 	): Struct<
 		T[number],
 		{
@@ -564,7 +564,7 @@ declare module "superstruct" {
 	export function instance<
 		T extends {
 			new (...args: any): any;
-		}
+		},
 	>(Class: T): Struct<InstanceType<T>, null>;
 	/**
 	 * Ensure that a value is an integer.
@@ -574,7 +574,7 @@ declare module "superstruct" {
 	 * Ensure that a value matches all of a set of types.
 	 */
 	export function intersection<A extends AnyStruct, B extends AnyStruct[]>(
-		Structs: [A, ...B]
+		Structs: [A, ...B],
 	): Struct<Infer<A> & UnionToIntersection<InferStructTuple<B>[number]>, null>;
 	/**
 	 * Ensure that a value is an exact value, using `===` for comparison.
@@ -621,7 +621,7 @@ declare module "superstruct" {
 	 */
 	export function record<K extends string, V>(
 		Key: Struct<K>,
-		Value: Struct<V>
+		Value: Struct<V>,
 	): Struct<Record<K, V>, null>;
 	/**
 	 * Ensure that a value is a `RegExp`.
@@ -645,7 +645,7 @@ declare module "superstruct" {
 	 * elements is of a specific type.
 	 */
 	export function tuple<A extends AnyStruct, B extends AnyStruct[]>(
-		Structs: [A, ...B]
+		Structs: [A, ...B],
 	): Struct<[Infer<A>, ...InferStructTuple<B>], null>;
 	/**
 	 * Ensure that a value has a set of known properties of specific types.
@@ -658,7 +658,7 @@ declare module "superstruct" {
 	 * Ensure that a value matches one of a set of types.
 	 */
 	export function union<A extends AnyStruct, B extends AnyStruct[]>(
-		Structs: [A, ...B]
+		Structs: [A, ...B],
 	): Struct<Infer<A> | InferStructTuple<B>[number], null>;
 	/**
 	 * Ensure that any value passes validation, without widening its type to `any`.
@@ -675,36 +675,36 @@ declare module "superstruct" {
 	 */
 	export function assign<A extends ObjectSchema, B extends ObjectSchema>(
 		A: Struct<ObjectType<A>, A>,
-		B: Struct<ObjectType<B>, B>
+		B: Struct<ObjectType<B>, B>,
 	): Struct<ObjectType<Assign<A, B>>, Assign<A, B>>;
 	export function assign<A extends ObjectSchema, B extends ObjectSchema, C extends ObjectSchema>(
 		A: Struct<ObjectType<A>, A>,
 		B: Struct<ObjectType<B>, B>,
-		C: Struct<ObjectType<C>, C>
+		C: Struct<ObjectType<C>, C>,
 	): Struct<ObjectType<Assign<Assign<A, B>, C>>, Assign<Assign<A, B>, C>>;
 	export function assign<
 		A extends ObjectSchema,
 		B extends ObjectSchema,
 		C extends ObjectSchema,
-		D extends ObjectSchema
+		D extends ObjectSchema,
 	>(
 		A: Struct<ObjectType<A>, A>,
 		B: Struct<ObjectType<B>, B>,
 		C: Struct<ObjectType<C>, C>,
-		D: Struct<ObjectType<D>, D>
+		D: Struct<ObjectType<D>, D>,
 	): Struct<ObjectType<Assign<Assign<Assign<A, B>, C>, D>>, Assign<Assign<Assign<A, B>, C>, D>>;
 	export function assign<
 		A extends ObjectSchema,
 		B extends ObjectSchema,
 		C extends ObjectSchema,
 		D extends ObjectSchema,
-		E extends ObjectSchema
+		E extends ObjectSchema,
 	>(
 		A: Struct<ObjectType<A>, A>,
 		B: Struct<ObjectType<B>, B>,
 		C: Struct<ObjectType<C>, C>,
 		D: Struct<ObjectType<D>, D>,
-		E: Struct<ObjectType<E>, E>
+		E: Struct<ObjectType<E>, E>,
 	): Struct<
 		ObjectType<Assign<Assign<Assign<Assign<A, B>, C>, D>, E>>,
 		Assign<Assign<Assign<Assign<A, B>, C>, D>, E>
@@ -719,7 +719,7 @@ declare module "superstruct" {
 	 */
 	export function deprecated<T>(
 		struct: Struct<T>,
-		log: (value: unknown, ctx: Context) => void
+		log: (value: unknown, ctx: Context) => void,
 	): Struct<T>;
 	/**
 	 * Create a struct with dynamic validation logic.
@@ -746,7 +746,7 @@ declare module "superstruct" {
 	 */
 	export function omit<S extends ObjectSchema, K extends keyof S>(
 		struct: Struct<ObjectType<S>, S>,
-		keys: K[]
+		keys: K[],
 	): Struct<ObjectType<Omit<S, K>>, Omit<S, K>>;
 	/**
 	 * Create a new struct based on an existing object struct, but with all of its
@@ -755,7 +755,7 @@ declare module "superstruct" {
 	 * Like TypeScript's `Partial` utility.
 	 */
 	export function partial<S extends ObjectSchema>(
-		struct: Struct<ObjectType<S>, S> | S
+		struct: Struct<ObjectType<S>, S> | S,
 	): Struct<ObjectType<PartialObjectSchema<S>>, PartialObjectSchema<S>>;
 	/**
 	 * Create a new struct based on an existing object struct, but only including
@@ -765,7 +765,7 @@ declare module "superstruct" {
 	 */
 	export function pick<S extends ObjectSchema, K extends keyof S>(
 		struct: Struct<ObjectType<S>, S>,
-		keys: K[]
+		keys: K[],
 	): Struct<ObjectType<Pick<S, K>>, Pick<S, K>>;
 	/**
 	 * Define a new struct type with a custom validation function.

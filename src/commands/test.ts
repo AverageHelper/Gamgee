@@ -28,26 +28,26 @@ const SERVICE_TESTS: Readonly<NonEmptyArray<FetchTest>> = [
 		name: "YouTube",
 		fn: getYouTubeVideo,
 		// Nicolas Dominique - Pushing the Limits
-		urlString: "https://youtu.be/jTCWupoPKIk"
+		urlString: "https://youtu.be/jTCWupoPKIk",
 	},
 	{
 		name: "SoundCloud",
 		fn: getSoundCloudTrack,
 		// nepo - No.999
-		urlString: "https://soundcloud.com/hwps/no999"
+		urlString: "https://soundcloud.com/hwps/no999",
 	},
 	{
 		name: "Bandcamp",
 		fn: getBandcampTrack,
 		// WoodLore - Let The Magic Fill Your Soul
-		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"
+		urlString: "https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul",
 	},
 	{
 		name: "Pony.FM",
 		fn: getPonyFmTrack,
 		// https://pony.fm/tracks/5591-birdsong-ft-relative1pitch
-		urlString: "https://pony.fm/tracks/5591-birdsong-ft-relative1pitch"
-	}
+		urlString: "https://pony.fm/tracks/5591-birdsong-ft-relative1pitch",
+	},
 ];
 
 const SUCCESS = ":white_check_mark:";
@@ -74,7 +74,7 @@ function addResult(result: FetchResult, embed: EmbedBuilder): void {
 		name,
 		value: `${result.error ? FAILURE : SUCCESS} ${
 			result.error?.message ?? "Success"
-		} (${runTime}ms)`
+		} (${runTime}ms)`,
 	});
 }
 
@@ -90,7 +90,7 @@ export const test: Command = {
 		if (isTesting) {
 			// TODO: Scope this to the user, instead of globally
 			await replyPrivately(
-				t("commands.test.responses.cannot-run-concurrent-invocations", userLocale)
+				t("commands.test.responses.cannot-run-concurrent-invocations", userLocale),
 			);
 			return;
 		}
@@ -100,7 +100,7 @@ export const test: Command = {
 
 			// Ask for video info from our various services
 			const results = await Promise.all(
-				SERVICE_TESTS.map(runTest) //
+				SERVICE_TESTS.map(runTest), //
 			);
 
 			// Prepare response
@@ -109,7 +109,7 @@ export const test: Command = {
 
 			const list = `[${t(
 				"commands.test.responses.supported-platforms",
-				userLocale
+				userLocale,
 			)}](${supportedPlatformsList})`;
 
 			embed.setTitle(t("commands.test.responses.results-header", userLocale));
@@ -126,5 +126,5 @@ export const test: Command = {
 			// eslint-disable-next-line require-atomic-updates
 			isTesting = false;
 		}
-	}
+	},
 };

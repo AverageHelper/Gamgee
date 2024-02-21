@@ -7,7 +7,7 @@ import {
 	pushBold,
 	pushCode,
 	pushNewLine,
-	push
+	push,
 } from "./composeStrings.js";
 
 describe("String Builder", () => {

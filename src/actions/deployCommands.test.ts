@@ -27,13 +27,13 @@ describe("Command deployments", () => {
 	const mockClient = {
 		application: {
 			commands: {
-				set: mockApplicationCommandsSet
-			}
+				set: mockApplicationCommandsSet,
+			},
 		},
 		guilds: {
-			fetch: mockFetchOauthGuilds
-		}
-	} as unknown as Client;
+			fetch: mockFetchOauthGuilds,
+		},
+	} as unknown as Client<true>;
 
 	beforeEach(() => {
 		mockRevokeCommands.mockResolvedValue(undefined);
@@ -45,24 +45,24 @@ describe("Command deployments", () => {
 					Promise.resolve({
 						id: "test-guild1",
 						commands: {
-							set: mockGuildCommandsSet
-						}
-					})
-			}
+							set: mockGuildCommandsSet,
+						},
+					}),
+			},
 		]);
 		const mockCommands: NonEmptyArray<Command> = [
 			{
 				name: "test1",
 				description: " ",
 				requiresGuild: false,
-				execute: () => undefined
+				execute: () => undefined,
 			},
 			{
 				name: "test2",
 				nameLocalizations: {},
 				description: " ",
 				requiresGuild: true,
-				execute: () => undefined
+				execute: () => undefined,
 			},
 			{
 				name: "test3",
@@ -70,7 +70,7 @@ describe("Command deployments", () => {
 				description: " ",
 				descriptionLocalizations: {},
 				requiresGuild: true,
-				execute: () => undefined
+				execute: () => undefined,
 			},
 			{
 				name: "test4",
@@ -81,11 +81,11 @@ describe("Command deployments", () => {
 					{
 						name: "c",
 						description: " ",
-						type: ApplicationCommandOptionType.String
-					}
+						type: ApplicationCommandOptionType.String,
+					},
 				],
 				requiresGuild: true,
-				execute: () => undefined
+				execute: () => undefined,
 			},
 			{
 				name: "test5",
@@ -97,11 +97,11 @@ describe("Command deployments", () => {
 					{
 						name: "c",
 						description: " ",
-						type: ApplicationCommandOptionType.String
-					}
+						type: ApplicationCommandOptionType.String,
+					},
 				],
 				requiresGuild: true,
-				execute: () => undefined
+				execute: () => undefined,
 			},
 			{
 				name: "test6",
@@ -113,12 +113,12 @@ describe("Command deployments", () => {
 					{
 						name: "c",
 						description: " ",
-						type: ApplicationCommandOptionType.String
-					}
+						type: ApplicationCommandOptionType.String,
+					},
 				],
 				requiresGuild: true,
-				execute: () => undefined
-			}
+				execute: () => undefined,
+			},
 		];
 		for (const cmd of mockCommands) {
 			mockAllCommands.set(cmd.name, cmd);

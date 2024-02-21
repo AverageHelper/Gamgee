@@ -17,13 +17,13 @@ export async function _main(logger = useLogger()): Promise<void> {
 				GatewayIntentBits.MessageContent,
 				GatewayIntentBits.GuildMessageReactions,
 				GatewayIntentBits.DirectMessages,
-				GatewayIntentBits.GuildMessageTyping
+				GatewayIntentBits.GuildMessageTyping,
 			],
 			partials: [Partials.Reaction, Partials.Channel, Partials.Message],
 			allowedMentions: {
 				parse: ["roles", "users"], // disallows @everyone pings
-				repliedUser: true
-			}
+				repliedUser: true,
+			},
 		});
 
 		// Register all the event handlers for the client
@@ -39,7 +39,10 @@ export async function _main(logger = useLogger()): Promise<void> {
 		// Handle top-level errors
 	} catch (error) {
 		logger.error(
-			richErrorMessage("Something bad has happened and we had to stop everything for a bit.", error)
+			richErrorMessage(
+				"Something bad has happened and we had to stop everything for a bit.",
+				error,
+			),
 		);
 	}
 }

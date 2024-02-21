@@ -30,8 +30,8 @@ function aliasesForCommand(cmd: Pick<Command, "aliases">): Array<string> {
 function localizationsForCommand(cmd: Pick<Command, "nameLocalizations">): Array<string> {
 	return Array.from(
 		new Set(
-			Object.values(cmd.nameLocalizations ?? {}).filter(isNotNull) //
-		)
+			Object.values(cmd.nameLocalizations ?? {}).filter(isNotNull), //
+		),
 	);
 }
 
@@ -43,7 +43,7 @@ function localizationsForCommand(cmd: Pick<Command, "nameLocalizations">): Array
  */
 export function resolveAlias(
 	alias: string,
-	commands: ReadonlyMap<string, Pick<Command, "aliases" | "nameLocalizations">> = allCommands
+	commands: ReadonlyMap<string, Pick<Command, "aliases" | "nameLocalizations">> = allCommands,
 ): string {
 	for (const [name, command] of commands) {
 		// If found, use the command's primary name
@@ -65,7 +65,7 @@ function add(command: Command): void {
 	// Ensure name uniqueness
 	if (allCommands.has(name)) {
 		throw new TypeError(
-			`Failed to add command '${name}' when a command with that name was already added`
+			`Failed to add command '${name}' when a command with that name was already added`,
 		); // TODO: i18n?
 	}
 
@@ -73,13 +73,13 @@ function add(command: Command): void {
 	for (const alias of aliases) {
 		if (allCommands.has(alias)) {
 			throw new TypeError(
-				`Failed to add command with alias '${alias}' when a command with that name (by the name of '${command.name}') was already added`
+				`Failed to add command with alias '${alias}' when a command with that name (by the name of '${command.name}') was already added`,
 			); // TODO: i18n?
 		}
 		for (const command of allCommands.values()) {
 			if (command.aliases?.includes(alias) === true) {
 				throw new TypeError(
-					`Failed to add command with alias '${alias}' when a command with that alias (by the name of '${command.name}') was already added`
+					`Failed to add command with alias '${alias}' when a command with that alias (by the name of '${command.name}') was already added`,
 				); // TODO: i18n?
 			}
 		}
@@ -89,14 +89,14 @@ function add(command: Command): void {
 	for (const localization of localizations) {
 		if (allCommands.has(localization)) {
 			throw new TypeError(
-				`Failed to add command with localized name '${localization}' when a command with that name (by the name of '${command.name}') was already added`
+				`Failed to add command with localized name '${localization}' when a command with that name (by the name of '${command.name}') was already added`,
 			); // TODO: i18n?
 		}
 		for (const command of allCommands.values()) {
 			const otherLocalizations = localizationsForCommand(command);
 			if (otherLocalizations.includes(localization)) {
 				throw new TypeError(
-					`Failed to add command with localized name '${localization}' when a command with that localization (by the name of '${command.name}') was already added`
+					`Failed to add command with localized name '${localization}' when a command with that localization (by the name of '${command.name}') was already added`,
 				); // TODO: i18n?
 			}
 		}

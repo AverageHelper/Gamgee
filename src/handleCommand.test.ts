@@ -20,8 +20,8 @@ mockGitForgeMetadata.mockResolvedValue({
 	description: "Gamgee",
 	languages_url: "https://example.com",
 	languages: {
-		TypeScript: 100
-	}
+		TypeScript: 100,
+	},
 });
 
 vi.mock("./commands/index.js");
@@ -42,10 +42,10 @@ describe("Command handler", () => {
 
 	const mockClient: Client<true> = {
 		user: { id: botId },
-		isReady: () => true
+		isReady: () => true,
 	} as unknown as Client<true>;
 	const mockSenderMember: GuildMember = {
-		user: { id: "another-user" }
+		user: { id: "another-user" },
 	} as unknown as GuildMember;
 
 	const mockMessage: Message = {
@@ -53,13 +53,13 @@ describe("Command handler", () => {
 		author: {
 			bot: false,
 			id: mockSenderMember.user.id,
-			send: mockAuthorSend
+			send: mockAuthorSend,
 		},
 		client: mockClient,
 		reply: mockReply,
 		channel: {
 			send: mockChannelSend,
-			sendTyping: mockChannelSendTyping
+			sendTyping: mockChannelSendTyping,
 		},
 		guild: {
 			members: {
@@ -72,10 +72,10 @@ describe("Command handler", () => {
 								return resolve(mockClient);
 							}
 							return resolve(mockSenderMember);
-						})
-				)
-			}
-		}
+						}),
+				),
+			},
+		},
 	} as unknown as Message;
 
 	beforeEach(() => {
@@ -98,7 +98,7 @@ describe("Command handler", () => {
 				name: url,
 				type: ApplicationCommandOptionType.String,
 				value: url,
-				options: []
+				options: [],
 			});
 		});
 
@@ -111,7 +111,7 @@ describe("Command handler", () => {
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
-				options: expect.arrayContaining([]) as Array<unknown>
+				options: expect.arrayContaining([]) as Array<unknown>,
 			});
 			expectDefined(options[0]?.options);
 			expect(options[0].options).toStrictEqual([
@@ -119,8 +119,8 @@ describe("Command handler", () => {
 					name: key,
 					type: ApplicationCommandOptionType.String,
 					value: key,
-					options: []
-				}
+					options: [],
+				},
 			]);
 		});
 
@@ -134,7 +134,7 @@ describe("Command handler", () => {
 				name: subcommand,
 				type: ApplicationCommandOptionType.Subcommand,
 				value: subcommand,
-				options: expect.arrayContaining([]) as Array<unknown>
+				options: expect.arrayContaining([]) as Array<unknown>,
 			});
 			expectDefined(options[0].options);
 			expect(options[0].options).toStrictEqual([
@@ -142,14 +142,14 @@ describe("Command handler", () => {
 					name: key,
 					type: ApplicationCommandOptionType.String,
 					value: key,
-					options: expect.arrayContaining([]) as Array<unknown>
+					options: expect.arrayContaining([]) as Array<unknown>,
 				},
 				{
 					name: value,
 					type: ApplicationCommandOptionType.String,
 					value: value,
-					options: expect.arrayContaining([]) as Array<unknown>
-				}
+					options: expect.arrayContaining([]) as Array<unknown>,
+				},
 			]);
 			expect(options[0].options[0]?.options).toHaveLength(0);
 			expect(options[0].options[1]?.options).toHaveLength(0);
@@ -195,8 +195,8 @@ describe("Command handler", () => {
 				expect(mockAuthorSend).toHaveBeenCalledOnce();
 				expect(mockAuthorSend).toHaveBeenCalledWith(
 					expect.stringContaining(
-						`Expected a string with a length between \`${expectedMin}\` and \`${expectedMax}\` but received one with a length of \`${value.length}\``
-					)
+						`Expected a string with a length between \`${expectedMin}\` and \`${expectedMax}\` but received one with a length of \`${value.length}\``,
+					),
 				);
 			});
 
@@ -238,8 +238,8 @@ describe("Command handler", () => {
 				expect(mockAuthorSend).toHaveBeenCalledOnce();
 				expect(mockAuthorSend).toHaveBeenCalledWith(
 					expect.stringContaining(
-						`Expected a string with a length between \`${expectedMin}\` but received one with a length of \`${value}\``
-					)
+						`Expected a string with a length between \`${expectedMin}\` but received one with a length of \`${value}\``,
+					),
 				);
 			});
 			*/
@@ -268,7 +268,7 @@ describe("Command handler", () => {
 					logger.debug("mockCommandDefinitions", mockCommandDefinitions);
 				expect.assertions(mockCommandDefinitions.size);
 			},
-			20000
+			20000,
 		);
 
 		test.each`
@@ -304,8 +304,8 @@ describe("Command handler", () => {
 					options: command
 						.split(/ +/u)
 						.slice(1)
-						.map(name => ({ name, type: ApplicationCommandOptionType.String }))
-				})
+						.map(name => ({ name, type: ApplicationCommandOptionType.String })),
+				}),
 			);
 		});
 
@@ -336,10 +336,10 @@ describe("Command handler", () => {
 						options: command
 							.split(/ +/u)
 							.slice(1)
-							.map(name => ({ name, type: ApplicationCommandOptionType.String }))
-					})
+							.map(name => ({ name, type: ApplicationCommandOptionType.String })),
+					}),
 				);
-			}
+			},
 		);
 
 		test.each`
@@ -368,7 +368,7 @@ describe("Command handler", () => {
 
 				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
 				expect.assertions(mockCommandDefinitions.size);
-			}
+			},
 		);
 
 		test("Command alias `now-playing` calls command `nowplaying`", async () => {

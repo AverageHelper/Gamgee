@@ -14,8 +14,8 @@ export const whitelist: Subcommand = {
 			name: "user",
 			description: "The user to allow to request songs.",
 			type: ApplicationCommandOptionType.User,
-			required: true
-		}
+			required: true,
+		},
 	],
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
@@ -27,13 +27,13 @@ export const whitelist: Subcommand = {
 		if (!firstOption) {
 			return await reply({
 				content: ":x: You'll need to tell me who to whitelist. Try again, and mention someone.",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
 		const [subject, queueChannel] = await Promise.all([
 			resolveUserFromOption(firstOption, guild),
-			getQueueChannel(guild)
+			getQueueChannel(guild),
 		]);
 
 		if (!subject) {
@@ -54,7 +54,7 @@ export const whitelist: Subcommand = {
 		return await reply({
 			content: `:checkered_flag: <@!${subject.id}> is allowed to submit song requests! :grin:`,
 			shouldMention: false,
-			ephemeral: true
+			ephemeral: true,
 		});
-	}
+	},
 };

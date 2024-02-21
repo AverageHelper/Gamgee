@@ -2,7 +2,7 @@ import type {
 	ApplicationCommandData,
 	ApplicationCommandDataResolvable,
 	Client,
-	Guild
+	Guild,
 } from "discord.js";
 import type { Command, GlobalCommand, GuildedCommand } from "../commands/index.js";
 import type { Logger } from "../logger.js";
@@ -13,6 +13,7 @@ import { revokeCommands } from "./revokeCommands.js";
 import { DEFAULT_LOCALE, localeIfSupported, locales, t } from "../i18n.js";
 
 export async function deployCommands(client: Client<true>, logger: Logger): Promise<void> {
+	// FIXME: This means command deployments won't retain the permissions given to them previously. Need to only revoke UNKNOWN commands and update known ones.
 	await revokeCommands(client, logger); // fresh start!
 
 	logger.info("Deploying commands...");
@@ -38,20 +39,20 @@ export async function deployCommands(client: Client<true>, logger: Logger): Prom
 	}
 
 	logger.info(
-		`All ${commands.length} command(s) prepared. Discord may take some time to sync commands to clients.`
+		`All ${commands.length} command(s) prepared. Discord may take some time to sync commands to clients.`,
 	);
 }
 
 async function prepareGlobalCommands(
 	globalCommands: NonEmptyArray<GlobalCommand>,
 	client: Client<true>,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	const commandBuilders = globalCommands;
 	logger.info(
 		`${globalCommands.length} command(s) will be set globally: ${JSON.stringify(
-			commandBuilders.map(cmd => `${cmd.name}`)
-		)}`
+			commandBuilders.map(cmd => `${cmd.name}`),
+		)}`,
 	);
 	logger.debug(`Deploying all ${globalCommands.length} global command(s)...`);
 	try {
@@ -65,13 +66,13 @@ async function prepareGlobalCommands(
 async function prepareGuildedCommands(
 	guildCommands: NonEmptyArray<GuildedCommand>,
 	client: Client<true>,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	const commandBuilders = guildCommands;
 	logger.info(
 		`${guildCommands.length} command(s) require a guild: ${JSON.stringify(
-			commandBuilders.map(cmd => `${cmd.name}`)
-		)}`
+			commandBuilders.map(cmd => `${cmd.name}`),
+		)}`,
 	);
 	const oAuthGuilds = await client.guilds.fetch();
 	const guilds = await Promise.all(oAuthGuilds.map(g => g.fetch()));
@@ -81,13 +82,13 @@ async function prepareGuildedCommands(
 async function prepareCommandsForGuild(
 	guild: Guild,
 	guildCommands: ReadonlyArray<GuildedCommand>,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	const commandBuilders = guildCommands;
 	logger.info(
 		`Deploying ${guildCommands.length} guild-bound command(s): ${JSON.stringify(
-			commandBuilders.map(cmd => `${cmd.name}`)
-		)}`
+			commandBuilders.map(cmd => `${cmd.name}`),
+		)}`,
 	);
 	try {
 		const result = await guild.commands.set(commandBuilders.map(deployableCommand));
@@ -101,7 +102,7 @@ export function deployableCommand(cmd: Command): ApplicationCommandDataResolvabl
 	const payload: ApplicationCommandData = {
 		description: cmd.description,
 		type: cmd.type ?? ApplicationCommandType.ChatInput,
-		name: cmd.name // TODO: Repeat for command aliases
+		name: cmd.name, // TODO: Repeat for command aliases
 	};
 
 	if (cmd.deprecated === true) {

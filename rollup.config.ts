@@ -17,10 +17,10 @@ export default defineConfig({
 		HOME !== undefined
 			? replace({
 					values: {
-						[HOME]: "~"
+						[HOME]: "~",
 					},
 					delimiters: ["", ""],
-					preventAssignment: true
+					preventAssignment: true,
 				})
 			: null,
 
@@ -28,7 +28,7 @@ export default defineConfig({
 		esbuild({
 			tsconfig: "./tsconfig.prod.json",
 			sourceMap: !isProduction,
-			minify: isProduction
+			minify: isProduction,
 		}), // translate TypeScript to JS
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
 		json(), // translate JSON
@@ -36,21 +36,14 @@ export default defineConfig({
 		// Find external dependencies
 		nodeResolve({
 			exportConditions: ["node"],
-			preferBuiltins: true
+			preferBuiltins: true,
 		}),
 
 		// Statistics
 		analyze({ filter: () => false }), // only top-level summary
-		visualizer()
+		visualizer(),
 	],
 	onwarn(warning, defaultHandler) {
-		// Ignore "`this` has been rewritten to `undefined`" warnings.
-		// They usually relate to modules that were transpiled from
-		// TypeScript, and check their context by querying the value
-		// of global `this`.
-		// TODO: PR @averagehelper/job-queue to fix this
-		if (warning.code === "THIS_IS_UNDEFINED") return;
-
 		// Ignore "Use of eval is strongly discouraged" warnings from
 		// prisma. Their `eval` calls are fairly tame, though this should
 		// be audited with each update.
@@ -60,7 +53,7 @@ export default defineConfig({
 		defaultHandler(warning);
 	},
 	external: [
-		// Circular, uses eval
+		// Circular, uses eval, unexpeted token in plugin-commonjs
 		"discord.js",
 
 		// Circular
@@ -68,13 +61,13 @@ export default defineConfig({
 		"winston",
 
 		// Relies on __dirname
-		"@prisma/client"
+		"@prisma/client",
 	],
 	input: "src/main.ts",
 	output: {
 		file: "dist/server.js",
 		format: "module",
 		inlineDynamicImports: true,
-		sourcemap: isProduction ? undefined : "inline"
-	}
+		sourcemap: isProduction ? undefined : "inline",
+	},
 });

@@ -16,7 +16,7 @@ const logger = useLogger();
  */
 export async function editMessage(
 	message: Message | PartialMessage,
-	options: string | MessageEditOptions
+	options: string | MessageEditOptions,
 ): Promise<boolean> {
 	try {
 		await message.edit(options);
@@ -35,7 +35,7 @@ export async function editMessage(
  */
 export async function suppressEmbedsForMessage(
 	message: Message,
-	suppress: boolean = true
+	suppress: boolean = true,
 ): Promise<void> {
 	try {
 		const me = message.client.user;
@@ -52,12 +52,12 @@ export async function suppressEmbedsForMessage(
 			options = {
 				flags: ["SuppressEmbeds"],
 				content: escapeUriInString(message.content),
-				allowedMentions: { users: [] }
+				allowedMentions: { users: [] },
 			};
 		} else {
 			options = {
 				flags: [],
-				content: stopEscapingUriInString(message.content)
+				content: stopEscapingUriInString(message.content),
 			};
 		}
 		await editMessage(message, options);
@@ -109,7 +109,7 @@ export function escapeUriInString(content: string): string {
 		// Add heads
 		if (suppressed[range.start - 1 + delta] !== "<") {
 			suppressed = `${suppressed.slice(0, range.start + delta)}<${suppressed.slice(
-				range.start + delta
+				range.start + delta,
 			)}`;
 			delta += 1;
 		}
@@ -117,7 +117,7 @@ export function escapeUriInString(content: string): string {
 		// Add tails
 		if (suppressed[range.end + delta] !== ">") {
 			suppressed = `${suppressed.slice(0, range.end + delta)}>${suppressed.slice(
-				range.end + delta
+				range.end + delta,
 			)}`;
 			delta += 1;
 		}
@@ -136,7 +136,7 @@ export function positionsOfUriInText(str: string): NonEmptyArray<Range> | null {
 	while ((match = uri.exec(str))) {
 		const range: Range = {
 			start: match.index,
-			end: match.index + (match[0]?.length ?? 0)
+			end: match.index + (match[0]?.length ?? 0),
 		};
 		if (!results) {
 			results = [range];

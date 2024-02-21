@@ -27,7 +27,7 @@ function eventCache(key: string): Array<Message> {
  */
 function removeFirstWhere<T>(
 	array: Array<T>,
-	predicate: (el: T, index: number, array: ReadonlyArray<T>) => boolean
+	predicate: (el: T, index: number, array: ReadonlyArray<T>) => boolean,
 ): T | undefined {
 	for (let index = 0; index < array.length; index++) {
 		const element = array[index];
@@ -48,7 +48,7 @@ async function waitForEventInCollection(
 	key: string,
 	waiterPool: Map<number, (msg: Message) => boolean>,
 	condition: (msg: Message) => boolean = (): boolean => true,
-	timeout: number = DEFAULT_TIMEOUT
+	timeout: number = DEFAULT_TIMEOUT,
 ): Promise<Message | null> {
 	const id = await uuid();
 	return await new Promise(resolve => {
@@ -74,14 +74,14 @@ async function waitForEventInCollection(
 				shouldHandle = condition(message);
 				if (shouldHandle) {
 					logger.debug(
-						`Waiter ${id} received message ${message.id} and should handle it. Removing from loop...`
+						`Waiter ${id} received message ${message.id} and should handle it. Removing from loop...`,
 					);
 					clearTimeout(timer);
 					removeFirstWhere(cache, msg => msg.id === message.id);
 					resolve(message);
 				} else {
 					logger.debug(
-						`Waiter ${id} received message ${message.id} but should not handle it. Continuing.`
+						`Waiter ${id} received message ${message.id} but should not handle it. Continuing.`,
 					);
 				}
 			}
@@ -102,7 +102,7 @@ async function waitForEventInCollection(
  */
 export async function waitForMessage(
 	condition: (msg: Message) => boolean = (): boolean => true,
-	timeout: number = DEFAULT_TIMEOUT
+	timeout: number = DEFAULT_TIMEOUT,
 ): Promise<Message | null> {
 	return await waitForEventInCollection("messageWaiters", messageWaiters, condition, timeout);
 }
@@ -117,12 +117,12 @@ export async function waitForMessage(
  */
 export async function waitForMessageDeletion(
 	condition: (msg: Message) => boolean = (): boolean => true,
-	timeout: number = DEFAULT_TIMEOUT
+	timeout: number = DEFAULT_TIMEOUT,
 ): Promise<Message | null> {
 	return await waitForEventInCollection(
 		"messageDeleteWaiters",
 		messageDeleteWaiters,
 		condition,
-		timeout
+		timeout,
 	);
 }

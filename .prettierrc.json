@@ -5,6 +5,6 @@
 	"proseWrap": "preserve",
 	"semi": true,
 	"singleQuote": false,
-	"trailingComma": "none",
+	"trailingComma": "all",
 	"useTabs": true
 }

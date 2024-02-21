@@ -24,7 +24,7 @@ describe("Queue teardown", () => {
 		context = {
 			guild: "the guild",
 			logger,
-			reply: mockReply
+			reply: mockReply,
 		} as unknown as GuildedCommandContext;
 
 		mockSetQueueChannel.mockResolvedValue(undefined);

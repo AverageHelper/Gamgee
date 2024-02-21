@@ -15,9 +15,9 @@ export const version: Command = {
 			{
 				me: client.user.username,
 				otherUser: user,
-				otherMember: null
+				otherMember: null,
 			},
-			randomCelebration()
+			randomCelebration(),
 		);
 
 		const systemName = "Gamgee Core";
@@ -29,8 +29,8 @@ export const version: Command = {
 				`${ti(
 					"commands.version.response",
 					{ version: `[${systemName} v${gamgeeVersion}](<${changelog}>)` },
-					guildLocale
-				)}  ${celebration}`
+					guildLocale,
+				)}  ${celebration}`,
 			);
 		}
 
@@ -39,8 +39,8 @@ export const version: Command = {
 			`${ti(
 				"commands.version.response",
 				{ version: systemName },
-				guildLocale
-			)} v${gamgeeVersion}  ${celebration}`
+				guildLocale,
+			)} v${gamgeeVersion}  ${celebration}`,
 		);
-	}
+	},
 };

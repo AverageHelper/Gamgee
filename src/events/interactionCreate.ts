@@ -9,5 +9,5 @@ export const interactionCreate = onEvent("interactionCreate", {
 		} else if (interaction.isButton()) {
 			await handleButton(interaction, logger);
 		}
-	}
+	},
 });

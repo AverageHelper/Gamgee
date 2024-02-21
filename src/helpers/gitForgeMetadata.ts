@@ -13,7 +13,7 @@ const repoMetadata = type({
 	private: boolean(),
 	html_url: string(),
 	description: string(),
-	languages_url: string()
+	languages_url: string(),
 });
 
 type RepoMetadata = Infer<typeof repoMetadata>;

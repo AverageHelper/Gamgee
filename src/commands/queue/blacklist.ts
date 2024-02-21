@@ -12,7 +12,7 @@ import {
 	createPartialString,
 	push,
 	pushCode,
-	pushNewLine
+	pushNewLine,
 } from "../../helpers/composeStrings.js";
 
 // TODO: i18n
@@ -24,8 +24,8 @@ export const blacklist: Subcommand = {
 			name: "user",
 			description: "Block the user from making song requests",
 			type: ApplicationCommandOptionType.User,
-			required: false
-		}
+			required: false,
+		},
 	],
 	type: ApplicationCommandOptionType.Subcommand,
 	requiresGuild: true,
@@ -101,7 +101,7 @@ export const blacklist: Subcommand = {
 		if (subject.id === guild.ownerId) {
 			return await reply({
 				content: ":x: I can't blacklist the owner. That would be rude!",
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -111,7 +111,7 @@ export const blacklist: Subcommand = {
 		return await reply({
 			content: `:pirate_flag: <@!${subject.id}> is no longer allowed to submit song requests.`,
 			shouldMention: false,
-			ephemeral: true
+			ephemeral: true,
 		}); // TODO: i18n
-	}
+	},
 };

@@ -25,13 +25,13 @@ export function useTestLogger(level?: LogLevel): Logger {
 				level
 					? // Log to console
 						new winston.transports.Console({
-							format: winston.format.cli()
+							format: winston.format.cli(),
 						})
 					: // Ignore all log messages
 						new winston.transports.File({
-							filename: "/dev/null"
-						})
-			]
+							filename: "/dev/null",
+						}),
+			],
 		});
 
 		loggers.set(level ?? "none", logger);

@@ -40,19 +40,19 @@ const fileTransportOptions: DailyRotateFileTransportOptions = {
 	utc: true,
 	frequency: "24h", // rotate daily
 	maxFiles: "30d", // retain 30 days only
-	zippedArchive: true
+	zippedArchive: true,
 };
 
 const errorFileTransport = new DailyRotateFile({
 	...fileTransportOptions,
 	level: "error",
-	filename: "error-%DATE%"
+	filename: "error-%DATE%",
 });
 
 const combinedFileTransport = new DailyRotateFile({
 	...fileTransportOptions,
 	level: "silly",
-	filename: "combined-%DATE%"
+	filename: "combined-%DATE%",
 });
 
 let hasSetTransportNotices = false;
@@ -79,8 +79,8 @@ export function useLogger(): Logger {
 				// - Rotate files daily, and retain only the last 30 days of logs
 				//
 				errorFileTransport,
-				combinedFileTransport
-			]
+				combinedFileTransport,
+			],
 		});
 
 		// eslint-disable-next-line no-constant-condition
@@ -88,8 +88,8 @@ export function useLogger(): Logger {
 			logger.add(
 				new transports.Console({
 					format: format.cli(),
-					level: consoleLogLevel
-				})
+					level: consoleLogLevel,
+				}),
 			);
 		}
 

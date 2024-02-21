@@ -22,8 +22,8 @@ export const help: GlobalCommand = {
 			return await context.reply(
 				`To see the list of commands, type \`/\` in the message bar. Try using ${mentionCommand(
 					help,
-					prefix
-				)}`
+					prefix,
+				)}`,
 			);
 		}
 
@@ -32,5 +32,5 @@ export const help: GlobalCommand = {
 		pushNewLine(response);
 		push(descriptions, response);
 		return await context.replyPrivately(composed(response));
-	}
+	},
 };

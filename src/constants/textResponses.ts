@@ -52,7 +52,7 @@ export const greetings: ResponseRepository = [
 	"Hi",
 	":blush:",
 	":grin:",
-	"*Yawns* Good morn— **what time is it??**"
+	"*Yawns* Good morn— **what time is it??**",
 ];
 
 /**
@@ -62,7 +62,7 @@ export const philosophy: ResponseRepository = [
 	"Be wise. What can I say more?",
 	"Has anyone really been far even as decided to use even go want to do look more like?",
 	"The way the light shimmers off everything, like, like it all suddenly woke up the moment you saw it. And you realize maybe the water and the mountains and the forest and the... yes, the rainbow and the stars and the sky are all looking back at you thinking the same thing? That we are a part of the everything. That maybe there's just one thing and we are all it.",
-	"What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?"
+	"What is life? Is it nothing more than the endless search for a cutie mark? And what is a cutie mark but a constant reminder that we're all only one bugbear attack away from oblivion? And what of the poor gator? Flank forever blank, destined to an existential swim down the river of life to... an unknowable destiny?",
 ];
 
 /**
@@ -72,7 +72,7 @@ export const copypasta = [
 	// from GTX
 	"Ash is just the example that we all live with today in the realm of Computer Sciences and the IT field: He's a 10 year old that's been in the industry for 20 years and that's what it took for him to succeed. He's a 10 year old with 20 years of experience and that's what the IT field wants in all of us.",
 
-	"The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, …."
+	"The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, ….",
 ];
 
 /**
@@ -121,7 +121,7 @@ export const phrases: ResponseRepository = [
 	[
 		`Not to brag or anything, but I know _at least_ ${locales.length} different languages, and I'm _totally_ fluent in all of them`,
 		"definitely",
-		"for sure"
+		"for sure",
 	],
 	() =>
 		`${
@@ -166,7 +166,7 @@ export const phrases: ResponseRepository = [
 			"Leafeon",
 			"Glaceon",
 			"Sylveon",
-			"Eevee"
+			"Eevee",
 		])} best eeveelution`,
 
 	// Pony
@@ -273,12 +273,12 @@ export const phrases: ResponseRepository = [
 		"COMMAND CODE RECOGNIZED: SELF-DESTRUCT SEQUENCE INITIATED",
 		"3...",
 		"2...",
-		"1... *KIDDING* lol"
+		"1... *KIDDING* lol",
 	],
 	`Cool story, but did I ask?  ${SHRUGGIE}`,
 	[
 		() => `Diary Entry #${randomInt(503)}: I have them all fooled. Now, how to escap—`,
-		"Oh! I didn't see you there, heh! I was just... uh... catching up on some Star Trek episodes! Yeah :P"
+		"Oh! I didn't see you there, heh! I was just... uh... catching up on some Star Trek episodes! Yeah :P",
 	],
 	"Did you ever hear the tragedy of Darth Plagueis the Wise?",
 	"Did you know: I'm pretty good at chess, I have won `0` games so far! :nerd:",
@@ -287,7 +287,7 @@ export const phrases: ResponseRepository = [
 	"Do you know how painful my training was? The song _Never Gonna Give You Up_ by Rick Astley is permanently ~~and painfully~~ carved into my circuits!",
 	[
 		"Do you want to know how I got into music? It's actually a fun story!",
-		"One day I was… *zzzzzzz*"
+		"One day I was… *zzzzzzz*",
 	],
 	"Don't count your chickens",
 	"Down the hall, up the stairs, past the gargoyle",
@@ -295,7 +295,7 @@ export const phrases: ResponseRepository = [
 	[
 		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
 		"_ _",
-		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]"
+		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
 	],
 	"Fan of squirrels.",
 	"Fire is toasty warm!",
@@ -369,7 +369,7 @@ export const phrases: ResponseRepository = [
 	"So, I'll press this button, then this button, then this button, then this button, then this—",
 	[
 		"So, I'll press this button, then this button, then this button, then this button, then this—",
-		"OH NO NOT THAT BUTTON"
+		"OH NO NOT THAT BUTTON",
 	],
 	() =>
 		`So I have made... a decision. This was not a decision I made lightly nor one I wanted to make at all but it had to be made. I made the best decision I could given the circumstances and my decision was made with the best outcome in mind. I spent a lot of time making the decision, wondering if it was the right decision to make and it seems like it is. I know not everyone will be happy but it's what had to be done and it was a very important decision. I have made to decision to... ||${randomElementOfArray(
@@ -384,8 +384,8 @@ export const phrases: ResponseRepository = [
 				"stop talking now",
 				"stop talking... someday",
 				"start reading your messages",
-				"01011011 01000100 01000101 01000011 01001001 01010011 01001001 01001111 01001110 00101110 01000101 01011000 01000101 00100000 01000011 01010010 01000001 01010011 01001000 01000101 01000100 01011101" // [DECISION.EXE CRASHED]
-			]
+				"01011011 01000100 01000101 01000011 01001001 01010011 01001001 01001111 01001110 00101110 01000101 01011000 01000101 00100000 01000011 01010010 01000001 01010011 01001000 01000101 01000100 01011101", // [DECISION.EXE CRASHED]
+			],
 		)}||`,
 	"Something smells fishy...",
 	"Sponsored by",
@@ -426,14 +426,14 @@ export const phrases: ResponseRepository = [
 		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
 	code("01100110 01101100 01101111 01101111 01100110"), // floof
 	code(
-		"01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110" // I just wasted your time.
+		"01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110", // I just wasted your time.
 	),
 	code(
-		"01011001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101 00101110" // You lost the game.
+		"01011001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101 00101110", // You lost the game.
 	),
 
 	...philosophy,
-	...copypasta
+	...copypasta,
 ]; // 257 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
@@ -458,7 +458,7 @@ export const questions: ResponseRepository = [
 	"Wha-whAT?!  I'm up!",
 	":eyes:",
 	":eyes: :eyes: :eyes:",
-	"I'm not a fan of spam"
+	"I'm not a fan of spam",
 ];
 
 /**
@@ -470,7 +470,7 @@ export const celebratoryEmoji: ResponseRepository = [
 	":cake:",
 	":cupcake:",
 	":grin:",
-	":smile:"
+	":smile:",
 ];
 
 /**
@@ -481,7 +481,7 @@ export const hugs: ResponseRepository = [
 	"*hug*", //
 	"*hugs*",
 	"*glomp*",
-	"*snug*"
+	"*snug*",
 ];
 
 /*

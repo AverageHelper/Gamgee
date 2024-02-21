@@ -16,9 +16,9 @@ export const ping: Command = {
 			{
 				me: client.user.username,
 				otherUser: user,
-				otherMember: null
+				otherMember: null,
 			},
-			randomPhrase()
+			randomPhrase(),
 		);
 
 		let testMessage: Message;
@@ -28,13 +28,13 @@ export const ping: Command = {
 		if (type === "message") {
 			testMessage = await context.message.reply({
 				content: random,
-				allowedMentions: { repliedUser: false }
+				allowedMentions: { repliedUser: false },
 			});
 			responseTime = testMessage.createdTimestamp - context.message.createdTimestamp;
 		} else {
 			await context.interaction.reply({
 				content: random,
-				allowedMentions: { repliedUser: false }
+				allowedMentions: { repliedUser: false },
 			});
 			testMessage = await context.interaction.fetchReply();
 			responseTime = testMessage.createdTimestamp - context.interaction.createdTimestamp;
@@ -45,10 +45,10 @@ export const ping: Command = {
 			content: ti(
 				"commands.ping.responses.pong",
 				{ time: code(`${responseTime}ms`), latency: code(`${apiLatency}ms`) },
-				guildLocale
+				guildLocale,
 			),
-			allowedMentions: { repliedUser: false }
+			allowedMentions: { repliedUser: false },
 		});
 		logger.info(`Sent ping response in ${responseTime}ms. API latency is ${apiLatency}ms.`);
-	}
+	},
 };

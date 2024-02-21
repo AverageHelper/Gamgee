@@ -11,7 +11,7 @@ describe("Creating event handlers", () => {
 		const execute = (): void => undefined;
 		const handler = onEvent("ready", {
 			once: true,
-			execute
+			execute,
 		});
 		expect(handler).toBeDefined();
 		expect(handler).toHaveProperty("name", "ready");

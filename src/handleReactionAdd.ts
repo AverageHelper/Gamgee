@@ -6,12 +6,12 @@ import { logUser } from "./helpers/logUser.js";
 export async function handleReactionAdd(
 	reaction: MessageReaction,
 	user: User,
-	logger: Logger
+	logger: Logger,
 ): Promise<void> {
 	// Ignore bot reactions unless we're being tested
 	if (user.bot && getEnv("NODE_ENV") !== "test-e2e") {
 		logger.silly(
-			`Momma always said not to follow strangers. It's rude. bot: ${user.bot ? "true" : "false"}`
+			`Momma always said not to follow strangers. It's rude. bot: ${user.bot ? "true" : "false"}`,
 		);
 		return;
 	}
@@ -24,7 +24,7 @@ export async function handleReactionAdd(
 	logger.debug(
 		`User ${logUser(user)} reacted with ${reaction.emoji.name ?? "unnamed emoji"} to message ${
 			message.id
-		}`
+		}`,
 	);
 
 	// follow the reaction maybe?

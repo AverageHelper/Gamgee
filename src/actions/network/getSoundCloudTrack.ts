@@ -30,7 +30,7 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 		parsedUrl = new URL(response.url);
 	} catch (error) {
 		logger?.debug(
-			richErrorMessage(`Failed to follow redirects from '${url.href}'. Using the original.`, error)
+			richErrorMessage(`Failed to follow redirects from '${url.href}'. Using the original.`, error),
 		);
 		parsedUrl = url;
 	}
@@ -48,6 +48,6 @@ export async function getSoundCloudTrack(url: URL): Promise<VideoDetails> {
 	return {
 		url: song.url,
 		title: song.title,
-		duration: { seconds: Math.floor(song.duration / 1000) }
+		duration: { seconds: Math.floor(song.duration / 1000) },
 	};
 }

@@ -8,12 +8,12 @@ const MockClient = vi.hoisted(
 		class MockClient {
 			on = mockOn;
 			once = mockOnce;
-		}
+		},
 );
 
 vi.mock("discord.js", async () => ({
 	...(await vi.importActual<typeof import("discord.js")>("discord.js")),
-	Client: MockClient
+	Client: MockClient,
 }));
 
 import { Client } from "discord.js";
@@ -50,12 +50,12 @@ describe("allEventHandlers", () => {
 		const fakeReadyEvent: EventHandler = {
 			name: "ready",
 			once: true,
-			execute: () => undefined
+			execute: () => undefined,
 		};
 		const fakeMessageEvent: EventHandler = {
 			name: "messageCreate",
 			once: false,
-			execute: () => undefined
+			execute: () => undefined,
 		};
 		expect(_add(fakeReadyEvent)).toBeUndefined();
 		expect(_add(fakeMessageEvent)).toBeUndefined();

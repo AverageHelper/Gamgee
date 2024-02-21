@@ -13,12 +13,12 @@ describe("Option Resolver", () => {
 	beforeEach(() => {
 		guild = {
 			channels: {
-				resolve: mockResolveChannel
-			}
+				resolve: mockResolveChannel,
+			},
 		} as unknown as Guild;
 		option = {
 			name: "option",
-			type: ApplicationCommandOptionType.String
+			type: ApplicationCommandOptionType.String,
 		};
 	});
 

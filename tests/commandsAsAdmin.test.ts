@@ -9,7 +9,7 @@ import {
 	waitForMessage,
 	sendMessageWithDefaultClient,
 	sendCommandWithDefaultClient,
-	useTesterClient
+	useTesterClient,
 } from "./discordUtils/index.js";
 
 const UUT_ID = requireEnv("BOT_TEST_ID");
@@ -49,11 +49,11 @@ describe("Command as admin", () => {
 				await setIsQueueCreator(true);
 				await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
-					NEW_QUEUE
+					NEW_QUEUE,
 				);
 				await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
-					"is allowed"
+					"is allowed",
 				);
 			});
 
@@ -61,7 +61,7 @@ describe("Command as admin", () => {
 				const keys = [
 					"entry-duration-max", //
 					"cooldown",
-					"count"
+					"count",
 				];
 				for (const key of keys) {
 					it(`allows the tester to set ${key} limits on the queue`, async () => {
@@ -75,50 +75,50 @@ describe("Command as admin", () => {
 				// read blacklist, should be empty
 				const firstCheck = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist`,
-					"Song Request Blacklist for"
+					"Song Request Blacklist for",
 				);
 				expect(firstCheck).toContain("Nobody");
 
 				// add to blacklist
 				const firstAdd = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
-					"is no longer allowed"
+					"is no longer allowed",
 				);
 				expect(firstAdd).toContain(`<@!${UUT_ID}> is no longer allowed`);
 
 				// read blacklist, should contain user
 				const secondCheck = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist`,
-					"Song Request Blacklist for"
+					"Song Request Blacklist for",
 				);
 				expect(secondCheck).toContain(userMention(UUT_ID));
 
 				// add to blacklist again, should have no duplicates
 				const secondAdd = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
-					"is no longer allowed"
+					"is no longer allowed",
 				);
 				expect(secondAdd).toContain(`<@!${UUT_ID}> is no longer allowed`);
 
 				const thirdCheck = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist`,
-					"Song Request Blacklist for"
+					"Song Request Blacklist for",
 				);
 				expect(thirdCheck).toContain(
-					userMention(UUT_ID) // TODO: Make sure this is the only match
+					userMention(UUT_ID), // TODO: Make sure this is the only match
 				);
 
 				// remove from blacklist
 				const remove = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
-					"is allowed"
+					"is allowed",
 				);
 				expect(remove).toContain(`<@!${UUT_ID}> is allowed`);
 
 				// read blacklist, should be empty again
 				const fourthCheck = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist`,
-					"Song Request Blacklist for"
+					"Song Request Blacklist for",
 				);
 				expect(fourthCheck).toContain("Nobody");
 			});
@@ -127,7 +127,7 @@ describe("Command as admin", () => {
 				const expected = "is allowed to submit song requests";
 				const content = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
-					expected
+					expected,
 				);
 				expect(content).toContain(expected);
 			});
@@ -164,7 +164,7 @@ describe("Command as admin", () => {
 				await useTesterClient(async client => {
 					const cmdMessage = await sendCommand(client, `${QUEUE_COMMAND} setup`);
 					const response = await waitForMessage(
-						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id
+						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id,
 					);
 					expect(response?.content).toContain("name a text channel");
 				});
@@ -174,7 +174,7 @@ describe("Command as admin", () => {
 				const keys = [
 					"entry-duration-max", //
 					"cooldown",
-					"count"
+					"count",
 				];
 				for (const key of keys) {
 					it(`fails to set ${key} limits on the queue`, async () => {
@@ -188,7 +188,7 @@ describe("Command as admin", () => {
 				const keys = [
 					"entry-duration-max", //
 					"cooldown",
-					"count"
+					"count",
 				];
 				for (const key of keys) {
 					it(`allows the tester to get the queue's global ${key} limit`, async () => {
@@ -201,10 +201,10 @@ describe("Command as admin", () => {
 			it("allows the tester to set up a queue", async () => {
 				await setIsQueueCreator(true);
 				await sendCommandWithDefaultClient(
-					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`
+					`${QUEUE_COMMAND} setup ${channelMention(QUEUE_CHANNEL_ID)}`,
 				);
 				const response = await waitForMessage(
-					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID
+					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID,
 				);
 				expect(response?.content).toContain("This is a queue now.");
 			});

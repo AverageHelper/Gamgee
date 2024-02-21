@@ -21,7 +21,7 @@ import _get from "lodash-es/get.js";
  */
 export function get<BaseType, Path extends string | ReadonlyArray<string>>(
 	object: BaseType,
-	path: Path
+	path: Path,
 ): Get<BaseType, Path> {
 	return _get(object, path) as Get<BaseType, Path>;
 }

@@ -14,7 +14,7 @@ import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
 import {
 	deleteEntryFromMessage,
 	markEntryDoneInQueue,
-	markEntryNotDoneInQueue
+	markEntryNotDoneInQueue,
 } from "./actions/queue/useQueue.js";
 
 /**
@@ -56,7 +56,7 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 		try {
 			await interaction.reply({
 				content: "I don't recognize that entry. Sorry  :slight_frown:",
-				ephemeral: true
+				ephemeral: true,
 			});
 		} catch (error) {
 			logger.error(richErrorMessage(`Failed to reply to interaction`, error));
@@ -65,7 +65,7 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 	}
 
 	logger.debug(
-		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`
+		`Got entry from message ${entry.queueMessageId} (${entry.isDone ? "Done" : "Not done"})`,
 	);
 
 	const message = await queueChannel.messages.fetch(interaction.message.id);

@@ -42,7 +42,7 @@ describe("Invoke Command", () => {
 			name: "test",
 			description: "A sample command",
 			requiresGuild: true,
-			execute: mockExecute
+			execute: mockExecute,
 		};
 
 		const guild = {
@@ -55,30 +55,30 @@ describe("Invoke Command", () => {
 					return {
 						id,
 						members: {
-							has: () => doesHave
-						}
+							has: () => doesHave,
+						},
 					} as unknown as Role;
-				}
-			}
+				},
+			},
 		} as unknown as Guild;
 
 		const member = {
 			id: callerId,
-			guild
+			guild,
 		} as unknown as GuildMember;
 
 		context = {
 			user: {
-				id: callerId
+				id: callerId,
 			},
 			member,
 			guild,
 			channel: {
 				id: "the-channel",
-				guild
+				guild,
 			},
 			reply: mockReply,
-			replyPrivately: mockReplyPrivately
+			replyPrivately: mockReplyPrivately,
 		} as unknown as CommandContext;
 
 		mockUserHasRoleInGuild.mockResolvedValue(false);
@@ -118,8 +118,8 @@ describe("Invoke Command", () => {
 				...context,
 				guild: {
 					id: "the-guild",
-					ownerId: callerId
-				} as unknown as Guild
+					ownerId: callerId,
+				} as unknown as Guild,
 			};
 			command = { ...command, requiresGuild: true, permissions: mockPermissions };
 
@@ -153,14 +153,14 @@ describe("Invoke Command", () => {
 						{
 							id: callerId,
 							type: ApplicationCommandPermissionType.User,
-							permission: true
-						}
+							permission: true,
+						},
 					]);
 				}
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
-			}
+			},
 		);
 
 		test.each`
@@ -177,13 +177,13 @@ describe("Invoke Command", () => {
 						{
 							id: callerId,
 							type: ApplicationCommandPermissionType.User,
-							permission: false
-						}
+							permission: false,
+						},
 					]);
 				}
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 				expect(mockExecute).not.toHaveBeenCalled();
-			}
+			},
 		);
 
 		test.each`
@@ -200,15 +200,15 @@ describe("Invoke Command", () => {
 						{
 							id: adminRoleId,
 							type: ApplicationCommandPermissionType.Role,
-							permission: true
-						}
+							permission: true,
+						},
 					]);
 				}
 				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
-			}
+			},
 		);
 
 		test("does not execute for admin if admins are to be denied", async () => {
@@ -216,8 +216,8 @@ describe("Invoke Command", () => {
 				{
 					id: adminRoleId,
 					type: ApplicationCommandPermissionType.Role,
-					permission: false
-				}
+					permission: false,
+				},
 			]);
 			mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();
@@ -238,15 +238,15 @@ describe("Invoke Command", () => {
 						{
 							id: queueAdminRoleId,
 							type: ApplicationCommandPermissionType.Role,
-							permission: true
-						}
+							permission: true,
+						},
 					]);
 				}
 				mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 				await expect(invokeCommand(command, context)).resolves.toBeUndefined();
 				expect(mockExecute).toHaveBeenCalledOnce();
 				expect(mockExecute).toHaveBeenCalledWith(context);
-			}
+			},
 		);
 
 		test("does not execute for queue admin if queue admins are to be denied", async () => {
@@ -254,8 +254,8 @@ describe("Invoke Command", () => {
 				{
 					id: queueAdminRoleId,
 					type: ApplicationCommandPermissionType.Role,
-					permission: false
-				}
+					permission: false,
+				},
 			]);
 			mockUserHasRoleInGuild.mockResolvedValueOnce(true);
 			await expect(invokeCommand(command, context)).resolves.toBeUndefined();

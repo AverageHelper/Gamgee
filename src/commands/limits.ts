@@ -1,12 +1,13 @@
 import type { Command } from "./Command.js";
 import { allLimits } from "./queue/limit.js";
 import { assertUnreachable } from "../helpers/assertUnreachable.js";
-import { code } from "../helpers/composeStrings.js";
 import { durationString } from "../helpers/durationString.js";
 import { EmbedBuilder } from "discord.js";
+import { getCommandPrefix } from "../useGuildStorage.js";
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
 import { getStoredQueueConfig } from "../useQueueStorage.js";
 import { localizations, t, ti } from "../i18n.js";
+import { mentionCommand } from "../helpers/mentionCommands.js";
 
 export const limits: Command = {
 	name: "limits",
@@ -27,9 +28,7 @@ export const limits: Command = {
 		const locale = type === "interaction" ? userLocale : guildLocale;
 
 		const { cooldown: cooldownCommand } = await import("./cooldown.js");
-		const cooldownName: string = cooldownCommand.nameLocalizations
-			? cooldownCommand.nameLocalizations[locale] ?? cooldownCommand.name
-			: cooldownCommand.name;
+		const COMMAND_PREFIX = await getCommandPrefix(guild);
 
 		// Read out the existing limits
 		const embed = new EmbedBuilder()
@@ -37,9 +36,9 @@ export const limits: Command = {
 			.setDescription(
 				ti(
 					"commands.limits.responses.use-cooldown-cmd",
-					{ cooldown: code(`/${cooldownName}`) },
-					locale
-				)
+					{ cooldown: mentionCommand(cooldownCommand, guild, COMMAND_PREFIX) },
+					locale,
+				),
 			);
 
 		allLimits(locale).forEach(key => {
@@ -88,5 +87,5 @@ export const limits: Command = {
 		});
 
 		await reply({ embeds: [embed], ephemeral: true });
-	}
+	},
 };

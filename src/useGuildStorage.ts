@@ -15,16 +15,16 @@ export async function getQueueAdminRoles(guild: Guild): Promise<Array<Snowflake>
 			roles.findMany({
 				where: {
 					definesQueueAdmin: true,
-					guildId: guild.id
+					guildId: guild.id,
 				},
-				select: { id: true }
-			})
+				select: { id: true },
+			}),
 		)
 	).map(role => role.id);
 	return storedAdminRoles.concat([
 		getEnv("EVENTS_ROLE_ID") ?? "0" /* as Snowflake*/, //
-		getEnv("QUEUE_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/ //
-		// getEnv("BOT_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/
+		getEnv("QUEUE_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/, //
+		// getEnv("BOT_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/,
 	]);
 }
 
@@ -38,30 +38,30 @@ export async function getGuildAdminRoles(guild: Guild): Promise<Array<Snowflake>
 			roles.findMany({
 				where: {
 					definesGuildAdmin: true,
-					guildId: guild.id
+					guildId: guild.id,
 				},
-				select: { id: true }
-			})
+				select: { id: true },
+			}),
 		)
 	)
 		.map(role => role.id)
 		.concat([
-			getEnv("QUEUE_CREATOR_ROLE_ID") ?? "0" /* as Snowflake*/ //
-			// getEnv("BOT_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/
+			getEnv("QUEUE_CREATOR_ROLE_ID") ?? "0" /* as Snowflake*/, //
+			// getEnv("BOT_ADMIN_ROLE_ID") ?? "0" /* as Snowflake*/,
 		]);
 }
 
 export async function updateRole(
 	roleId: Snowflake,
 	attrs: Partial<Pick<Readonly<Role>, "definesGuildAdmin" | "definesQueueAdmin">>,
-	guild: Guild
+	guild: Guild,
 ): Promise<void> {
 	if (!roleId) return;
 	if (Object.keys(attrs).length === 0) return; // nothing to update
 
 	const update: Partial<Pick<Role, "definesGuildAdmin" | "definesQueueAdmin">> = {
 		definesGuildAdmin: attrs.definesGuildAdmin,
-		definesQueueAdmin: attrs.definesQueueAdmin
+		definesQueueAdmin: attrs.definesQueueAdmin,
 	};
 
 	await useRepository("role", roles =>
@@ -73,9 +73,9 @@ export async function updateRole(
 				definesGuildAdmin: attrs.definesGuildAdmin ?? false,
 				definesQueueAdmin: attrs.definesQueueAdmin ?? false,
 				guildId: guild.id,
-				id: roleId
-			}
-		})
+				id: roleId,
+			},
+		}),
 	);
 }
 
@@ -84,8 +84,8 @@ export async function removeRole(roleId: Snowflake): Promise<void> {
 	if (!roleId) return;
 	await useRepository("role", roles =>
 		roles.delete({
-			where: { id: roleId }
-		})
+			where: { id: roleId },
+		}),
 	);
 }
 
@@ -94,8 +94,8 @@ export async function getQueueChannelId(guild: Guild): Promise<Snowflake | null>
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },
-			select: { currentQueue: true }
-		})
+			select: { currentQueue: true },
+		}),
 	);
 	return guildInfo?.currentQueue ?? null;
 }
@@ -103,7 +103,7 @@ export async function getQueueChannelId(guild: Guild): Promise<Snowflake | null>
 /** Sets the guild's queue channel. */
 export async function setQueueChannel(
 	channel: TextChannel | Snowflake | null,
-	guild: Guild
+	guild: Guild,
 ): Promise<void> {
 	let currentQueue: Snowflake | null;
 
@@ -122,9 +122,9 @@ export async function setQueueChannel(
 				currentQueue,
 				id: guild.id,
 				isQueueOpen: false,
-				messageCommandPrefix: DEFAULT_MESSAGE_COMMAND_PREFIX
-			}
-		})
+				messageCommandPrefix: DEFAULT_MESSAGE_COMMAND_PREFIX,
+			},
+		}),
 	);
 }
 
@@ -134,8 +134,8 @@ export async function getCommandPrefix(guild: Guild | null | undefined): Promise
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },
-			select: { messageCommandPrefix: true }
-		})
+			select: { messageCommandPrefix: true },
+		}),
 	);
 	return guildInfo?.messageCommandPrefix ?? DEFAULT_MESSAGE_COMMAND_PREFIX;
 }
@@ -153,9 +153,9 @@ export async function setCommandPrefix(guild: Guild, messageCommandPrefix: strin
 				currentQueue: null,
 				id: guild.id,
 				isQueueOpen: false,
-				messageCommandPrefix
-			}
-		})
+				messageCommandPrefix,
+			},
+		}),
 	);
 }
 
@@ -164,8 +164,8 @@ export async function isQueueOpen(guild: Guild): Promise<boolean> {
 	const guildInfo = await useRepository("guild", guilds =>
 		guilds.findUnique({
 			where: { id: guild.id },
-			select: { isQueueOpen: true }
-		})
+			select: { isQueueOpen: true },
+		}),
 	);
 	return guildInfo?.isQueueOpen ?? false;
 }
@@ -177,7 +177,7 @@ export async function setQueueOpen(isQueueOpen: boolean, guild: Guild): Promise<
 			// Attempt to update row
 			await guilds.update({
 				where: { id: guild.id },
-				data: { isQueueOpen }
+				data: { isQueueOpen },
 			});
 		} catch (error) {
 			// Throw unknown errors

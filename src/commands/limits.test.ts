@@ -30,11 +30,11 @@ describe("Get Queue Limits", () => {
 		context = {
 			guild: "the-guild",
 			user: { id: "the-user" },
-			reply: mockReply
+			reply: mockReply,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue({
-			id: "queue-channel"
+			id: "queue-channel",
 		} as unknown as TextChannel);
 		mockGetStoredQueueConfig.mockResolvedValue({
 			cooldownSeconds: null,
@@ -43,7 +43,7 @@ describe("Get Queue Limits", () => {
 			blacklistedUsers: [],
 			channelId: "",
 			queueDurationSeconds: null,
-			entryDurationMinSeconds: null
+			entryDurationMinSeconds: null,
 		});
 	});
 
@@ -68,7 +68,7 @@ describe("Get Queue Limits", () => {
 		async ({
 			cooldownSeconds,
 			entryDurationMaxSeconds,
-			submissionMaxQuantity
+			submissionMaxQuantity,
 		}: {
 			cooldownSeconds: number | null;
 			entryDurationMaxSeconds: number | null;
@@ -81,13 +81,13 @@ describe("Get Queue Limits", () => {
 				blacklistedUsers: [],
 				channelId: "",
 				queueDurationSeconds: null,
-				entryDurationMinSeconds: null
+				entryDurationMinSeconds: null,
 			});
 			await expect(limits.execute(context)).resolves.toBeUndefined();
 			expect(mockReply).toHaveBeenCalledOnce();
 
 			const replyArgs = mockReply.mock.calls[0] as Array<unknown>;
 			expect(replyArgs[0]).toMatchSnapshot();
-		}
+		},
 	);
 });

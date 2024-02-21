@@ -7,18 +7,18 @@ import {
 	escapeUriInString,
 	positionsOfUriInText,
 	stopEscapingUriInString,
-	suppressEmbedsForMessage
+	suppressEmbedsForMessage,
 } from "./editMessage.js";
 
 const mockEdit = vi.fn();
 
 vi.mock("../../logger.js", async () => ({
-	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger
+	useLogger: (await import("../../../tests/testUtils/logger.js")).useTestLogger,
 }));
 
 describe("editing messages", () => {
 	const message = {
-		edit: mockEdit
+		edit: mockEdit,
 	} as unknown as Message;
 	const newValue = "new new new";
 
@@ -51,12 +51,12 @@ describe("Suppress embeds", () => {
 				edit: mockEdit,
 				client: {
 					user: {
-						id: meId
-					}
+						id: meId,
+					},
 				},
 				author: {
-					id: meId
-				}
+					id: meId,
+				},
 			} as unknown as Message;
 		});
 
@@ -67,7 +67,7 @@ describe("Suppress embeds", () => {
 			expect(mockEdit).toHaveBeenCalledWith({
 				flags: ["SuppressEmbeds"],
 				content: message.content,
-				allowedMentions: { users: [] }
+				allowedMentions: { users: [] },
 			});
 		});
 
@@ -77,7 +77,7 @@ describe("Suppress embeds", () => {
 			expect(mockEdit).toHaveBeenCalledOnce();
 			expect(mockEdit).toHaveBeenCalledWith({
 				flags: [],
-				content: message.content
+				content: message.content,
 			});
 		});
 
@@ -95,12 +95,12 @@ describe("Suppress embeds", () => {
 				suppressEmbeds: mockSuppressEmbeds,
 				client: {
 					user: {
-						id: meId
-					}
+						id: meId,
+					},
 				},
 				author: {
-					id: otherId
-				}
+					id: otherId,
+				},
 			} as unknown as Message;
 		});
 
@@ -148,7 +148,7 @@ describe("Identifying URIs in strings", () => {
 		"correctly identifies URI substring range(s) in string '$msg'",
 		({ msg, ranges }: { msg: string; ranges: NonEmptyArray<Range> | null }) => {
 			expect(positionsOfUriInText(msg)).toStrictEqual(ranges);
-		}
+		},
 	);
 });
 
@@ -170,7 +170,7 @@ describe("Suppressing Embeds", () => {
 		"suppresses embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
 			expectValueEqual(escapeUriInString(msg), result);
-		}
+		},
 	);
 
 	test.each`
@@ -188,7 +188,7 @@ describe("Suppressing Embeds", () => {
 		"doesn't re-suppress embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
 			expectValueEqual(escapeUriInString(msg), result);
-		}
+		},
 	);
 });
 
@@ -210,7 +210,7 @@ describe("Allowing Embeds", () => {
 		"frees embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
 			expectValueEqual(stopEscapingUriInString(msg), result);
-		}
+		},
 	);
 
 	test.each`
@@ -227,6 +227,6 @@ describe("Allowing Embeds", () => {
 		"doesn't re-free embeds from message content: '$msg'",
 		({ msg, result }: { msg: string; result: string }) => {
 			expectValueEqual(stopEscapingUriInString(msg), result);
-		}
+		},
 	);
 });

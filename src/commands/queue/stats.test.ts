@@ -20,7 +20,7 @@ const mockCountAllStoredEntries = countAllStoredEntries as Mock<
 import {
 	playtimeAverageInQueue,
 	playtimeRemainingInQueue,
-	playtimeTotalInQueue
+	playtimeTotalInQueue,
 } from "../../actions/queue/useQueue.js";
 const mockPlaytimeRemaining = playtimeRemainingInQueue as Mock<
 	Parameters<typeof playtimeRemainingInQueue>,
@@ -56,7 +56,7 @@ describe("Queue Statistics", () => {
 			logger,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
-			deleteInvocation: mockDeleteInvocation
+			deleteInvocation: mockDeleteInvocation,
 		} as unknown as GuildedCommandContext;
 
 		mockCountAllStoredEntries.mockResolvedValue(0);
@@ -65,7 +65,7 @@ describe("Queue Statistics", () => {
 		mockPlaytimeAverage.mockResolvedValue(0);
 
 		mockGetQueueChannel.mockResolvedValue({
-			id: "queue-channel"
+			id: "queue-channel",
 		} as unknown as TextChannel);
 	});
 

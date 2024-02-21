@@ -4,7 +4,7 @@ import type {
 	MessageEditOptions,
 	PartialMessage,
 	Snowflake,
-	TextChannel
+	TextChannel,
 } from "discord.js";
 import type { MessageButton } from "../../buttons.js";
 import type { QueueEntry, UnsentQueueEntry } from "../../useQueueStorage.js";
@@ -21,14 +21,14 @@ import {
 	getAllStoredEntriesFromSender,
 	getStoredEntry,
 	saveNewEntryToDatabase,
-	updateStoredEntryIsDone
+	updateStoredEntryIsDone,
 } from "../../useQueueStorage.js";
 import {
 	composed,
 	createPartialString,
 	push,
 	pushBold,
-	pushNewLine
+	pushNewLine,
 } from "../../helpers/composeStrings.js";
 
 // FIXME: Some of these may be inlined with functions from useQueueStorage.js, and should be inlined to avoid confusion between raw database function and full queue functions
@@ -40,7 +40,7 @@ import {
  */
 function queueMessageFromEntry(
 	locale: SupportedLocale,
-	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">
+	entry: Pick<QueueEntry, "isDone" | "senderId" | "seconds" | "url" | "haveCalledNowPlaying">,
 ): MessageCreateOptions & MessageEditOptions {
 	const partialContent = createPartialString();
 	push(`<@!${entry.senderId}>`, partialContent);
@@ -77,7 +77,7 @@ function queueMessageFromEntry(
 	return {
 		content,
 		allowedMentions: { users: [] },
-		components: [actionRow(entryButtons)]
+		components: [actionRow(entryButtons)],
 	};
 }
 
@@ -117,12 +117,12 @@ export async function playtimeAverageInQueue(queueChannel: TextChannel): Promise
 /** Adds an entry to the queue cache and sends the entry to the queue channel. */
 export async function pushEntryToQueue(
 	newEntry: UnsentQueueEntry,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<QueueEntry> {
 	const messageOptions = queueMessageFromEntry(preferredLocale(queueChannel.guild), {
 		...newEntry,
 		isDone: false,
-		haveCalledNowPlaying: []
+		haveCalledNowPlaying: [],
 	});
 	const queueMessage = await queueChannel.send(messageOptions);
 
@@ -135,9 +135,9 @@ export async function pushEntryToQueue(
 				senderId: newEntry.senderId,
 				sentAt: new Date(), // this call should be linearized with other such calls, so that we never have a duplicate date. Useful to keep ordering consistent between queue channel and db.
 				queueMessageId: queueMessage.id,
-				isDone: false
+				isDone: false,
 			},
-			queueChannel
+			queueChannel,
 		);
 
 		// If the database write fails...
@@ -152,7 +152,7 @@ export async function pushEntryToQueue(
 /** Returns the average entry duration of the submissions of the user with the provided ID. */
 export async function averageSubmissionPlaytimeForUser(
 	userId: Snowflake,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<number> {
 	const entries = await getAllStoredEntriesFromSender(userId, queueChannel);
 	let average = 0;
@@ -168,7 +168,7 @@ export async function averageSubmissionPlaytimeForUser(
 /** If the message represents a "done" entry, that entry is unmarked. */
 export async function markEntryNotDoneInQueue(
 	queueMessage: Message | PartialMessage,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	await updateStoredEntryIsDone(false, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
@@ -181,7 +181,7 @@ export async function markEntryNotDoneInQueue(
 /** If the message represents a "not done" entry, that entry is marked "done". */
 export async function markEntryDoneInQueue(
 	queueMessage: Message | PartialMessage,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	await updateStoredEntryIsDone(true, queueMessage.id);
 	const entry = await getStoredEntry(queueMessage.id);
@@ -195,7 +195,7 @@ export async function markEntryDoneInQueue(
 export async function addUserToHaveCalledNowPlaying(
 	user: Snowflake,
 	queueMessage: Message | PartialMessage,
-	queueChannel: TextChannel
+	queueChannel: TextChannel,
 ): Promise<void> {
 	await addToHaveCalledNowPlayingForStoredEntry(user, queueMessage.id, queueChannel);
 
@@ -204,7 +204,7 @@ export async function addUserToHaveCalledNowPlaying(
 
 	await editMessage(
 		queueMessage,
-		queueMessageFromEntry(preferredLocale(queueChannel.guild), entry)
+		queueMessageFromEntry(preferredLocale(queueChannel.guild), entry),
 	);
 }
 
@@ -214,7 +214,7 @@ export async function addUserToHaveCalledNowPlaying(
  * @returns the entry that was deleted.
  */
 export async function deleteEntryFromMessage(
-	queueMessage: Message | PartialMessage
+	queueMessage: Message | PartialMessage,
 ): Promise<QueueEntry | null> {
 	const entry = await getStoredEntry(queueMessage.id);
 	if (entry === null) return entry;

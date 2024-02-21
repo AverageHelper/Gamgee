@@ -10,7 +10,7 @@ import type {
 	LocaleString,
 	Message,
 	MessageReplyOptions,
-	User
+	User,
 } from "discord.js";
 import type { Logger } from "../logger.js";
 import type { SupportedLocale } from "../i18n.js";
@@ -80,7 +80,7 @@ interface BaseCommandContext {
 			| string //
 			| Omit<MessageReplyOptions, "flags">
 			| Omit<InteractionReplyOptions, "flags">,
-		viaDM?: true
+		viaDM?: true,
 	) => Promise<void>;
 
 	/** Replies to the command invocation message, optionally pinging the command's sender. */
@@ -90,7 +90,7 @@ interface BaseCommandContext {
 			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
 					readonly shouldMention?: boolean;
-			  })
+			  }),
 	) => Promise<void>;
 
 	/**
@@ -105,7 +105,7 @@ interface BaseCommandContext {
 			| Omit<MessageReplyOptions, "flags">
 			| (Omit<InteractionReplyOptions, "flags"> & {
 					readonly reply?: boolean;
-			  })
+			  }),
 	) => Promise<Message | boolean>;
 }
 

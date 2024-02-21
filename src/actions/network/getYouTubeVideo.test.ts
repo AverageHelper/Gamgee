@@ -7,7 +7,7 @@ import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js"
 // Mock ytdl
 vi.mock("ytdl-core", async () => ({
 	validateURL: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).validateURL,
-	getBasicInfo: vi.fn()
+	getBasicInfo: vi.fn(),
 }));
 import { getBasicInfo } from "ytdl-core";
 const mockGetBasicInfo = getBasicInfo as Mock<
@@ -66,20 +66,20 @@ describe("YouTube track details", () => {
 			mockGetBasicInfo.mockResolvedValue({
 				videoDetails: {
 					availableCountries: [
-						/* ... */ "US" /* ... */ // truncated for testing purposes
+						/* ... */ "US" /* ... */, // truncated for testing purposes
 					],
 					lengthSeconds: `${duration}`,
 					isLiveContent: true,
 					video_url: result,
-					title: "sample"
-				}
+					title: "sample",
+				},
 			} as unknown as videoInfo);
 
 			const details = await getYouTubeVideo(new URL(url));
 			expectValueEqual(details.url, result);
 			expectDefined(details.duration.seconds);
 			expectValueEqual(details.duration.seconds, duration);
-		}
+		},
 	);
 
 	test("returns infinite duration for a livestream", async () => {
@@ -88,13 +88,13 @@ describe("YouTube track details", () => {
 		mockGetBasicInfo.mockResolvedValue({
 			videoDetails: {
 				availableCountries: [
-					/* ... */ "US" /* ... */ // truncated for testing purposes
+					/* ... */ "US" /* ... */, // truncated for testing purposes
 				],
 				lengthSeconds: "0",
 				isLiveContent: true,
 				video_url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-				title: "lofi hip hop radio - beats to relax/study to"
-			}
+				title: "lofi hip hop radio - beats to relax/study to",
+			},
 		} as unknown as videoInfo);
 
 		const details = await getYouTubeVideo(new URL(url));

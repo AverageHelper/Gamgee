@@ -4,7 +4,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 1`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	infinite",
@@ -38,7 +38,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 2`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	infinite",
@@ -72,7 +72,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 3`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	infinite",
@@ -106,7 +106,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 4`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	42",
@@ -140,7 +140,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 5`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	infinite",
@@ -174,7 +174,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 6`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	42",
@@ -208,7 +208,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 7`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	42",
@@ -242,7 +242,7 @@ exports[`Get Queue Limits > shows statistics on queue limits 8`] = `
 {
   "embeds": [
     {
-      "description": "Use \`/cooldown\` to see your cooldown time",
+      "description": "Use \`?cooldown\` to see your cooldown time",
       "fields": [
         {
           "name": "Number of Submissions:	42",

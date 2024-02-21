@@ -14,7 +14,7 @@ const logger = useTestLogger();
  * @returns an event receiver function.
  */
 export function useDispatchLoop<T>(
-	waiterCollection: Map<number, (arg: T) => boolean>
+	waiterCollection: Map<number, (arg: T) => boolean>,
 ): (arg: T) => void {
 	return function handleEvent(arg): void {
 		if (waiterCollection.size === 0) return;

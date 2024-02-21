@@ -19,7 +19,7 @@ export async function fetchMetadata(url: URL, timeoutSeconds?: number): Promise<
 					resolve(result);
 				}
 			},
-			{ url: url.href }
+			{ url: url.href },
 		);
 
 		const parser = new Parser(handler);

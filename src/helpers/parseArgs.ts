@@ -28,24 +28,24 @@ export function parseArgs(): Args {
 			deploy: {
 				type: "boolean",
 				short: "c",
-				description: "Upload Discord commands, then exit"
+				description: "Upload Discord commands, then exit",
 			} satisfies ArgOption,
 			revoke: {
 				type: "boolean",
 				short: "C",
-				description: "Revoke Discord commands, then exit"
+				description: "Revoke Discord commands, then exit",
 			} satisfies ArgOption,
 			help: {
 				type: "boolean",
 				short: "h",
-				description: "Show help"
+				description: "Show help",
 			} satisfies ArgOption,
 			version: {
 				type: "boolean",
 				short: "v",
-				description: "Show version number"
-			} satisfies ArgOption
-		}
+				description: "Show version number",
+			} satisfies ArgOption,
+		},
 	}).values;
 
 	if (parsedValues.version) {
@@ -62,7 +62,7 @@ export function parseArgs(): Args {
 			"-c, --deploy   Upload Discord commands, then exit   [boolean] [default: false]",
 			"-C, --revoke   Revoke Discord commands, then exit   [boolean] [default: false]",
 			"-h, --help     Show help                                             [boolean]",
-			"-v, --version  Show version number                                   [boolean]"
+			"-v, --version  Show version number                                   [boolean]",
 		];
 		for (const stuff of stuffToWrite) {
 			output += "\n  ";
@@ -75,7 +75,7 @@ export function parseArgs(): Args {
 
 	parsedArgs = {
 		deploy: parsedValues.deploy ?? false,
-		revoke: parsedValues.revoke ?? false
+		revoke: parsedValues.revoke ?? false,
 	};
 
 	return parsedArgs;

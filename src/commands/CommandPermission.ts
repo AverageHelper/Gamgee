@@ -28,7 +28,7 @@ export function guildOwnerPermission(guild: Guild, permission: boolean): Command
 	return {
 		permission,
 		type: ApplicationCommandPermissionType.User,
-		id: guild.ownerId
+		id: guild.ownerId,
 	};
 }
 
@@ -45,7 +45,7 @@ export function guildOwnerPermission(guild: Guild, permission: boolean): Command
  */
 export async function adminRolePermissions(
 	guild: Guild,
-	permission: boolean
+	permission: boolean,
 ): Promise<Array<CommandPermission>> {
 	const knownAdminRoleIDs = await getGuildAdminRoles(guild);
 	return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
@@ -64,7 +64,7 @@ export async function adminRolePermissions(
  */
 export async function queueAdminRolePermissions(
 	guild: Guild,
-	permission: boolean
+	permission: boolean,
 ): Promise<Array<CommandPermission>> {
 	const knownRoleIDs = await getQueueAdminRoles(guild);
 	return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
@@ -85,7 +85,7 @@ export function rolePermission(roleId: Snowflake, permission: boolean = true): C
 	return {
 		permission,
 		type: ApplicationCommandPermissionType.Role,
-		id: roleId
+		id: roleId,
 	};
 }
 
@@ -103,7 +103,7 @@ export function isPermissionAliasList(tbd: unknown): tbd is PermissionAliasList 
 
 export async function resolvePermissions(
 	aliases: ReadonlyArray<PermissionAlias>,
-	guild: Guild
+	guild: Guild,
 ): Promise<Array<CommandPermission>> {
 	const result: Array<CommandPermission> = [];
 

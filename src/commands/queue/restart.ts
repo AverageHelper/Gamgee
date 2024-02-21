@@ -29,5 +29,5 @@ export const restart: Subcommand = {
 		await deleteStoredEntriesForQueue(queueChannel);
 
 		return await reply("The queue has restarted.");
-	}
+	},
 };

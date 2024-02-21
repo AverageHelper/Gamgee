@@ -22,19 +22,19 @@ export const open: GuildedSubcommand = {
 		userLocale,
 		reply,
 		followUp,
-		deleteInvocation
+		deleteInvocation,
 	}) {
 		logger.debug(`Got queue-open request at ${createdTimestamp}`);
 
 		const [queueChannel] = await Promise.all([
 			getQueueChannel(guild), //
-			deleteInvocation()
+			deleteInvocation(),
 		]);
 
 		if (!queueChannel) {
 			return await reply({
 				content: t("commands.queue-admin.options.open.responses.no-queue", userLocale),
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 		const isAlreadyOpen = await isQueueOpen(guild);
@@ -42,7 +42,7 @@ export const open: GuildedSubcommand = {
 			const message = t("commands.queue-admin.options.open.responses.already-open", userLocale);
 			return await reply({
 				content: `${message} :smiley:`,
-				ephemeral: true
+				ephemeral: true,
 			});
 		}
 
@@ -53,23 +53,23 @@ export const open: GuildedSubcommand = {
 		await queueChannel.send(
 			`${t(
 				"commands.queue-admin.options.open.responses.this-queue-now-open",
-				guildLocale
-			)} :smiley:`
+				guildLocale,
+			)} :smiley:`,
 		);
 		if (!queueIsCurrent) {
 			if (type === "interaction") {
 				await reply({
 					content: t("commands.queue-admin.options.open.responses.ack", userLocale),
-					ephemeral: true
+					ephemeral: true,
 				});
 			}
 			await followUp({
 				content: `${t(
 					"commands.queue-admin.options.open.responses.the-queue-now-open",
-					guildLocale
+					guildLocale,
 				)} :smiley:`,
-				reply: false
+				reply: false,
 			});
 		}
-	}
+	},
 };

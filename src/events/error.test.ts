@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const mockLoggerError = vi.fn();
 const logger = {
-	error: mockLoggerError
+	error: mockLoggerError,
 } as unknown as Logger;
 
 // Import the unit under test

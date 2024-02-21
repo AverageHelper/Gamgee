@@ -33,9 +33,9 @@ export const howto: GuildedCommand = {
 			ti(
 				"commands.howto.responses.example",
 				{ example: `\`/${srCommandName} ${exampleQuery}\`` },
-				guildLocale
+				guildLocale,
 			),
-			msg
+			msg,
 		);
 		pushNewLine(msg);
 		push(t("commands.howto.responses.will-confirm", guildLocale), msg);
@@ -46,12 +46,12 @@ export const howto: GuildedCommand = {
 				? ti(
 						"commands.howto.responses.see-supported-platforms",
 						{ url: `<${supportedPlatformsList}>` },
-						guildLocale
+						guildLocale,
 					)
 				: ti(
 						"commands.howto.responses.see-supported-platforms-at-url",
 						{ url: `<${supportedPlatformsList}>` },
-						guildLocale
+						guildLocale,
 					);
 		push(supportedPlatforms, msg);
 		pushNewLine(msg);
@@ -60,9 +60,9 @@ export const howto: GuildedCommand = {
 		const npMention = mentionCommand(nowPlaying, guild, COMMAND_PREFIX);
 		push(
 			ti("commands.howto.responses.to-get-current-song", { command: npMention }, guildLocale),
-			msg
+			msg,
 		);
 
 		return await reply(composed(msg));
-	}
+	},
 };

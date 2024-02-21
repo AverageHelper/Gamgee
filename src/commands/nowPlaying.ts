@@ -12,7 +12,7 @@ const responses = [
 	"commands.nowplaying.responses.dj-says",
 	"commands.nowplaying.responses.good-chance",
 	"commands.nowplaying.responses.i-think",
-	"commands.nowplaying.responses.likely"
+	"commands.nowplaying.responses.likely",
 ] as const;
 let lastResponse: Response | null = null;
 
@@ -57,7 +57,7 @@ export const nowPlaying: GuildedCommand = {
 		await addUserToHaveCalledNowPlaying(
 			user.id,
 			await queueChannel.messages.fetch(firstNotDone.queueMessageId),
-			queueChannel
+			queueChannel,
 		);
 
 		const usermention = userMention(firstNotDone.senderId);
@@ -67,5 +67,5 @@ export const nowPlaying: GuildedCommand = {
 		// TODO: Also read out the song's title. Store this in the database as it comes in.
 
 		return await replyPrivately(response, true);
-	}
+	},
 };

@@ -11,10 +11,10 @@ export default defineConfig({
 		setupFiles: ["./tests/hooks.ts"],
 		fileParallelism: false,
 		sequence: {
-			hooks: "list"
+			hooks: "list",
 		},
 		coverage: {
-			enabled: false
-		}
-	}
+			enabled: false,
+		},
+	},
 });

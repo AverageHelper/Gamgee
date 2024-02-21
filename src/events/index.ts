@@ -29,7 +29,7 @@ export function _add(eventHandler: EventHandler): void {
 
 	if (_allEventHandlers.has(name)) {
 		throw new TypeError(
-			`Failed to add event handler for '${name}' when a handler for that event was already added`
+			`Failed to add event handler for '${name}' when a handler for that event was already added`,
 		);
 	}
 
@@ -58,7 +58,7 @@ export function registerEventHandlers(client: Client): void {
 		}
 
 		logger.debug(
-			`Registered event handler ${eventHandler.once === true ? "once" : "on"}(${eventName})`
+			`Registered event handler ${eventHandler.once === true ? "once" : "on"}(${eventName})`,
 		);
 	});
 }

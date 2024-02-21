@@ -54,20 +54,20 @@ describe("Manage the Queue Blacklist", () => {
 			type: "message",
 			guild: {
 				ownerId,
-				name: "Test Guild"
+				name: "Test Guild",
 			},
 			user: { id: "test-user" },
 			options: [
 				{
 					name: "user",
 					value: userMention(badUserId),
-					type: ApplicationCommandOptionType.String
-				}
+					type: ApplicationCommandOptionType.String,
+				},
 			],
 			logger,
 			reply: mockReply,
 			replyPrivately: mockReplyPrivately,
-			deleteInvocation: mockDeleteMessage
+			deleteInvocation: mockDeleteMessage,
 		} as unknown as GuildedCommandContext;
 
 		mockGetQueueChannel.mockResolvedValue(queueChannel);
@@ -79,7 +79,7 @@ describe("Manage the Queue Blacklist", () => {
 			submissionMaxQuantity: null,
 			queueDurationSeconds: null,
 			entryDurationMaxSeconds: null,
-			entryDurationMinSeconds: null
+			entryDurationMinSeconds: null,
 		});
 
 		mockSaveUserToStoredBlacklist.mockResolvedValue(undefined);
@@ -97,7 +97,7 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledOnce();
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
-				expect.stringContaining(`?quo ${blacklist.name} <user mention>`)
+				expect.stringContaining(`?quo ${blacklist.name} <user mention>`),
 			);
 		});
 
@@ -109,7 +109,7 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledOnce(); // only called when not a '/' command
 			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("your DMs"));
 			expect(mockReplyPrivately).toHaveBeenCalledWith(
-				expect.stringContaining(`?quo ${blacklist.name} <user mention>`)
+				expect.stringContaining(`?quo ${blacklist.name} <user mention>`),
 			);
 		});
 	});
@@ -124,8 +124,8 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist yourself") as string,
-					ephemeral: true
-				})
+					ephemeral: true,
+				}),
 			);
 		});
 
@@ -138,8 +138,8 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist the owner") as string,
-					ephemeral: true
-				})
+					ephemeral: true,
+				}),
 			);
 		});
 
@@ -153,8 +153,8 @@ describe("Manage the Queue Blacklist", () => {
 			expect(mockReply).toHaveBeenCalledWith(
 				expect.objectContaining({
 					content: expect.stringContaining("blacklist yourself") as string,
-					ephemeral: true
-				})
+					ephemeral: true,
+				}),
 			);
 		});
 
@@ -185,8 +185,8 @@ describe("Manage the Queue Blacklist", () => {
 				expect.objectContaining({
 					content: expect.stringContaining(badUserId) as string,
 					shouldMention: false,
-					ephemeral: true
-				})
+					ephemeral: true,
+				}),
 			);
 			expect(mockDeleteMessage).toHaveBeenCalledOnce();
 			expect(mockDeleteMessage).toHaveBeenCalledWith();

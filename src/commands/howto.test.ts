@@ -23,7 +23,7 @@ describe.each(locales)("How-to command in %s", guildLocale => {
 			guild: { id: "some-guild" },
 			guildLocale,
 			reply: mockReply,
-			type: "message"
+			type: "message",
 		} as unknown as GuildedCommandContext;
 
 		mockAssertUserCanRunCommand.mockResolvedValue(true);

@@ -24,7 +24,7 @@ function shortDurationString(locale: SupportedLocale, seconds: number): string {
 export function durationString(
 	locale: SupportedLocale,
 	seconds: number,
-	short: boolean = false
+	short: boolean = false,
 ): string {
 	if (short) {
 		return shortDurationString(locale, seconds);
