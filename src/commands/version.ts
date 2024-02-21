@@ -20,7 +20,7 @@ export const version: Command = {
 			randomCelebration(),
 		);
 
-		const systemName = "Gamgee Core";
+		const systemName = "Gamgee";
 
 		if (type === "interaction") {
 			// Discord lets bots link stuff in Markdown syntax, but it'll also embed by default.

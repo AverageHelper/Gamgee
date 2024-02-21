@@ -338,7 +338,7 @@ Triggers the typing indicator in the current channel. This is mostly for fun and
 
 ### `version`
 
-Display's the current version of Gamgee Core. (see [package.json](https://github.com/AverageHelper/Gamgee/blob/main/package.json#L3))
+Display's the current version of the bot's Gamgee core. (see [package.json](https://github.com/AverageHelper/Gamgee/blob/main/package.json#L3))
 
 ### `video <url>`
 

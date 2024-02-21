@@ -1,8 +1,8 @@
 import "source-map-support/register.js";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { getEnv, requireEnv } from "./helpers/environment.js";
-import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { registerEventHandlers } from "./events/index.js";
+import { richErrorMessage } from "./helpers/richErrorMessage.js";
 import { useLogger } from "./logger.js";
 
 // We *could* do all of this at the top level,
@@ -29,7 +29,7 @@ export async function _main(logger = useLogger()): Promise<void> {
 		// Register all the event handlers for the client
 		registerEventHandlers(client);
 
-		// Log in
+		// Log in to Discord
 		try {
 			await client.login(requireEnv("DISCORD_TOKEN"));
 		} catch (error) {

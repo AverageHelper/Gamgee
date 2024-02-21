@@ -34,7 +34,7 @@ export const ready = onEvent("ready", {
 
 		logger.verbose("*Yawn* Good morning!");
 		logger.verbose("Starting...");
-		logger.info(`Started Gamgee Core v${gamgeeVersion}`);
+		logger.info(`Started Gamgee v${gamgeeVersion}`);
 
 		// Sanity check for commands
 		logger.info("Verifying command deployments...");
