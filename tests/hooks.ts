@@ -6,7 +6,7 @@ beforeAll(async () => {
 	await setupTesterClient();
 });
 
-afterAll(async () => {
+afterAll(() => {
 	// Signs out the test client after all tests are done
-	await destroyTesterClient();
+	destroyTesterClient();
 });
