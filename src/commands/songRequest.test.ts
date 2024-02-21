@@ -271,11 +271,11 @@ describe("Song request via URL", () => {
 
 	test("submissions enter the queue in order", async () => {
 		const mockMessages: Array<Message> = [];
-		urls.forEach((url, i) => {
+		for (const [i, url] of urls.entries()) {
 			const userId = `user-${i + 1}`;
 			const message = mockMessage(userId, `?sr ${url.href}`);
 			mockMessages.push(message);
-		});
+		}
 
 		await Promise.all([
 			mockMessages
@@ -310,7 +310,7 @@ describe("Song request via URL", () => {
 		await new Promise(resolve => setTimeout(resolve, 500));
 
 		// queue.push should have been called on each URL
-		urls.forEach((url, i) => {
+		for (const [i, url] of urls.entries()) {
 			expect(mockQueuePush).toHaveBeenNthCalledWith(
 				i + 1,
 				expect.objectContaining({
@@ -319,7 +319,7 @@ describe("Song request via URL", () => {
 				}),
 				queueChannel,
 			);
-		});
+		}
 		expect(mockQueuePush).toHaveBeenCalledTimes(10);
 	});
 });

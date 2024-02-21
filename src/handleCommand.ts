@@ -98,7 +98,6 @@ export async function queryFromMessage(
 	if (content.startsWith(SLASH_COMMAND_INTENT_PREFIX)) {
 		// get rid of the slash
 		query[0] = query[0]?.slice(SLASH_COMMAND_INTENT_PREFIX.length) ?? "";
-		query.forEach(s => s.trim());
 		return { query, invocationMethod: "slash" };
 	}
 
@@ -107,7 +106,6 @@ export async function queryFromMessage(
 	if (content.startsWith(commandPrefix)) {
 		// get rid of the prefix
 		query[0] = query[0]?.slice(commandPrefix.length) ?? "";
-		query.forEach(s => s.trim());
 		return { query, invocationMethod: "prefix" };
 	}
 

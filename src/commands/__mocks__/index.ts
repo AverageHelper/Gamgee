@@ -34,4 +34,6 @@ function addMock(command: Command): void {
 }
 
 // Add all commands to our mock commands list
-_allCommands.forEach(cmd => addMock(cmd));
+for (const cmd of _allCommands.values()) {
+	addMock(cmd);
+}

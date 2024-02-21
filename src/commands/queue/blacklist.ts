@@ -62,10 +62,10 @@ export const blacklist: Subcommand = {
 				pushNewLine(replyMsg);
 			}
 
-			blacklistedUsers.forEach(userId => {
+			for (const userId of blacklistedUsers) {
 				push(` - ${userMention(userId)}`, replyMsg);
 				pushNewLine(replyMsg);
-			});
+			}
 
 			pushNewLine(replyMsg);
 			push("To add a user to the blacklist, run ", replyMsg);

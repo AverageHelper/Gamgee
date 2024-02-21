@@ -261,7 +261,9 @@ describe("Command handler", () => {
 				mockMessage.content = content;
 				await handleCommand(mockMessage, logger);
 
-				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+				for (const cmd of mockCommandDefinitions.values()) {
+					expect(cmd.execute).not.toHaveBeenCalled();
+				}
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
 				await new Promise(resolve => setTimeout(resolve, 20));
 				if (mockCommandDefinitions.size > 13)
@@ -366,7 +368,9 @@ describe("Command handler", () => {
 				mockMessage.author.bot = true;
 				await handleCommand(mockMessage, logger);
 
-				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+				for (const cmd of mockCommandDefinitions.values()) {
+					expect(cmd.execute).not.toHaveBeenCalled();
+				}
 				expect.assertions(mockCommandDefinitions.size);
 			},
 		);

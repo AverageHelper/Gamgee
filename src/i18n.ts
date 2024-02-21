@@ -249,13 +249,13 @@ export function localizations<K extends string>(
 	// Get all localizations for the given keypath
 	const result: Partial<Record<SupportedLocale, string>> = {};
 
-	locales.forEach(locale => {
+	for (const locale of locales) {
 		const translation = t(keypath, locale);
 		if (translation !== undefined) {
 			// only add the translation if there is one to add
 			result[locale] = translation;
 		}
-	});
+	}
 
 	// Return undefined if there were no results
 	if (Object.keys(result).length === 0) return undefined;
