@@ -27,7 +27,7 @@ export default defineConfig({
 		// Transpile source
 		esbuild({
 			tsconfig: "./tsconfig.prod.json",
-			sourceMap: !isProduction,
+			sourceMap: true,
 			minify: isProduction,
 		}), // translate TypeScript to JS
 		commonjs({ extensions: [".js", ".ts"] }), // translate CommonJS to ESM
@@ -68,6 +68,6 @@ export default defineConfig({
 		file: "dist/server.js",
 		format: "module",
 		inlineDynamicImports: true,
-		sourcemap: isProduction ? undefined : "inline",
+		sourcemap: "inline",
 	},
 });
