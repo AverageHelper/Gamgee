@@ -293,9 +293,9 @@ export const phrases: ResponseRepository = [
 	"Down the hall, up the stairs, past the gargoyle",
 	"*ENERGY*",
 	[
-		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a bot!\nI can do anyth—",
+		"Everyone says I shouldn't divide by 0 but I don't know why. I'm a robot!\nI can do anyth—",
 		"_ _",
-		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆ ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
+		"[ERROR DIV̶̼͋I̸͉͐Ş̴̈́I̶̼͂Ö̶͙́N̷̼͘ BY Z̶͜E̪͒R̷̠͇̫͑O̸͉̬̓̑͌ NO NOO̼OO NΘ stop the an*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s ͎a̧͈͖r̽̾̈́͒͑e not `rè̑ͧ̌aͨl̘̝̙̃ͤ͂̾̆` ZA̡͊͠͝LGΌ I҉̯͈͕̹̘̱  ]",
 	],
 	"Fan of squirrels.",
 	"Fire is toasty warm!",
@@ -424,6 +424,7 @@ export const phrases: ResponseRepository = [
 	"Your free trial has expired. Would you like to purchase WinRAR?",
 	({ otherMember: m, otherUser: u }) =>
 		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
+	code("00101010 01100010 01101100 01100101 01110000 00101010"), // *blep*
 	code("01100110 01101100 01101111 01101111 01100110"), // floof
 	code(
 		"01001001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 01110101 01110010 00100000 01110100 01101001 01101101 01100101 00101110", // I just wasted your time.
@@ -434,7 +435,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta,
-]; // 257 of these
+]; // 258 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

@@ -52,7 +52,7 @@ jobs:
           BOT_PREFIX: "?"
 
       # Try again with the minified build
-      - run: npm run build --production
+      - run: npm run build --omit=dev
       - run: npm run test:e2e
         env:
           CI: true
