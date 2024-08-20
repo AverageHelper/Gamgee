@@ -16,22 +16,24 @@ const logger = useLogger();
  * Gets information about a YouTube video.
  *
  * @param url The track URL to check.
+ * @param signal A signal that would indicate that we should abort the network request.
  *
  * @throws `InvalidYouTubeUrlError` if the provided URL is not a YouTube URL.
  * @throws `UnavailableError` if the video is unavailable in the United States.
  * @returns a `Promise` that resolves with the video details.
  */
-export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
+export async function getYouTubeVideo(url: URL, signal?: AbortSignal): Promise<VideoDetails> {
 	const urlString = url.href;
 	if (!validateURL(urlString)) throw new InvalidYouTubeUrlError(url);
 
 	let info: YTVideoInfo;
 	try {
-		info = await getBasicInfo(urlString);
+		info = await getBasicInfo(urlString, { requestOptions: { signal } });
 	} catch (error) {
+		// TODO: Try an Invidius instance instead
 		const err = new VideoError(error);
 		switch (err.message) {
-			case "Status code: 410":
+			case "Status code: 410": // TODO: Should 410 be a "youtube is down" error?
 			case "Video unavailable":
 				logger.error(richErrorMessage("Possibly misleading error from YouTube.", error));
 				throw new UnavailableError(url);

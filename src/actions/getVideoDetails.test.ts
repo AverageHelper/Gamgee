@@ -72,18 +72,19 @@ describe("Video details", () => {
 	test.each(urls)("strips extra info from a %s URL", async (_, url) => {
 		const dirtyUrl = `${url} Text and stuff`;
 		const cleanUrl = new URL(url);
+		const signal = expect.any(AbortSignal) as AbortSignal;
 
 		await expect(getVideoDetails(dirtyUrl, null)).resolves.toMatchObject({ url: validUrl });
 		expect(mockGetBandcampTrack).toHaveBeenCalledOnce();
-		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetPonyFmTrack).toHaveBeenCalledOnce();
-		expect(mockGetPonyFmTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetPonyFmTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetSoundCloudTrack).toHaveBeenCalledOnce();
-		expect(mockGetSoundCloudTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetSoundCloudTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetYouTubeVideo).toHaveBeenCalledOnce();
-		expect(mockGetYouTubeVideo).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetYouTubeVideo).toHaveBeenCalledWith(cleanUrl, signal);
 	});
 });

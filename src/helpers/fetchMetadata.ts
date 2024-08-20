@@ -1,13 +1,12 @@
 import type { Result } from "htmlmetaparser";
-import { fetchWithTimeout } from "./fetch.js";
 import { Handler } from "htmlmetaparser";
 import { Parser } from "htmlparser2";
 
 /**
  * Retrieves metadata about the webpage at the given `url`.
  */
-export async function fetchMetadata(url: URL, timeoutSeconds?: number): Promise<Result> {
-	const result = await fetchWithTimeout(url, timeoutSeconds);
+export async function fetchMetadata(url: URL, signal?: AbortSignal): Promise<Result> {
+	const result = await fetch(url, { signal });
 	const html = await result.text();
 
 	return await new Promise((resolve, reject) => {

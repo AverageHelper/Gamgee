@@ -102,7 +102,10 @@ export const phrases: ResponseRepository = [
 	// Deltarune
 	"Don't have anythings better to do.",
 	"Ho ho ho, i lost and confused.",
+	"Legally grey but sweet with the phrasing",
 	"That's a [BIG SHOT] move right there",
+	"Wanna know a secret? **[[Hyperlink Blocked]]**",
+	["Wanna know a secret?", "**[[Hyperlink Blocked]]**"],
 	"You' rerealllyaswellpersonyouknowthat?!",
 
 	// German
@@ -224,6 +227,10 @@ export const phrases: ResponseRepository = [
 	"Uzani, his army with fists open",
 	"Zinda, his face black, his eyes red",
 	// TODO: Add more from https://memory-alpha.fandom.com/wiki/Tamarian_language, once there is more to balance these out
+
+	// The Music Man
+	"Friend, either you're closing your eyes to a situation you do not wish to acknowledge, or you are not aware of the caliber of disaster indicated by the presence of a pool table in your community",
+	"Ya got trouble my friend, right here I say, trouble right in River City",
 
 	// Time
 	"Did you hear Unix clocks ticked over to 17-something? Feels like ages ago, but it's, what, <t:1700000000:R> now?",
@@ -393,6 +400,7 @@ export const phrases: ResponseRepository = [
 	["Squirrel!", "_ _", "... Sorry, what were we talking about?"],
 	"'Tis better to have loved and lost, than never to have loved at all.",
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
+	"That rhymes, so it must be true!",
 	"That's par for the course",
 	// eslint-disable-next-line deprecation/deprecation
 	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
@@ -408,6 +416,7 @@ export const phrases: ResponseRepository = [
 	"Today's been a long week.",
 	"Truly inspirational!",
 	"Warning: Your pc have many virus please call the number to fix issue: ||*gotcha* :P||",
+	"Was there ever any song more cool than The Stupendium's [_AD INFINITUM_](<https://www.youtube.com/watch?v=d8RkcUiCxuE>)? :hugging:",
 	"We've been trying to reach you about your vehicle's extended warranty. You may consider this your first and only notice.",
 	"Were you attacked by a party?",
 	"What are the odds that I would find myself where I began",
@@ -424,6 +433,8 @@ export const phrases: ResponseRepository = [
 	"Your free trial has expired. Would you like to purchase WinRAR?",
 	({ otherMember: m, otherUser: u }) =>
 		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
+	":3",
+	"\\>:3",
 	code("00101010 01100010 01101100 01100101 01110000 00101010"), // *blep*
 	code("01100110 01101100 01101111 01101111 01100110"), // floof
 	code(
@@ -435,7 +446,7 @@ export const phrases: ResponseRepository = [
 
 	...philosophy,
 	...copypasta,
-]; // 258 of these
+]; // 267 of these
 logger.silly(`I have ${phrases.length} random things to say ^^`);
 
 /**

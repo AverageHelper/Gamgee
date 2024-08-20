@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/limits` now mentions the `/cooldown` command properly.
 - Updated dependencies, and made our Rollup bundle tighter.
 
+### Fixed
+- We now halt dangling network requests when one video platform answers back. This might speed up handling request floods, since ostensibly this means Node will let go of unneeded network resources more quickly for each request.
+
 ## [2.2.0] - 2024-02-18
 ### Added
 - Translations for `/howto` command responses. (Thanks to [@karcsesz](https://github.com/karcsesz), [@vayandas](https://github.com/vayandas), and marph92 for help translating!)

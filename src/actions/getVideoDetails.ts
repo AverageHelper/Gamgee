@@ -4,6 +4,7 @@ import { getPonyFmTrack } from "./network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
+import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import { useLogger } from "../logger.js";
 
 export interface VideoDetails {
@@ -30,19 +31,34 @@ export async function getVideoDetails(
 	urlOrString: URL | string,
 	logger: Logger | null = useLogger(),
 ): Promise<VideoDetails | null> {
+	let timeout: NodeJS.Timeout | undefined;
+
 	try {
 		const url: URL =
 			typeof urlOrString === "string" ? new URL(urlOrString.split(/\s+/u)[0] ?? "") : urlOrString;
-		return await Promise.any([
-			getYouTubeVideo(url),
-			getSoundCloudTrack(url),
-			getBandcampTrack(url),
-			getPonyFmTrack(url),
+
+		// Abort after a few seconds if all handlers are taking too long
+		const aborter = new AbortController();
+		const timeoutSeconds = 8;
+		timeout = setTimeout(() => aborter.abort(), timeoutSeconds * MILLISECONDS_IN_SECOND);
+
+		const result = await Promise.any([
+			getYouTubeVideo(url, aborter.signal),
+			getSoundCloudTrack(url, aborter.signal),
+			getBandcampTrack(url, aborter.signal),
+			getPonyFmTrack(url, aborter.signal),
 		]);
+
+		// Abort other requests
+		aborter.abort();
+
+		return result;
 	} catch (error) {
 		logger?.error(
 			richErrorMessage(`Failed to fetch song using url '${urlOrString.toString()}'`, error),
 		);
 		return null;
+	} finally {
+		clearTimeout(timeout);
 	}
 }

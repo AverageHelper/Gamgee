@@ -63,6 +63,7 @@
 		"@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
 		"@typescript-eslint/array-type": ["warn", { "default": "generic" }],
 		"@typescript-eslint/dot-notation": "off",
+		"@typescript-eslint/no-unused-vars": "warn",
 		"unicorn/catch-error-name": ["warn", { "name": "error" }],
 		"unicorn/import-index": ["error", { "ignoreImports": true }],
 		"unicorn/no-process-exit": "off" // we are a CLI app lol
