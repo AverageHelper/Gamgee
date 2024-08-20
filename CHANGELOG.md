@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.2.1] - 2024-08-19
 ### Changed
 - BREAKING: We now require Node 20. Make sure you upgrade your system Node version if you don't use Docker.
 - Network and args parsing are now handled using native structures instead of `cross-fetch` and `yargs`.
@@ -451,7 +451,7 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v2.2.0...HEAD
+[2.2.1]: https://github.com/AverageHelper/Gamgee/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/AverageHelper/Gamgee/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/AverageHelper/Gamgee/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/AverageHelper/Gamgee/compare/v2.0.6...v2.1.0
