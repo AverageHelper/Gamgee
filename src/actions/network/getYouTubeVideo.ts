@@ -1,12 +1,16 @@
 import type { VideoDetails } from "../getVideoDetails.js";
 import type { videoInfo as YTVideoInfo } from "ytdl-core";
 import { getBasicInfo, validateURL } from "ytdl-core";
+import { useLogger } from "../../logger.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
 import {
 	InvalidYouTubeUrlError,
 	NotFoundError,
 	UnavailableError,
 	VideoError,
 } from "../../errors/index.js";
+
+const logger = useLogger();
 
 /**
  * Gets information about a YouTube video.
@@ -29,6 +33,7 @@ export async function getYouTubeVideo(url: URL): Promise<VideoDetails> {
 		switch (err.message) {
 			case "Status code: 410":
 			case "Video unavailable":
+				logger.error(richErrorMessage("Possibly misleading error from YouTube.", error));
 				throw new UnavailableError(url);
 			case "Status code: 404":
 				throw new NotFoundError(url);
