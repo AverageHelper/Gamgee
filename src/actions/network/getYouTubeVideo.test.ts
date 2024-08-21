@@ -8,6 +8,7 @@ import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js"
 vi.mock("ytdl-core", async () => ({
 	validateURL: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).validateURL,
 	getBasicInfo: vi.fn(),
+	getURLVideoID: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).getURLVideoID,
 }));
 import { getBasicInfo } from "ytdl-core";
 const mockGetBasicInfo = getBasicInfo as Mock<

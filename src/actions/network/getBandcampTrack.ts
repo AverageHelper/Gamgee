@@ -7,14 +7,15 @@ import { VideoError } from "../../errors/index.js";
  * Gets information about a Bandcamp track.
  *
  * @param url The track URL to check.
+ * @param signal A signal that would indicate that we should abort the network request.
  *
  * @throws an error if metadata couldn't be found on the webpage pointed to by the
  * provided `url`, or a `VideoError` if no song duration or title could be found in
  * that metadata.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getBandcampTrack(url: URL, timeoutSeconds?: number): Promise<VideoDetails> {
-	const metadata = await fetchMetadata(url, timeoutSeconds);
+export async function getBandcampTrack(url: URL, signal?: AbortSignal): Promise<VideoDetails> {
+	const metadata = await fetchMetadata(url, signal);
 
 	type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 	const jsonld = metadata.jsonld ?? [];

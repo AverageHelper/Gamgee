@@ -1,6 +1,5 @@
 import type { Infer } from "superstruct";
 import type { VideoDetails } from "../getVideoDetails.js";
-import { fetchWithTimeout } from "../../helpers/fetch.js";
 import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
 import { is, string, type } from "superstruct";
 
@@ -31,18 +30,16 @@ function isPonyFmTrackAPIError(tbd: unknown): tbd is PonyFmTrackAPIError {
  * Gets information about a Pony.fm track.
  *
  * @param trackId The Pony.fm track ID to get information for.
+ * @param signal A signal that would indicate that we should abort the network request.
  *
  * @throws a `VideoError` if the track info couldn't be found for the provided ID.
  * @returns a `Promise` that resolves with the track details.
  */
 async function getPonyFmTrackInfoFromId(
 	trackId: number,
-	timeoutSeconds?: number,
+	signal?: AbortSignal,
 ): Promise<PonyFmTrackAPIResponse> {
-	const response = await fetchWithTimeout(
-		`https://pony.fm/api/v1/tracks/${trackId}`,
-		timeoutSeconds,
-	);
+	const response = await fetch(`https://pony.fm/api/v1/tracks/${trackId}`, { signal });
 	if (response.status === 200) {
 		try {
 			const responseParsed: unknown = await response.json();
@@ -73,12 +70,13 @@ async function getPonyFmTrackInfoFromId(
  * Gets information about a Pony.fm track.
  *
  * @param url The track URL to check.
+ * @param signal A signal that would indicate that we should abort the network request.
  *
  * @throws an `InvalidPonyFmUrlError` if the provided URL is not a Pony.fm URL.
  * @throws a `VideoError` if the track info couldn't be found for the provided URL.
  * @returns a `Promise` that resolves with the track details.
  */
-export async function getPonyFmTrack(url: URL, timeoutSeconds?: number): Promise<VideoDetails> {
+export async function getPonyFmTrack(url: URL, signal?: AbortSignal): Promise<VideoDetails> {
 	// Full link looks like this: https://pony.fm/tracks/46025-beneath-the-sea-ft-lectro-dub-studio-quinn-liv-learn-zelizine
 	// Short link looks like this: https://pony.fm/t46025
 
@@ -97,7 +95,7 @@ export async function getPonyFmTrack(url: URL, timeoutSeconds?: number): Promise
 	if (Number.isNaN(trackId)) {
 		throw new InvalidPonyFmUrlError(url);
 	}
-	const trackData = await getPonyFmTrackInfoFromId(trackId, timeoutSeconds);
+	const trackData = await getPonyFmTrackInfoFromId(trackId, signal);
 
 	return {
 		url: trackData.url,
