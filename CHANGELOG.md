@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.1] - 2024-08-20
+## [2.2.1] - 2024-08-21
 ### Changed
 - BREAKING: We now require Node 20. Make sure you upgrade your system Node version if you don't use Docker.
 - Network and args parsing are now handled using native structures instead of `cross-fetch` and `yargs`.
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - We now halt dangling network requests when one video platform answers back. This might speed up handling request floods, since ostensibly this means Node will let go of unneeded network resources more quickly for each request.
+- Handle YouTube failures by trying an [Invidius](https://docs.invidious.io/api/#get-apiv1videosid) proxy instead. For now, the only instance we'll try is https://iv.ggtyler.dev, as it seemed the most reliable at the time.
 
 ## [2.2.0] - 2024-02-18
 ### Added
