@@ -1,4 +1,4 @@
-import type { VideoDetails } from "../getVideoDetails.js";
+import type { VideoDetails, VideoMetaSource } from "../getVideoDetails.js";
 import type { Song } from "soundcloud-scraper";
 import { Client as SoundCloudClient } from "soundcloud-scraper";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
@@ -6,6 +6,11 @@ import { useLogger } from "../../logger.js";
 import { VideoError } from "../../errors/VideoError.js";
 
 const logger = useLogger();
+
+const metaSource: Readonly<VideoMetaSource> = {
+	platformName: "soundcloud",
+	alternative: null,
+};
 
 /**
  * Gets information about a SoundCloud track.
@@ -49,5 +54,6 @@ export async function getSoundCloudTrack(url: URL, signal?: AbortSignal): Promis
 		url: song.url,
 		title: song.title,
 		duration: { seconds: Math.floor(song.duration / 1000) },
+		metaSource,
 	};
 }

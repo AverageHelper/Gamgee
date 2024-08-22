@@ -1,5 +1,5 @@
 import type { Infer } from "superstruct";
-import type { VideoDetails } from "../getVideoDetails.js";
+import type { VideoDetails, VideoMetaSource } from "../getVideoDetails.js";
 import { InvalidPonyFmUrlError, VideoError } from "../../errors/index.js";
 import { is, string, type } from "superstruct";
 
@@ -25,6 +25,11 @@ type PonyFmTrackAPIError = Infer<typeof ponyFmTrackAPIError>;
 function isPonyFmTrackAPIError(tbd: unknown): tbd is PonyFmTrackAPIError {
 	return is(tbd, ponyFmTrackAPIError);
 }
+
+const metaSource: Readonly<VideoMetaSource> = {
+	platformName: "pony.fm",
+	alternative: null,
+};
 
 /**
  * Gets information about a Pony.fm track.
@@ -101,5 +106,6 @@ export async function getPonyFmTrack(url: URL, signal?: AbortSignal): Promise<Vi
 		url: trackData.url,
 		title: trackData.title,
 		duration: { seconds: Math.floor(Number.parseFloat(trackData.duration)) },
+		metaSource,
 	};
 }

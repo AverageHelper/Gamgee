@@ -118,6 +118,10 @@ async function getYouTubeVideoViaApi(
 		duration: {
 			seconds: durationSeconds,
 		},
+		metaSource: {
+			platformName: "youtube",
+			alternative: null,
+		},
 	};
 }
 
@@ -129,6 +133,7 @@ async function getYouTubeVideoViaSideChannel(
 	if (!validateURL(urlString)) throw new InvalidYouTubeUrlError(url);
 
 	let info: YouTubeVideoInfo;
+	let usedInvidius = false;
 	try {
 		info = await getBasicInfo(urlString, { requestOptions: { signal } });
 	} catch (error) {
@@ -138,6 +143,7 @@ async function getYouTubeVideoViaSideChannel(
 		// Try an Invidius instance instead
 		// TODO: Report upstream which proxy was used, and show that in `/test` output
 		try {
+			usedInvidius = true;
 			info = await invidius(url, signal);
 		} catch (error) {
 			if (error instanceof VideoError) {
@@ -162,6 +168,10 @@ async function getYouTubeVideoViaSideChannel(
 		url: info.videoDetails.video_url,
 		title: info.videoDetails.title,
 		duration: { seconds },
+		metaSource: {
+			platformName: "youtube",
+			alternative: usedInvidius ? "iv.ggtyler.dev" : "ytdl",
+		},
 	};
 }
 

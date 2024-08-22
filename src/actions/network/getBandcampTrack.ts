@@ -1,4 +1,4 @@
-import type { VideoDetails } from "../getVideoDetails.js";
+import type { VideoDetails, VideoMetaSource } from "../getVideoDetails.js";
 import { array, is, string, type } from "superstruct";
 import { fetchMetadata } from "../../helpers/fetchMetadata.js";
 import { richErrorMessage } from "../../helpers/richErrorMessage.js";
@@ -16,6 +16,11 @@ const bandcampJsonld = array(
 		duration: string(),
 	}),
 );
+
+const metaSource: Readonly<VideoMetaSource> = {
+	platformName: "bandcamp",
+	alternative: null,
+};
 
 /**
  * Gets information about a Bandcamp track.
@@ -61,5 +66,6 @@ export async function getBandcampTrack(url: URL, signal?: AbortSignal): Promise<
 		url: url.href,
 		title,
 		duration: { seconds: durationSeconds },
+		metaSource,
 	};
 }

@@ -7,12 +7,28 @@ import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { MILLISECONDS_IN_SECOND } from "../constants/time.js";
 import { useLogger } from "../logger.js";
 
+export interface VideoMetaSource {
+	/** The name of the source platform. */
+	platformName: "youtube" | "soundcloud" | "bandcamp" | "pony.fm";
+
+	/** The name of the alternative interface used to source the data. */
+	alternative: string | null;
+}
+
 export interface VideoDetails {
+	/** The canonical URL of the track. */
 	url: string;
+
+	/** The title of the track. */
 	title: string;
+
+	/** The duration of the track. */
 	duration: {
 		seconds: number;
 	};
+
+	/** The source of the track metadata. */
+	metaSource: VideoMetaSource;
 }
 
 /**
