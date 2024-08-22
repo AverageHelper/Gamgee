@@ -72,6 +72,8 @@ const youtubeDataApiResponse = type({
 	),
 });
 
+// TODO: Organize this better!!
+
 async function getYouTubeVideoViaApi(
 	key: string,
 	url: URL,
@@ -82,7 +84,7 @@ async function getYouTubeVideoViaApi(
 	api.searchParams.set("key", key);
 	api.searchParams.set("id", videoId);
 	api.searchParams.set("maxResults", "1");
-	api.searchParams.set("part", "snippet,contentDetails,liveStreamingDetails,id");
+	api.searchParams.set("part", "snippet,contentDetails,id");
 
 	const response = await fetch(api, { signal });
 	const info: unknown = await response.json();
@@ -113,7 +115,7 @@ async function getYouTubeVideoViaApi(
 	}
 
 	return {
-		url: `https://www.youtube.com/watch?v=${videoId}`,
+		url: `https://www.youtube.com/watch?v=${video.id}`, // TODO: Is there a way to get a canonical URL from YouTube directly?
 		title: video.snippet.title,
 		duration: {
 			seconds: durationSeconds,
