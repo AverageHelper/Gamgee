@@ -34,21 +34,17 @@ describe("Bandcamp track details", () => {
 		await expect(() => getBandcampTrack(new URL(url))).rejects.toThrow(VideoError);
 	});
 
+	// ISO strings given here are the ones found on Bandcamp as of 22 Aug 2024:
 	test.each`
-		url                                                                             | duration
-		${"https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"}       | ${233}
-		${"https://forestrainmedia.com/track/bad-wolf"}                                 | ${277}
-		${"https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"} | ${170}
+		url                                                                             | duration | iso
+		${"https://poniesatdawn.bandcamp.com/track/let-the-magic-fill-your-soul"}       | ${233}   | ${"P00H03M53S"}
+		${"https://forestrainmedia.com/track/bad-wolf"}                                 | ${277}   | ${"P00H04M37S"}
+		${"https://lehtmojoe.bandcamp.com/track/were-not-going-home-dallas-stars-2020"} | ${170}   | ${"P00H02M50S"}
 	`(
 		"returns info for Bandcamp track $url, $duration seconds long",
-		async ({ url, duration }: { url: string; duration: number }) => {
+		async ({ url, duration, iso }: { url: string; duration: number; iso: string }) => {
 			mockFetchMetadata.mockResolvedValue({
-				jsonld: [
-					{
-						name: "sample",
-						duration: `0H${Math.floor(duration / 60)}M${duration % 60}S`,
-					},
-				],
+				jsonld: [{ name: "sample", duration: iso }],
 			} as unknown as Result);
 
 			const details = await getBandcampTrack(new URL(url));

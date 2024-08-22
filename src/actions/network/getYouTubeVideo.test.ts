@@ -26,6 +26,16 @@ describe("YouTube track details", () => {
 
 	test.each`
 		id               | url
+		${"9Y8ZGLiqXBJ"} | ${"https://youtu.be/9Y8ZGLiqXBJ"}
+		${"9Y8ZGLiqXBK"} | ${"https://www.youtube.com/watch?v=9Y8ZGLiqXBK"}
+	`("throws with nonexistent video ($id)", async ({ url }: { url: string }) => {
+		const error = new UnavailableError(new URL(url));
+		mockGetBasicInfo.mockRejectedValue(error);
+		await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
+	});
+
+	test.each`
+		id               | url
 		${"9Y8ZGLiqXba"} | ${"https://youtu.be/9Y8ZGLiqXba"}
 		${"dmneTS-Gows"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}
 	`("throws with unavailable video ($id)", async ({ url }: { url: string }) => {

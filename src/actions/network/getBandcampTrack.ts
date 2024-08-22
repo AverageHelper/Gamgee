@@ -1,7 +1,21 @@
 import type { VideoDetails } from "../getVideoDetails.js";
+import { array, is, string, type } from "superstruct";
 import { fetchMetadata } from "../../helpers/fetchMetadata.js";
-import { isString } from "../../helpers/guards.js";
+import { richErrorMessage } from "../../helpers/richErrorMessage.js";
+import { secondsFromIso8601Duration } from "../../helpers/secondsFromIso8601Duration.js";
+import { useLogger } from "../../logger.js";
 import { VideoError } from "../../errors/index.js";
+
+const logger = useLogger();
+
+const bandcampJsonld = array(
+	type({
+		/** The title of the track. */
+		name: string(),
+		/** An ISO 8601 duration string. */
+		duration: string(),
+	}),
+);
 
 /**
  * Gets information about a Bandcamp track.
@@ -17,35 +31,35 @@ import { VideoError } from "../../errors/index.js";
 export async function getBandcampTrack(url: URL, signal?: AbortSignal): Promise<VideoDetails> {
 	const metadata = await fetchMetadata(url, signal);
 
-	type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 	const jsonld = metadata.jsonld ?? [];
-	const json = jsonld[0] as
-		| { name?: string; duration: `${string}H${Digit}${Digit}M${Digit}${Digit}S` }
-		| undefined;
+	if (!is(jsonld, bandcampJsonld)) throw new VideoError("Duration or title not found");
+
+	const json = jsonld[0];
 	if (!json) throw new VideoError("Duration and title not found");
-	if (!json.duration || !isString(json.duration)) throw new VideoError("Duration data not found");
 
-	const durationPropertiesMatch = json.duration.matchAll(/H([0-9]+)M([0-9]+)S/gu);
-	const durationProperties = Array.from(durationPropertiesMatch)[0] as
-		| [string, string, string, ...Array<string>] // at least 3 strings
-		| undefined;
+	const durationString = json["duration"];
+	let durationSeconds: number;
+	try {
+		let durationStringToParse = durationString;
+		// Bandcamp's duration strings often don't parse correctly...
+		if (durationString.startsWith("P00H")) {
+			logger.debug(`Got nonstandard duration string '${durationString}'. Attempting workaround...`);
+			durationStringToParse = `PT${durationString.slice(1)}`;
+		}
+		durationSeconds = secondsFromIso8601Duration(durationStringToParse);
+	} catch (error) {
+		logger.error(
+			richErrorMessage(`Failed to parse ISO 8601 duration string '${durationString}'.`, error),
+		);
+		throw new VideoError("Duration could not be parsed");
+	}
 
-	// Sanity checks (I have a college education and I don't understand regex)
-	if (!durationProperties || durationProperties.length < 3 || !durationProperties.every(isString))
-		throw new VideoError("Duration not found");
-
-	const minutes = Number.parseInt(durationProperties[1], 10);
-	const seconds = Number.parseInt(durationProperties[2], 10);
-	if (Number.isNaN(minutes) || Number.isNaN(seconds)) throw new VideoError("Duration not found");
-
-	const totalSeconds = minutes * 60 + seconds;
-
-	const title: string | null = json.name ?? null;
-	if (title === null || !title) throw new VideoError("Title not found");
+	const title: string = json["name"];
+	if (!title) throw new VideoError("Title not found");
 
 	return {
 		url: url.href,
 		title,
-		duration: { seconds: Math.floor(totalSeconds) },
+		duration: { seconds: durationSeconds },
 	};
 }
