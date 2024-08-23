@@ -94,7 +94,10 @@ export async function getYouTubeVideoViaInvidius(
 			}
 			const message = `Invidius proxy ${baseUrl.hostname} errored with status ${response.status}.`; // TODO: i18n?
 			logger.error(richErrorMessage(message, responseParsed));
-			if (responseParsed.error === "This video is not available") {
+			if (
+				responseParsed.error === "This video is not available" ||
+				responseParsed.error === "Watch on the latest version of YouTube."
+			) {
 				// Not sure why this sometimes comes back from both 404 and 500...
 				throw new UnavailableError(url);
 			}
