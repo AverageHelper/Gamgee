@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use YouTube's first-party API when an API key is provided.
 - The `/test` command now reports when an alternative source is used for querying platforms. This is especially useful to determine whether Gamgee needed to fall back on an Invidius instance when YTDL failed, or when an API key was not configured.
 
+### Changed
+- More reliable parsing of track duration data from Bandcamp, using [a polyfill](https://github.com/fullcalendar/temporal-polyfill) for the new [Temporal API](https://tc39.es/proposal-temporal/docs/duration.html) instead of RegEx.
+
 ## [3.0.0] - 2024-08-21
 ### Fixed
 - Version bump because of a breaking change in v2.2.1. (Sorry!!) We now require Node 20. Docker users should be unaffected, since the Dockerfile \*should\* be using the latest Node anyway.
