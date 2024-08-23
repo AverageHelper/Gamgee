@@ -41,6 +41,7 @@ jobs:
           NODE_ENV: "test"
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           SOUNDCLOUD_API_KEY: ${{ secrets.SOUNDCLOUD_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           CORDE_TEST_TOKEN: ${{ secrets.CORDE_TEST_TOKEN }}
           CORDE_BOT_ID: ${{ secrets.CORDE_BOT_ID }}
           BOT_TEST_ID: ${{ secrets.BOT_TEST_ID }}

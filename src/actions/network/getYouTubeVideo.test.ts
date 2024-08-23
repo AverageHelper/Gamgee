@@ -4,6 +4,10 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 
+// Mock logger
+const mockLogger = vi.fn().mockReturnValue({ debug: vi.fn(), error: vi.fn() });
+vi.mock("../../logger.js", () => ({ useLogger: mockLogger }));
+
 // Mock ytdl
 vi.mock("ytdl-core", async () => ({
 	validateURL: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).validateURL,
@@ -16,11 +20,25 @@ const mockGetBasicInfo = getBasicInfo as Mock<
 	ReturnType<typeof getBasicInfo>
 >;
 
-// Import the unit under test
-import { getYouTubeVideo } from "./getYouTubeVideo.js";
+// Mock env
+import type { getEnv as _getEnv } from "../../helpers/environment.js";
+const mockGetEnv = vi.fn<Parameters<typeof _getEnv>, ReturnType<typeof _getEnv>>();
+mockGetEnv.mockReturnValue(undefined);
+vi.mock("../../helpers/environment.js", () => ({ getEnv: mockGetEnv }));
 
-describe("YouTube track details", () => {
+const { requireEnv } = await vi.importActual<typeof import("../../helpers/environment.js")>(
+	"../../helpers/environment.js",
+);
+
+// Import the unit under test
+const { getYouTubeVideo } = await import("./getYouTubeVideo.js");
+
+describe.each([true, false])("YouTube track details (API: %s)", withKey => {
 	beforeEach(() => {
+		if (withKey) {
+			const YOUTUBE_API_KEY = requireEnv("YOUTUBE_API_KEY");
+			mockGetEnv.mockReturnValue(YOUTUBE_API_KEY);
+		}
 		mockGetBasicInfo.mockRejectedValue(new Error("Please mock a response."));
 	});
 
