@@ -21,6 +21,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test:src
+        env:
+          # TODO: Some way for users without a Google account to run other tests:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
   integration:
     runs-on: ubuntu-latest
