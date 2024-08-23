@@ -134,6 +134,12 @@ LOG_LEVEL={silly | debug | verbose | info | warn | error}
 # optional, the level of logs you should see in the console
 # must be one of [silly, debug, verbose, info, warn, error]
 # defaults to `info` in production mode, `error` in test mode, and `debug` in any other mode
+
+SOUNDCLOUD_API_KEY=YOUR_SOUNDCLOUD_KEY_HERE
+# optional, used for communicating with SoundCloud more reliably
+
+YOUTUBE_API_KEY=YOUR_YOUTUBE_KEY_HERE
+# optional, used for communicating with YouTube more reliably
 ```
 
 ### Install dependencies
