@@ -15,12 +15,16 @@ on:
       - rollup.config.ts
       - vitest.config.e2e.ts
       - vitest.config.ts
-
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # Don't run integration tests more than once at a time
+    concurrency:
+      group: gamgee-tests
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repository
