@@ -13,7 +13,7 @@ import type { Logger } from "../logger.js";
 import { DEFAULT_LOCALE, localeIfSupported, t, ti, type SupportedLocale } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { rejectQueueEntryFromMessage } from "../actions/rejectQueueEntry.js";
-import { lastKnownLocaleForUser } from "../i18nCache.js";
+import { lastKnownLocaleForUser } from "../userLocalesCache.js";
 import { getQueueChannelFromGuild } from "../actions/queue/getQueueChannel.js";
 
 /** Users type this into the prompt to ensure this isn't an accident */

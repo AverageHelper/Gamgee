@@ -1,4 +1,4 @@
-import { cacheLocaleFromInteraction } from "../i18nCache.js";
+import { cacheLocaleFromInteraction } from "../userLocalesCache.js";
 import { handleButton } from "../handleButton.js";
 import { handleInteraction } from "../handleInteraction.js";
 import { handleModal } from "../handleModal.js";

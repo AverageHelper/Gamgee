@@ -8,8 +8,8 @@ const mockAllCommands = vi.hoisted(() => new Map<string, Command>());
 vi.mock("../commands/index.js", () => ({ allCommands: mockAllCommands }));
 
 // Mock locales cache
-vi.mock("../i18nCache.js", () => ({ cacheLocaleFromInteraction: vi.fn() }));
-import { cacheLocaleFromInteraction } from "../i18nCache.js";
+vi.mock("../userLocalesCache.js", () => ({ cacheLocaleFromInteraction: vi.fn() }));
+import { cacheLocaleFromInteraction } from "../userLocalesCache.js";
 const mockCacheLocaleFromInteraction = cacheLocaleFromInteraction as Mock<
 	typeof cacheLocaleFromInteraction
 >;
