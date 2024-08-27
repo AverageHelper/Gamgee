@@ -13,7 +13,7 @@ declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace NodeJS {
 		interface Process {
-			_preload_modules: Array<string>;
+			_preload_modules: ReadonlyArray<string>;
 		}
 	}
 }
