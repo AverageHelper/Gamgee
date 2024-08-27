@@ -5,20 +5,11 @@ vi.mock("../../actions/queue/getQueueChannel.js");
 vi.mock("../../useGuildStorage.js");
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as Mock<
-	Parameters<typeof isQueueOpen>,
-	ReturnType<typeof isQueueOpen>
->;
-const mockSetQueueOpen = setQueueOpen as Mock<
-	Parameters<typeof setQueueOpen>,
-	ReturnType<typeof setQueueOpen>
->;
+const mockIsQueueOpen = isQueueOpen as Mock<typeof isQueueOpen>;
+const mockSetQueueOpen = setQueueOpen as Mock<typeof setQueueOpen>;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
 import type { TextChannel } from "discord.js";

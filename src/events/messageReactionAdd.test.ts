@@ -7,9 +7,9 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 const logger = useTestLogger();
 
 describe("Reaction duplication", () => {
-	const mockResendReact = vi.fn<[], Promise<unknown>>();
+	const mockResendReact = vi.fn<MessageReaction["react"]>();
 
-	let mockRandom: MockInstance<[], number>;
+	let mockRandom: MockInstance<typeof Math.random>;
 	let mockReaction: MessageReaction;
 	let mockSender: User;
 

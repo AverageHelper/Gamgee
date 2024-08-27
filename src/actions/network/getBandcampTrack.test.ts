@@ -7,10 +7,7 @@ import { VideoError } from "../../errors/VideoError.js";
 // Mock fetchMetadata
 vi.mock("../../helpers/fetchMetadata.js");
 import { fetchMetadata } from "../../helpers/fetchMetadata.js";
-const mockFetchMetadata = fetchMetadata as Mock<
-	Parameters<typeof fetchMetadata>,
-	ReturnType<typeof fetchMetadata>
->;
+const mockFetchMetadata = fetchMetadata as Mock<typeof fetchMetadata>;
 
 // Import the unit under test
 import { getBandcampTrack } from "./getBandcampTrack.js";

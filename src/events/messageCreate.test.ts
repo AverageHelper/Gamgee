@@ -8,10 +8,7 @@ import { useTestLogger } from "../../tests/testUtils/logger.js";
 // Mock the command handler
 vi.mock("../handleCommand.js", () => ({ handleCommand: vi.fn() }));
 import { handleCommand } from "../handleCommand.js";
-const mockHandleCommand = handleCommand as Mock<
-	Parameters<typeof handleCommand>,
-	ReturnType<typeof handleCommand>
->;
+const mockHandleCommand = handleCommand as Mock<typeof handleCommand>;
 
 describe("messageCreate", () => {
 	const logger = useTestLogger();

@@ -4,16 +4,13 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock("../../useGuildStorage.js");
 
 import { setQueueChannel } from "../../useGuildStorage.js";
-const mockSetQueueChannel = setQueueChannel as Mock<
-	Parameters<typeof setQueueChannel>,
-	ReturnType<typeof setQueueChannel>
->;
+const mockSetQueueChannel = setQueueChannel as Mock<typeof setQueueChannel>;
 
 import type { GuildedCommandContext } from "../Command.js";
 import { teardown } from "./teardown.js";
 import { useTestLogger } from "../../../tests/testUtils/logger.js";
 
-const mockReply = vi.fn().mockResolvedValue(undefined);
+const mockReply = vi.fn<GuildedCommandContext["reply"]>().mockResolvedValue(undefined);
 
 const logger = useTestLogger();
 

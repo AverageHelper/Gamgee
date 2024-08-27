@@ -2,7 +2,7 @@
 import type { Logger } from "../logger.js";
 import { describe, expect, test, vi } from "vitest";
 
-const mockLoggerError = vi.fn();
+const mockLoggerError = vi.fn<Logger["error"]>();
 const logger = {
 	error: mockLoggerError,
 } as unknown as Logger;

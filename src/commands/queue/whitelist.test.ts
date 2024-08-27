@@ -6,21 +6,14 @@ vi.mock("../../useQueueStorage.js");
 vi.mock("../../helpers/getUserFromMention.js");
 
 import { getUserFromMention } from "../../helpers/getUserFromMention.js";
-const mockGetUserFromMention = getUserFromMention as Mock<
-	Parameters<typeof getUserFromMention>,
-	ReturnType<typeof getUserFromMention>
->;
+const mockGetUserFromMention = getUserFromMention as Mock<typeof getUserFromMention>;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import { removeUserFromStoredBlacklist } from "../../useQueueStorage.js";
 const mockRemoveUserFromStoredBlacklist = removeUserFromStoredBlacklist as Mock<
-	Parameters<typeof removeUserFromStoredBlacklist>,
-	ReturnType<typeof removeUserFromStoredBlacklist>
+	typeof removeUserFromStoredBlacklist
 >;
 
 import type { GuildedCommandContext } from "../Command.js";

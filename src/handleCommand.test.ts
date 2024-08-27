@@ -1,4 +1,4 @@
-import type { Client, GuildMember, Message } from "discord.js";
+import type { Client, GuildMember, Message, UserResolvable } from "discord.js";
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ApplicationCommandOptionType, userMention } from "discord.js";
@@ -8,10 +8,7 @@ import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.j
 vi.mock("./helpers/gitForgeMetadata.js");
 
 import { gitForgeMetadata } from "./helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as Mock<
-	Parameters<typeof gitForgeMetadata>,
-	ReturnType<typeof gitForgeMetadata>
->;
+const mockGitForgeMetadata = gitForgeMetadata as Mock<typeof gitForgeMetadata>;
 mockGitForgeMetadata.mockResolvedValue({
 	name: "Gamgee",
 	full_name: "Gamgee",
@@ -35,10 +32,16 @@ const logger = useTestLogger();
 describe("Command handler", () => {
 	const botId = "this-user";
 
-	const mockReply = vi.fn().mockResolvedValue(undefined);
-	const mockAuthorSend = vi.fn().mockResolvedValue(undefined);
-	const mockChannelSend = vi.fn().mockResolvedValue(undefined);
-	const mockChannelSendTyping = vi.fn().mockResolvedValue(undefined);
+	/* eslint-disable @typescript-eslint/consistent-type-assertions */
+	const mockReply = vi.fn<Message["reply"]>().mockResolvedValue({} as Message);
+	const mockAuthorSend = vi.fn<Message["author"]["send"]>().mockResolvedValue({} as Message<false>);
+	const mockChannelSend = vi
+		.fn<Message["channel"]["send"]>()
+		.mockResolvedValue({} as Message<true>);
+	const mockChannelSendTyping = vi
+		.fn<Message["channel"]["sendTyping"]>()
+		.mockResolvedValue(undefined);
+	/* eslint-enable @typescript-eslint/consistent-type-assertions */
 
 	const mockClient: Client<true> = {
 		user: { id: botId },
@@ -63,13 +66,11 @@ describe("Command handler", () => {
 		},
 		guild: {
 			members: {
-				fetch: vi.fn().mockImplementation(
-					(userId: string) =>
+				fetch: vi.fn<(u: UserResolvable) => Promise<GuildMember>>().mockImplementation(
+					userId =>
 						new Promise(resolve => {
 							if (userId === mockSenderMember.user.id) {
 								return resolve(mockSenderMember);
-							} else if (userId === botId) {
-								return resolve(mockClient);
 							}
 							return resolve(mockSenderMember);
 						}),

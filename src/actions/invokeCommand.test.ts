@@ -4,30 +4,21 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock("../useGuildStorage.js");
 vi.mock("../permissions/index.js");
 
-import type { CommandContext, CommandPermission, GuildedCommand } from "../commands/index.js";
+import type { CommandContext, GuildedCommand, PermissionGenerator } from "../commands/index.js";
 import type { Guild, GuildMember, Role } from "discord.js";
 import { ApplicationCommandPermissionType } from "discord.js";
 import { invokeCommand } from "./invokeCommand.js";
 
 import { getGuildAdminRoles, getQueueAdminRoles } from "../useGuildStorage.js";
-const mockGetQueueAdminRoles = getQueueAdminRoles as Mock<
-	Parameters<typeof getQueueAdminRoles>,
-	ReturnType<typeof getQueueAdminRoles>
->;
-const mockGetGuildAdminRoles = getGuildAdminRoles as Mock<
-	Parameters<typeof getGuildAdminRoles>,
-	ReturnType<typeof getGuildAdminRoles>
->;
+const mockGetQueueAdminRoles = getQueueAdminRoles as Mock<typeof getQueueAdminRoles>;
+const mockGetGuildAdminRoles = getGuildAdminRoles as Mock<typeof getGuildAdminRoles>;
 
 import { userHasRoleInGuild } from "../permissions/index.js";
-const mockUserHasRoleInGuild = userHasRoleInGuild as Mock<
-	Parameters<typeof userHasRoleInGuild>,
-	ReturnType<typeof userHasRoleInGuild>
->;
+const mockUserHasRoleInGuild = userHasRoleInGuild as Mock<typeof userHasRoleInGuild>;
 
-const mockExecute = vi.fn<Array<unknown>, Promise<void>>().mockResolvedValue(undefined);
-const mockReply = vi.fn().mockResolvedValue(undefined);
-const mockReplyPrivately = vi.fn().mockResolvedValue(undefined);
+const mockExecute = vi.fn<GuildedCommand["execute"]>().mockResolvedValue(undefined);
+const mockReply = vi.fn<CommandContext["reply"]>().mockResolvedValue(undefined);
+const mockReplyPrivately = vi.fn<CommandContext["replyPrivately"]>().mockResolvedValue(undefined);
 
 describe("Invoke Command", () => {
 	const callerId = "the-user";
@@ -108,10 +99,7 @@ describe("Invoke Command", () => {
 	});
 
 	describe("Permission Guards", () => {
-		const mockPermissions = vi.fn<
-			[guild: Guild],
-			Array<CommandPermission> | Promise<Array<CommandPermission>>
-		>();
+		const mockPermissions = vi.fn<PermissionGenerator>();
 
 		beforeEach(() => {
 			context = {

@@ -9,26 +9,18 @@ vi.mock("../../permissions/index.js");
 
 import { bulkDeleteMessagesWithIds } from "../../actions/messages/index.js";
 const mockBulkDeleteMessagesWithIds = bulkDeleteMessagesWithIds as Mock<
-	Parameters<typeof bulkDeleteMessagesWithIds>,
-	ReturnType<typeof bulkDeleteMessagesWithIds>
+	typeof bulkDeleteMessagesWithIds
 >;
 
 import type { QueueEntry } from "../../useQueueStorage.js";
 import { deleteStoredEntriesForQueue, getAllStoredEntries } from "../../useQueueStorage.js";
 const mockDeleteStoredEntriesForQueue = deleteStoredEntriesForQueue as Mock<
-	Parameters<typeof deleteStoredEntriesForQueue>,
-	ReturnType<typeof deleteStoredEntriesForQueue>
+	typeof deleteStoredEntriesForQueue
 >;
-const mockGetAllStoredEntries = getAllStoredEntries as Mock<
-	Parameters<typeof getAllStoredEntries>,
-	ReturnType<typeof getAllStoredEntries>
->;
+const mockGetAllStoredEntries = getAllStoredEntries as Mock<typeof getAllStoredEntries>;
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import type { GuildedCommandContext } from "../Command.js";
 import type { TextChannel } from "discord.js";

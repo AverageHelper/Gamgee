@@ -12,10 +12,10 @@ import { getBandcampTrack } from "./network/getBandcampTrack.js";
 import { getPonyFmTrack } from "./network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
-const mockGetBandcampTrack = getBandcampTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetPonyFmTrack = getPonyFmTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetSoundCloudTrack = getSoundCloudTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetYouTubeVideo = getYouTubeVideo as Mock<[URL], Promise<VideoDetails>>;
+const mockGetBandcampTrack = getBandcampTrack as Mock<typeof getBandcampTrack>;
+const mockGetPonyFmTrack = getPonyFmTrack as Mock<typeof getPonyFmTrack>;
+const mockGetSoundCloudTrack = getSoundCloudTrack as Mock<typeof getSoundCloudTrack>;
+const mockGetYouTubeVideo = getYouTubeVideo as Mock<typeof getYouTubeVideo>;
 
 import { getVideoDetails } from "./getVideoDetails.js";
 
@@ -25,6 +25,10 @@ describe("Video details", () => {
 		duration: { seconds: 5 },
 		title: "Sample",
 		url: validUrl,
+		metaSource: {
+			platformName: "youtube",
+			alternative: null,
+		},
 	};
 
 	beforeEach(() => {

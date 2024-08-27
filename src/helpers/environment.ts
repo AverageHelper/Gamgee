@@ -1,5 +1,3 @@
-import "dotenv/config.js";
-
 import { EnvVariableNotFoundError } from "../errors/EnvVariableNotFoundError.js";
 
 export type EnvKey =

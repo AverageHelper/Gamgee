@@ -2,7 +2,7 @@ import type { ParseArgsConfig } from "node:util";
 import { version } from "../version.js";
 import { parseArgs as _parseArgs } from "node:util";
 
-export interface Args {
+interface Args {
 	readonly deploy: boolean;
 	readonly revoke: boolean;
 }

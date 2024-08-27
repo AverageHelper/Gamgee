@@ -25,11 +25,11 @@
 		"build:only": "./node_modules/.bin/rollup --config rollup.config.ts --configPlugin esbuild",
 		"export-version": "./node_modules/.bin/genversion ./src/version.ts -esd",
 		"test": "npm run test:src && npm run test:e2e",
-		"test:src": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && ./node_modules/.bin/vitest run",
-		"test:src:watch": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && ./node_modules/.bin/vitest watch --coverage=false",
+		"test:src": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && node --env-file=.env ./node_modules/vitest/vitest.mjs run",
+		"test:src:watch": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; ./node_modules/.bin/prisma migrate reset --force && node --env-file=.env ./node_modules/vitest/vitest.mjs watch --coverage=false",
 		"test:e2e": "./node_modules/.bin/concurrently -kn bot,vitest -s first 'npm run start:test' 'sleep 5 && npm run _test:e2e'",
 		"start:test": "export DATABASE_URL=\"file:$(pwd)/tests/db-test/db.sqlite\"; export NODE_ENV=test-e2e; ./node_modules/.bin/prisma migrate reset --force && node .",
-		"_test:e2e": "./node_modules/.bin/vitest run --config vitest.config.e2e.ts"
+		"_test:e2e": "node --env-file=.env ./node_modules/vitest/vitest.mjs run --config vitest.config.e2e.ts"
 	},
 	"main": "./dist/server.js",
 	"type": "module",
