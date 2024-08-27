@@ -1,11 +1,18 @@
 import type { CommandInteraction, Interaction, TextBasedChannel } from "discord.js";
 import type { Command } from "../commands/index.js";
 import { ChannelType } from "discord.js";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi, type Mock } from "vitest";
 
 // Mock allCommands to isolate our test code
 const mockAllCommands = vi.hoisted(() => new Map<string, Command>());
 vi.mock("../commands/index.js", () => ({ allCommands: mockAllCommands }));
+
+// Mock locales cache
+vi.mock("../i18nCache.js", () => ({ cacheLocaleFromInteraction: vi.fn() }));
+import { cacheLocaleFromInteraction } from "../i18nCache.js";
+const mockCacheLocaleFromInteraction = cacheLocaleFromInteraction as Mock<
+	typeof cacheLocaleFromInteraction
+>;
 
 // Create two mock commands to track handler behavior
 const mockGlobalExecute = vi.fn();
@@ -81,6 +88,14 @@ const channelId = "the-channel-1234";
 
 const mockGuildMembersFetch = vi.fn();
 
+const mockInCachedGuild = vi.fn<Interaction["inCachedGuild"]>().mockReturnValue(true);
+const mockInGuild = vi.fn<Interaction["inGuild"]>().mockReturnValue(true);
+
+const mockIsButton = vi.fn<Interaction["isButton"]>().mockReturnValue(false);
+const mockIsChatInputCommand = vi.fn<Interaction["isChatInputCommand"]>().mockReturnValue(true);
+const mockIsModalSubmit = vi.fn<Interaction["isModalSubmit"]>().mockReturnValue(false);
+const mockIsAutocomplete = vi.fn<Interaction["isAutocomplete"]>().mockReturnValue(false);
+
 // Helper function to create Interactions
 // Reduces code duplication
 function defaultInteraction(): Interaction {
@@ -97,8 +112,8 @@ function defaultInteraction(): Interaction {
 			id: otherUid,
 		},
 		channelId,
-		inCachedGuild: () => true,
-		inGuild: () => true,
+		inCachedGuild: mockInCachedGuild,
+		inGuild: mockInGuild,
 		member: { id: otherUid },
 		guild: {
 			id: "guild-1234",
@@ -110,9 +125,10 @@ function defaultInteraction(): Interaction {
 			type: ChannelType.GuildText,
 			partial: false,
 		},
-		isButton: () => false,
-		isChatInputCommand: () => true,
-		isAutocomplete: () => false,
+		isButton: mockIsButton,
+		isChatInputCommand: mockIsChatInputCommand,
+		isModalSubmit: mockIsModalSubmit,
+		isAutocomplete: mockIsAutocomplete,
 		replied: false,
 	} as unknown as Interaction;
 }
@@ -121,16 +137,16 @@ describe("on(interactionCreate)", () => {
 	describe("commands", () => {
 		test("logs interaction errors", async () => {
 			const interaction = defaultInteraction();
-			interaction.isChatInputCommand = (): boolean => {
+			mockCacheLocaleFromInteraction.mockImplementationOnce(() => {
 				throw interactionError;
-			};
+			});
 
 			await expect(interactionCreate.execute(interaction, logger)).rejects.toBe(interactionError);
 		});
 
 		test("does nothing if the interaction isn't a supported interaction type", async () => {
 			const interaction = defaultInteraction();
-			interaction.isChatInputCommand = (): boolean => false;
+			mockIsChatInputCommand.mockReturnValueOnce(false);
 
 			await expect(interactionCreate.execute(interaction, logger)).resolves.toBeUndefined();
 			expect(mockGlobalExecute).not.toHaveBeenCalled();
@@ -169,8 +185,8 @@ describe("on(interactionCreate)", () => {
 
 		test("calls the `execute` method of a global command from DMs", async () => {
 			let interaction = defaultInteraction();
-			interaction.inCachedGuild = (): boolean => false;
-			interaction.inGuild = (): boolean => false;
+			mockInCachedGuild.mockReturnValueOnce(false);
+			mockInGuild.mockReturnValueOnce(false);
 			interaction.member = null;
 
 			const channel = {
@@ -201,8 +217,8 @@ describe("on(interactionCreate)", () => {
 		test("tells the user off when they try to execute a guilded command from DMs", async () => {
 			let interaction = defaultInteraction();
 			(interaction as CommandInteraction).commandName = mockGuildedCommand.name;
-			interaction.inCachedGuild = (): boolean => false;
-			interaction.inGuild = (): boolean => false;
+			mockInCachedGuild.mockReturnValueOnce(false);
+			mockInGuild.mockReturnValueOnce(false);
 			interaction.member = null;
 
 			const channel = {
@@ -231,8 +247,8 @@ describe("on(interactionCreate)", () => {
 
 		test("fetches the channel when a command comes from a partial DM channel", async () => {
 			let interaction = defaultInteraction();
-			interaction.inCachedGuild = (): boolean => false;
-			interaction.inGuild = (): boolean => false;
+			mockInCachedGuild.mockReturnValueOnce(false);
+			mockInGuild.mockReturnValueOnce(false);
 			interaction.member = null;
 
 			const mockChannelFetch = vi.fn();
