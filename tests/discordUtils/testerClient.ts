@@ -1,6 +1,5 @@
 import type { EnvKey } from "../../src/helpers/environment.js";
 import type { Message, PartialMessage } from "discord.js";
-import "dotenv/config";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { useTestLogger } from "../testUtils/logger.js";
 import { useDispatchLoop } from "./dispatchLoop.js";

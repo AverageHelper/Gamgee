@@ -15,14 +15,11 @@ vi.mock("ytdl-core", async () => ({
 	getURLVideoID: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).getURLVideoID,
 }));
 import { getBasicInfo } from "ytdl-core";
-const mockGetBasicInfo = getBasicInfo as Mock<
-	Parameters<typeof getBasicInfo>,
-	ReturnType<typeof getBasicInfo>
->;
+const mockGetBasicInfo = getBasicInfo as Mock<typeof getBasicInfo>;
 
 // Mock env
 import type { getEnv as _getEnv } from "../../helpers/environment.js";
-const mockGetEnv = vi.fn<Parameters<typeof _getEnv>, ReturnType<typeof _getEnv>>();
+const mockGetEnv = vi.fn<typeof _getEnv>();
 mockGetEnv.mockReturnValue(undefined);
 vi.mock("../../helpers/environment.js", () => ({ getEnv: mockGetEnv }));
 

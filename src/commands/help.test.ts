@@ -4,10 +4,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock("../actions/assertUserCanRunCommand.js");
 
 import { assertUserCanRunCommand } from "../actions/assertUserCanRunCommand.js";
-const mockAssertUserCanRunCommand = assertUserCanRunCommand as Mock<
-	Parameters<typeof assertUserCanRunCommand>,
-	ReturnType<typeof assertUserCanRunCommand>
->;
+const mockAssertUserCanRunCommand = assertUserCanRunCommand as Mock<typeof assertUserCanRunCommand>;
 
 import type { GuildedCommandContext } from "./Command.js";
 import { DEFAULT_LOCALE, locales } from "../i18n.js";

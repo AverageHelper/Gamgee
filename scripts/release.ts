@@ -1,5 +1,7 @@
 #!/usr/bin/env tsx
 
+import "./assertTsx.js";
+
 import { assert, enums, string, type } from "superstruct";
 import { parser as changelogParser } from "keep-a-changelog";
 import { parse as parseSemVer } from "semver";

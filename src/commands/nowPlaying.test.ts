@@ -8,21 +8,14 @@ vi.mock("../permissions/index.js");
 
 import { addUserToHaveCalledNowPlaying } from "../actions/queue/useQueue.js";
 const mockAddUserToHaveCalledNowPlaying = addUserToHaveCalledNowPlaying as Mock<
-	Parameters<typeof addUserToHaveCalledNowPlaying>,
-	ReturnType<typeof addUserToHaveCalledNowPlaying>
+	typeof addUserToHaveCalledNowPlaying
 >;
 
 import { getAllStoredEntries } from "../useQueueStorage.js";
-const mockGetAllStoredEntries = getAllStoredEntries as Mock<
-	Parameters<typeof getAllStoredEntries>,
-	ReturnType<typeof getAllStoredEntries>
->;
+const mockGetAllStoredEntries = getAllStoredEntries as Mock<typeof getAllStoredEntries>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 mockGetAllStoredEntries.mockResolvedValue([]);
 

@@ -3,10 +3,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("../helpers/gitForgeMetadata.js");
 import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as Mock<
-	Parameters<typeof gitForgeMetadata>,
-	ReturnType<typeof gitForgeMetadata>
->;
+const mockGitForgeMetadata = gitForgeMetadata as Mock<typeof gitForgeMetadata>;
 mockGitForgeMetadata.mockResolvedValue({
 	name: "",
 	full_name: "",

@@ -27,32 +27,25 @@ import { Client } from "discord.js";
 const client = new Client<true>({ intents: [] });
 
 // Mock parseArgs so we can control what the args are
-import type { Args } from "../helpers/parseArgs.js";
-const mockParseArgs = vi.hoisted(() => vi.fn<[], Args>());
+import type { parseArgs as _parseArgs } from "../helpers/parseArgs.js";
+const mockParseArgs = vi.hoisted(() => vi.fn<typeof _parseArgs>());
 vi.mock("../helpers/parseArgs.js", () => ({ parseArgs: mockParseArgs }));
 
 // Mock deployCommands so we can track it
 vi.mock("../actions/deployCommands.js");
 import { deployCommands } from "../actions/deployCommands.js";
-const mockDeployCommands = deployCommands as Mock<
-	Parameters<typeof deployCommands>,
-	ReturnType<typeof deployCommands>
->;
+const mockDeployCommands = deployCommands as Mock<typeof deployCommands>;
 
 // Mock revokeCommands so we can track it
 vi.mock("../actions/revokeCommands.js");
 import { revokeCommands } from "../actions/revokeCommands.js";
-const mockRevokeCommands = revokeCommands as Mock<
-	Parameters<typeof revokeCommands>,
-	ReturnType<typeof revokeCommands>
->;
+const mockRevokeCommands = revokeCommands as Mock<typeof revokeCommands>;
 
 // Mock verifyCommandDeployments so we can track it
 vi.mock("../actions/verifyCommandDeployments.js");
 import { verifyCommandDeployments } from "../actions/verifyCommandDeployments.js";
 const mockVerifyCommandDeployments = verifyCommandDeployments as Mock<
-	Parameters<typeof verifyCommandDeployments>,
-	ReturnType<typeof verifyCommandDeployments>
+	typeof verifyCommandDeployments
 >;
 
 // TODO: Mock the logger so nothing is printed

@@ -179,7 +179,7 @@ Keep in mind that this requires a valid Discord bot token!
 Since Gamgee is just a Node script, any Node process manager will do.
 
 ```sh
-node .
+node --env-file=.env .
 ```
 
 or

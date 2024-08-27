@@ -7,7 +7,7 @@ interface MockCommand {
 	aliases?: Command["aliases"];
 	nameLocalizations?: Command["nameLocalizations"];
 	options: Command["options"];
-	execute: Mock<Parameters<Command["execute"]>, ReturnType<Command["execute"]>>;
+	execute: Mock<Command["execute"]>;
 }
 
 export { invokeCommand } from "../../actions/invokeCommand.js";
@@ -27,9 +27,7 @@ function addMock(command: Command): void {
 		aliases: command.aliases,
 		options: command.options,
 		nameLocalizations: command.nameLocalizations,
-		execute: vi
-			.fn<Parameters<Command["execute"]>, ReturnType<Command["execute"]>>()
-			.mockResolvedValue(undefined),
+		execute: vi.fn<Command["execute"]>().mockResolvedValue(undefined),
 	});
 }
 

@@ -6,34 +6,19 @@ vi.mock("../../useQueueStorage.js");
 vi.mock("../../actions/queue/useQueue.js");
 
 import { getQueueChannel } from "../../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import { countAllStoredEntries } from "../../useQueueStorage.js";
-const mockCountAllStoredEntries = countAllStoredEntries as Mock<
-	Parameters<typeof countAllStoredEntries>,
-	ReturnType<typeof countAllStoredEntries>
->;
+const mockCountAllStoredEntries = countAllStoredEntries as Mock<typeof countAllStoredEntries>;
 
 import {
 	playtimeAverageInQueue,
 	playtimeRemainingInQueue,
 	playtimeTotalInQueue,
 } from "../../actions/queue/useQueue.js";
-const mockPlaytimeRemaining = playtimeRemainingInQueue as Mock<
-	Parameters<typeof playtimeRemainingInQueue>,
-	ReturnType<typeof playtimeRemainingInQueue>
->;
-const mockPlaytimeTotal = playtimeTotalInQueue as Mock<
-	Parameters<typeof playtimeTotalInQueue>,
-	ReturnType<typeof playtimeTotalInQueue>
->;
-const mockPlaytimeAverage = playtimeAverageInQueue as Mock<
-	Parameters<typeof playtimeAverageInQueue>,
-	ReturnType<typeof playtimeAverageInQueue>
->;
+const mockPlaytimeRemaining = playtimeRemainingInQueue as Mock<typeof playtimeRemainingInQueue>;
+const mockPlaytimeTotal = playtimeTotalInQueue as Mock<typeof playtimeTotalInQueue>;
+const mockPlaytimeAverage = playtimeAverageInQueue as Mock<typeof playtimeAverageInQueue>;
 
 import type { GuildedCommandContext } from "../CommandContext.js";
 import type { TextChannel } from "discord.js";
