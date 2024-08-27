@@ -17,7 +17,6 @@ import { createConfirmRejectModalForEntry } from "./modals/confirmRejectTrack.js
  * @param interaction The Discord interaction to handle.
  * @param logger The logger to talk to about what's going on.
  */
-// TODO: I18n
 export async function handleButton(interaction: ButtonInteraction, logger: Logger): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
