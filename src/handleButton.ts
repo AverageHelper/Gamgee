@@ -1,21 +1,14 @@
 import type { ButtonInteraction } from "discord.js";
 import type { Logger } from "./logger.js";
-import { createPartialString, composed, push } from "./helpers/composeStrings.js";
 import { DELETE_BUTTON, DONE_BUTTON, RESTORE_BUTTON } from "./buttons.js";
 import { getEnv } from "./helpers/environment.js";
 import { getQueueChannel } from "./actions/queue/getQueueChannel.js";
 import { getStoredEntry } from "./useQueueStorage.js";
-import { getUserWithId } from "./helpers/getUserWithId.js";
-import { isQueueOpen } from "./useGuildStorage.js";
 import { logUser } from "./helpers/logUser.js";
+import { markEntryDoneInQueue, markEntryNotDoneInQueue } from "./actions/queue/useQueue.js";
 import { richErrorMessage } from "./helpers/richErrorMessage.js";
-import { sendPrivately } from "./actions/messages/index.js";
-import { timeoutSeconds } from "./helpers/timeoutSeconds.js";
-import {
-	deleteEntryFromMessage,
-	markEntryDoneInQueue,
-	markEntryNotDoneInQueue,
-} from "./actions/queue/useQueue.js";
+import { DEFAULT_LOCALE, localeIfSupported, t } from "./i18n.js";
+import { createConfirmRejectModalForEntry } from "./modals/confirmRejectTrack.js";
 
 /**
  * Performs actions from a Discord command interaction.
@@ -24,6 +17,7 @@ import {
  * @param interaction The Discord interaction to handle.
  * @param logger The logger to talk to about what's going on.
  */
+// TODO: I18n
 export async function handleButton(interaction: ButtonInteraction, logger: Logger): Promise<void> {
 	// Don't respond to bots unless we're being tested
 	if (
@@ -50,12 +44,16 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 		return;
 	}
 
+	const userLocale =
+		localeIfSupported(interaction.locale) ??
+		localeIfSupported(interaction.guildLocale) ??
+		DEFAULT_LOCALE;
 	const entry = await getStoredEntry(interaction.message.id);
 	if (!entry) {
 		logger.debug("The message does not represent a known song request.");
 		try {
 			await interaction.reply({
-				content: "I don't recognize that entry. Sorry  :slight_frown:",
+				content: `${t("modals.confirm-reject-entry.responses.unknown-entry", userLocale)}  :slight_frown:`,
 				ephemeral: true,
 			});
 		} catch (error) {
@@ -94,32 +92,18 @@ export async function handleButton(interaction: ButtonInteraction, logger: Logge
 			break;
 
 		case DELETE_BUTTON.id: {
-			logger.debug("Deleting entry...");
-			const entry = await deleteEntryFromMessage(message);
-			if (!entry) {
-				logger.debug("There was no entry to delete.");
-				break;
-			}
-			logger.debug("Deleted an entry");
-
-			const userId = entry.senderId;
-			const guild = interaction.guild;
-			if (!guild) {
-				logger.debug(`Queue message ${message.id} has no guild.`);
-				return;
-			}
-			const user = await getUserWithId(guild, userId);
-
-			logger.verbose(`Informing User ${logUser(user)} that their song was rejected...`);
-			const rejection = createPartialString();
-			push(":persevere:\nI'm very sorry. Your earlier submission was rejected: ", rejection); // TODO: i18n
-			push(entry.url, rejection);
-
-			await sendPrivately(user, composed(rejection));
-
-			if (await isQueueOpen(guild)) {
-				await timeoutSeconds(2);
-				await sendPrivately(user, "You can submit another song if you'd like to. :slight_smile:"); // TODO: i18n
+			const modalLocale =
+				localeIfSupported(interaction.locale) ??
+				localeIfSupported(interaction.guildLocale) ??
+				DEFAULT_LOCALE;
+			const modal = await createConfirmRejectModalForEntry(interaction.client, entry, modalLocale);
+			try {
+				logger.debug(
+					`Showing reject modal to ${logUser(interaction.user)} with locale ${modalLocale}`,
+				);
+				await interaction.showModal(modal);
+			} catch (error) {
+				logger.error(richErrorMessage(`Failed to show reject modal`, error));
 			}
 			break;
 		}

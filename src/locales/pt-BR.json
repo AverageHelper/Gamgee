@@ -217,6 +217,21 @@
 			}
 		}
 	},
+	"dms": {
+		"rejection-apology": "Sinto muito. Seu envio anterior foi rejeitado:",
+		"rejection-submit-another": "Você pode enviar outra música se quiser."
+	},
+	"modals": {
+		"confirm-reject-entry": {
+			"title": "Rejeitar a música do {user}?",
+			"confirm-input": "Digite a palavra \"{confirm}\" aqui se tiver certeza:",
+			"responses": {
+				"success": "O aviso de rejeição foi enviado.",
+				"unknown-entry": "Desculpe, não reconheço essa entrada.",
+				"wrong-word": "Desculpe, você deve digitar a palavra \"{confirm}\""
+			}
+		}
+	},
 	"common": {
 		"count": {
 			"infinity": "Infinidade",

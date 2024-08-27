@@ -217,6 +217,21 @@
 			}
 		}
 	},
+	"dms": {
+		"rejection-apology": "I'm very sorry. Your earlier submission was rejected:",
+		"rejection-submit-another": "You can submit another song if you'd like to."
+	},
+	"modals": {
+		"confirm-reject-entry": {
+			"title": "Reject {user}'s song?",
+			"confirm-input": "Type the word \"{confirm}\" here if you're sure:",
+			"responses": {
+				"success": "The rejection notice was sent.",
+				"unknown-entry": "Sorry, I don't recognize that entry.",
+				"wrong-word": "Sorry, you must enter the word \"{confirm}\""
+			}
+		}
+	},
 	"common": {
 		"count": {
 			"infinity": "Infinity",
