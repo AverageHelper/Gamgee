@@ -1,5 +1,3 @@
-import "dotenv/config.js";
-
 import { EnvVariableNotFoundError } from "../errors/EnvVariableNotFoundError.js";
 
 export type EnvKey =
@@ -18,7 +16,8 @@ export type EnvKey =
 	| "NODE_ENV"
 	| "QUEUE_ADMIN_ROLE_ID"
 	| "QUEUE_CHANNEL_ID"
-	| "QUEUE_CREATOR_ROLE_ID";
+	| "QUEUE_CREATOR_ROLE_ID"
+	| "YOUTUBE_API_KEY";
 
 /**
  * Fetches the value of an environment variable key.

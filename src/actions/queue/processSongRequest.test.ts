@@ -14,37 +14,19 @@ vi.mock("../../logger.js", async () => ({
 // ** Gather mockable actions
 
 import { deleteMessage } from "../../actions/messages/index.js";
-const mockDeleteMessage = deleteMessage as Mock<
-	Parameters<typeof deleteMessage>,
-	ReturnType<typeof deleteMessage>
->;
+const mockDeleteMessage = deleteMessage as Mock<typeof deleteMessage>;
 
 import { getVideoDetails } from "../getVideoDetails.js";
-const mockGetVideoDetails = getVideoDetails as Mock<
-	Parameters<typeof getVideoDetails>,
-	ReturnType<typeof getVideoDetails>
->;
+const mockGetVideoDetails = getVideoDetails as Mock<typeof getVideoDetails>;
 
 import type { Guild, Message, TextChannel } from "discord.js";
 import { playtimeTotalInQueue, pushEntryToQueue } from "./useQueue.js";
-const mockPlaytimeTotalInQueue = playtimeTotalInQueue as Mock<
-	Parameters<typeof playtimeTotalInQueue>,
-	ReturnType<typeof playtimeTotalInQueue>
->;
-const mockPushEntryToQueue = pushEntryToQueue as Mock<
-	Parameters<typeof pushEntryToQueue>,
-	ReturnType<typeof pushEntryToQueue>
->;
+const mockPlaytimeTotalInQueue = playtimeTotalInQueue as Mock<typeof playtimeTotalInQueue>;
+const mockPushEntryToQueue = pushEntryToQueue as Mock<typeof pushEntryToQueue>;
 
 import { isQueueOpen, setQueueOpen } from "../../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as Mock<
-	Parameters<typeof isQueueOpen>,
-	ReturnType<typeof isQueueOpen>
->;
-const mockSetQueueOpen = setQueueOpen as Mock<
-	Parameters<typeof setQueueOpen>,
-	ReturnType<typeof setQueueOpen>
->;
+const mockIsQueueOpen = isQueueOpen as Mock<typeof isQueueOpen>;
+const mockSetQueueOpen = setQueueOpen as Mock<typeof setQueueOpen>;
 
 import {
 	countAllStoredEntriesFromSender,
@@ -53,23 +35,18 @@ import {
 } from "../../useQueueStorage.js";
 import type { QueueConfig, QueueEntry } from "../../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
-	Parameters<typeof countAllStoredEntriesFromSender>,
-	ReturnType<typeof countAllStoredEntriesFromSender>
+	typeof countAllStoredEntriesFromSender
 >;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
-	Parameters<typeof getLatestStoredEntryFromSender>,
-	ReturnType<typeof getLatestStoredEntryFromSender>
+	typeof getLatestStoredEntryFromSender
 >;
-const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
-	Parameters<typeof getStoredQueueConfig>,
-	ReturnType<typeof getStoredQueueConfig>
->;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<typeof getStoredQueueConfig>;
 
 const mockDeleteInvocation = vi.fn();
 const mockReplyPrivately = vi.fn();
 const mockFollowUp = vi.fn();
 
-const mockChannelSend = vi.fn<[string], Promise<unknown>>();
+const mockChannelSend = vi.fn<TextChannel["send"]>();
 
 // ** Import the unit-under-test
 
@@ -152,7 +129,8 @@ describe("Song request pipeline", () => {
 		mockDeleteInvocation.mockResolvedValue(undefined);
 		mockReplyPrivately.mockResolvedValue(undefined);
 		mockFollowUp.mockResolvedValue(undefined);
-		mockChannelSend.mockResolvedValue(undefined);
+		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+		mockChannelSend.mockResolvedValue({} as Message<true>);
 	});
 
 	test("(message) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
@@ -166,6 +144,10 @@ describe("Song request pipeline", () => {
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
 			url: newEntry.url,
+			metaSource: {
+				platformName: "youtube",
+				alternative: null,
+			},
 		});
 
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
@@ -185,6 +167,10 @@ describe("Song request pipeline", () => {
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
 			url: newEntry.url,
+			metaSource: {
+				platformName: "youtube",
+				alternative: null,
+			},
 		});
 
 		context = { ...context, type: "interaction" } as unknown as CommandContext;
@@ -210,6 +196,10 @@ describe("Song request pipeline", () => {
 			title: "Long Song",
 			duration: { seconds: entrySeconds },
 			url: newEntry.url,
+			metaSource: {
+				platformName: "youtube",
+				alternative: null,
+			},
 		});
 
 		// mock the queue closer so it behaves as tho the unit closed the queue appropriately

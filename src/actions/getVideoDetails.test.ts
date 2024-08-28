@@ -12,10 +12,10 @@ import { getBandcampTrack } from "./network/getBandcampTrack.js";
 import { getPonyFmTrack } from "./network/getPonyFmTrack.js";
 import { getSoundCloudTrack } from "./network/getSoundCloudTrack.js";
 import { getYouTubeVideo } from "./network/getYouTubeVideo.js";
-const mockGetBandcampTrack = getBandcampTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetPonyFmTrack = getPonyFmTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetSoundCloudTrack = getSoundCloudTrack as Mock<[URL], Promise<VideoDetails>>;
-const mockGetYouTubeVideo = getYouTubeVideo as Mock<[URL], Promise<VideoDetails>>;
+const mockGetBandcampTrack = getBandcampTrack as Mock<typeof getBandcampTrack>;
+const mockGetPonyFmTrack = getPonyFmTrack as Mock<typeof getPonyFmTrack>;
+const mockGetSoundCloudTrack = getSoundCloudTrack as Mock<typeof getSoundCloudTrack>;
+const mockGetYouTubeVideo = getYouTubeVideo as Mock<typeof getYouTubeVideo>;
 
 import { getVideoDetails } from "./getVideoDetails.js";
 
@@ -25,6 +25,10 @@ describe("Video details", () => {
 		duration: { seconds: 5 },
 		title: "Sample",
 		url: validUrl,
+		metaSource: {
+			platformName: "youtube",
+			alternative: null,
+		},
 	};
 
 	beforeEach(() => {
@@ -72,18 +76,19 @@ describe("Video details", () => {
 	test.each(urls)("strips extra info from a %s URL", async (_, url) => {
 		const dirtyUrl = `${url} Text and stuff`;
 		const cleanUrl = new URL(url);
+		const signal = expect.any(AbortSignal) as AbortSignal;
 
 		await expect(getVideoDetails(dirtyUrl, null)).resolves.toMatchObject({ url: validUrl });
 		expect(mockGetBandcampTrack).toHaveBeenCalledOnce();
-		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetPonyFmTrack).toHaveBeenCalledOnce();
-		expect(mockGetPonyFmTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetPonyFmTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetSoundCloudTrack).toHaveBeenCalledOnce();
-		expect(mockGetSoundCloudTrack).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetSoundCloudTrack).toHaveBeenCalledWith(cleanUrl, signal);
 
 		expect(mockGetYouTubeVideo).toHaveBeenCalledOnce();
-		expect(mockGetYouTubeVideo).toHaveBeenCalledWith(cleanUrl);
+		expect(mockGetYouTubeVideo).toHaveBeenCalledWith(cleanUrl, signal);
 	});
 });

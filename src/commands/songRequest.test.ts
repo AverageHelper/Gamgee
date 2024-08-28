@@ -14,50 +14,27 @@ import {
 	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
-	Parameters<typeof countAllStoredEntriesFromSender>,
-	ReturnType<typeof countAllStoredEntriesFromSender>
+	typeof countAllStoredEntriesFromSender
 >;
-const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
-	Parameters<typeof getStoredQueueConfig>,
-	ReturnType<typeof getStoredQueueConfig>
->;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<typeof getStoredQueueConfig>;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
-	Parameters<typeof getLatestStoredEntryFromSender>,
-	ReturnType<typeof getLatestStoredEntryFromSender>
+	typeof getLatestStoredEntryFromSender
 >;
 
 import { playtimeTotalInQueue, pushEntryToQueue } from "../actions/queue/useQueue.js";
-const mockPlaytimeTotal = playtimeTotalInQueue as Mock<
-	Parameters<typeof playtimeTotalInQueue>,
-	ReturnType<typeof playtimeTotalInQueue>
->;
-const mockQueuePush = pushEntryToQueue as Mock<
-	Parameters<typeof pushEntryToQueue>,
-	ReturnType<typeof pushEntryToQueue>
->;
+const mockPlaytimeTotal = playtimeTotalInQueue as Mock<typeof playtimeTotalInQueue>;
+const mockQueuePush = pushEntryToQueue as Mock<typeof pushEntryToQueue>;
 
 import { getCommandPrefix, isQueueOpen } from "../useGuildStorage.js";
-const mockGetCommandPrefix = getCommandPrefix as Mock<
-	Parameters<typeof getCommandPrefix>,
-	ReturnType<typeof getCommandPrefix>
->;
-const mockIsQueueOpen = isQueueOpen as Mock<
-	Parameters<typeof isQueueOpen>,
-	ReturnType<typeof isQueueOpen>
->;
+const mockGetCommandPrefix = getCommandPrefix as Mock<typeof getCommandPrefix>;
+const mockIsQueueOpen = isQueueOpen as Mock<typeof isQueueOpen>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import { randomInt } from "../helpers/randomInt.js";
 import { getVideoDetails } from "../actions/getVideoDetails.js";
-const mockGetVideoDetails = getVideoDetails as Mock<
-	Parameters<typeof getVideoDetails>,
-	ReturnType<typeof getVideoDetails>
->;
+const mockGetVideoDetails = getVideoDetails as Mock<typeof getVideoDetails>;
 mockGetVideoDetails.mockImplementation(async url => {
 	// Enough uncertainty that *something* should go out of order if it's going to
 	const ms = randomInt(50);
@@ -67,6 +44,10 @@ mockGetVideoDetails.mockImplementation(async url => {
 		title: "video-title",
 		duration: {
 			seconds: 500,
+		},
+		metaSource: {
+			platformName: "youtube",
+			alternative: null,
 		},
 	};
 });

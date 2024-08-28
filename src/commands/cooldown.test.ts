@@ -11,29 +11,18 @@ import {
 	getStoredQueueConfig,
 } from "../useQueueStorage.js";
 const mockCountAllStoredEntriesFromSender = countAllStoredEntriesFromSender as Mock<
-	Parameters<typeof countAllStoredEntriesFromSender>,
-	ReturnType<typeof countAllStoredEntriesFromSender>
+	typeof countAllStoredEntriesFromSender
 >;
-const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
-	Parameters<typeof getStoredQueueConfig>,
-	ReturnType<typeof getStoredQueueConfig>
->;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<typeof getStoredQueueConfig>;
 const mockGetLatestStoredEntryFromSender = getLatestStoredEntryFromSender as Mock<
-	Parameters<typeof getLatestStoredEntryFromSender>,
-	ReturnType<typeof getLatestStoredEntryFromSender>
+	typeof getLatestStoredEntryFromSender
 >;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import { isQueueOpen } from "../useGuildStorage.js";
-const mockIsQueueOpen = isQueueOpen as Mock<
-	Parameters<typeof isQueueOpen>,
-	ReturnType<typeof isQueueOpen>
->;
+const mockIsQueueOpen = isQueueOpen as Mock<typeof isQueueOpen>;
 
 import type { GuildedCommandContext } from "./CommandContext.js";
 import type { TextChannel } from "discord.js";

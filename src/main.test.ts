@@ -27,10 +27,7 @@ process.env["DISCORD_TOKEN"] = mockToken;
 // Mock the event handler index so we can track it
 vi.mock("./events/index.js");
 import { registerEventHandlers } from "./events/index.js";
-const mockRegisterEventHandlers = registerEventHandlers as Mock<
-	Parameters<typeof registerEventHandlers>,
-	ReturnType<typeof registerEventHandlers>
->;
+const mockRegisterEventHandlers = registerEventHandlers as Mock<typeof registerEventHandlers>;
 
 // Mock the logger to track output
 import type { Logger } from "./logger.js";

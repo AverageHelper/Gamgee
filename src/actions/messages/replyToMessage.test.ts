@@ -9,8 +9,9 @@ vi.mock("../../logger.js", async () => ({
 }));
 
 describe("Message replies", () => {
-	const resultMessage = { id: "foo" };
-	const mockUserSend = vi.fn().mockResolvedValue(resultMessage);
+	// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+	const resultMessage = { id: "foo" } as Message<false>;
+	const mockUserSend = vi.fn<User["send"]>().mockResolvedValue(resultMessage);
 
 	let user: User;
 

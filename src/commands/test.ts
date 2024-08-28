@@ -1,4 +1,6 @@
 import type { Command } from "./Command.js";
+import type { VideoMetaSource } from "../actions/getVideoDetails.js";
+import { code } from "../helpers/composeStrings.js";
 import { EmbedBuilder } from "discord.js";
 import { getBandcampTrack } from "../actions/network/getBandcampTrack.js";
 import { getPonyFmTrack } from "../actions/network/getPonyFmTrack.js";
@@ -21,6 +23,7 @@ interface FetchResult {
 	startTime: number;
 	endTime?: number;
 	error?: NodeJS.ErrnoException;
+	metaSource?: VideoMetaSource;
 }
 
 const SERVICE_TESTS: Readonly<NonEmptyArray<FetchTest>> = [
@@ -57,7 +60,8 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 	const startTime = Date.now();
 	const result: FetchResult = { test, startTime };
 	try {
-		await test.fn(new URL(test.urlString));
+		const info = await test.fn(new URL(test.urlString));
+		result.metaSource = info.metaSource;
 	} catch (error) {
 		result.error = error as NodeJS.ErrnoException;
 	} finally {
@@ -70,8 +74,10 @@ async function runTest(test: FetchTest): Promise<FetchResult> {
 function addResult(result: FetchResult, embed: EmbedBuilder): void {
 	const name = result.test.name;
 	const runTime = (result.endTime ?? 0) - result.startTime;
+	const alt = result.metaSource?.alternative ?? null;
+	const via = alt === null ? "" : ` (via ${code(alt)})`;
 	embed.addFields({
-		name,
+		name: `${name}${via}`,
 		value: `${result.error ? FAILURE : SUCCESS} ${
 			result.error?.message ?? "Success"
 		} (${runTime}ms)`,

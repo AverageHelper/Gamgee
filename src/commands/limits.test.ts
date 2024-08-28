@@ -6,16 +6,10 @@ vi.mock("../actions/queue/getQueueChannel.js");
 vi.mock("../actions/queue/useQueue.js");
 
 import { getStoredQueueConfig } from "../useQueueStorage.js";
-const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
-	Parameters<typeof getStoredQueueConfig>,
-	ReturnType<typeof getStoredQueueConfig>
->;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<typeof getStoredQueueConfig>;
 
 import { getQueueChannel } from "../actions/queue/getQueueChannel.js";
-const mockGetQueueChannel = getQueueChannel as Mock<
-	Parameters<typeof getQueueChannel>,
-	ReturnType<typeof getQueueChannel>
->;
+const mockGetQueueChannel = getQueueChannel as Mock<typeof getQueueChannel>;
 
 import type { GuildedCommandContext } from "./CommandContext.js";
 import type { TextChannel } from "discord.js";

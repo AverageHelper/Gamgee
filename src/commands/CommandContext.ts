@@ -9,6 +9,7 @@ import type {
 	InteractionReplyOptions,
 	LocaleString,
 	Message,
+	MessageMentionOptions,
 	MessageReplyOptions,
 	User,
 } from "discord.js";
@@ -102,9 +103,10 @@ interface BaseCommandContext {
 	readonly followUp: (
 		options:
 			| string
-			| Omit<MessageReplyOptions, "flags">
+			| (Omit<MessageReplyOptions, "flags"> & { readonly allowedMentions?: MessageMentionOptions })
 			| (Omit<InteractionReplyOptions, "flags"> & {
 					readonly reply?: boolean;
+					readonly allowedMentions?: MessageMentionOptions;
 			  }),
 	) => Promise<Message | boolean>;
 }

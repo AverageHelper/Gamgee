@@ -10,28 +10,13 @@ import {
 	getStoredQueueConfig,
 	saveNewEntryToDatabase,
 } from "../../useQueueStorage.js";
-const mockDeleteStoredEntry = deleteStoredEntry as Mock<
-	Parameters<typeof deleteStoredEntry>,
-	ReturnType<typeof deleteStoredEntry>
->;
-const mockGetStoredEntry = getStoredEntry as Mock<
-	Parameters<typeof getStoredEntry>,
-	ReturnType<typeof getStoredEntry>
->;
-const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<
-	Parameters<typeof getStoredQueueConfig>,
-	ReturnType<typeof getStoredQueueConfig>
->;
-const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as Mock<
-	Parameters<typeof saveNewEntryToDatabase>,
-	ReturnType<typeof saveNewEntryToDatabase>
->;
+const mockDeleteStoredEntry = deleteStoredEntry as Mock<typeof deleteStoredEntry>;
+const mockGetStoredEntry = getStoredEntry as Mock<typeof getStoredEntry>;
+const mockGetStoredQueueConfig = getStoredQueueConfig as Mock<typeof getStoredQueueConfig>;
+const mockSaveNewEntryToDatabase = saveNewEntryToDatabase as Mock<typeof saveNewEntryToDatabase>;
 
 import { deleteMessage } from "../messages/index.js";
-const mockDeleteMessage = deleteMessage as Mock<
-	Parameters<typeof deleteMessage>,
-	ReturnType<typeof deleteMessage>
->;
+const mockDeleteMessage = deleteMessage as Mock<typeof deleteMessage>;
 
 const mockChannelSend = vi.fn();
 const mockMessageRemoveReaction = vi.fn();

@@ -1,22 +1,16 @@
-import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetch
-vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));
-import { fetchWithTimeout } from "../../helpers/fetch.js";
-const mockFetchWithTimeout = fetchWithTimeout as Mock<
-	Parameters<typeof fetchWithTimeout>,
-	ReturnType<typeof fetchWithTimeout>
->;
+const mockFetch = vi.spyOn(global, "fetch");
 
 // Import the unit under test
 import { getPonyFmTrack } from "./getPonyFmTrack.js";
 
 describe("Pony.FM track details", () => {
 	beforeEach(() => {
-		mockFetchWithTimeout.mockRejectedValue(new Error("Please mock a response."));
+		mockFetch.mockRejectedValue(new Error("Please mock a response."));
 	});
 
 	test.each`
@@ -30,7 +24,7 @@ describe("Pony.FM track details", () => {
 		${"invalid track shortlink"} | ${"https://pony.fm/t54321"}
 	`("throws with Pony.fm $desc", async ({ url }: { desc: string; url: string }) => {
 		const error = new VideoError(`Malformed response from Pony.fm API`); // TODO: i18n?
-		mockFetchWithTimeout.mockRejectedValue(error);
+		mockFetch.mockRejectedValue(error);
 
 		await expect(() => getPonyFmTrack(new URL(url))).rejects.toThrow(VideoError);
 	});
@@ -44,7 +38,7 @@ describe("Pony.FM track details", () => {
 		${"short link"}           | ${"https://pony.fm/t46025"}
 	`("returns correct length for $desc of Pony.fm track", async ({ url }: { url: string }) => {
 		const duration = 385;
-		mockFetchWithTimeout.mockResolvedValue(
+		mockFetch.mockResolvedValue(
 			new Response(
 				JSON.stringify({
 					title: "sample",

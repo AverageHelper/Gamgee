@@ -1,15 +1,9 @@
 import type { Song, SongInfoOptions } from "soundcloud-scraper";
-import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 
 // Mock fetch
-vi.mock("../../helpers/fetch.js", () => ({ fetchWithTimeout: vi.fn() }));
-import { fetchWithTimeout } from "../../helpers/fetch.js";
-const mockFetchWithTimeout = fetchWithTimeout as Mock<
-	Parameters<typeof fetchWithTimeout>,
-	ReturnType<typeof fetchWithTimeout>
->;
+const mockFetch = vi.spyOn(global, "fetch");
 
 // Mock SoundCloud client
 const mockGetSongInfo = vi.fn<
@@ -33,7 +27,7 @@ describe("SoundCloud track details", () => {
 
 	beforeEach(() => {
 		// Pretend we never redirect at all, just respond with the given URL
-		mockFetchWithTimeout.mockImplementation(url => {
+		mockFetch.mockImplementation(url => {
 			if (url instanceof Request) {
 				return Promise.resolve({ url: url.url } as unknown as Response);
 			} else if (typeof url === "string") {

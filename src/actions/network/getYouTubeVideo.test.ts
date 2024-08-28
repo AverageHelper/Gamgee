@@ -4,23 +4,49 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 
+// Mock logger
+const mockLogger = vi.fn().mockReturnValue({ debug: vi.fn(), error: vi.fn() });
+vi.mock("../../logger.js", () => ({ useLogger: mockLogger }));
+
 // Mock ytdl
 vi.mock("ytdl-core", async () => ({
 	validateURL: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).validateURL,
 	getBasicInfo: vi.fn(),
+	getURLVideoID: (await vi.importActual<typeof import("ytdl-core")>("ytdl-core")).getURLVideoID,
 }));
 import { getBasicInfo } from "ytdl-core";
-const mockGetBasicInfo = getBasicInfo as Mock<
-	Parameters<typeof getBasicInfo>,
-	ReturnType<typeof getBasicInfo>
->;
+const mockGetBasicInfo = getBasicInfo as Mock<typeof getBasicInfo>;
+
+// Mock env
+import type { getEnv as _getEnv } from "../../helpers/environment.js";
+const mockGetEnv = vi.fn<typeof _getEnv>();
+mockGetEnv.mockReturnValue(undefined);
+vi.mock("../../helpers/environment.js", () => ({ getEnv: mockGetEnv }));
+
+const { requireEnv } = await vi.importActual<typeof import("../../helpers/environment.js")>(
+	"../../helpers/environment.js",
+);
 
 // Import the unit under test
-import { getYouTubeVideo } from "./getYouTubeVideo.js";
+const { getYouTubeVideo } = await import("./getYouTubeVideo.js");
 
-describe("YouTube track details", () => {
+describe.each([true, false])("YouTube track details (API: %s)", withKey => {
 	beforeEach(() => {
+		if (withKey) {
+			const YOUTUBE_API_KEY = requireEnv("YOUTUBE_API_KEY");
+			mockGetEnv.mockReturnValue(YOUTUBE_API_KEY);
+		}
 		mockGetBasicInfo.mockRejectedValue(new Error("Please mock a response."));
+	});
+
+	test.each`
+		id               | url
+		${"9Y8ZGLiqXBJ"} | ${"https://youtu.be/9Y8ZGLiqXBJ"}
+		${"9Y8ZGLiqXBK"} | ${"https://www.youtube.com/watch?v=9Y8ZGLiqXBK"}
+	`("throws with nonexistent video ($id)", async ({ url }: { url: string }) => {
+		const error = new UnavailableError(new URL(url));
+		mockGetBasicInfo.mockRejectedValue(error);
+		await expect(() => getYouTubeVideo(new URL(url))).rejects.toThrow(error);
 	});
 
 	test.each`
