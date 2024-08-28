@@ -217,6 +217,21 @@
 			}
 		}
 	},
+	"dms": {
+		"rejection-apology": "Es tut mir sehr leid. Ihre frühere Einreichung wurde abgelehnt:",
+		"rejection-submit-another": "Sie können, wenn Sie möchten, ein anderes Lied einreichen."
+	},
+	"modals": {
+		"confirm-reject-entry": {
+			"title": "{user}s Lied ablehnen?",
+			"confirm-input": "Wenn Sie sicher sind, geben Sie hier das Wort „{confirm}“ ein:",
+			"responses": {
+				"success": "Der Ablehnungsbescheid wurde versendet.",
+				"unknown-entry": "Entschuldigung, ich erkenne diesen Eintrag nicht.",
+				"wrong-word": "Entschuldigung, Sie müssen das Wort „{confirm}“ eingeben"
+			}
+		}
+	},
 	"common": {
 		"count": {
 			"infinity": "Unendlichkeit",

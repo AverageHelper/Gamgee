@@ -217,6 +217,21 @@
 			}
 		}
 	},
+	"dms": {
+		"rejection-apology": "nagyon sajnálom. Korábbi beadványát elutasították:",
+		"rejection-submit-another": "Ha szeretnél, beküldhetsz egy másik dalt is."
+	},
+	"modals": {
+		"confirm-reject-entry": {
+			"title": "Elutasítja {user} dalát?",
+			"confirm-input": "Írja be ide a \"{confirm}\" szót, ha biztos benne:",
+			"responses": {
+				"success": "Az elutasító értesítést elküldték.",
+				"unknown-entry": "Elnézést, nem ismerem fel ezt a bejegyzést.",
+				"wrong-word": "Elnézést, be kell írnia a \"{confirm}\" szót"
+			}
+		}
+	},
 	"common": {
 		"count": {
 			"infinity": "végtelen",

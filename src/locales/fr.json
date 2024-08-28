@@ -217,6 +217,21 @@
 			}
 		}
 	},
+	"dms": {
+		"rejection-apology": "Je suis vraiment désolé. Votre précédente soumission a été rejetée:",
+		"rejection-submit-another": "Vous pouvez soumettre une autre chanson si vous le souhaitez."
+	},
+	"modals": {
+		"confirm-reject-entry": {
+			"title": "Rejeter la chanson de {user}?",
+			"confirm-input": "Tapez le mot « {confirm} » ici si vous êtes sûr:",
+			"responses": {
+				"success": "L'avis de rejet a été envoyé.",
+				"unknown-entry": "Désolé, je ne reconnais pas cette entrée.",
+				"wrong-word": "Désolé, vous devez saisir le mot « {confirm} »"
+			}
+		}
+	},
 	"common": {
 		"count": {
 			"infinity": "Infini",

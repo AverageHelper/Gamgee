@@ -39,7 +39,10 @@ async function getQueueChannelFromCommand(context: CommandContext): Promise<Text
 	return queueChannel;
 }
 
-async function getQueueChannelFromGuild(guild: Guild): Promise<TextChannel | null> {
+/**
+ * Finds and returns the channel that serves as the given guild's queue, if one is set.
+ */
+export async function getQueueChannelFromGuild(guild: Guild): Promise<TextChannel | null> {
 	const queueChannelId = await getQueueChannelId(guild);
 	if (queueChannelId === null || !queueChannelId) {
 		return null;
