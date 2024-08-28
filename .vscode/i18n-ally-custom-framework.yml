@@ -11,7 +11,7 @@ languageIds:
 # To help with this, you can use https://www.freeformatter.com/json-escape.html
 usageMatchRegex:
   # Detect `localizations("your.i18n.keys")`
-  - "[^\\w\\d]localizations\\(['\"`]({key})['\"`]\\)"
+  - "[^\\w\\d]localizations\\([\r\n\t]*['\"`]({key})['\"`][\r\n\t,]*\\)"
   # Detect `t("your.i18n.keys"`
   - "[^\\w\\d]t\\(\\s*['\"`]({key})['\"`]"
   # Detect `translate("your.i18n.keys"`

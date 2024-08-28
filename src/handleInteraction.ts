@@ -1,5 +1,10 @@
 import type { CommandContext } from "./commands/index.js";
-import type { CommandInteraction, DMChannel, GuildMember, GuildTextBasedChannel } from "discord.js";
+import type {
+	ChatInputCommandInteraction,
+	DMChannel,
+	GuildMember,
+	GuildTextBasedChannel,
+} from "discord.js";
 import type { Logger } from "./logger.js";
 import { allCommands } from "./commands/index.js";
 import { ChannelType } from "discord.js";
@@ -18,7 +23,7 @@ import { richErrorMessage } from "./helpers/richErrorMessage.js";
  * @param logger The place to write system messages.
  */
 export async function handleInteraction(
-	interaction: CommandInteraction,
+	interaction: ChatInputCommandInteraction,
 	logger: Logger,
 ): Promise<void> {
 	// Don't respond to bots unless we're being tested

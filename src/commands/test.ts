@@ -120,7 +120,9 @@ export const test: Command = {
 
 			embed.setTitle(t("commands.test.responses.results-header", userLocale));
 			embed.setDescription(ti("commands.test.responses.see-on-forge", { list }, userLocale));
-			results.forEach(result => addResult(result, embed));
+			for (const result of results) {
+				addResult(result, embed);
+			}
 
 			const anyFailures = results.some(result => result.error !== undefined);
 			const content = anyFailures
