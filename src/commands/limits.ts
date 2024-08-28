@@ -41,7 +41,7 @@ export const limits: Command = {
 				),
 			);
 
-		allLimits(locale).forEach(key => {
+		for (const key of allLimits(locale)) {
 			let value: string;
 			switch (key.value) {
 				case "cooldown":
@@ -84,7 +84,7 @@ export const limits: Command = {
 			}
 
 			embed.addFields({ name: `${key.name}:\t${value}`, value: key.description });
-		});
+		}
 
 		await reply({ embeds: [embed], ephemeral: true });
 	},

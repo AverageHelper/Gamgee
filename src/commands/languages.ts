@@ -53,9 +53,9 @@ export const languages: GlobalCommand = {
 		}
 
 		let totalUse = 0;
-		Object.values(languages).forEach(val => {
+		for (const val of Object.values(languages)) {
 			totalUse += val ?? 0;
-		});
+		}
 
 		const stats = Object.entries(languages).map(([languageName, languageUse]) => {
 			const use = (languageUse ?? 0) / totalUse;

@@ -31,9 +31,9 @@ export function useDispatchLoop<T>(
 		});
 
 		// remove marked keys
-		keysToRemove.forEach(id => {
+		for (const id of keysToRemove) {
 			waiterCollection.delete(id);
-		});
+		}
 		logger.debug(`Removed ${keysToRemove.length} finished waiters.`);
 	};
 }

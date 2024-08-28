@@ -85,11 +85,9 @@ function queueMessageFromEntry(
 export async function playtimeRemainingInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
-	queue
-		.filter(e => !e.isDone)
-		.forEach(e => {
-			duration += e.seconds;
-		});
+	for (const e of queue.filter(e => !e.isDone)) {
+		duration += e.seconds;
+	}
 	return duration;
 }
 
@@ -97,9 +95,9 @@ export async function playtimeRemainingInQueue(queueChannel: TextChannel): Promi
 export async function playtimeTotalInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let duration = 0;
-	queue.forEach(e => {
+	for (const e of queue) {
 		duration += e.seconds;
-	});
+	}
 	return duration;
 }
 
@@ -107,9 +105,9 @@ export async function playtimeTotalInQueue(queueChannel: TextChannel): Promise<n
 export async function playtimeAverageInQueue(queueChannel: TextChannel): Promise<number> {
 	const queue = await getAllStoredEntries(queueChannel);
 	let average = 0;
-	queue.forEach(e => {
+	for (const e of queue) {
 		average += e.seconds;
-	});
+	}
 	average /= queue.length;
 	return average;
 }
@@ -157,9 +155,9 @@ export async function averageSubmissionPlaytimeForUser(
 	const entries = await getAllStoredEntriesFromSender(userId, queueChannel);
 	let average = 0;
 
-	entries.forEach(entry => {
+	for (const entry of entries) {
 		average += entry.seconds;
-	});
+	}
 	average /= entries.length;
 
 	return average;
