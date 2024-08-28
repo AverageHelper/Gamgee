@@ -77,7 +77,7 @@ export function stopEscapingUriInString(content: string): string {
 
 	let freed = content.slice(0);
 
-	uris.reverse().forEach(range => {
+	for (const range of uris.reverse()) {
 		// Remove tails
 		if (freed[range.end] === ">") {
 			freed = freed.slice(0, range.end) + freed.slice(range.end + 1);
@@ -87,7 +87,7 @@ export function stopEscapingUriInString(content: string): string {
 		if (freed[range.start - 1] === "<") {
 			freed = freed.slice(0, range.start - 1) + freed.slice(range.start);
 		}
-	});
+	}
 
 	return freed;
 }
@@ -105,7 +105,7 @@ export function escapeUriInString(content: string): string {
 	let suppressed = content.slice(0);
 	let delta = 0;
 
-	uris.forEach(range => {
+	for (const range of uris) {
 		// Add heads
 		if (suppressed[range.start - 1 + delta] !== "<") {
 			suppressed = `${suppressed.slice(0, range.start + delta)}<${suppressed.slice(
@@ -121,7 +121,7 @@ export function escapeUriInString(content: string): string {
 			)}`;
 			delta += 1;
 		}
-	});
+	}
 
 	return suppressed;
 }

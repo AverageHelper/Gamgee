@@ -15,7 +15,7 @@
 		"baseline": "./node_modules/.bin/prisma migrate resolve --applied 20220915022732_initial_state",
 		"migrate": "./node_modules/.bin/prisma migrate deploy",
 		"prisma:introspect": "./node_modules/.bin/prisma db pull",
-		"prisma:generate": "./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma",
+		"prisma:generate": "./node_modules/.bin/prisma generate --no-hints --schema ./prisma/schema.prisma",
 		"migrations:generate": "./node_modules/.bin/prisma migrate dev --create-only",
 		"lint": "npm run export-version && npm run lintonly",
 		"lint:fix": "npm run export-version && npm run lintonly -- --fix",
