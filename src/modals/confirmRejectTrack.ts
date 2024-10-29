@@ -19,6 +19,7 @@ import { getQueueChannelFromGuild } from "../actions/queue/getQueueChannel.js";
 /** Users type this into the prompt to ensure this isn't an accident */
 const MAGIC_WORD = "reject"; // TODO: Does this need i18n?
 
+/** String that identifies the prompt text field. */
 const MAGIC_WORD_FIELD_ID = "confirm-reject";
 
 /** Prefix that identifies this modal from others that Gamgee might send. */
