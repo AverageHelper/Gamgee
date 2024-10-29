@@ -30,5 +30,6 @@ export async function handleModal(
 	// Handle form submission
 	logger.debug(`User ${logUser(interaction.user)} submitted modal: '${interaction.customId}'`);
 
+	// Our only modal so far is track reject confirmation
 	await handleConfirmRejectModal(interaction, logger);
 }
