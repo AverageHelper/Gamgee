@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Confirm prompt before rejecting tracks.
-- More translations!
+- More translations! (Thanks to @karcsesz for the help!)
 
 ### Changed
 - Updated internal testing utilities.
