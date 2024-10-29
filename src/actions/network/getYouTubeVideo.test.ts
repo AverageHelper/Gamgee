@@ -84,7 +84,7 @@ describe.each([true, false])("YouTube track details (API: %s)", withKey => {
 		${"is shortened w/ unicode title"}        | ${"https://youtu.be/GgwUenaQqlM"}                                                                                      | ${"https://www.youtube.com/watch?v=GgwUenaQqlM"} | ${267}
 		${"is a playlist entry w/ unicode title"} | ${"https://www.youtube.com/watch?v=GgwUenaQqlM&list=PLOKsOCrQbr0OCj6faA0kck1LwhQW-aj63&index=5"}                       | ${"https://www.youtube.com/watch?v=GgwUenaQqlM"} | ${267}
 		${"has extra info w/ unicode title"}      | ${"https://www.youtube.com/watch?v=GgwUenaQqlM&ab_channel=TOHOanimation%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB"} | ${"https://www.youtube.com/watch?v=GgwUenaQqlM"} | ${267}
-		${"is a short livestream VOD"}            | ${"https://youtu.be/5XbLY7IIqkY"}                                                                                      | ${"https://www.youtube.com/watch?v=5XbLY7IIqkY"} | ${426}
+		${"is a short livestream VOD"}            | ${"https://youtu.be/kpnW68Q8ltc"}                                                                                      | ${"https://www.youtube.com/watch?v=kpnW68Q8ltc"} | ${413}
 	`(
 		"returns info for a YouTube link that $desc, $duration seconds long",
 		async ({ url, result, duration }: { url: string; result: string; duration: number }) => {
