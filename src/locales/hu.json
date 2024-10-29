@@ -218,17 +218,17 @@
 		}
 	},
 	"dms": {
-		"rejection-apology": "nagyon sajnálom. Korábbi beadványát elutasították:",
-		"rejection-submit-another": "Ha szeretnél, beküldhetsz egy másik dalt is."
+		"rejection-apology": "Nagyon sajnálom, de a következő beküldött dalát elutasították:",
+		"rejection-submit-another": "Ha szeretne, beküldhet helyette egy másik dalt."
 	},
 	"modals": {
 		"confirm-reject-entry": {
 			"title": "Elutasítja {user} dalát?",
-			"confirm-input": "Írja be ide a \"{confirm}\" szót, ha biztos benne:",
+			"confirm-input": "Írja be a \"{confirm}\" szót, ha biztos benne:",
 			"responses": {
-				"success": "Az elutasító értesítést elküldték.",
-				"unknown-entry": "Elnézést, nem ismerem fel ezt a bejegyzést.",
-				"wrong-word": "Elnézést, be kell írnia a \"{confirm}\" szót"
+				"success": "Dal elutasítva, és a beküldő értesítve!",
+				"unknown-entry": "Elnézést, nem ismerem fel ezt a dalt.",
+				"wrong-word": "Elnézést, a \"{confirm}\" szót kell beírnia."
 			}
 		}
 	},
