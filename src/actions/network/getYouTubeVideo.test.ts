@@ -1,12 +1,128 @@
 import type { Mock } from "vitest";
 import type { videoInfo } from "ytdl-core";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi, afterEach } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { Temporal } from "temporal-polyfill";
+import type { YoutubeDataApiResponse } from "./youtubeMethods/getYouTubeVideoViaApi.js";
 
 // Mock logger
 const mockLogger = vi.fn().mockReturnValue({ debug: vi.fn(), error: vi.fn() });
 vi.mock("../../logger.js", () => ({ useLogger: mockLogger }));
+
+// Mock YouTube API
+const restHandlers = [
+	http.get("https://www.googleapis.com/youtube/v3/videos", ({ request }) => {
+		const url = new URL(request.url);
+
+		const videoId = url.searchParams.get("id");
+		if (!videoId) {
+			return new HttpResponse(null, { status: 400 });
+		}
+
+		let hasVideo = true;
+		let title: string | null = null;
+		let liveBroadcastContent: YoutubeDataApiResponse["items"][0]["snippet"]["liveBroadcastContent"] =
+			"none";
+		let duration: number = -1;
+		let regionRestriction: YoutubeDataApiResponse["items"][0]["contentDetails"]["regionRestriction"];
+
+		switch (videoId) {
+			case "9RAQsdTQIcs": {
+				title = "Luna's Banishment - Deep Edition [SFM]";
+				duration = 174;
+				break;
+			}
+			case "9Y8ZGLiqXB8": {
+				title = "Hades [METAL] - Out of Tartarus";
+				duration = 346;
+				break;
+			}
+			case "2rzoPFLRhqE": {
+				title = "STARBOY on Triple Neck Guitar (The Weeknd ft. Daft Punk) - Luca Stricagnoli";
+				duration = 225;
+				break;
+			}
+			case "nY1WVAoMnYc": {
+				title = "Let it Go (Disney's Frozen) POWER METAL COVER by Jonathan Young";
+				duration = 216;
+				break;
+			}
+			case "NFw-FrYmAEw": {
+				title = "elda Ocarina of Time - MASSIVE MEDLEY! - Super Guitar Bros";
+				duration = 1980;
+				break;
+			}
+			case "GgwUenaQqlM": {
+				title =
+					"ヒロアカ「Hero too」ミュージックビデオ(MV)／雄英高校ヒーロー科1年A組／『僕のヒーローアカデミア』4期文化祭編／MY HEROACADEMIA";
+				duration = 267;
+				break;
+			}
+			case "5XbLY7IIqkY": {
+				title = "DOOM Eternal OST 22: The Only Thing They Fear Is You (ARC Complex Theme)";
+				duration = 426;
+				break;
+			}
+
+			// Livestreams
+			case "jfKfPfyJRdk": {
+				title = "lofi hip hop radio - beats to relax/study to";
+				liveBroadcastContent = "live";
+				duration = 0;
+				regionRestriction = {
+					allowed: ["US"],
+				};
+				break;
+			}
+
+			// Unavailable videos
+			case "9Y8ZGLiqXba": {
+				// Upcoming livestream
+				title = "Example Livestream";
+				liveBroadcastContent = "upcoming";
+				break;
+			}
+			case "dmneTS-Gows": {
+				// Blocked in the US
+				title = "Dead To The World";
+				regionRestriction = {
+					blocked: ["US"],
+				};
+				break;
+			}
+
+			case "9Y8ZGLiqXBK":
+			default: {
+				hasVideo = false;
+				break;
+			}
+		}
+
+		return HttpResponse.json({
+			kind: "youtube#videoListResponse",
+			items: hasVideo
+				? [
+						{
+							id: videoId,
+							snippet: {
+								title,
+								liveBroadcastContent,
+							},
+							contentDetails: {
+								duration: Temporal.Duration.from({ seconds: duration }).toString(),
+								regionRestriction,
+							},
+						},
+					]
+				: [],
+		});
+	}),
+];
+
+const youtube = setupServer(...restHandlers);
 
 // Mock ytdl
 vi.mock("ytdl-core", async () => ({
@@ -31,12 +147,24 @@ const { requireEnv } = await vi.importActual<typeof import("../../helpers/enviro
 const { getYouTubeVideo } = await import("./getYouTubeVideo.js");
 
 describe.each([true, false])("YouTube track details (API: %s)", withKey => {
+	beforeAll(() => {
+		youtube.listen({ onUnhandledRequest: "bypass" });
+	});
+
+	afterAll(() => {
+		youtube.close();
+	});
+
 	beforeEach(() => {
 		if (withKey) {
 			const YOUTUBE_API_KEY = requireEnv("YOUTUBE_API_KEY");
 			mockGetEnv.mockReturnValue(YOUTUBE_API_KEY);
 		}
 		mockGetBasicInfo.mockRejectedValue(new Error("Please mock a response."));
+	});
+
+	afterEach(() => {
+		youtube.resetHandlers();
 	});
 
 	test.each`
