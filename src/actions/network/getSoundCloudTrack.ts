@@ -35,7 +35,10 @@ export async function getSoundCloudTrack(url: URL, signal?: AbortSignal): Promis
 		parsedUrl = new URL(response.url);
 	} catch (error) {
 		logger?.debug(
-			richErrorMessage(`Failed to follow redirects from '${url.href}'. Using the original.`, error),
+			richErrorMessage(
+				`[SoundCloud] Failed to follow redirects from '${url.href}'. Using the original.`,
+				error,
+			),
 		);
 		parsedUrl = url;
 	}
