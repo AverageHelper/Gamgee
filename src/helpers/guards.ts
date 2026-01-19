@@ -11,14 +11,3 @@ export function isNotNull<T>(tbd: T | null): tbd is T {
 export function isString(tbd: unknown): tbd is string {
 	return tbd !== null && (typeof tbd === "string" || tbd instanceof String);
 }
-
-export function isUrlString(tbd: unknown): tbd is string {
-	if (!isString(tbd)) return false;
-
-	try {
-		new URL(tbd); // throws if not a URL string
-		return true;
-	} catch {
-		return false;
-	}
-}

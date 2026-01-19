@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - .github/workflows/**
+      - .forgejo/workflows/**
       - prisma/**
       - src/**
       - tests/**
@@ -28,10 +28,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        # actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Use Node.js 20.10.x
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8
+        # actions/setup-node@v6.2.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: 20.10.x
       - run: npm ci
@@ -46,10 +48,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        # actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Use Node.js 20.10.x (earliest version supported)
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8
+        # actions/setup-node@v6.2.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: 20.10.x
       - run: npm ci

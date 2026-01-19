@@ -41,14 +41,14 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/AverageHelper/Gamgee.git"
+		"url": "git+https://git.average.name/AverageHelper/Gamgee.git"
 	},
 	"author": "AverageHelper",
 	"license": "LICENSE",
 	"bugs": {
-		"url": "https://github.com/AverageHelper/Gamgee/issues"
+		"url": "https://git.average.name/AverageHelper/Gamgee/issues"
 	},
-	"homepage": "https://github.com/AverageHelper/Gamgee#readme",
+	"homepage": "https://git.average.name/AverageHelper/Gamgee#readme",
 	"dependencies": {
 		"@averagehelper/job-queue": "3.0.0",
 		"@prisma/client": "5.18.0",

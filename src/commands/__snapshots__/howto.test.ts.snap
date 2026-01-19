@@ -5,7 +5,7 @@ exports[`How-to command in de > informs the user how to run queue commands (inte
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Ich werde mit einer Bestätigung antworten, dass dein Song zur Warteschlange hinzugefügt wurde!
-Siehe [unsere Liste der unterstützten Plattformen](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Siehe [unsere Liste der unterstützten Plattformen](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
@@ -15,7 +15,7 @@ exports[`How-to command in de > informs the user how to run queue commands (mess
 
 Zum Beispiel: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Ich werde mit einer Bestätigung antworten, dass dein Song zur Warteschlange hinzugefügt wurde!
-Siehe unsere Liste der unterstützten Plattformen <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+Siehe unsere Liste der unterstützten Plattformen <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 Um einen Link zum aktuellen Song zu erhalten, verwende \`?nowplaying\`."
 `;
@@ -25,7 +25,7 @@ exports[`How-to command in en-GB > informs the user how to run queue commands (i
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with confirmation that your song has joined the queue!
-See [our list of supported platforms](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+See [our list of supported platforms](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 To get a link to the current song, use \`?nowplaying\`."
 `;
@@ -35,7 +35,7 @@ exports[`How-to command in en-GB > informs the user how to run queue commands (m
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with confirmation that your song has joined the queue!
-See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+See our list of supported platforms at <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 To get a link to the current song, use \`?nowplaying\`."
 `;
@@ -45,7 +45,7 @@ exports[`How-to command in en-US > informs the user how to run queue commands (i
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with confirmation that your song has joined the queue!
-See [our list of supported platforms](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+See [our list of supported platforms](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 To get a link to the current song, use \`?nowplaying\`."
 `;
@@ -55,7 +55,7 @@ exports[`How-to command in en-US > informs the user how to run queue commands (m
 
 For example: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 I will respond with confirmation that your song has joined the queue!
-See our list of supported platforms at <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+See our list of supported platforms at <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 To get a link to the current song, use \`?nowplaying\`."
 `;
@@ -65,7 +65,7 @@ exports[`How-to command in es-ES > informs the user how to run queue commands (i
 
 Por ejemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 ¡Responderé con una confirmación indicando que tu canción se ha unido a la cola!
-Vea [nuestra lista de plataformas compatibles](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Vea [nuestra lista de plataformas compatibles](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 Para obtener un enlace a la canción actual, use \`?nowplaying\`."
 `;
@@ -75,7 +75,7 @@ exports[`How-to command in es-ES > informs the user how to run queue commands (m
 
 Por ejemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 ¡Responderé con una confirmación indicando que tu canción se ha unido a la cola!
-Consulte nuestra lista de plataformas compatibles en <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+Consulte nuestra lista de plataformas compatibles en <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 Para obtener un enlace a la canción actual, use \`?nowplaying\`."
 `;
@@ -85,7 +85,7 @@ exports[`How-to command in fr > informs the user how to run queue commands (inte
 
 Par exemple: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Je vous répondrai avec une confirmation indiquant que votre chanson a rejoint la file d'attente!
-Consultez [notre liste de plateformes prises en charge](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Consultez [notre liste de plateformes prises en charge](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 Pour obtenir un lien vers la chanson actuelle, utilisez \`?nowplaying\`."
 `;
@@ -95,7 +95,7 @@ exports[`How-to command in fr > informs the user how to run queue commands (mess
 
 Par exemple: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Je vous répondrai avec une confirmation indiquant que votre chanson a rejoint la file d'attente!
-Consultez notre liste des plates-formes prises en charge sur <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+Consultez notre liste des plates-formes prises en charge sur <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 Pour obtenir un lien vers la chanson actuelle, utilisez \`?nowplaying\`."
 `;
@@ -105,7 +105,7 @@ exports[`How-to command in hu > informs the user how to run queue commands (inte
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Jelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!
-Tekintse meg [a támogatott platformok listáját](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Tekintse meg [a támogatott platformok listáját](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
@@ -115,7 +115,7 @@ exports[`How-to command in hu > informs the user how to run queue commands (mess
 
 Például: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Jelezni fogom, amint sikeresen hozzáadtam a dalt a sorhoz!
-Tekintse meg a támogatott platformok listáját a <https://github.com/AverageHelper/Gamgee#supported-music-platforms> címen.
+Tekintse meg a támogatott platformok listáját a <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms> címen.
 
 Az aktuális dal hivatkozásának lekéréséhez használja a \`?nowplaying\` parancsot."
 `;
@@ -125,7 +125,7 @@ exports[`How-to command in pt-BR > informs the user how to run queue commands (i
 
 Por exemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Responderei com uma confirmação indicando que sua música entrou na fila!
-Veja [nossa lista de plataformas suportadas](<https://github.com/AverageHelper/Gamgee#supported-music-platforms>).
+Veja [nossa lista de plataformas suportadas](<https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>).
 
 Para obter um link para a música atual, use \`?nowplaying\`."
 `;
@@ -135,7 +135,7 @@ exports[`How-to command in pt-BR > informs the user how to run queue commands (m
 
 Por exemplo: \`/sr https://youtu.be/dQw4w9WgXcQ\`
 Responderei com uma confirmação indicando que sua música entrou na fila!
-Veja nossa lista de plataformas suportadas em <https://github.com/AverageHelper/Gamgee#supported-music-platforms>.
+Veja nossa lista de plataformas suportadas em <https://git.average.name/AverageHelper/Gamgee#supported-music-platforms>.
 
 Para obter um link para a música atual, use \`?nowplaying\`."
 `;

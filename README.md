@@ -17,7 +17,7 @@ In order to highlight new contributors, these users are listed reverse-chronolog
 - [**karcsesz**](https://github.com/karcsesz)
 - [**bendai94**](https://github.com/bendai94)
 - [**ajnrules**](https://github.com/ajnrules)
-- [**AverageHelper**](https://github.com/AverageHelper)
+- [**AverageHelper**](https://git.average.name/AverageHelper)
 
 Many thanks to each person who contributed code or translations or advice or any other kind of help! I cannot build Gamgee alone, and every bit of help is very much appreciated!
 
@@ -116,7 +116,7 @@ The rest of the steps should be handled automatically.
 
 ```sh
 cd path/to/parent
-git clone https://github.com/AverageHelper/Gamgee.git
+git clone https://git.average.name/AverageHelper/Gamgee.git
 cd Gamgee
 ```
 
@@ -232,7 +232,7 @@ We support the following media platforms:
 - [Bandcamp](https://bandcamp.com/)
 - [Pony.FM](https://pony.fm/)
 
-If you'd like us to support another platform, please [submit an issue](https://github.com/AverageHelper/Gamgee/issues/new?labels=enhancement&template=feature_request.md)!
+If you'd like us to support another platform, please [submit an issue](https://git.average.name/AverageHelper/Gamgee/issues/new?template=.forgejo%2fISSUE_TEMPLATE%2ffeature_request.md)!
 
 ## Commands
 
@@ -344,7 +344,7 @@ Triggers the typing indicator in the current channel. This is mostly for fun and
 
 ### `version`
 
-Display's the current version of Gamgee Core. (see [package.json](https://github.com/AverageHelper/Gamgee/blob/main/package.json#L3))
+Display's the current version of Gamgee Core. (see [package.json](https://git.average.name/AverageHelper/Gamgee/src/branch/main/package.json#L3))
 
 ### `video <url>`
 
@@ -352,7 +352,7 @@ Given a track link from a [supported platform](#supported-music-platforms), Gamg
 
 ## Contributing
 
-This project is entirely open source. Do with it what you will. If you're willing to help me improve this project, consider [filing an issue](https://github.com/AverageHelper/Gamgee/issues/new/choose).
+This project is entirely open source. Do with it what you will. If you're willing to help me improve this project, consider [filing an issue](https://git.average.name/AverageHelper/Gamgee/issues/new/choose).
 
 See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
 

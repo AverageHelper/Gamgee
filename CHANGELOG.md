@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Moved source code to [Forgejo](https://git.average.name/AverageHelper/Gamgee), and updated user-facing source links and documentation. ([Why?](https://blog.average.name/2023-12-16-leaving-github))
+- `/languages` is now slightly faster, using only one API request instead of two.
 - Updated internal testing utilities.
 
 ### Fixed

@@ -1,0 +1,30 @@
+# We don't accept contributions from GitHub at the moment.
+# Workflow adapted from https://github.com/mozilla/gecko-dev/blob/fe2d53e73ac98af12bd5d4d73edd801582c5c607/.github/workflows/close-pr.yml
+
+name: close pull request
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  run:
+    if: github.server_url == 'https://github.com' # Skip on Forgejo and others
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "README.md"
+          sparse-checkout-cone-mode: false
+
+      - name: close
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.number }}
+        run: |
+          gh pr close ${{ env.PR }} --comment "(Automated close) Please do not file pull requests here. [File at git.average.name](https://git.average.name/AverageHelper/Gamgee) instead."
+          gh pr lock ${{ env.PR }}

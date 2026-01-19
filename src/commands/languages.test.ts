@@ -1,22 +1,14 @@
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("../helpers/gitForgeMetadata.js");
-import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as Mock<typeof gitForgeMetadata>;
-mockGitForgeMetadata.mockResolvedValue({
-	name: "",
-	full_name: "",
-	private: false,
-	html_url: "",
-	description: "",
-	languages_url: "",
-	languages: {
-		English: 80,
-		Spanish: 10,
-		Indonesian: 5,
-		HTML: 5,
-	},
+vi.mock("../helpers/forgeLanguages.js");
+import { forgeLanguages } from "../helpers/forgeLanguages.js";
+const mockForgeLanguages = forgeLanguages as Mock<typeof forgeLanguages>;
+mockForgeLanguages.mockResolvedValue({
+	English: 80,
+	Spanish: 10,
+	Indonesian: 5,
+	HTML: 5,
 });
 
 const mockReply = vi.fn().mockResolvedValue(undefined);
@@ -46,8 +38,8 @@ describe("Language Statistics from our git forge", () => {
 		const repo = "Gamgee";
 
 		await expect(languages.execute(context)).resolves.toBeUndefined();
-		expect(mockGitForgeMetadata).toHaveBeenCalledOnce();
-		expect(mockGitForgeMetadata).toHaveBeenCalledWith({ owner, repo });
+		expect(mockForgeLanguages).toHaveBeenCalledOnce();
+		expect(mockForgeLanguages).toHaveBeenCalledWith({ owner, repo });
 
 		expect(mockReply).toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("languages"));

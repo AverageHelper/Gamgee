@@ -1,26 +1,10 @@
 import type { Infer } from "superstruct";
-import { boolean, is, number, record, string, type } from "superstruct";
-import { isUrlString } from "./guards.js";
+import { is, number, record, string } from "superstruct";
 import { useLogger } from "../logger.js";
 
 const languagesMetadata = record(string(), number());
 
-type LanguagesMetadata = Infer<typeof languagesMetadata>;
-
-const repoMetadata = type({
-	name: string(),
-	full_name: string(),
-	private: boolean(),
-	html_url: string(),
-	description: string(),
-	languages_url: string(),
-});
-
-type RepoMetadata = Infer<typeof repoMetadata>;
-
-export interface GitForgeMetadata extends RepoMetadata {
-	languages: Record<string, number>;
-}
+export type LanguagesMetadata = Infer<typeof languagesMetadata>;
 
 export interface Options {
 	owner: string;
@@ -30,21 +14,15 @@ export interface Options {
 const logger = useLogger();
 
 /**
- * Fetches metadata about the provided git repository.
+ * Fetches metadata about the provided git repository's languages.
  */
-export async function gitForgeMetadata(options: Readonly<Options>): Promise<GitForgeMetadata> {
+export async function forgeLanguages(options: Readonly<Options>): Promise<LanguagesMetadata> {
 	const { owner, repo } = options;
-	const forgeApi = new URL("https://api.github.com/");
-	const url = new URL(`/repos/${owner}/${repo}`, forgeApi);
+	const forgeApi = new URL("https://git.average.name/");
+	const url = new URL(`/api/v1/repos/${owner}/${repo}/languages`, forgeApi);
 
-	logger.verbose(`Asking ${url.href} about its metadata...`);
-	const repoData = await getFrom(url, isRepoMetadata);
-	const languagesUrl = new URL(repoData.languages_url);
-
-	logger.verbose(`Asking ${languagesUrl.href} about language statistics...`);
-	const languages = await getFrom(languagesUrl, isLanguagesMetadata);
-
-	return { ...repoData, languages };
+	logger.verbose(`Asking ${url.href} about language statistics...`);
+	return await getFrom(url, isLanguagesMetadata);
 }
 
 export class UnexpectedResponseError extends TypeError {
@@ -52,14 +30,6 @@ export class UnexpectedResponseError extends TypeError {
 		super(`[${url.href}] Server response was unexpected`);
 		this.name = "UnexpectedResponseError";
 	}
-}
-
-function isRepoMetadata(tbd: unknown): tbd is RepoMetadata {
-	return (
-		is(tbd, repoMetadata) && //
-		isUrlString(tbd.html_url) &&
-		isUrlString(tbd.languages_url)
-	);
 }
 
 function isLanguagesMetadata(tbd: unknown): tbd is LanguagesMetadata {

@@ -20,7 +20,7 @@
  *
  * Note: New responses should make *some* sense in *any* type of server,
  *    and must follow our **CODE_OF_CONDUCT**:
- *    https://github.com/AverageHelper/Gamgee/blob/main/CODE_OF_CONDUCT.md
+ *    https://git.average.name/AverageHelper/Gamgee/src/branch/main/CODE_OF_CONDUCT.md
  */
 
 import type { ResponseRepository } from "../helpers/randomStrings.js";

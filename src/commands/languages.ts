@@ -1,6 +1,6 @@
-import type { GitForgeMetadata } from "../helpers/gitForgeMetadata.js";
+import type { LanguagesMetadata } from "../helpers/forgeLanguages.js";
 import type { GlobalCommand } from "./Command.js";
-import { gitForgeMetadata } from "../helpers/gitForgeMetadata.js";
+import { forgeLanguages } from "../helpers/forgeLanguages.js";
 import { locales, localizations } from "../i18n.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
@@ -8,7 +8,7 @@ import { timeoutSeconds } from "../helpers/timeoutSeconds.js";
 const owner = "AverageHelper";
 const repo = "Gamgee";
 
-let cachedMetadata: GitForgeMetadata | null = null;
+let cachedLanguages: LanguagesMetadata | null = null;
 
 // TODO: i18n
 export const languages: GlobalCommand = {
@@ -20,9 +20,9 @@ export const languages: GlobalCommand = {
 	async execute({ logger, prepareForLongRunningTasks, reply, followUp }) {
 		try {
 			await prepareForLongRunningTasks();
-			if (cachedMetadata === null) {
+			if (cachedLanguages === null) {
 				// eslint-disable-next-line require-atomic-updates
-				cachedMetadata = await gitForgeMetadata({ owner, repo });
+				cachedLanguages = await forgeLanguages({ owner, repo });
 			}
 		} catch (error) {
 			logger.error(richErrorMessage("Failed to get metadata from my git forge.", error));
@@ -35,7 +35,7 @@ export const languages: GlobalCommand = {
 			return;
 		}
 
-		const languages = cachedMetadata.languages;
+		const languages = cachedLanguages;
 		logger.debug(`Language metadata: ${JSON.stringify(languages, null, "  ")}`);
 
 		const totalLanguages = Object.keys(languages).length;

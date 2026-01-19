@@ -14,7 +14,7 @@ the app needs translated.
 To update an existing translation:
 
 1. Start a fork as you would normally do when contributing to a project
-   on GitHub.
+   on GitHub or Forgejo.
 2. Find the relevant strings file.
 3. Start translating! Test your work using `npm start`.
 4. Create a Pull Request as described [below](#pull-requests).
@@ -22,7 +22,7 @@ To update an existing translation:
 To create a translation for a language which we don't yet support:
 
 1. Start a fork as you would normally do when contributing to a project
-   on GitHub.
+   on GitHub or Forgejo.
 2. Create a new file of the same format.
 3. Reference your new strings file in the [i18n index file](/src/i18n.ts).
 4. Start translating! Test your work using `npm start`.
@@ -30,7 +30,7 @@ To create a translation for a language which we don't yet support:
 
 ## Issues
 
-[Issues](https://github.com/AverageHelper/Gamgee/issues/new/choose) are very valuable to this project.
+[Issues](https://git.average.name/AverageHelper/Gamgee/issues/new/choose) are very valuable to this project.
 
 - Ideas are a valuable source of contributions others can make
 - Problems show where this project is lacking

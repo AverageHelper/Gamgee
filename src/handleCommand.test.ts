@@ -5,20 +5,11 @@ import { ApplicationCommandOptionType, userMention } from "discord.js";
 import { expectArrayOfLength, expectDefined } from "../tests/testUtils/expectations.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX as PREFIX } from "./constants/database.js";
 
-vi.mock("./helpers/gitForgeMetadata.js");
-
-import { gitForgeMetadata } from "./helpers/gitForgeMetadata.js";
-const mockGitForgeMetadata = gitForgeMetadata as Mock<typeof gitForgeMetadata>;
-mockGitForgeMetadata.mockResolvedValue({
-	name: "Gamgee",
-	full_name: "Gamgee",
-	private: false,
-	html_url: "https://example.com",
-	description: "Gamgee",
-	languages_url: "https://example.com",
-	languages: {
-		TypeScript: 100,
-	},
+vi.mock("./helpers/forgeLanguages.js");
+import { forgeLanguages } from "./helpers/forgeLanguages.js";
+const mockForgeLanguages = forgeLanguages as Mock<typeof forgeLanguages>;
+mockForgeLanguages.mockResolvedValue({
+	TypeScript: 100,
 });
 
 vi.mock("./commands/index.js");
