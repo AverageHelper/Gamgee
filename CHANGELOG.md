@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Nothing yet :3
 
-## [3.2.0] - 2026-01-18
+## [3.2.0] - 2026-01-19
 ### Changed
 - [BREAKING if you use Docker] The Docker container at `ghcr.io/averagehelper/gamgee` is no longer maintained, and may be deleted soon. Use `git.average.name/averagehelper/gamgee` instead. (Just replace `ghcr.io` ~> `git.average.name`)
 - Moved source code to [Forgejo](https://git.average.name/AverageHelper/Gamgee), and updated user-facing source links and documentation. ([Why?](https://blog.average.name/2023-12-16-leaving-github))
