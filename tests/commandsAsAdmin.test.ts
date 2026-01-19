@@ -19,7 +19,7 @@ const QUEUE_COMMAND = "quo";
 
 describe("Command as admin", () => {
 	const url = "https://youtu.be/dQw4w9WgXcQ";
-	const info = `Rick Astley - Never Gonna Give You Up (Official Music Video): (3 minutes, 33 seconds)`;
+	const info = `Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster): (3 minutes, 34 seconds)`;
 	const NO_QUEUE = "no queue";
 	const NEW_QUEUE = "New queue";
 
@@ -66,6 +66,7 @@ describe("Command as admin", () => {
 				for (const key of keys) {
 					it(`allows the tester to set ${key} limits on the queue`, async () => {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+						expect(content).toBeTruthy();
 						expect(content?.toLowerCase()).toContain(`set to **3`);
 					});
 				}
@@ -77,6 +78,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} blacklist`,
 					"Song Request Blacklist for",
 				);
+				expect(firstCheck).toBeTruthy();
 				expect(firstCheck).toContain("Nobody");
 
 				// add to blacklist
@@ -84,6 +86,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
 					"is no longer allowed",
 				);
+				expect(firstAdd).toBeTruthy();
 				expect(firstAdd).toContain(`<@!${UUT_ID}> is no longer allowed`);
 
 				// read blacklist, should contain user
@@ -91,6 +94,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} blacklist`,
 					"Song Request Blacklist for",
 				);
+				expect(secondCheck).toBeTruthy();
 				expect(secondCheck).toContain(userMention(UUT_ID));
 
 				// add to blacklist again, should have no duplicates
@@ -98,12 +102,14 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} blacklist ${userMention(UUT_ID)}`,
 					"is no longer allowed",
 				);
+				expect(secondAdd).toBeTruthy();
 				expect(secondAdd).toContain(`<@!${UUT_ID}> is no longer allowed`);
 
 				const thirdCheck = await commandResponseInTestChannel(
 					`${QUEUE_COMMAND} blacklist`,
 					"Song Request Blacklist for",
 				);
+				expect(thirdCheck).toBeTruthy();
 				expect(thirdCheck).toContain(
 					userMention(UUT_ID), // TODO: Make sure this is the only match
 				);
@@ -113,6 +119,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
 					"is allowed",
 				);
+				expect(remove).toBeTruthy();
 				expect(remove).toContain(`<@!${UUT_ID}> is allowed`);
 
 				// read blacklist, should be empty again
@@ -120,6 +127,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} blacklist`,
 					"Song Request Blacklist for",
 				);
+				expect(fourthCheck).toBeTruthy();
 				expect(fourthCheck).toContain("Nobody");
 			});
 
@@ -129,6 +137,7 @@ describe("Command as admin", () => {
 					`${QUEUE_COMMAND} whitelist ${userMention(UUT_ID)}`,
 					expected,
 				);
+				expect(content).toBeTruthy();
 				expect(content).toContain(expected);
 			});
 		});
@@ -138,11 +147,13 @@ describe("Command as admin", () => {
 
 			it("url request does nothing", async () => {
 				const content = await commandResponseInTestChannel(`sr ${url}`, NO_QUEUE);
+				expect(content).toBeTruthy();
 				expect(content?.toLowerCase()).toContain(NO_QUEUE);
 			});
 
 			it("url request with embed hidden does nothing", async () => {
 				const content = await commandResponseInTestChannel(`sr <${url}>`, NO_QUEUE);
+				expect(content).toBeTruthy();
 				expect(content?.toLowerCase()).toContain(NO_QUEUE);
 			});
 		});
@@ -166,6 +177,7 @@ describe("Command as admin", () => {
 					const response = await waitForMessage(
 						msg => msg.author.id === UUT_ID && msg.channel.id === cmdMessage.channel.id,
 					);
+					expect(response?.content).toBeTruthy();
 					expect(response?.content).toContain("name a text channel");
 				});
 			});
@@ -179,6 +191,7 @@ describe("Command as admin", () => {
 				for (const key of keys) {
 					it(`fails to set ${key} limits on the queue`, async () => {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key} 3`);
+						expect(content).toBeTruthy();
 						expect(content?.toLowerCase()).toContain(NO_QUEUE);
 					});
 				}
@@ -193,6 +206,7 @@ describe("Command as admin", () => {
 				for (const key of keys) {
 					it(`allows the tester to get the queue's global ${key} limit`, async () => {
 						const content = await commandResponseInTestChannel(`${QUEUE_COMMAND} limit ${key}`);
+						expect(content).toBeTruthy();
 						expect(content?.toLowerCase()).toContain(NO_QUEUE);
 					});
 				}
@@ -206,6 +220,7 @@ describe("Command as admin", () => {
 				const response = await waitForMessage(
 					msg => msg.author.id === UUT_ID && msg.channel.id === QUEUE_CHANNEL_ID,
 				);
+				expect(response?.content).toBeTruthy();
 				expect(response?.content).toContain("This is a queue now.");
 			});
 		});

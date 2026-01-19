@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated internal testing utilities.
 
+### Fixed
+- `npm run firstrun` pointed to the wrong internal commands
+
 ## [3.1.0] - 2024-08-22
 ### Added
 - Use YouTube's first-party API when an API key is provided.

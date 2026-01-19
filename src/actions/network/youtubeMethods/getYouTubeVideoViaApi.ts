@@ -1,5 +1,5 @@
 import type { VideoDetails, VideoMetaSource } from "../../getVideoDetails.js";
-import { array, enums, is, literal, optional, string, type } from "superstruct";
+import { array, enums, is, literal, optional, string, type, type Infer } from "superstruct";
 import { getURLVideoID } from "ytdl-core";
 import { secondsFromIso8601Duration } from "../../../helpers/secondsFromIso8601Duration.js";
 import { useLogger } from "../../../logger.js";
@@ -39,6 +39,8 @@ const youtubeDataApiResponse = type({
 	),
 });
 
+export type YoutubeDataApiResponse = Infer<typeof youtubeDataApiResponse>;
+
 export async function getYouTubeVideoViaApi(
 	key: string,
 	url: URL,
@@ -62,6 +64,7 @@ export async function getYouTubeVideoViaApi(
 	// Construct a VideoDetails from the response payload
 	const video = info.items[0];
 	if (!video) {
+		logger.debug("[YouTube API] No video info found");
 		throw new UnavailableError(url);
 	}
 
@@ -69,11 +72,13 @@ export async function getYouTubeVideoViaApi(
 		video.contentDetails.regionRestriction?.blocked?.includes("US") ||
 		video.snippet.liveBroadcastContent === "upcoming"
 	) {
+		logger.debug('[YouTube API] The video is not available in the US, or is marked "upcoming"');
 		throw new UnavailableError(url);
 	}
 
 	let durationSeconds: number;
 	if (video.snippet.liveBroadcastContent === "live") {
+		logger.debug("[YouTube API] The video is a live broadcast; assuming infinite duration");
 		durationSeconds = Number.POSITIVE_INFINITY;
 	} else {
 		durationSeconds = secondsFromIso8601Duration(video.contentDetails.duration);
