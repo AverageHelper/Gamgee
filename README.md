@@ -352,9 +352,9 @@ Given a track link from a [supported platform](#supported-music-platforms), Gamg
 
 ## Contributing
 
-This project is entirely open source. Do with it what you will. If you're willing to help me improve this project, consider [filing an issue](https://git.average.name/AverageHelper/Gamgee/issues/new/choose).
+This project is entirely open source. Do with it what you will (within the bounds of the [LICENSE](LICENSE)). The source code lives primarily at [git.average.name](https://git.average.name/AverageHelper/Gamgee). A read-only code mirror also exists on [GitHub](https://github.com/AverageHelper/Gamgee).
 
-See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
+If you're willing to help me improve this project, consider [filing an issue](https://git.average.name/AverageHelper/Gamgee/issues/new/choose). See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
 
 ## Built With
 
