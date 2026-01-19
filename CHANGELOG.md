@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Nothing yet :3
+
+## [3.2.0] - 2026-01-18
 ### Changed
+- [BREAKING if you use Docker] The Docker container at `ghcr.io/averagehelper/gamgee` is no longer maintained, and may be deleted soon. Use `git.average.name/averagehelper/gamgee` instead. (Just replace `ghcr.io` ~> `git.average.name`)
 - Moved source code to [Forgejo](https://git.average.name/AverageHelper/Gamgee), and updated user-facing source links and documentation. ([Why?](https://blog.average.name/2023-12-16-leaving-github))
 - `/languages` is now slightly faster, using only one API request instead of two.
 - Updated internal testing utilities.
@@ -473,7 +477,8 @@ After updating, be sure to run `npm ci && npm run build:clean && npm run migrate
 ### Added
 - Initial commit
 
-[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/AverageHelper/Gamgee/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/AverageHelper/Gamgee/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/AverageHelper/Gamgee/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/AverageHelper/Gamgee/compare/v2.2.1...v3.0.0
 [2.2.1]: https://github.com/AverageHelper/Gamgee/compare/v2.2.0...v2.2.1
