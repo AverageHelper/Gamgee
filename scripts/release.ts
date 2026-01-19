@@ -7,7 +7,7 @@ import { parser as changelogParser } from "keep-a-changelog";
 import { parse as parseSemVer } from "semver";
 import { readFileSync, writeFileSync } from "node:fs";
 
-// Fixes the changelog's footer links and bumps the `version` in [package.json](/package.json) and [package-lock.json](/package-lock.json).
+// Fixes the changelog's footer links and bumps the `version` in `package.json and `package-lock.json`.
 // This script may be run repeatedly on the same project.
 
 function quote(str: string | undefined): string | undefined {

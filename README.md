@@ -92,7 +92,7 @@ For running the container, you don't need anything other than a Docker-compatibl
 Note that, by running Gamgee, you agree to be bound by the Discord's
 [Developer Terms of Service](https://support-dev.discord.com/hc/en-us/articles/8562894815383) and
 [Developer Policy](https://support-dev.discord.com/hc/en-us/articles/8563934450327), as well as
-[Gamgee's own license](/LICENSE). With that in mind, you'll need a token for a Discord bot account.
+[Gamgee's own license](LICENSE). With that in mind, you'll need a token for a Discord bot account.
 See [this awesome tutorial on how to get one](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
 ### Invite your bot to your server
@@ -109,7 +109,7 @@ Some commands require special permission to run. We'll soon add a command for yo
 
 ### Launch Container
 
-If you'd like to run Gamgee as a container, we recommend reading the [sample compose file](/docker-compose.example.yml) and building on that.
+If you'd like to run Gamgee as a container, we recommend reading the [sample compose file](docker-compose.example.yml) and building on that.
 The rest of the steps should be handled automatically.
 
 ### Clone the Repo
@@ -354,7 +354,7 @@ Given a track link from a [supported platform](#supported-music-platforms), Gamg
 
 This project is entirely open source. Do with it what you will (within the bounds of the [LICENSE](LICENSE)). The source code lives primarily at [git.average.name](https://git.average.name/AverageHelper/Gamgee). A read-only code mirror also exists on [GitHub](https://github.com/AverageHelper/Gamgee).
 
-If you're willing to help me improve this project, consider [filing an issue](https://git.average.name/AverageHelper/Gamgee/issues/new/choose). See [CONTRIBUTING.md](/CONTRIBUTING.md) for ways to contribute.
+If you're willing to help me improve this project, consider [filing an issue](https://git.average.name/AverageHelper/Gamgee/issues/new/choose). See [CONTRIBUTING.md](CONTRIBUTING.md) for ways to contribute.
 
 ## Built With
 

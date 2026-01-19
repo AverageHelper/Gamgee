@@ -112,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - `/sr` and `/video` now support hiding embeds using Discord's standard angle-brackets method. Simply wrap your link in `<` and `>`, and Gamgee will parse the link in the usual way, taking care to avoid embedding the title and thumbnail publicly.
 - BREAKING: Changed the way database migrations happen. After you update, please run `npm run baseline` if you do not wish your database to be reset. This command adds a field to your database that lets our ORM know that its schema is up to date. You should only have to do this once.
-- BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](/README.md#selecting-a-database-file-location) for an example.
+- BREAKING: Replaced the `DATABASE_FOLDER` environment variable with a new required `DATABASE_URL` variable. Please add this variable to your `.env` file, and set it to the value `"file:{absolute path to your database file}"`. See the [README](src/tag/v2.0.0/README.md#selecting-a-database-file-location) for an example.
 - Renamed the `entry-duration` queue limit ID to `entry-duration-max`. This makes more sense alongside the `entry-duration-min` limit ID.
 - Since [Node 18 supports a built-in `fetch` API](https://dev.to/andrewbaisden/the-nodejs-18-fetch-api-72m), we'll use that when its available. We fall back to `cross-fetch` otherwise.
 - Clarified the descriptions of queue limits. They used to specify that time values are in seconds, but we format the number nicely with appropriate units that usually _aren't_ seconds.
@@ -139,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.8.2] - 2022-09-10
 ### Added
 - Created issue templates!
-- Automated deployment pipeline based on [CHANGELOG.md](/CHANGELOG.md). Now, the changelog file is the source of truth for versioning Gamgee, and our CI/CD pipeline automatically cuts deployment releases based on that. Much less work for me to do to maintain those!
+- Automated deployment pipeline based on [CHANGELOG.md](src/tag/v1.8.2/CHANGELOG.md). Now, the changelog file is the source of truth for versioning Gamgee, and our CI/CD pipeline automatically cuts deployment releases based on that. Much less work for me to do to maintain those!
 
 ### Changed
 - Better Hungarian translations! (Thanks again, [@karcsesz](https://github.com/karcsesz)!)
@@ -174,7 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced `node-fetch` with `cross-fetch`, because Jest doesn't seem to like ESM (which [`node-fetch` requires](https://github.com/node-fetch/node-fetch/issues/1279)) or [`undici`](https://github.com/nodejs/undici/issues/318) anymore.
 - Gamgee now speaks over 7 languages, and knows it. (More, if you count JavaScript!)
 - Moved I18N calls into a single file that can be imported from anywhere in the codebase.
-- Locales are now stored in [/src/locales/](/src/locales/). Feel free to contribute there!
+- Locales are now stored in [/src/locales/](src/tag/v1.7.1/src/locales). Feel free to contribute there!
 - Added two functions to retrieve localized text in bulk (for Discord command registration) or for a single locale (for command responses).
 
 ## [1.7.0] - 2022-08-10
@@ -185,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated discord.js to version 14.1.2
-- Made [textResponses.ts](/src/constants/textResponses.ts) a bit easier for humans to read
+- Made [textResponses.ts](src/tag/v1.7.0/src/constants/textResponses.ts) a bit easier for humans to read
 - Migrated our integration tests from Jest to Mocha, because [`discord.js` now depends on `undici` instead of `node-fetch`](https://github.com/discordjs/discord.js/pull/7747), and [`undici` historically hasn't played well with Jest's runner](https://github.com/nodejs/undici/issues/318), and I guess [still doesn't](https://github.com/facebook/jest/issues/2549), and the [other](https://github.com/facebook/jest/issues/2549#issuecomment-983717728) [workarounds](https://github.com/facebook/jest/issues/2549#issuecomment-1098071474) [I](https://github.com/kayahr/jest-environment-node-single-context) [tried](https://github.com/nicolo-ribaudo/jest-light-runner) don't play well with ESM or the [`references`](https://www.typescriptlang.org/tsconfig#references) tsconfig option. Mocha works just fine, tho!
 
 ## [1.6.6] - 2022-07-26
