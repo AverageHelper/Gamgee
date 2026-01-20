@@ -15,11 +15,11 @@ jobs:
         # actions/checkout@v6.0.2
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - name: Use Node.js 20.19.x
+      - name: Use Node.js 22.21.x
         # actions/setup-node@v6.2.0
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
-          node-version: 20.19.x
+          node-version: 22.21.x
           cache: "npm"
 
       - name: Install Dependencies
