@@ -1,8 +1,8 @@
 import type { Guild, Snowflake, TextChannel } from "discord.js";
-import type { Role } from "@prisma/client";
+import type { Role } from "./database/prisma/client.js";
 import { DEFAULT_MESSAGE_COMMAND_PREFIX } from "./constants/database.js";
 import { getEnv } from "./helpers/environment.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "./database/prisma/client.js";
 import { useRepository } from "./database/useDatabase.js";
 
 /**

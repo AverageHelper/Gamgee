@@ -43,15 +43,6 @@ export default defineConfig({
 		analyze({ filter: () => false }), // only top-level summary
 		visualizer(),
 	],
-	onwarn(warning, defaultHandler) {
-		// Ignore "Use of eval is strongly discouraged" warnings from
-		// prisma. Their `eval` calls are fairly tame, though this should
-		// be audited with each update.
-		const evalWhitelist = ["@prisma/client"];
-		if (warning.code === "EVAL" && evalWhitelist.some(e => warning.loc?.file?.includes(e))) return;
-
-		defaultHandler(warning);
-	},
 	external: [
 		// Circular, uses eval, unexpeted token in plugin-commonjs
 		"discord.js",
@@ -59,9 +50,6 @@ export default defineConfig({
 		// Circular
 		"winston-transport",
 		"winston",
-
-		// Relies on __dirname
-		"@prisma/client",
 	],
 	input: "src/main.ts",
 	output: {

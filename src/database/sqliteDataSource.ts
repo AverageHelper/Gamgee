@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "./prisma/client.js";
 import { requireEnv } from "../helpers/environment.js";
 import { richErrorMessage } from "../helpers/richErrorMessage.js";
 import { useLogger } from "../logger.js";
@@ -12,7 +13,8 @@ if (dbFolder.protocol !== "file:")
 const path = dbFolder.pathname;
 logger.debug(`Database URL: '${path}'`);
 
-export const dataSource = new PrismaClient();
+const adapter = new PrismaBetterSqlite3({ url: dbFolder });
+export const dataSource = new PrismaClient({ adapter });
 
 // ** Graceful exit under PM2 **
 

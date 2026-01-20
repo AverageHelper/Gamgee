@@ -24,7 +24,7 @@ Many thanks to each person who contributed code or translations or advice or any
 ## Prerequisites
 
 This project either requires a [Docker](https://www.docker.com/) compatible container runtime;
-or [NodeJS](https://nodejs.org/) (version 20.10 or later), and [NPM](https://npmjs.org/).
+or [NodeJS](https://nodejs.org/) (version 20.19 or later), and [NPM](https://npmjs.org/).
 You'll also need a [Discord bot account token](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
 ## Table of Contents

@@ -18,6 +18,7 @@ dist
 ./config
 coverage
 src/version.ts
+src/database/prisma
 tmp
 temp
 .vs

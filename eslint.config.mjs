@@ -22,7 +22,7 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-	globalIgnores(["coverage", "eslint.config.mjs", "ecosystem.config.cjs", "**/dist", "**/node_modules", "src/version.ts"]),
+	globalIgnores(["coverage", "eslint.config.mjs", "ecosystem.config.cjs", "**/dist", "**/node_modules", "src/database/prisma", "src/version.ts"]),
 	{
 		extends: fixupConfigRules(
 			compat.extends(

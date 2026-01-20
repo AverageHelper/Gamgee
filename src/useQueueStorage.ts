@@ -1,6 +1,10 @@
-import type { QueueConfig as _QueueConfig, QueueEntry as _QueueEntry, User } from "@prisma/client";
+import type {
+	QueueConfig as _QueueConfig,
+	QueueEntry as _QueueEntry,
+	User,
+} from "./database/prisma/client.js";
 import type { Snowflake, TextChannel } from "discord.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "./database/prisma/client.js";
 import { useLogger } from "./logger.js";
 import { useRepository } from "./database/useDatabase.js";
 
