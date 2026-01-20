@@ -3,6 +3,7 @@
 
 # Secret files
 .env
+compose.yml
 docker-compose.yml
 
 # Useless files

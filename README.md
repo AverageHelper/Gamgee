@@ -109,7 +109,7 @@ Some commands require special permission to run. We'll soon add a command for yo
 
 ### Launch Container
 
-If you'd like to run Gamgee as a container, we recommend reading the [sample compose file](docker-compose.example.yml) and building on that.
+If you'd like to run Gamgee as a container, we recommend reading the [sample compose file](compose.example.yml) and building on that.
 The rest of the steps should be handled automatically.
 
 ### Clone the Repo
