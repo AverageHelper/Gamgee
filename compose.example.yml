@@ -12,6 +12,7 @@ services:
       - "./db/:/db/"
       - "./logs/:/app/logs/"
     restart: unless-stopped
+    # Set this to the UID:GID of some non-root user (see yours with the `id` command)
     user: 1000:1000
     cap_drop:
       - ALL
