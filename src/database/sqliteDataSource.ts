@@ -13,7 +13,7 @@ if (dbFolder.protocol !== "file:")
 const path = dbFolder.pathname;
 logger.debug(`Database URL: '${path}'`);
 
-const adapter = new PrismaBetterSqlite3({ url: dbFolder });
+const adapter = new PrismaBetterSqlite3({ url: dbFolder.href });
 export const dataSource = new PrismaClient({ adapter });
 
 // ** Graceful exit under PM2 **
