@@ -95,11 +95,7 @@ export const sr: GuildedCommand = {
 		if (!queueChannel) {
 			// Delete the preemptive message, if it exists
 			const p = await publicPreemptiveResponse;
-			if (p) {
-				await deleteMessage(p);
-			} else {
-				await deleteInvocation();
-			}
+			await (p ? deleteMessage(p) : deleteInvocation());
 
 			await context.followUp({
 				content: `:hammer: <@!${user.id}> ${t("common.queue.not-set-up", guildLocale)}`,
@@ -125,11 +121,7 @@ export const sr: GuildedCommand = {
 		if (!isOpen) {
 			// Delete the preemptive message, if it exists
 			const p = await publicPreemptiveResponse;
-			if (p) {
-				await deleteMessage(p);
-			} else {
-				await deleteInvocation();
-			}
+			await (p ? deleteMessage(p) : deleteInvocation());
 
 			return await replyPrivately(
 				`:hammer: ${MENTION_SENDER} ${t("common.queue.not-open", userLocale)}`,

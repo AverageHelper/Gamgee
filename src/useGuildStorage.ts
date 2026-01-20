@@ -105,13 +105,8 @@ export async function setQueueChannel(
 	channel: TextChannel | Snowflake | null,
 	guild: Guild,
 ): Promise<void> {
-	let currentQueue: Snowflake | null;
-
-	if (channel === null || typeof channel === "string") {
-		currentQueue = channel;
-	} else {
-		currentQueue = channel.id;
-	}
+	const currentQueue: Snowflake | null =
+		channel === null || typeof channel === "string" ? channel : channel.id;
 
 	await useRepository("guild", guilds =>
 		guilds.upsert({

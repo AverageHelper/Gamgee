@@ -18,11 +18,10 @@ export type PermissionGenerator = (
 	guild: Guild,
 ) => Array<CommandPermission> | Promise<Array<CommandPermission>>;
 
-interface BaseCommand
-	extends Omit<
-		ChatInputApplicationCommandData,
-		"options" | "type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
-	> {
+interface BaseCommand extends Omit<
+	ChatInputApplicationCommandData,
+	"options" | "type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
+> {
 	readonly aliases?: ReadonlyArray<string>;
 	readonly options?: Readonly<NonEmptyArray<ApplicationCommandOptionData>>;
 	readonly type?: ApplicationCommandType.ChatInput;
@@ -82,11 +81,10 @@ export interface GuildedCommand extends BaseCommand {
  */
 export type Command = GlobalCommand | GuildedCommand;
 
-interface BaseSubcommand
-	extends Omit<
-		ApplicationCommandSubCommandData,
-		"type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
-	> {
+interface BaseSubcommand extends Omit<
+	ApplicationCommandSubCommandData,
+	"type" | "permissions" | "defaultMemberPermissions" | "dmPermission"
+> {
 	readonly type: ApplicationCommandOptionType.Subcommand;
 }
 

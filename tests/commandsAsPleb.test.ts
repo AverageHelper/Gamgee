@@ -19,6 +19,7 @@ describe("Command as pleb", () => {
 
 	beforeEach(async () => {
 		// Cut out the test filepath
+		// eslint-disable-next-line vitest/no-standalone-expect
 		const title = expect.getState().currentTestName?.split(" > ").slice(1).join(" > ");
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 
@@ -68,11 +69,9 @@ describe("Command as pleb", () => {
 						"set up",
 					);
 
-					if (isOpen) {
-						await commandResponseInTestChannel(`${QUEUE_COMMAND} open`);
-					} else {
-						await commandResponseInTestChannel(`${QUEUE_COMMAND} close`);
-					}
+					await (isOpen
+						? commandResponseInTestChannel(`${QUEUE_COMMAND} open`)
+						: commandResponseInTestChannel(`${QUEUE_COMMAND} close`));
 
 					await setIsQueueCreator(false);
 					await setIsQueueAdmin(false);

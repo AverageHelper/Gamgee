@@ -83,8 +83,7 @@ export function useLogger(): Logger {
 			],
 		});
 
-		// eslint-disable-next-line no-constant-condition
-		if (true || nodeEnv !== "test") {
+		if (nodeEnv !== "test") {
 			logger.add(
 				new transports.Console({
 					format: format.cli(),
@@ -100,7 +99,7 @@ export function useLogger(): Logger {
 			hasSetTransportNotices = true;
 
 			for (const xport of [errorFileTransport, combinedFileTransport]) {
-				const level = xport.level !== undefined ? `'${xport.level}'` : "";
+				const level = xport.level === undefined ? "" : `'${xport.level}'`;
 
 				xport.on("new", (newFilename: string) => {
 					logger?.info(`NEW ${level} LOG CREATED AT '${newFilename}'`);

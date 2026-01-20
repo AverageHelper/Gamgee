@@ -3,13 +3,10 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 
 // Mock fetch
-const mockFetch = vi.spyOn(global, "fetch");
+const mockFetch = vi.spyOn(globalThis, "fetch");
 
 // Mock SoundCloud client
-const mockGetSongInfo = vi.fn<
-	[url: string, options?: SongInfoOptions | undefined],
-	Promise<Song>
->();
+const mockGetSongInfo = vi.fn<(url: string, options?: SongInfoOptions) => Promise<Song>>();
 const MockSoundCloudClient = vi.hoisted(
 	() =>
 		class MockSoundCloudClient {
@@ -74,7 +71,7 @@ describe("SoundCloud track details", () => {
 			mockGetSongInfo.mockResolvedValue({
 				url: result,
 				title: "sample",
-				duration: 5_000, // sample
+				duration: 5000, // sample
 			} as unknown as Song);
 
 			const details = await getSoundCloudTrack(new URL(url));

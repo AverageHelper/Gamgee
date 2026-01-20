@@ -63,6 +63,7 @@ async function signIn(): Promise<void> {
 }
 
 // Preemptively start signing in
+// eslint-disable-next-line unicorn/prefer-top-level-await
 const signingIn = signIn();
 
 export async function setupTesterClient(): Promise<void> {

@@ -48,7 +48,7 @@ export async function adminRolePermissions(
 	permission: boolean,
 ): Promise<Array<CommandPermission>> {
 	const knownAdminRoleIDs = await getGuildAdminRoles(guild);
-	return knownAdminRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
+	return knownAdminRoleIDs.filter(Boolean).map(id => rolePermission(id, permission));
 }
 
 /**
@@ -67,7 +67,7 @@ export async function queueAdminRolePermissions(
 	permission: boolean,
 ): Promise<Array<CommandPermission>> {
 	const knownRoleIDs = await getQueueAdminRoles(guild);
-	return knownRoleIDs.filter(id => id).map(id => rolePermission(id, permission));
+	return knownRoleIDs.filter(Boolean).map(id => rolePermission(id, permission));
 }
 
 /**

@@ -53,8 +53,9 @@ describe("Clear queue contents", () => {
 
 		await expect(restart.execute(context)).resolves.toBeUndefined();
 
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith("No queue is set up. Maybe that's what you wanted...?");
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith(
+			"No queue is set up. Maybe that's what you wanted...?",
+		);
 		expect(mockDeleteStoredEntriesForQueue).not.toHaveBeenCalled();
 	});
 
@@ -85,14 +86,12 @@ describe("Clear queue contents", () => {
 
 			// Feedback
 			expect(mockPrepareForLongRunningTasks).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith("The queue has restarted.");
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith("The queue has restarted.");
 
 			// Actions
 			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledOnce();
 			expect(mockDeleteStoredEntriesForQueue).toHaveBeenCalledWith(queueChannel);
-			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledOnce();
-			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledWith(
+			expect(mockBulkDeleteMessagesWithIds).toHaveBeenCalledExactlyOnceWith(
 				queueEntries.map(entry => entry.queueMessageId),
 				queueChannel,
 			);

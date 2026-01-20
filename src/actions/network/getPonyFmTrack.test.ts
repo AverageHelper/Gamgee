@@ -3,7 +3,7 @@ import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expect
 import { VideoError } from "../../errors/VideoError.js";
 
 // Mock fetch
-const mockFetch = vi.spyOn(global, "fetch");
+const mockFetch = vi.spyOn(globalThis, "fetch");
 
 // Import the unit under test
 import { getPonyFmTrack } from "./getPonyFmTrack.js";
@@ -39,13 +39,11 @@ describe("Pony.FM track details", () => {
 	`("returns correct length for $desc of Pony.fm track", async ({ url }: { url: string }) => {
 		const duration = 385;
 		mockFetch.mockResolvedValue(
-			new Response(
-				JSON.stringify({
-					title: "sample",
-					duration: `${duration}`,
-					url: test1,
-				}),
-			),
+			Response.json({
+				title: "sample",
+				duration: `${duration}`,
+				url: test1,
+			}),
 		);
 
 		const details = await getPonyFmTrack(new URL(url));

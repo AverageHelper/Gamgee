@@ -33,16 +33,14 @@ describe("Message replies", () => {
 		test("calls the `send` method of the given user", async () => {
 			const content = "yo";
 			await expect(sendPrivately(user, content)).resolves.toStrictEqual(resultMessage);
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith(content);
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith(content);
 		});
 
 		test("returns `null` if the `send` method of the given user throws", async () => {
 			mockUserSend.mockRejectedValueOnce(new Error("This is a test"));
 			const content = "yo";
 			await expect(sendPrivately(user, content)).resolves.toBeNull();
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith(content);
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith(content);
 		});
 	});
 
@@ -64,8 +62,7 @@ describe("Message replies", () => {
 			await expect(
 				replyPrivately(interaction, content, false, DEFAULT_LOCALE, DEFAULT_LOCALE),
 			).resolves.toBe(true);
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith({ content, ephemeral: true });
 		});
 
 		test("returns false when an ephemeral reply with text fails", async () => {
@@ -74,8 +71,7 @@ describe("Message replies", () => {
 			await expect(
 				replyPrivately(interaction, content, false, DEFAULT_LOCALE, DEFAULT_LOCALE),
 			).resolves.toBe(false);
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith({ content, ephemeral: true });
 		});
 
 		test("sends an ephemeral reply with options", async () => {
@@ -83,8 +79,7 @@ describe("Message replies", () => {
 			await expect(
 				replyPrivately(interaction, { content }, false, DEFAULT_LOCALE, DEFAULT_LOCALE),
 			).resolves.toBe(true);
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith({ content, ephemeral: true });
 		});
 
 		test("returns false when an ephemeral reply with options fails", async () => {
@@ -93,8 +88,7 @@ describe("Message replies", () => {
 			await expect(
 				replyPrivately(interaction, { content }, false, DEFAULT_LOCALE, DEFAULT_LOCALE),
 			).resolves.toBe(false);
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith({ content, ephemeral: true });
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith({ content, ephemeral: true });
 		});
 	});
 
@@ -126,8 +120,7 @@ describe("Message replies", () => {
 			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith(
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith(
 				`(Reply from ${channelMention(message.channel.id)})\n${content}`,
 			);
 		});
@@ -138,8 +131,7 @@ describe("Message replies", () => {
 			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith({
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith({
 				content: `(Reply from ${channelMention(message.channel.id)})\n`,
 			});
 		});
@@ -151,8 +143,7 @@ describe("Message replies", () => {
 			).resolves.toStrictEqual(resultMessage);
 			expect(mockReply).not.toHaveBeenCalled();
 			expect(mockChannelSend).not.toHaveBeenCalled();
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith({
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith({
 				content: `(Reply from ${channelMention(message.channel.id)})\n${content}`,
 			});
 		});
@@ -164,12 +155,12 @@ describe("Message replies", () => {
 				replyPrivately(message, content, true, DEFAULT_LOCALE, DEFAULT_LOCALE),
 			).resolves.toBe(false);
 			expect(mockReply).not.toHaveBeenCalled();
-			expect(mockUserSend).toHaveBeenCalledOnce();
-			expect(mockUserSend).toHaveBeenCalledWith(
+			expect(mockUserSend).toHaveBeenCalledExactlyOnceWith(
 				`(Reply from ${channelMention(message.channel.id)})\n${content}`,
 			);
-			expect(mockChannelSend).toHaveBeenCalledOnce();
-			expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("tried to DM you"));
+			expect(mockChannelSend).toHaveBeenCalledExactlyOnceWith(
+				expect.stringContaining("tried to DM you"),
+			);
 		});
 	});
 });

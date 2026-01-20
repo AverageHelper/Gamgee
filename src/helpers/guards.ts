@@ -1,4 +1,5 @@
 export { default as isFunction } from "lodash-es/isFunction.js";
+import { is, string } from "superstruct";
 
 export function isNonEmptyArray<T>(array: ReadonlyArray<T>): array is NonEmptyArray<T> {
 	return array.length > 0;
@@ -9,5 +10,5 @@ export function isNotNull<T>(tbd: T | null): tbd is T {
 }
 
 export function isString(tbd: unknown): tbd is string {
-	return tbd !== null && (typeof tbd === "string" || tbd instanceof String);
+	return is(tbd, string());
 }

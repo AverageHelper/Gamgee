@@ -4,7 +4,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, test, vi, afterEach 
 import { expectDefined, expectValueEqual } from "../../../tests/testUtils/expectations.js";
 import { InvalidYouTubeUrlError, UnavailableError } from "../../errors/index.js";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
+import { setupServer } from "msw/node"; // eslint-disable-line import/extensions
 import { Temporal } from "temporal-polyfill";
 import type { YoutubeDataApiResponse } from "./youtubeMethods/getYouTubeVideoViaApi.js";
 
@@ -94,7 +94,6 @@ const restHandlers = [
 				break;
 			}
 
-			case "9Y8ZGLiqXBK":
 			default: {
 				hasVideo = false;
 				break;

@@ -38,9 +38,7 @@ describe("Language Statistics from our git forge", () => {
 		const repo = "Gamgee";
 
 		await expect(languages.execute(context)).resolves.toBeUndefined();
-		expect(mockForgeLanguages).toHaveBeenCalledOnce();
-		expect(mockForgeLanguages).toHaveBeenCalledWith({ owner, repo });
-
+		expect(mockForgeLanguages).toHaveBeenCalledExactlyOnceWith({ owner, repo });
 		expect(mockReply).toHaveBeenCalled();
 		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining("languages"));
 	});

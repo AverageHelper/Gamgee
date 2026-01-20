@@ -79,16 +79,9 @@ describe("Video details", () => {
 		const signal = expect.any(AbortSignal) as AbortSignal;
 
 		await expect(getVideoDetails(dirtyUrl, null)).resolves.toMatchObject({ url: validUrl });
-		expect(mockGetBandcampTrack).toHaveBeenCalledOnce();
-		expect(mockGetBandcampTrack).toHaveBeenCalledWith(cleanUrl, signal);
-
-		expect(mockGetPonyFmTrack).toHaveBeenCalledOnce();
-		expect(mockGetPonyFmTrack).toHaveBeenCalledWith(cleanUrl, signal);
-
-		expect(mockGetSoundCloudTrack).toHaveBeenCalledOnce();
-		expect(mockGetSoundCloudTrack).toHaveBeenCalledWith(cleanUrl, signal);
-
-		expect(mockGetYouTubeVideo).toHaveBeenCalledOnce();
-		expect(mockGetYouTubeVideo).toHaveBeenCalledWith(cleanUrl, signal);
+		expect(mockGetBandcampTrack).toHaveBeenCalledExactlyOnceWith(cleanUrl, signal);
+		expect(mockGetPonyFmTrack).toHaveBeenCalledExactlyOnceWith(cleanUrl, signal);
+		expect(mockGetSoundCloudTrack).toHaveBeenCalledExactlyOnceWith(cleanUrl, signal);
+		expect(mockGetYouTubeVideo).toHaveBeenCalledExactlyOnceWith(cleanUrl, signal);
 	});
 });

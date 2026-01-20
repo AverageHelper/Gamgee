@@ -59,11 +59,8 @@ describe("Close the Queue", () => {
 		mockIsQueueOpen.mockResolvedValue(true);
 		await expect(close.execute(context)).resolves.toBeUndefined();
 		expect(mockIsQueueOpen).toHaveBeenCalledOnce();
-		expect(mockSetQueueOpen).toHaveBeenCalledOnce();
-		expect(mockSetQueueOpen).toHaveBeenCalledWith(false, context.guild);
-		expect(mockChannelSend).toHaveBeenCalledOnce();
-
-		expect(mockChannelSend).toHaveBeenCalledWith(expect.stringContaining("is closed"));
+		expect(mockSetQueueOpen).toHaveBeenCalledExactlyOnceWith(false, context.guild);
+		expect(mockChannelSend).toHaveBeenCalledExactlyOnceWith(expect.stringContaining("is closed"));
 		expect(mockFollowUp).toHaveBeenCalledWith(
 			expect.objectContaining({
 				content: expect.stringContaining("now closed") as string,

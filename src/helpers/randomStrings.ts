@@ -74,11 +74,7 @@ export async function unwrappingWith(
 	} else if (isMultipleResponse(response)) {
 		// It's an array
 		for (const resp of response) {
-			if (typeof resp === "string") {
-				await handler(resp);
-			} else {
-				await handler(resp(context));
-			}
+			await (typeof resp === "string" ? handler(resp) : handler(resp(context)));
 			if (response.length > 1) {
 				// If more than one, wait a second between each
 				await new Promise(resolve => setTimeout(resolve, pauseTime));

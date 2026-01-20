@@ -47,19 +47,16 @@ export async function suppressEmbedsForMessage(
 		}
 
 		// We sent this, so we can edit its content directly.
-		let options: MessageEditOptions;
-		if (suppress) {
-			options = {
-				flags: ["SuppressEmbeds"],
-				content: escapeUriInString(message.content),
-				allowedMentions: { users: [] },
-			};
-		} else {
-			options = {
-				flags: [],
-				content: stopEscapingUriInString(message.content),
-			};
-		}
+		const options: MessageEditOptions = suppress
+			? {
+					flags: ["SuppressEmbeds"],
+					content: escapeUriInString(message.content),
+					allowedMentions: { users: [] },
+				}
+			: {
+					flags: [],
+					content: stopEscapingUriInString(message.content),
+				};
 		await editMessage(message, options);
 	} catch (error) {
 		logger.error(richErrorMessage("Cannot suppress message embeds.", error));
@@ -77,7 +74,7 @@ export function stopEscapingUriInString(content: string): string {
 
 	let freed = content.slice(0);
 
-	for (const range of uris.reverse()) {
+	for (const range of uris.toReversed()) {
 		// Remove tails
 		if (freed[range.end] === ">") {
 			freed = freed.slice(0, range.end) + freed.slice(range.end + 1);
@@ -138,10 +135,10 @@ export function positionsOfUriInText(str: string): NonEmptyArray<Range> | null {
 			start: match.index,
 			end: match.index + (match[0]?.length ?? 0),
 		};
-		if (!results) {
-			results = [range];
-		} else {
+		if (results) {
 			results.push(range);
+		} else {
+			results = [range];
 		}
 	}
 

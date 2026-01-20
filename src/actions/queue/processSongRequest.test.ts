@@ -151,9 +151,9 @@ describe("Song request pipeline", () => {
 		});
 
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
-
-		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith((context as MessageCommandContext).message);
+		expect(mockDeleteMessage).toHaveBeenCalledExactlyOnceWith(
+			(context as MessageCommandContext).message,
+		);
 	});
 
 	test("(interaction) rejects the request if the entry is longer than the queue's configured max entry length", async () => {
@@ -180,9 +180,9 @@ describe("Song request pipeline", () => {
 			publicPreemptiveResponse: Promise.resolve({ id: "a-message" } as unknown as Message),
 		};
 		await expect(processSongRequest(request)).resolves.toBeUndefined();
-
-		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith(await request.publicPreemptiveResponse);
+		expect(mockDeleteMessage).toHaveBeenCalledExactlyOnceWith(
+			await request.publicPreemptiveResponse,
+		);
 	});
 
 	test("closes the queue automatically just as entries exceed queue-length limits", async () => {
@@ -231,8 +231,7 @@ describe("Song request pipeline", () => {
 
 		// expect the queue close command to have been fired, and only 3 entries pushed
 		expect(mockPushEntryToQueue).toHaveBeenCalledTimes(3); // 3 successful pushes
-		expect(mockSetQueueOpen).toHaveBeenCalledOnce(); // 1 queue closure
-		expect(mockSetQueueOpen).toHaveBeenCalledWith(false, request.queueChannel.guild);
+		expect(mockSetQueueOpen).toHaveBeenCalledExactlyOnceWith(false, request.queueChannel.guild); // 1 queue closure
 		expect(mockReplyPrivately).toHaveBeenCalledTimes(2); // 2 rejections
 	});
 });

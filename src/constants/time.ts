@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/numeric-separators-style */
+
 export const SECONDS_IN_HOUR = 3_600;
 export const SECONDS_IN_MINUTE = 60;
 

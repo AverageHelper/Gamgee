@@ -49,7 +49,7 @@ export const setPrefix: Command = {
 
 		const { help } = await import("./help.js");
 		const helpCommandName: string = help.nameLocalizations
-			? help.nameLocalizations[locale] ?? help.name
+			? (help.nameLocalizations[locale] ?? help.name)
 			: help.name;
 
 		return await reply({

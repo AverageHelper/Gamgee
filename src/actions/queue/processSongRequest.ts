@@ -195,7 +195,7 @@ export async function processSongRequest(request: SongRequest): Promise<void> {
 		const cooldown = config.cooldownSeconds;
 		const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
 		const timeSinceLatest =
-			latestTimestamp !== null ? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND : null;
+			latestTimestamp === null ? null : (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND;
 		if (timeSinceLatest === null) {
 			logger.verbose(
 				`This is the first song request that I've seen from user ${logUser(sender)} tonight.`,

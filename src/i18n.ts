@@ -60,6 +60,7 @@ type MessageSchema = (typeof vocabulary)[typeof DEFAULT_LOCALE];
 
 // ** I18N Utilities **
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface RecursiveStringRecord extends Record<string, string | RecursiveStringRecord> {}
 
 // for testing i18n over generic vocabularies
@@ -220,12 +221,8 @@ export function ti<K extends string>(
 	const partial = createPartialString();
 
 	for (const item of items) {
-		let str: string;
-		if (item.isVar) {
-			str = values[item.name] ?? `{${item.name}}`; // default to the raw variable name
-		} else {
-			str = item.text;
-		}
+		// default to the raw variable name
+		const str: string = item.isVar ? (values[item.name] ?? `{${item.name}}`) : item.text;
 		push(str, partial);
 	}
 
@@ -261,47 +258,3 @@ export function localizations<K extends string>(
 	if (Object.keys(result).length === 0) return undefined;
 	return result;
 }
-
-// For science:
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// const enUS = vocabulary["en-US"];
-
-/*
-import type { Join } from "type-fest";
-
-// We start with this at dev time, typing into a function:
-const given = "commands.sr.name";
-
-// Goal: Confirm that a given string makes up a valid key-path in a given object.
-
-// Split given by DOT:
-const p: ["commands", "sr", "name"] = split(given, DOT);
-
-// const testBad: string = get(enUS, "commands.sr."); // Error
-const testGood: string = get(enUS, "commands.sr.name");
-const testAlsoBad: string = get(enUS, ["commands", "sr"]);
-const testAlsoGood: string = get(enUS, p);
-
-// If we can split `given` by a DOT "." we get these values:
-const p0: "commands" = p[0];
-const p1: "sr" = p[1];
-const p2: "name" = p[2];
-
-// We can recombine segments with this:
-type Path<L extends string, R extends string, Sep extends string = typeof DOT> = Join<[L, R], Sep>;
-
-const partial: Path<typeof p0, typeof p1> = `${p0}.${p1}`;
-
-// these values are equivalent to `given`:
-const path: Path<Path<typeof p0, typeof p1>, typeof p2> = given;
-const alsoPath: Join<typeof p, typeof DOT> = given;
-
-const commands: MessageSchema[typeof p0] = vocabulary["en-US"][p0];
-const sr: MessageSchema[typeof p0][typeof p1] = vocabulary["en-US"][p0][p1];
-const name: MessageSchema[typeof p0][typeof p1][typeof p2] = t(given, "en-US");
-
-type IsKeyPath<O, K extends string> = Get<O, K> extends string ? true : false;
-
-const good: IsKeyPath<MessageSchema, typeof given> = true;
-const bad: IsKeyPath<MessageSchema, "typeof given"> = false;
-*/

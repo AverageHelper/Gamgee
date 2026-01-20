@@ -117,11 +117,8 @@ describe("Request Queue", () => {
 	test("deletes a queue entry based on a message", async () => {
 		message.id = queueMessageId;
 		await expect(deleteEntryFromMessage(message)).resolves.toBe(entry);
-
-		expect(mockDeleteStoredEntry).toHaveBeenCalledOnce();
-		expect(mockDeleteStoredEntry).toHaveBeenCalledWith(message.id);
-		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith(message);
+		expect(mockDeleteStoredEntry).toHaveBeenCalledExactlyOnceWith(message.id);
+		expect(mockDeleteMessage).toHaveBeenCalledExactlyOnceWith(message);
 	});
 
 	const request: UnsentQueueEntry = {
@@ -138,8 +135,7 @@ describe("Request Queue", () => {
 
 		await flushPromises();
 
-		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledOnce();
-		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledWith(
+		expect(mockSaveNewEntryToDatabase).toHaveBeenCalledExactlyOnceWith(
 			{
 				...request,
 				isDone: false,
@@ -149,7 +145,6 @@ describe("Request Queue", () => {
 			},
 			queueChannel,
 		);
-
 		expect(mockDeleteStoredEntry).not.toHaveBeenCalled();
 	});
 });

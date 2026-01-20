@@ -9,7 +9,7 @@ export function richErrorMessage(preamble: string, error: unknown): string {
 		if (error instanceof AggregateError) {
 			// Describe sub-errors
 			push(`${error.name}: ${error.message}`, messageBuilder);
-			error.errors.forEach((err: unknown, index) => {
+			for (const [index, err] of error.errors.entries()) {
 				pushNewLine(messageBuilder);
 				push(`${index + 1}: `, messageBuilder);
 				if (isError(err)) {
@@ -25,7 +25,7 @@ export function richErrorMessage(preamble: string, error: unknown): string {
 					push(`${typeof err}: `, messageBuilder);
 					push(JSON.stringify(err, undefined, 2), messageBuilder);
 				}
-			});
+			}
 		} else {
 			// Describe the error and its code
 			if (error.code !== undefined) {

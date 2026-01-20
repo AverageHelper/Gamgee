@@ -46,8 +46,7 @@ describe("Option Resolver", () => {
 			option.value = channelMention(channelId);
 			resolveChannelFromOption(option, guild);
 
-			expect(mockResolveChannel).toHaveBeenCalledOnce();
-			expect(mockResolveChannel).toHaveBeenCalledWith(channelId);
+			expect(mockResolveChannel).toHaveBeenCalledExactlyOnceWith(channelId);
 		});
 
 		test("resolves a channel from a string value", () => {

@@ -35,12 +35,12 @@ import { useLogger } from "../logger.js";
 
 const logger = useLogger();
 
-export const SHRUGGIE = "¯\\_(ツ)_/¯"; // The `Faces.Shrug` constant from discord.js has incorrect escapes
+export const SHRUGGIE = String.raw`¯\_(ツ)_/¯`; // The `Faces.Shrug` constant from discord.js has incorrect escapes
 
 // NOTE: disabling ESLint here because we don't need
 // to have `: void` declarations sprinkled in the
 // middle of so many blocks:
-/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 /**
  * Said in response to messages whose only content is a mention to the bot
@@ -129,7 +129,7 @@ export const phrases: ResponseRepository = [
 	() =>
 		`${
 			t(`languages.${randomSupportedLocale()}`, DEFAULT_LOCALE) // "German", "English, UK", etc.
-				.replace(/\W+/giu, " ") // "English, UK" ~> "English UK"
+				.replaceAll(/\W+/giu, " ") // "English, UK" ~> "English UK"
 				.split(" ")[0] ?? "That language" // "English UK" ~> "English"
 		} is hard, but it can be learned through tough thorough thought, though.`,
 
@@ -311,7 +311,7 @@ export const phrases: ResponseRepository = [
 	"Google Translate is fun, I used it and it's really good! I remember the day I did this, I practically translated my post into other languages and then back to English when I translated, my post was different, but the context was the same and it still made sense!",
 	"Great, but you might need to think about what you're asking me because it's getting annoying",
 	"haha automated message go brrrrrrr",
-	"\\*happy robot noises\\*",
+	String.raw`\*happy robot noises\*`,
 	"Have you ever tried speaking only in memes? I once knew a guy who could do it, but they were all inside jokes so I didn't have a clue what he was talking about!",
 	({ otherMember: m, otherUser: u }) =>
 		`Hey, I know you! You're ${m?.nickname ?? u.username}, right?`,
@@ -402,7 +402,6 @@ export const phrases: ResponseRepository = [
 	"That question will be answered _this Sunday night,_ when _John Cena_ defends the belt at WWE Super Slam.",
 	"That rhymes, so it must be true!",
 	"That's par for the course",
-	// eslint-disable-next-line deprecation/deprecation
 	({ me }) => `That was close… I was almost ${indefiniteArticle(me)} ${firstWord(me)} sandwich!`,
 	["The queue is now open! :tada:\n...\n||just kidding||", "", "... Did I get you?"],
 	"They told me not to keep saying random stuff. BUT I DIDN'T LISTEN!",
@@ -410,7 +409,7 @@ export const phrases: ResponseRepository = [
 	"(This message will be in a separate message)",
 	"This message was written in 4K Ultra HD:tm:",
 	"This reminds me of the time when I tried to drink some water to maybe act like other people, and I wish I never did.",
-	"\\*thoughtful phrase\\*",
+	String.raw`\*thoughtful phrase\*`,
 	() => `To talk to a customer, please press ${code(randomInt(9))}`,
 	"Today is the tomorrow you were promised yesterday",
 	"Today's been a long week.",
@@ -429,12 +428,12 @@ export const phrases: ResponseRepository = [
 	"yesn't",
 	["yggrfygiryigrehirehjirgejhigeuijgejirhg", "Whoops! Sorry, I dropped my keyboard :sweat_smile:"],
 	"You passed the vibe check... I think... maybe?",
-	["Your call is very important to me. Please hold...", "_ _", "\\*hangs up\\*"],
+	["Your call is very important to me. Please hold...", "_ _", String.raw`\*hangs up\*`],
 	"Your free trial has expired. Would you like to purchase WinRAR?",
 	({ otherMember: m, otherUser: u }) =>
 		`${m?.nickname ?? u.username} ALWAYS submits my favorite songs! (and I'm not just saying that)`,
 	":3",
-	"\\>:3",
+	String.raw`\>:3`,
 	code("00101010 01100010 01101100 01100101 01110000 00101010"), // *blep*
 	code("01100110 01101100 01101111 01101111 01100110"), // floof
 	code(

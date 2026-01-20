@@ -45,39 +45,34 @@ export const limits: Command = {
 			let value: string;
 			switch (key.value) {
 				case "cooldown":
-					if (config.cooldownSeconds !== null && config.cooldownSeconds > 0) {
-						value = durationString(locale, config.cooldownSeconds);
-					} else {
-						value = t("commands.limits.responses.none", locale);
-					}
+					value =
+						config.cooldownSeconds !== null && config.cooldownSeconds > 0
+							? durationString(locale, config.cooldownSeconds)
+							: t("commands.limits.responses.none", locale);
 					break;
 				case "entry-duration-max":
-					if (config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0) {
-						value = durationString(locale, config.entryDurationMaxSeconds);
-					} else {
-						value = t("commands.limits.responses.infinite", locale);
-					}
+					value =
+						config.entryDurationMaxSeconds !== null && config.entryDurationMaxSeconds > 0
+							? durationString(locale, config.entryDurationMaxSeconds)
+							: t("commands.limits.responses.infinite", locale);
 					break;
 				case "entry-duration-min":
-					if (config.entryDurationMinSeconds !== null && config.entryDurationMinSeconds > 0) {
-						value = durationString(locale, config.entryDurationMinSeconds);
-					} else {
-						value = "0";
-					}
+					value =
+						config.entryDurationMinSeconds !== null && config.entryDurationMinSeconds > 0
+							? durationString(locale, config.entryDurationMinSeconds)
+							: "0";
 					break;
 				case "queue-duration":
-					if (config.queueDurationSeconds !== null && config.queueDurationSeconds > 0) {
-						value = durationString(locale, config.queueDurationSeconds);
-					} else {
-						value = t("commands.limits.responses.infinite", locale);
-					}
+					value =
+						config.queueDurationSeconds !== null && config.queueDurationSeconds > 0
+							? durationString(locale, config.queueDurationSeconds)
+							: t("commands.limits.responses.infinite", locale);
 					break;
 				case "count":
-					if (config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0) {
-						value = `${config.submissionMaxQuantity}`;
-					} else {
-						value = t("commands.limits.responses.infinite", locale);
-					}
+					value =
+						config.submissionMaxQuantity !== null && config.submissionMaxQuantity > 0
+							? `${config.submissionMaxQuantity}`
+							: t("commands.limits.responses.infinite", locale);
 					break;
 				default:
 					assertUnreachable(key.value);

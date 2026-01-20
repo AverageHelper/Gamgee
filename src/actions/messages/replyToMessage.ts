@@ -103,7 +103,7 @@ async function sendDMReply(
 			});
 		} else if (!user.bot) {
 			logger.silly("This is a human. Or their dog... I love dogs!");
-			const content = typeof options !== "string" ? options.content ?? null : options;
+			const content = typeof options === "string" ? options : (options.content ?? null);
 			const response = replyMessage(source.channel, content, locale);
 			if (typeof options === "string") {
 				return await sendDM(user, response);
@@ -128,11 +128,9 @@ async function sendEphemeralReply(
 ): Promise<boolean> {
 	// Returns boolean and not message, because we cannot fetch ephemeral messages
 	try {
-		if (typeof options === "string") {
-			await source.reply({ content: options, ephemeral: true });
-		} else {
-			await source.reply({ ...options, ephemeral: true });
-		}
+		await (typeof options === "string"
+			? source.reply({ content: options, ephemeral: true })
+			: source.reply({ ...options, ephemeral: true }));
 		logger.verbose(
 			`Sent ephemeral reply to User ${logUser(source.user)}: ${JSON.stringify(options)}`,
 		);
@@ -172,14 +170,12 @@ export async function replyPrivately(
 
 		// If this is an interaction, but we really wanna use DMs
 	} else if (preferDMs) {
-		if (typeof options === "string") {
-			message = await sendDM(source.user, replyMessage(source.channel, options, userLocale));
-		} else {
-			message = await sendDM(source.user, {
-				...options,
-				content: replyMessage(source.channel, options.content, userLocale),
-			});
-		}
+		message = await (typeof options === "string"
+			? sendDM(source.user, replyMessage(source.channel, options, userLocale))
+			: sendDM(source.user, {
+					...options,
+					content: replyMessage(source.channel, options.content, userLocale),
+				}));
 
 		// If this is an interaction, reply ephemerally
 	} else {

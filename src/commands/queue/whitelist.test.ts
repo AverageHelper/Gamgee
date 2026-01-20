@@ -63,8 +63,7 @@ describe("Removing from Queue Blacklist", () => {
 		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith({
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith({
 			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true,
 		});
@@ -74,8 +73,7 @@ describe("Removing from Queue Blacklist", () => {
 		context = { ...context, options: [] };
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith({
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith({
 			content: expect.stringContaining("mention someone") as string,
 			ephemeral: true,
 		});
@@ -86,8 +84,7 @@ describe("Removing from Queue Blacklist", () => {
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		expect(mockRemoveUserFromStoredBlacklist).not.toHaveBeenCalled();
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith({
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith({
 			content: expect.stringContaining("whitelist yourself") as string,
 			ephemeral: true,
 		});
@@ -111,17 +108,17 @@ describe("Removing from Queue Blacklist", () => {
 		await expect(whitelist.execute(context)).resolves.toBeUndefined();
 
 		// whitelist effect
-		expect(mockRemoveUserFromStoredBlacklist).toHaveBeenCalledOnce();
-		expect(mockRemoveUserFromStoredBlacklist).toHaveBeenCalledWith(goodUserId, queueChannel);
+		expect(mockRemoveUserFromStoredBlacklist).toHaveBeenCalledExactlyOnceWith(
+			goodUserId,
+			queueChannel,
+		);
 
 		// response
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith({
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith({
 			content: expect.stringContaining(goodUserId) as string,
 			shouldMention: false,
 			ephemeral: true,
 		});
-		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockDeleteMessage).toHaveBeenCalledWith();
+		expect(mockDeleteMessage).toHaveBeenCalledExactlyOnceWith();
 	});
 });

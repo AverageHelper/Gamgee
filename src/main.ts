@@ -47,9 +47,9 @@ export async function _main(logger = useLogger()): Promise<void> {
 	}
 }
 
-/* istanbul ignore next */
-// Not Constantinople
+/* v8 ignore next */
 if (getEnv("NODE_ENV") !== "test") {
 	// Vitest will never hit this without hax:
+	// eslint-disable-next-line unicorn/prefer-top-level-await
 	void _main();
 }

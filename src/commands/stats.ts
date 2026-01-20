@@ -91,9 +91,9 @@ export const stats: Command = {
 		if (userCanSubmitAgainLater && isOpen) {
 			const latestTimestamp = latestSubmission?.sentAt.getTime() ?? null;
 			const timeSinceLatest =
-				latestTimestamp !== null //
-					? (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND
-					: null;
+				latestTimestamp === null //
+					? null
+					: (Date.now() - latestTimestamp) / MILLISECONDS_IN_SECOND;
 			const timeToWait =
 				config.cooldownSeconds !== null && //
 				config.cooldownSeconds > 0 &&
@@ -109,10 +109,8 @@ export const stats: Command = {
 			// TODO: ETA to user's next submission would be nice here
 		}
 
-		if ((embed.data.fields ?? []).length > 0) {
-			await replyPrivately({ embeds: [embed] });
-		} else {
-			await replyPrivately(t("commands.stats.responses.queue-empty", userLocale));
-		}
+		await ((embed.data.fields ?? []).length > 0
+			? replyPrivately({ embeds: [embed] })
+			: replyPrivately(t("commands.stats.responses.queue-empty", userLocale)));
 	},
 };

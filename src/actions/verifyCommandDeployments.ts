@@ -35,7 +35,7 @@ export async function verifyCommandDeployments(
 				);
 				break;
 			default:
-				/* istanbul ignore next */
+				/* v8 ignore next */
 				assertUnreachable(issue);
 		}
 	}
@@ -59,7 +59,7 @@ export async function verifyCommandDeployments(
 				);
 				break;
 			default:
-				/* istanbul ignore next */
+				/* v8 ignore next */
 				assertUnreachable(issue);
 		}
 	}
@@ -81,7 +81,7 @@ async function diffGuildCommandDeployments(
 	const expectedCommandNames = Array.from(allCommands.values())
 		.filter(c => c.requiresGuild)
 		.map(c => c.name)
-		.sort(sortAlphabetically);
+		.toSorted(sortAlphabetically);
 
 	for (const guild of guilds) {
 		const guildCommands = await guild.commands.fetch();
@@ -95,7 +95,7 @@ async function diffGuildCommandDeployments(
 
 		const actualCommandNames = Array.from(guildCommands.values())
 			.map(c => c.name)
-			.sort(sortAlphabetically);
+			.toSorted(sortAlphabetically);
 
 		const diff = diffArrays(expectedCommandNames, actualCommandNames);
 		if (diff) return { ...diff, guild };
@@ -108,7 +108,7 @@ async function diffGlobalCommandDeployments(client: Client<true>): Promise<Diff 
 	const expectedCommandNames = Array.from(allCommands.values())
 		.filter(c => !c.requiresGuild)
 		.map(c => c.name)
-		.sort(sortAlphabetically);
+		.toSorted(sortAlphabetically);
 
 	const actualCommands = await client.application.commands.fetch();
 	for (const command of actualCommands.values()) {
@@ -120,7 +120,7 @@ async function diffGlobalCommandDeployments(client: Client<true>): Promise<Diff 
 
 	const actualCommandNames = actualCommands //
 		.map(c => c.name)
-		.sort(sortAlphabetically);
+		.toSorted(sortAlphabetically);
 
 	return diffArrays(expectedCommandNames, actualCommandNames);
 }
@@ -161,7 +161,7 @@ function sortAlphabetically(a: string, b: string): number {
 	return a.localeCompare(b);
 }
 
-/* istanbul ignore next */
+/* v8 ignore next */
 function assertUnreachable(value: never): never {
 	throw new EvalError(`Unreachable case: ${JSON.stringify(value)}`);
 }

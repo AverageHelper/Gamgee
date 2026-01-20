@@ -16,7 +16,7 @@ export const howto: GuildedCommand = {
 		const { nowPlaying } = await import("./nowPlaying.js");
 
 		const srCommandName: string = sr.nameLocalizations
-			? sr.nameLocalizations[guildLocale] ?? sr.name
+			? (sr.nameLocalizations[guildLocale] ?? sr.name)
 			: sr.name;
 
 		// Print the standard help

@@ -28,8 +28,7 @@ describe.each(locales)("How-to command in %s", guildLocale => {
 
 	test("informs the user how to run queue commands (message)", async () => {
 		await howto.execute(context);
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 		const calls = mockReply.mock.calls[0] as Array<unknown>;
 		const description = calls[0];
@@ -39,8 +38,7 @@ describe.each(locales)("How-to command in %s", guildLocale => {
 	test("informs the user how to run queue commands (interaction)", async () => {
 		context = { ...context, type: "interaction" } as unknown as GuildedCommandContext;
 		await howto.execute(context);
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 		const calls = mockReply.mock.calls[0] as Array<unknown>;
 		const description = calls[0];

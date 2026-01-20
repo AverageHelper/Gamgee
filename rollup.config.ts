@@ -14,15 +14,15 @@ const HOME = process.env["HOME"];
 export default defineConfig({
 	plugins: [
 		// Prisma injects the home directory. Remove that:
-		HOME !== undefined
-			? replace({
+		HOME === undefined
+			? null
+			: replace({
 					values: {
 						[HOME]: "~",
 					},
 					delimiters: ["", ""],
 					preventAssignment: true,
-				})
-			: null,
+				}),
 
 		// Transpile source
 		esbuild({

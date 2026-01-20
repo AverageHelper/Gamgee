@@ -167,8 +167,7 @@ describe("Song request via URL", () => {
 			} as unknown as GuildedCommandContext;
 
 			await songRequest.execute(context);
-			expect(mockReply).toHaveBeenCalledOnce();
-			expect(mockReply).toHaveBeenCalledWith(expect.stringContaining(""));
+			expect(mockReply).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 			const calls = mockReply.mock.calls[0] as Array<unknown>;
 			const description = calls[0];
@@ -238,27 +237,27 @@ describe("Song request via URL", () => {
 		await new Promise(resolve => setTimeout(resolve, 500));
 
 		// queue.push should only have been called on the first URL
-		expect(mockQueuePush).toHaveBeenCalledOnce();
-		expect(mockQueuePush).toHaveBeenCalledWith(
+		expect(mockQueuePush).toHaveBeenCalledExactlyOnceWith(
 			expect.objectContaining({ url: urls[0].href }),
 			queueChannel,
 		);
 
 		// The submission should have been rejected with a cooldown warning via DMs
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("must wait") as string);
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
+			expect.stringContaining("must wait") as string,
+		);
 	});
 
 	test("submissions enter the queue in order", async () => {
 		const mockMessages: Array<Message> = [];
-		urls.forEach((url, i) => {
+		for (const [i, url] of urls.entries()) {
 			const userId = `user-${i + 1}`;
 			const message = mockMessage(userId, `?sr ${url.href}`);
 			mockMessages.push(message);
-		});
+		}
 
-		await Promise.all([
+		await Promise.all(
 			mockMessages
 				.map(message => {
 					return {
@@ -284,14 +283,14 @@ describe("Song request via URL", () => {
 						followUp: mockFollowUp,
 					} as unknown as GuildedCommandContext;
 				})
-				.map(songRequest.execute),
-		]);
+				.map(async ctx => await songRequest.execute(ctx)),
+		);
 
 		// Wait for handles to close
 		await new Promise(resolve => setTimeout(resolve, 500));
 
 		// queue.push should have been called on each URL
-		urls.forEach((url, i) => {
+		for (const [i, url] of urls.entries()) {
 			expect(mockQueuePush).toHaveBeenNthCalledWith(
 				i + 1,
 				expect.objectContaining({
@@ -300,7 +299,7 @@ describe("Song request via URL", () => {
 				}),
 				queueChannel,
 			);
-		});
+		}
 		expect(mockQueuePush).toHaveBeenCalledTimes(10);
 	});
 });

@@ -50,19 +50,14 @@ export async function handleInteraction(
 			)}`,
 		);
 
-		let member: GuildMember | null;
-		if (interaction.inCachedGuild()) {
-			member = interaction.member;
-		} else {
-			member = (await interaction.guild?.members.fetch(interaction.user)) ?? null;
-		}
+		const member: GuildMember | null = interaction.inCachedGuild()
+			? interaction.member
+			: ((await interaction.guild?.members.fetch(interaction.user)) ?? null);
 
-		let channel: GuildTextBasedChannel | DMChannel | null;
-		if (interaction.channel?.type === ChannelType.DM && interaction.channel.partial) {
-			channel = await interaction.channel.fetch();
-		} else {
-			channel = interaction.channel;
-		}
+		const channel: GuildTextBasedChannel | DMChannel | null =
+			interaction.channel?.type === ChannelType.DM && interaction.channel.partial
+				? await interaction.channel.fetch()
+				: interaction.channel;
 
 		// TODO: Let the user specify a userspace locale override outside of their Discord client preference. `/prefs` command maybe?
 
@@ -110,11 +105,9 @@ export async function handleInteraction(
 				}
 				if (interaction.deferred && !viaDM) {
 					try {
-						if (typeof options === "string") {
-							await interaction.followUp({ ephemeral: true, content: options });
-						} else {
-							await interaction.followUp({ ...options, ephemeral: true });
-						}
+						await (typeof options === "string"
+							? interaction.followUp({ ephemeral: true, content: options })
+							: interaction.followUp({ ...options, ephemeral: true }));
 					} catch (error) {
 						logger.error(richErrorMessage("Failed to follow up on interaction.", error));
 					}
@@ -167,8 +160,7 @@ export async function handleInteraction(
 				if (
 					typeof options !== "string" &&
 					(!("reply" in options) || options.reply === false || options.reply === undefined) &&
-					interaction.channel &&
-					interaction.channel.isTextBased()
+					interaction.channel?.isTextBased()
 				) {
 					return (
 						(await sendMessageInChannel(interaction.channel, { ...options, reply: undefined })) ??

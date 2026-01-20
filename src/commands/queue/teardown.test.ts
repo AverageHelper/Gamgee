@@ -29,10 +29,7 @@ describe("Queue teardown", () => {
 
 	test("unsets the guild queue", async () => {
 		await expect(teardown.execute(context)).resolves.toBeUndefined();
-
-		expect(mockReply).toHaveBeenCalledOnce();
-		expect(mockReply).toHaveBeenCalledWith("Queue deleted.");
-		expect(mockSetQueueChannel).toHaveBeenCalledOnce();
-		expect(mockSetQueueChannel).toHaveBeenCalledWith(null, context.guild);
+		expect(mockReply).toHaveBeenCalledExactlyOnceWith("Queue deleted.");
+		expect(mockSetQueueChannel).toHaveBeenCalledExactlyOnceWith(null, context.guild);
 	});
 });

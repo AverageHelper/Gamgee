@@ -98,8 +98,7 @@ export async function queryFromMessage(
 	if (content.startsWith(SLASH_COMMAND_INTENT_PREFIX)) {
 		// get rid of the slash
 		query[0] = query[0]?.slice(SLASH_COMMAND_INTENT_PREFIX.length) ?? "";
-		query.forEach(s => s.trim());
-		return { query, invocationMethod: "slash" };
+		return { query: query.map(s => s.trim()), invocationMethod: "slash" };
 	}
 
 	// See if it's a message-command intent
@@ -107,8 +106,7 @@ export async function queryFromMessage(
 	if (content.startsWith(commandPrefix)) {
 		// get rid of the prefix
 		query[0] = query[0]?.slice(commandPrefix.length) ?? "";
-		query.forEach(s => s.trim());
-		return { query, invocationMethod: "prefix" };
+		return { query: query.map(s => s.trim()), invocationMethod: "prefix" };
 	}
 
 	// It's not for me.
@@ -198,16 +196,13 @@ export function optionsFromArgs(
 
 /** Resolves guild member information for the bot and for the user who invoked the interaction. */
 async function responseContext(message: Message): Promise<ResponseContext> {
-	let me: string;
 	const otherUser = message.author;
 	const otherMember = (await message.guild?.members.fetch(otherUser)) ?? null;
 
 	const client = message.client;
-	if (client.isReady()) {
-		me = (await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username;
-	} else {
-		me = "Me";
-	}
+	const me: string = client.isReady()
+		? ((await message.guild?.members.fetch(client.user.id))?.nickname ?? client.user.username)
+		: "Me";
 
 	return { me, otherUser, otherMember };
 }
@@ -297,12 +292,10 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 			)}`,
 		);
 
-		let channel: GuildTextBasedChannel | DMChannel;
-		if (message.channel?.type === ChannelType.DM && message.channel.partial) {
-			channel = await message.channel.fetch();
-		} else {
-			channel = message.channel;
-		}
+		const channel: GuildTextBasedChannel | DMChannel =
+			message.channel?.type === ChannelType.DM && message.channel.partial
+				? await message.channel.fetch()
+				: message.channel;
 
 		const context: CommandContext = {
 			type: "message",
@@ -334,11 +327,9 @@ export async function handleCommand(message: Message, logger: Logger): Promise<v
 				}
 			},
 			reply: async options => {
-				if (typeof options === "string" || !("shouldMention" in options)) {
-					await _reply(message, options);
-				} else {
-					await _reply(message, options, options?.shouldMention);
-				}
+				await (typeof options === "string" || !("shouldMention" in options)
+					? _reply(message, options)
+					: _reply(message, options, options?.shouldMention));
 			},
 			followUp: async options => {
 				if (typeof options !== "string" && "ephemeral" in options && options.ephemeral === true) {

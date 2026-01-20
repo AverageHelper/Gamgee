@@ -1,4 +1,4 @@
-import type { CommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 import type { Command } from "./commands/index.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ChannelType } from "discord.js";
@@ -41,7 +41,7 @@ describe("Command event handler", () => {
 		};
 		mockAllCommands.set(mockCommand.name, mockCommand);
 
-		let interaction: CommandInteraction;
+		let interaction: ChatInputCommandInteraction;
 
 		beforeEach(() => {
 			interaction = {
@@ -71,7 +71,7 @@ describe("Command event handler", () => {
 				deferReply: mockInteractionDeferReply,
 				editReply: mockInteractionEditReply,
 				followUp: mockInteractionFollowUp,
-			} as unknown as CommandInteraction;
+			} as unknown as ChatInputCommandInteraction;
 		});
 
 		test("sends typing indicator when requested", async () => {
@@ -85,7 +85,7 @@ describe("Command event handler", () => {
 		});
 
 		test("edits interaction reply if deferred", async () => {
-			interaction = { ...interaction, deferred: true } as unknown as CommandInteraction;
+			interaction = { ...interaction, deferred: true } as unknown as ChatInputCommandInteraction;
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionEditReply).toHaveBeenCalled();
 			expect(mockInteractionEditReply).toHaveBeenCalledWith("yo");
@@ -94,7 +94,7 @@ describe("Command event handler", () => {
 		test("falls back to a followup if interaction edit failed", async () => {
 			mockInteractionEditReply.mockRejectedValueOnce(new Error("This is a test."));
 
-			interaction = { ...interaction, deferred: true } as unknown as CommandInteraction;
+			interaction = { ...interaction, deferred: true } as unknown as ChatInputCommandInteraction;
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionEditReply).toHaveBeenCalled();
 			expect(mockInteractionEditReply).toHaveBeenCalledWith("yo");
@@ -124,7 +124,7 @@ describe("Command event handler", () => {
 		});
 
 		test("sends an ephemeral follow-up message to the interaction if the interaction is deferred", async () => {
-			interaction = { ...interaction, deferred: true } as unknown as CommandInteraction;
+			interaction = { ...interaction, deferred: true } as unknown as ChatInputCommandInteraction;
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionFollowUp).toHaveBeenCalled();
 			expect(mockInteractionFollowUp).toHaveBeenCalledWith({
@@ -134,7 +134,7 @@ describe("Command event handler", () => {
 		});
 
 		test("sends an ephemeral follow-up message from options to the interaction if the interaction is deferred", async () => {
-			interaction = { ...interaction, deferred: true } as unknown as CommandInteraction;
+			interaction = { ...interaction, deferred: true } as unknown as ChatInputCommandInteraction;
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionFollowUp).toHaveBeenCalled();
 			expect(mockInteractionFollowUp).toHaveBeenCalledWith({
@@ -155,7 +155,7 @@ describe("Command event handler", () => {
 		});
 
 		test("edits the reply message to check DMs if the interaction was deferred", async () => {
-			interaction = { ...interaction, deferred: true } as unknown as CommandInteraction;
+			interaction = { ...interaction, deferred: true } as unknown as ChatInputCommandInteraction;
 			await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 			expect(mockInteractionEditReply).toHaveBeenCalled();
 			expect(mockInteractionEditReply).toHaveBeenCalledWith(
@@ -190,7 +190,7 @@ describe("Command event handler", () => {
 			member: null,
 			guild: null,
 			channel: { type: ChannelType.DM },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).not.toHaveBeenCalled();
@@ -220,7 +220,7 @@ describe("Command event handler", () => {
 			member: null,
 			guild: null,
 			channel: { type: ChannelType.DM },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).not.toHaveBeenCalled();
@@ -250,7 +250,7 @@ describe("Command event handler", () => {
 			member: null,
 			guild: null,
 			channel: { type: ChannelType.DM },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).not.toHaveBeenCalled();
@@ -280,7 +280,7 @@ describe("Command event handler", () => {
 			member: { id: otherUid },
 			guild: { id: "guild-1234" },
 			channel: { type: ChannelType.GuildText },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).toHaveBeenCalledOnce();
@@ -310,7 +310,7 @@ describe("Command event handler", () => {
 			member: null,
 			guild: null,
 			channel: { type: ChannelType.DM },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).toHaveBeenCalledOnce();
@@ -340,7 +340,7 @@ describe("Command event handler", () => {
 			member: { id: otherUid },
 			guild: { id: "guild-1234" },
 			channel: { type: ChannelType.GuildText },
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).toHaveBeenCalledOnce();
@@ -374,12 +374,11 @@ describe("Command event handler", () => {
 			member: null,
 			channel: { type: ChannelType.DM },
 			reply: mockInteractionReply,
-		} as unknown as CommandInteraction;
+		} as unknown as ChatInputCommandInteraction;
 
 		await expect(handleInteraction(interaction, mockConsole)).resolves.toBeUndefined();
 		expect(mockExecute).not.toHaveBeenCalled();
-		expect(mockInteractionReply).toHaveBeenCalledOnce();
-		expect(mockInteractionReply).toHaveBeenCalledWith({
+		expect(mockInteractionReply).toHaveBeenCalledExactlyOnceWith({
 			content: "Can't do that here.",
 			ephemeral: true,
 		});

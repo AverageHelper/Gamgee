@@ -26,7 +26,7 @@ async function getQueueChannelFromCommand(context: CommandContext): Promise<Text
 		return null;
 	}
 
-	if (!queueChannel || queueChannel.type !== ChannelType.GuildText) return null;
+	if (queueChannel?.type !== ChannelType.GuildText) return null;
 
 	if (!queueChannel.isTextBased()) {
 		logger.error("The configured channel is not a text channel.");
@@ -53,7 +53,7 @@ async function getQueueChannelFromGuild(guild: Guild): Promise<TextChannel | nul
 		return null;
 	}
 
-	if (!queueChannel || queueChannel.type !== ChannelType.GuildText) return null;
+	if (queueChannel?.type !== ChannelType.GuildText) return null;
 
 	if (!queueChannel.isTextBased()) {
 		logger.error("The configured channel is not a text channel.");

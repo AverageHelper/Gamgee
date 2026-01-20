@@ -4,7 +4,6 @@
  * Note: Should only be used in English contexts.
  */
 export function indefiniteArticle(noun: string): "a" | "an" {
-	// eslint-disable-next-line deprecation/deprecation
 	return startsWithVowel(noun) ? "an" : "a";
 }
 

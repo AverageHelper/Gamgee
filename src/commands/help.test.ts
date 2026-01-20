@@ -35,8 +35,7 @@ describe("Help command", () => {
 
 	test("describes all commands", async () => {
 		await help.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 		const description = calls[0];
@@ -49,8 +48,7 @@ describe("Help command", () => {
 			context = { ...context, userLocale };
 
 			await help.execute(context);
-			expect(mockReplyPrivately).toHaveBeenCalledOnce();
-			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
+			expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 			const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 			const description = calls[0];
@@ -71,8 +69,7 @@ describe("Help command", () => {
 		});
 
 		await help.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining(""));
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(""));
 
 		const calls = mockReplyPrivately.mock.calls[0] as Array<unknown>;
 		const description = calls[0];

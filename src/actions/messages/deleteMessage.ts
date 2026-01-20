@@ -83,6 +83,7 @@ export async function bulkDeleteMessagesWithIds(
 
 		return true;
 	} catch (error) {
+		// eslint-disable-next-line unicorn/numeric-separators-style
 		if (isDiscordError(error) && error.code === 50034) {
 			// Error 50034: You can only bulk delete messages that are under 14 days old.
 			logger.warn(error.message);

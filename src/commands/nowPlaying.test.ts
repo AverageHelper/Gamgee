@@ -62,8 +62,7 @@ describe("Now-Playing", () => {
 		expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
 		expect(mockDeleteMessage).toHaveBeenCalledOnce();
 		expect(mockReplyWithMention).not.toHaveBeenCalled();
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("no queue"));
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(expect.stringContaining("no queue"));
 	});
 
 	test.each`
@@ -82,8 +81,9 @@ describe("Now-Playing", () => {
 			expect(mockAddUserToHaveCalledNowPlaying).not.toHaveBeenCalled();
 			expect(mockDeleteMessage).toHaveBeenCalledOnce();
 			expect(mockReplyWithMention).not.toHaveBeenCalled();
-			expect(mockReplyPrivately).toHaveBeenCalledOnce();
-			expect(mockReplyPrivately).toHaveBeenCalledWith(expect.stringContaining("nothing"));
+			expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
+				expect.stringContaining("nothing"),
+			);
 		},
 	);
 

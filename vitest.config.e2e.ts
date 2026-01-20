@@ -3,7 +3,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
 	test: {
 		clearMocks: true,
-		include: ["tests/**/*.test.ts"],
+		dir: "tests",
+		include: ["**/*.test.ts"],
 		testTimeout: 60_000,
 		hookTimeout: 60_000,
 		teardownTimeout: 60_000,

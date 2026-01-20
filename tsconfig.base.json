@@ -20,7 +20,7 @@
 		"noUncheckedIndexedAccess": true,
 		"typeRoots": ["./node_modules/@types", "./src"],
 		"types": ["node"],
-		"skipLibCheck": false,
+		"skipLibCheck": true, // until discord.js gets its act together 😤
 		"forceConsistentCasingInFileNames": true
 	}
 }

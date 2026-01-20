@@ -24,15 +24,13 @@ describe("editing messages", () => {
 
 	test("calls the `edit` meethod of the given message", async () => {
 		expectValueEqual(await editMessage(message, newValue), true);
-		expect(mockEdit).toHaveBeenCalledOnce();
-		expect(mockEdit).toHaveBeenCalledWith(newValue);
+		expect(mockEdit).toHaveBeenCalledExactlyOnceWith(newValue);
 	});
 
 	test("returns false when the message edit fails", async () => {
 		mockEdit.mockRejectedValueOnce(new Error("This is a test"));
 		expectValueEqual(await editMessage(message, newValue), false);
-		expect(mockEdit).toHaveBeenCalledOnce();
-		expect(mockEdit).toHaveBeenCalledWith(newValue);
+		expect(mockEdit).toHaveBeenCalledExactlyOnceWith(newValue);
 	});
 });
 
@@ -63,8 +61,7 @@ describe("Suppress embeds", () => {
 		test("edits the message content directly to suppress embeds", async () => {
 			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
 			expect(mockSuppressEmbeds).not.toHaveBeenCalled();
-			expect(mockEdit).toHaveBeenCalledOnce();
-			expect(mockEdit).toHaveBeenCalledWith({
+			expect(mockEdit).toHaveBeenCalledExactlyOnceWith({
 				flags: ["SuppressEmbeds"],
 				content: message.content,
 				allowedMentions: { users: [] },
@@ -74,8 +71,7 @@ describe("Suppress embeds", () => {
 		test("edits the message content directly to unsuppress embeds", async () => {
 			await expect(suppressEmbedsForMessage(message, false)).resolves.toBeUndefined();
 			expect(mockSuppressEmbeds).not.toHaveBeenCalled();
-			expect(mockEdit).toHaveBeenCalledOnce();
-			expect(mockEdit).toHaveBeenCalledWith({
+			expect(mockEdit).toHaveBeenCalledExactlyOnceWith({
 				flags: [],
 				content: message.content,
 			});
@@ -106,15 +102,13 @@ describe("Suppress embeds", () => {
 
 		test("the `suppress`` parameter defaults to `true`", async () => {
 			await expect(suppressEmbedsForMessage(message)).resolves.toBeUndefined();
-			expect(mockSuppressEmbeds).toHaveBeenCalledOnce();
-			expect(mockSuppressEmbeds).toHaveBeenCalledWith(true);
+			expect(mockSuppressEmbeds).toHaveBeenCalledExactlyOnceWith(true);
 			expect(mockEdit).not.toHaveBeenCalled();
 		});
 
 		test("calls the suppressEmbeds method of the message if the sender is not us", async () => {
 			await expect(suppressEmbedsForMessage(message, true)).resolves.toBeUndefined();
-			expect(mockSuppressEmbeds).toHaveBeenCalledOnce();
-			expect(mockSuppressEmbeds).toHaveBeenCalledWith(true);
+			expect(mockSuppressEmbeds).toHaveBeenCalledExactlyOnceWith(true);
 			expect(mockEdit).not.toHaveBeenCalled();
 		});
 

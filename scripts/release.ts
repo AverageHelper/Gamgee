@@ -47,10 +47,10 @@ const newChangelog = changelog.toString();
 writeFileSync(changelogPath, newChangelog);
 
 const didFixChangelog = rawChangelog !== newChangelog;
-if (!didFixChangelog) {
-	console.info("Changelog was already spec compliant.");
-} else {
+if (didFixChangelog) {
 	console.info("Fixed formatting for spec compliance.");
+} else {
+	console.info("Changelog was already spec compliant.");
 }
 
 // Fix package.json and package-lock.json
@@ -102,10 +102,10 @@ const newPackageJson = `${JSON.stringify(packageJson, undefined, "\t")}\n`;
 writeFileSync(packageJsonPath, newPackageJson);
 
 const didFixPackageJson = oldPackageJson !== newPackageJson;
-if (!didFixPackageJson) {
-	console.info("package.json already had the correct version.");
-} else {
+if (didFixPackageJson) {
 	console.info("Updated package.json version.");
+} else {
+	console.info("package.json already had the correct version.");
 }
 
 // Update package-lock.json
@@ -117,10 +117,10 @@ const newPackageLockJson = `${JSON.stringify(packageLockJson, undefined, "\t")}\
 writeFileSync(packageLockJsonPath, newPackageLockJson);
 
 const didFixPackageLockJson = oldPackageLockJson !== newPackageLockJson;
-if (!didFixPackageLockJson) {
-	console.info("package-lock.json already had the correct version.");
-} else {
+if (didFixPackageLockJson) {
 	console.info("Updated package-lock.json version.");
+} else {
+	console.info("package-lock.json already had the correct version.");
 }
 
 // If we fixed the changelog or updated package.json, throw

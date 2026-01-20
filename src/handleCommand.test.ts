@@ -184,8 +184,7 @@ describe("Command handler", () => {
 				expect(mock).not.toHaveBeenCalled();
 
 				// Should reply privately to the user about the error
-				expect(mockAuthorSend).toHaveBeenCalledOnce();
-				expect(mockAuthorSend).toHaveBeenCalledWith(
+				expect(mockAuthorSend).toHaveBeenCalledExactlyOnceWith(
 					expect.stringContaining(
 						`Expected a string with a length between \`${expectedMin}\` and \`${expectedMax}\` but received one with a length of \`${value.length}\``,
 					),
@@ -253,14 +252,16 @@ describe("Command handler", () => {
 				mockMessage.content = content;
 				await handleCommand(mockMessage, logger);
 
-				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+				for (const cmd of mockCommandDefinitions.values()) {
+					expect(cmd.execute).not.toHaveBeenCalled();
+				}
 				// FIXME: Not sure why, but these three lines hold up the world. Without them, nothing or everything will break. Nobody knows. Schrödinger's cat got nothing on this:
 				await new Promise(resolve => setTimeout(resolve, 20));
 				if (mockCommandDefinitions.size > 13)
 					logger.debug("mockCommandDefinitions", mockCommandDefinitions);
 				expect.assertions(mockCommandDefinitions.size);
 			},
-			20000,
+			20_000,
 		);
 
 		test.each`
@@ -288,8 +289,7 @@ describe("Command handler", () => {
 
 			const mock = mockCommandDefinitions.get(command.replace("-", ""))?.execute;
 			expectDefined(mock);
-			expect(mock).toHaveBeenCalledOnce();
-			expect(mock).toHaveBeenCalledWith(
+			expect(mock).toHaveBeenCalledExactlyOnceWith(
 				expect.objectContaining({
 					client: mockClient,
 					message: mockMessage,
@@ -320,8 +320,7 @@ describe("Command handler", () => {
 				const mockCommand = mockCommandDefinitions.get(command.replace("-", ""));
 				const mock = mockCommand?.execute;
 				expectDefined(mock);
-				expect(mock).toHaveBeenCalledOnce();
-				expect(mock).toHaveBeenCalledWith(
+				expect(mock).toHaveBeenCalledExactlyOnceWith(
 					expect.objectContaining({
 						client: mockClient,
 						message: mockMessage,
@@ -358,7 +357,9 @@ describe("Command handler", () => {
 				mockMessage.author.bot = true;
 				await handleCommand(mockMessage, logger);
 
-				mockCommandDefinitions.forEach(cmd => expect(cmd.execute).not.toHaveBeenCalled());
+				for (const cmd of mockCommandDefinitions.values()) {
+					expect(cmd.execute).not.toHaveBeenCalled();
+				}
 				expect.assertions(mockCommandDefinitions.size);
 			},
 		);

@@ -25,6 +25,7 @@ describe("Command as admin", () => {
 
 	beforeEach(async () => {
 		// Cut out the test filepath
+		// eslint-disable-next-line vitest/no-standalone-expect
 		const title = expect.getState().currentTestName?.split(" > ").slice(1).join(" > ");
 		await sendMessageWithDefaultClient(`**'${title ?? "null"}'**`);
 

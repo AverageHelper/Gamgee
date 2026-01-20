@@ -77,7 +77,7 @@ describe("Bulk Message Delete", () => {
 		async (params: { count: number; multiples: number; singles: number }) => {
 			const { count, multiples, singles } = params;
 			// Use an array of `count` instances of "a"
-			const messageIds = new Array<string>(count).fill("a");
+			const messageIds = Array.from<string>({ length: count }).fill("a");
 			await expect(bulkDeleteMessagesWithIds(messageIds, channel)).resolves.toBe(true);
 
 			expect(mockBulkDelete).toHaveBeenCalledTimes(multiples);
@@ -94,8 +94,9 @@ describe("Bulk Message Delete", () => {
 	});
 
 	const tooOldError = new DiscordAPIError(
+		// eslint-disable-next-line unicorn/numeric-separators-style
 		{ code: 50034, error: "" },
-		50034,
+		50034, // eslint-disable-line unicorn/numeric-separators-style
 		400,
 		"DELETE",
 		"https://example.com",
@@ -126,8 +127,7 @@ describe("Bulk Message Delete", () => {
 		await expect(bulkDeleteMessagesWithIds(messageIds, channel)).resolves.toBe(true);
 
 		expect(mockBulkDelete).not.toHaveBeenCalled();
-		expect(mockSingleDelete).toHaveBeenCalledOnce();
-		expect(mockSingleDelete).toHaveBeenCalledWith("a");
+		expect(mockSingleDelete).toHaveBeenCalledExactlyOnceWith("a");
 	});
 
 	test("Does nothing when the queue has 0 items in it", async () => {

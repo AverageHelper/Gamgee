@@ -73,8 +73,7 @@ describe("User retrieving their own cooldown", () => {
 	test("tells the user when the queue is not set up", async () => {
 		mockGetQueueChannel.mockResolvedValue(null);
 		await cooldown.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith("No queue is set up.");
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith("No queue is set up.");
 	});
 
 	test("tells the user when they're blacklisted", async () => {
@@ -88,8 +87,7 @@ describe("User retrieving their own cooldown", () => {
 			entryDurationMinSeconds: null,
 		});
 		await cooldown.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith(
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
 			"You can submit once you're removed from the blacklist... sorry",
 		);
 	});
@@ -97,14 +95,14 @@ describe("User retrieving their own cooldown", () => {
 	test("tells the user when the queue is closed", async () => {
 		mockIsQueueOpen.mockResolvedValue(false);
 		await cooldown.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith("The queue is not open.");
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith("The queue is not open.");
 	});
 
 	test("tells the user they can submit immediately when there's no cooldown", async () => {
 		await cooldown.execute(context);
-		expect(mockReplyPrivately).toHaveBeenCalledOnce();
-		expect(mockReplyPrivately).toHaveBeenCalledWith("You can submit right now! :grinning:");
+		expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
+			"You can submit right now! :grinning:",
+		);
 	});
 
 	test.each`
@@ -149,7 +147,6 @@ describe("User retrieving their own cooldown", () => {
 				entryDurationMinSeconds: null,
 			});
 			await cooldown.execute(context);
-			expect(mockReplyPrivately).toHaveBeenCalledOnce();
 
 			let quantity: string;
 			if (userSubmissions <= 0) {
@@ -161,8 +158,7 @@ describe("User retrieving their own cooldown", () => {
 			} else {
 				quantity = `all ${userSubmissions} of your submissions`;
 			}
-
-			expect(mockReplyPrivately).toHaveBeenCalledWith(
+			expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
 				`You've used ${quantity} for the night! :tada:`,
 			);
 		},
@@ -211,8 +207,9 @@ describe("User retrieving their own cooldown", () => {
 				entryDurationMinSeconds: null,
 			});
 			await cooldown.execute(context);
-			expect(mockReplyPrivately).toHaveBeenCalledOnce();
-			expect(mockReplyPrivately).toHaveBeenCalledWith("You can submit right now! :grinning:");
+			expect(mockReplyPrivately).toHaveBeenCalledExactlyOnceWith(
+				"You can submit right now! :grinning:",
+			);
 		},
 	);
 

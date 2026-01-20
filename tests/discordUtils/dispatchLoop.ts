@@ -20,7 +20,7 @@ export function useDispatchLoop<T>(
 		if (waiterCollection.size === 0) return;
 
 		const keysToRemove: Array<number> = [];
-		waiterCollection.forEach((waiter, id) => {
+		for (const [id, waiter] of waiterCollection.entries()) {
 			const shouldRemove = waiter(arg);
 			if (shouldRemove) {
 				logger.debug(`Waiter ${id} handled a deleted message. Removing from the loop...`);
@@ -28,7 +28,7 @@ export function useDispatchLoop<T>(
 			} else {
 				logger.debug(`Waiter ${id} did not handle the message. Keeping in the loop.`);
 			}
-		});
+		}
 
 		// remove marked keys
 		for (const id of keysToRemove) {

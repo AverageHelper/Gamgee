@@ -21,7 +21,8 @@ export function resolveAlias(alias: string): string {
 
 export const allCommands = new Map<string, MockCommand>();
 
-function addMock(command: Command): void {
+// Add all commands to our mock commands list
+for (const command of _allCommands.values()) {
 	allCommands.set(command.name, {
 		name: command.name,
 		aliases: command.aliases,
@@ -30,6 +31,3 @@ function addMock(command: Command): void {
 		execute: vi.fn<Command["execute"]>().mockResolvedValue(undefined),
 	});
 }
-
-// Add all commands to our mock commands list
-_allCommands.forEach(addMock);
