@@ -1,20 +1,19 @@
-version: "3"
-
 services:
   gamgee:
     image: "git.average.name/averagehelper/gamgee:latest"
-    environment:
-      - DISCORD_TOKEN=[TOKEN GOES HERE]
-      - LOG_LEVEL=info # Valid options: silly, debug, verbose, info, warn, error
-    #   Optional:
-    # - EVENTS_ROLE_ID=[Role ID]
-    # - QUEUE_ADMIN_ROLE_ID=[Role ID]
-    # - QUEUE_CREATOR_ROLE_ID=[Role ID]
-    # - BOT_ADMIN_ROLE_ID=[Role ID]
-    #   Warning! Container internal path!
-    # - DATABASE_URL="file:/new/path/to/store/db/at.sqlite"
+    # Comment the above line and uncomment the following to build from source:
+    # build:
+    #   context: .
+    container_name: gamgee
+    # Make sure to have a .env file present, as described in the README:
+    env_file: .env
     volumes:
-      - "./db/:/db/" # Store DB at ./db/db.sqlite
-    #   Other potentially useful mounts:
-    # - "./logs/:/app/logs/"
-    restart: unless-stopped # Automatically restart container
+      # Stores the database at ./db/db.sqlite
+      - "./db/:/db/"
+      - "./logs/:/app/logs/"
+    restart: unless-stopped
+    user: 1000:1000
+    cap_drop:
+      - ALL
+    security_opt:
+      - "no-new-privileges:true"

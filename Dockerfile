@@ -11,11 +11,13 @@ FROM node:alpine
 
 WORKDIR /app
 
+# Prisma needs OpenSSL now
+RUN apk update && apk add openssl
+
 COPY --from=builder /app/dist/server.js ./dist/server.js
 COPY package*.json ./
 COPY prisma prisma/
 COPY scripts/launch_in_docker.sh .
-
 
 RUN npm install --omit dev
 
