@@ -93,6 +93,14 @@ const restHandlers = [
 				};
 				break;
 			}
+			case "IcSVBeIOIl8": {
+				// Not allowed in the US (yes, this is different to the API, lol)
+				title = "DAWAN";
+				regionRestriction = {
+					allowed: ["HU", "MX", "NL"],
+				};
+				break;
+			}
 
 			default: {
 				hasVideo = false;
@@ -180,6 +188,7 @@ describe.each([true, false])("YouTube track details (API: %s)", withKey => {
 		id               | url
 		${"9Y8ZGLiqXba"} | ${"https://youtu.be/9Y8ZGLiqXba"}
 		${"dmneTS-Gows"} | ${"https://www.youtube.com/watch?v=dmneTS-Gows"}
+		${"IcSVBeIOIl8"} | ${"https://www.youtube.com/watch?v=IcSVBeIOIl8"}
 	`("throws with unavailable video ($id)", async ({ url }: { url: string }) => {
 		const error = new UnavailableError(new URL(url));
 		mockGetBasicInfo.mockRejectedValue(error);

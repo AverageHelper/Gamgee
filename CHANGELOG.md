@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The changelog link in `/version` now points to the _current_ changelog file, rather than the one that was published with the deployed Gamgee version. This way, users can see changes coming with not-yet-deployed versions, if any.
 - Updated dependencies.
 
+### Fixed
+- Filter YouTube videos that aren't `blocked` in the US but aren't `allowed` there either.
+
 ## [3.2.1] - 2026-01-19
 ### Fixed
 - \[Docker\] Installed missing Prisma environment dependencies.

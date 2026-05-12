@@ -68,11 +68,14 @@ export async function getYouTubeVideoViaApi(
 		throw new UnavailableError(url);
 	}
 
-	if (
-		video.contentDetails.regionRestriction?.blocked?.includes("US") ||
-		video.snippet.liveBroadcastContent === "upcoming"
-	) {
-		logger.debug('[YouTube API] The video is not available in the US, or is marked "upcoming"');
+	const code = "US";
+	const isBlocked: bool = video.contentDetails.regionRestriction?.blocked?.includes(code) ?? false;
+	const isAllowed: bool =
+		!video.contentDetails.regionRestriction?.allowed ||
+		video.contentDetails.regionRestriction.allowed.includes(code);
+
+	if (isBlocked || !isAllowed || video.snippet.liveBroadcastContent === "upcoming") {
+		logger.debug(`[YouTube API] The video is not available in ${code}, or hasn't premiered yet`);
 		throw new UnavailableError(url);
 	}
 
