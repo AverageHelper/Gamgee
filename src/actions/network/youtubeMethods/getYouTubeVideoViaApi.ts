@@ -69,8 +69,8 @@ export async function getYouTubeVideoViaApi(
 	}
 
 	const code = "US";
-	const isBlocked: bool = video.contentDetails.regionRestriction?.blocked?.includes(code) ?? false;
-	const isAllowed: bool =
+	const isBlocked: boolean = video.contentDetails.regionRestriction?.blocked?.includes(code) ?? false;
+	const isAllowed: boolean =
 		!video.contentDetails.regionRestriction?.allowed ||
 		video.contentDetails.regionRestriction.allowed.includes(code);
 
