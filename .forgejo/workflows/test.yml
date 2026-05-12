@@ -3,6 +3,18 @@ name: Tests
 on:
   push:
     branches: [main]
+    paths:
+      - .forgejo/workflows/**
+      - prisma/**
+      - src/**
+      - tests/**
+      - package-lock.json
+      - package.json
+      - .dockerignore
+      - Dockerfile
+      - rollup.config.ts
+      - vitest.config.e2e.ts
+      - vitest.config.ts
   pull_request:
     branches: [main]
     paths:
@@ -42,8 +54,10 @@ jobs:
       - run: npm run build
       - run: npm run test:src
         env:
-          # TODO: Some way for users without a Google account to run other tests:
+          # FIXME: Mock the YouTube API properly so this isn't needed
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+      # TODO: Test Docker build
 
   integration:
     runs-on: ubuntu-latest
