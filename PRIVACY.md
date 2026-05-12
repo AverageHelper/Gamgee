@@ -1,6 +1,6 @@
 # Privacy
 
-This document describes how Gmagee handles user data. This document may be updated periodically. To be notified proactively about updates to this document, you may subscribe to this file's commit feed at <https://git.average.name/AverageHelper/Gamgee/rss/branch/main/PRIVACY.md> using an RSS reader.
+This document describes how Gamgee handles user data. This document may be updated periodically. To be notified proactively about updates to this document, you may subscribe to this file's commit feed at <https://git.average.name/AverageHelper/Gamgee/rss/branch/main/PRIVACY.md> using an RSS reader.
 
 ## What is stored, and how
 
